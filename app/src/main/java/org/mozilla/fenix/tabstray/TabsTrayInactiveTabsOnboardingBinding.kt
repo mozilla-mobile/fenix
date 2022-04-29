@@ -25,12 +25,12 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.lib.state.helpers.AbstractBinding
 import mozilla.components.support.ktx.android.util.dpToPx
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
+import mozilla.telemetry.glean.private.NoExtras
+import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.infobanner.InfoBanner
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.ComponentTabstray2Binding
 import org.mozilla.fenix.databinding.OnboardingInactiveTabsCfrBinding
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.potentialInactiveTabs
 import org.mozilla.fenix.utils.Settings
 
@@ -42,6 +42,8 @@ class TabsTrayInactiveTabsOnboardingBinding(
     private val settings: Settings,
     private val navigationInteractor: NavigationInteractor
 ) : AbstractBinding<BrowserState>(store) {
+
+    private lateinit var inactiveTabsDialog: Dialog
 
     @VisibleForTesting
     internal var banner: InfoBanner? = null
@@ -63,29 +65,31 @@ class TabsTrayInactiveTabsOnboardingBinding(
             settings.canShowCfr
 
     private fun createInactiveCFR() {
+        // Don't create a new dialog if one is already displayed
+        if (this::inactiveTabsDialog.isInitialized) return
+
         val context: Context = context
-        val metrics = context.components.analytics.metrics
         val anchorPosition = IntArray(2)
         val popupBinding = OnboardingInactiveTabsCfrBinding.inflate(LayoutInflater.from(context))
-        val popup = Dialog(context)
+        inactiveTabsDialog = Dialog(context)
 
-        popup.apply {
+        inactiveTabsDialog.apply {
             setContentView(popupBinding.root)
             setCancelable(false)
             // removing title or setting it as an empty string does not prevent a11y services from assigning one
             setTitle(" ")
         }
         popupBinding.closeInfoBanner.setOnClickListener {
-            popup.dismiss()
+            inactiveTabsDialog.dismiss()
             settings.shouldShowInactiveTabsOnboardingPopup = false
-            metrics.track(Event.TabsTrayInactiveTabsCFRDismissed)
+            TabsTray.inactiveTabsCfrDismissed.record(NoExtras())
         }
 
         popupBinding.bannerInfoMessage.setOnClickListener {
-            popup.dismiss()
+            inactiveTabsDialog.dismiss()
             settings.shouldShowInactiveTabsOnboardingPopup = false
             navigationInteractor.onTabSettingsClicked()
-            metrics.track(Event.TabsTrayInactiveTabsCFRGotoSettings)
+            TabsTray.inactiveTabsCfrSettings.record(NoExtras())
         }
 
         val messageText = context.getString(R.string.tab_tray_inactive_onboarding_message)
@@ -106,7 +110,7 @@ class TabsTrayInactiveTabsOnboardingBinding(
 
         popupBinding.root.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
 
-        popup.window?.apply {
+        inactiveTabsDialog.window?.apply {
             val attr = attributes
             setGravity(Gravity.START or Gravity.TOP)
             attr.x = x + 15.dpToPx(context.resources.displayMetrics)
@@ -114,7 +118,7 @@ class TabsTrayInactiveTabsOnboardingBinding(
             attributes = attr
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
-        popup.show()
-        metrics.track(Event.TabsTrayInactiveTabsCFRIsVisible)
+        inactiveTabsDialog.show()
+        TabsTray.inactiveTabsCfrVisible.record(NoExtras())
     }
 }

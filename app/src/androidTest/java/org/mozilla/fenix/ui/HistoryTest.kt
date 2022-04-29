@@ -13,7 +13,6 @@ import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
@@ -85,7 +84,6 @@ class HistoryTest {
         }
     }
 
-    @Ignore("Failing, see https://github.com/mozilla-mobile/fenix/issues/22304")
     @Test
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
@@ -121,7 +119,7 @@ class HistoryTest {
             historyListIdlingResource =
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1)
             IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-            clickDeleteHistoryButton()
+            clickDeleteHistoryButton(firstWebPage.url.toString())
             IdlingRegistry.getInstance().unregister(historyListIdlingResource!!)
             verifyDeleteSnackbarText("Deleted")
             verifyEmptyHistoryView()
@@ -247,8 +245,8 @@ class HistoryTest {
             historyListIdlingResource =
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 2)
             IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-            verifyHistoryItemExists(firstWebPage.url.toString())
-            verifyHistoryItemExists(secondWebPage.url.toString())
+            verifyHistoryItemExists(true, firstWebPage.url.toString())
+            verifyHistoryItemExists(true, secondWebPage.url.toString())
             longTapSelectItem(firstWebPage.url)
             longTapSelectItem(secondWebPage.url)
             openActionBarOverflowOrOptionsMenu(activityTestRule.activity)

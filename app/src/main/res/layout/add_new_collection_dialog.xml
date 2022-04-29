@@ -10,11 +10,11 @@
     android:orientation="vertical">
 
     <View
-        android:id="@+id/top_divider"
+        android:id="@+id/top_spacer"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="16dp"
-        android:background="?neutralFaded" />
+        android:background="?borderPrimary" />
 
     <ScrollView
         android:id="@+id/scroll_view"
@@ -29,9 +29,9 @@
     </ScrollView>
 
     <View
-        android:id="@+id/bottom_divider"
+        android:id="@+id/bottom_spacer"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginBottom="8dp"
-        android:background="?neutralFaded" />
+        android:background="?borderPrimary" />
 </LinearLayout>

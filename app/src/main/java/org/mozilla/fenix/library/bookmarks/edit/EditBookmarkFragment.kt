@@ -34,10 +34,11 @@ import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.android.view.showKeyboard
+import mozilla.telemetry.glean.private.NoExtras
+import org.mozilla.fenix.GleanMetrics.BookmarksManagement
 import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.FragmentEditBookmarkBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
@@ -165,8 +166,8 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
         val actionBar = (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary()
         val toolbar = activity.findViewById<Toolbar>(R.id.navigationToolbar)
         toolbar?.setToolbarColors(
-            foreground = activity.getColorFromAttr(R.attr.primaryText),
-            background = activity.getColorFromAttr(R.attr.foundation)
+            foreground = activity.getColorFromAttr(R.attr.textPrimary),
+            background = activity.getColorFromAttr(R.attr.layer1)
         )
         actionBar.show()
     }
@@ -201,14 +202,14 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
         activity?.let { activity ->
             AlertDialog.Builder(activity).apply {
                 setMessage(R.string.bookmark_deletion_confirmation)
-                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
+                setNegativeButton(R.string.bookmark_delete_negative) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
                 setPositiveButton(R.string.tab_collection_dialog_positive) { dialog: DialogInterface, _ ->
                     // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
                     lifecycleScope.launch(IO) {
                         requireComponents.core.bookmarksStorage.deleteNode(args.guidToEdit)
-                        requireComponents.analytics.metrics.track(Event.RemoveBookmark)
+                        BookmarksManagement.removed.record(NoExtras())
 
                         launch(Main) {
                             Navigation.findNavController(requireActivity(), R.id.container)
@@ -249,13 +250,13 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
             try {
                 requireComponents.let { components ->
                     if (title != bookmarkNode?.title || url != bookmarkNode?.url) {
-                        components.analytics.metrics.track(Event.EditedBookmark)
+                        BookmarksManagement.edited.record(NoExtras())
                     }
                     val parentGuid = sharedViewModel.selectedFolder?.guid ?: bookmarkNode!!.parentGuid
                     val parentChanged = initialParentGuid != parentGuid
                     // Only track the 'moved' event if new parent was selected.
                     if (parentChanged) {
-                        components.analytics.metrics.track(Event.MovedBookmark)
+                        BookmarksManagement.moved.record(NoExtras())
                     }
                     components.core.bookmarksStorage.updateNode(
                         args.guidToEdit,

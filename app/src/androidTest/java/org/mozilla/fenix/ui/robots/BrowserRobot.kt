@@ -690,7 +690,7 @@ class BrowserRobot {
 
         fun openTabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
             mDevice.findObject(
-                UiSelector().descriptionContains("open tab. Tap to switch tabs.")
+                UiSelector().descriptionContains("Tap to switch tabs.")
             ).waitForExists(waitingTime)
 
             tabsCounter().click()
@@ -749,6 +749,8 @@ class BrowserRobot {
 
             val tabCrashedCloseButton = mDevice.findObject(text("Close tab"))
             tabCrashedCloseButton.click()
+
+            mDevice.waitForIdle()
 
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()
@@ -887,7 +889,6 @@ private val getLocationButton = mDevice.findObject(UiSelector().text("Get Locati
 val userNameTextBox =
     mDevice.findObject(
         UiSelector()
-            .index(0)
             .resourceId("username")
             .className("android.widget.EditText")
             .packageName("$packageName")
@@ -896,7 +897,6 @@ val userNameTextBox =
 private val submitLoginButton =
     mDevice.findObject(
         UiSelector()
-            .index(2)
             .resourceId("submit")
             .textContains("Submit Query")
             .className("android.widget.Button")
@@ -906,7 +906,6 @@ private val submitLoginButton =
 val passwordTextBox =
     mDevice.findObject(
         UiSelector()
-            .index(1)
             .resourceId("password")
             .className("android.widget.EditText")
             .packageName("$packageName")

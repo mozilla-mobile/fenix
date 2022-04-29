@@ -8,6 +8,7 @@ import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.View
 import android.widget.PopupWindow
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
@@ -17,12 +18,14 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.feature.top.sites.TopSite
+import org.mozilla.fenix.GleanMetrics.Pings
+import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.TopSiteItemBinding
 import org.mozilla.fenix.ext.bitmapForUrl
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
+import org.mozilla.fenix.ext.name
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.view.ViewHolder
@@ -36,13 +39,9 @@ class TopSiteItemViewHolder(
     private val binding = TopSiteItemBinding.bind(view)
 
     init {
-        binding.topSiteItem.setOnClickListener {
-            interactor.onSelectTopSite(topSite)
-        }
-
         binding.topSiteItem.setOnLongClickListener {
             interactor.onTopSiteMenuOpened()
-            it.context.components.analytics.metrics.track(Event.TopSiteLongPress(topSite))
+            TopSites.longPress.record(TopSites.LongPressExtra(topSite.name()))
 
             val topSiteMenu = TopSiteItemMenu(
                 context = view.context,
@@ -72,7 +71,11 @@ class TopSiteItemViewHolder(
         }
     }
 
-    fun bind(topSite: TopSite) {
+    fun bind(topSite: TopSite, position: Int) {
+        binding.topSiteItem.setOnClickListener {
+            interactor.onSelectTopSite(topSite, position)
+        }
+
         binding.topSiteTitle.text = topSite.title
 
         if (topSite is TopSite.Pinned || topSite is TopSite.Default) {
@@ -89,6 +92,7 @@ class TopSiteItemViewHolder(
                 itemView.context.components.core.client.bitmapForUrl(topSite.imageUrl)?.let { bitmap ->
                     withContext(Main) {
                         binding.faviconImage.setImageBitmap(bitmap)
+                        submitTopSitesImpressionPing(topSite, position)
                     }
                 }
             }
@@ -119,6 +123,21 @@ class TopSiteItemViewHolder(
         }
 
         this.topSite = topSite
+    }
+
+    @VisibleForTesting
+    internal fun submitTopSitesImpressionPing(topSite: TopSite.Provided, position: Int) {
+        TopSites.contileImpression.record(
+            TopSites.ContileImpressionExtra(
+                position = position + 1,
+                source = "newtab"
+            )
+        )
+
+        topSite.id?.let { TopSites.contileTileId.set(it) }
+        topSite.title?.let { TopSites.contileAdvertiser.set(it.lowercase()) }
+        TopSites.contileReportingUrl.set(topSite.impressionUrl)
+        Pings.topsitesImpression.submit()
     }
 
     private fun onTouchEvent(

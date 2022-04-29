@@ -9,7 +9,7 @@
         android:id="@+id/previewThumbnail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?tabTrayThumbnailItemBackground" />
+        android:background="?layer2" />
 
     <LinearLayout
         android:id="@+id/fakeToolbar"
@@ -44,6 +44,6 @@
             android:layout_gravity="center"
             android:scaleType="center"
             app:srcCompat="@drawable/ic_menu"
-            app:tint="?primaryText" />
+            app:tint="?attr/textPrimary" />
     </LinearLayout>
 </merge>

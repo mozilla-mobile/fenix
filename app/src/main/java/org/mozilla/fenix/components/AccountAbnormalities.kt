@@ -9,15 +9,12 @@ import android.content.SharedPreferences
 import android.os.StrictMode
 import androidx.annotation.GuardedBy
 import androidx.annotation.VisibleForTesting
-import kotlinx.coroutines.Dispatchers
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.lib.crash.CrashReporter
-import mozilla.components.service.fxa.manager.FxaAccountManager
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.perf.StrictModeManager
-import kotlin.coroutines.CoroutineContext
 
 /**
  * Miscellaneous FxA-related abnormalities.
@@ -52,13 +49,11 @@ internal abstract class AbnormalFxaEvent : Exception() {
  * See [AbnormalFxaEvent] for types of abnormal events this class detects.
  *
  * @param crashReporter An instance of [CrashReporter] used for reporting detected abnormalities.
- * @param coroutineContext A [CoroutineContext] used for executing async tasks. Defaults to [Dispatchers.IO].
  */
 class AccountAbnormalities(
     context: Context,
     private val crashReporter: CrashReporter,
     strictMode: StrictModeManager,
-    private val coroutineContext: CoroutineContext = Dispatchers.IO
 ) : AccountObserver {
     companion object {
         private const val PREF_FXA_ABNORMALITIES = "fxa_abnormalities"
@@ -89,17 +84,7 @@ class AccountAbnormalities(
         hadAccountPrior = prefPair.second
     }
 
-    /**
-     * Once [accountManager] is initialized, queries it to detect abnormal account states.
-     * Call this right after running [FxaAccountManager.initAsync].
-     *
-     * @param accountManager An instance of [FxaAccountManager].
-     * @param initResult A deferred result of initializing [accountManager].
-     * @return A [Unit] deferred, resolved once [initResult] is resolved and state is processed for abnormalities.
-     */
-    fun accountManagerStarted(
-        accountManager: FxaAccountManager
-    ) {
+    override fun onReady(authenticatedAccount: OAuthAccount?) {
         check(!accountManagerConfigured) { "accountManagerStarted called twice" }
         accountManagerConfigured = true
 
@@ -110,7 +95,7 @@ class AccountAbnormalities(
         // account. This works because our account state is persisted in the application's
         // directory, same as SharedPreferences. If user clears application data, both the
         // fxa state and our flag will be removed.
-        val hasAccountNow = accountManager.authenticatedAccount() != null
+        val hasAccountNow = authenticatedAccount != null
         if (hadAccountPrior && !hasAccountNow) {
             prefs.edit().putBoolean(KEY_HAS_ACCOUNT, false).apply()
 

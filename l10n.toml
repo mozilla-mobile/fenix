@@ -2,6 +2,7 @@
 basepath = "."
 
 locales = [
+  "ab",
   "an",
   "ann",
   "ar",
@@ -97,10 +98,12 @@ locales = [
   "tg",
   "th",
   "tl",
+  "tok",
   "tr",
   "trs",
   "tt",
   "tzm",
+  "ug",
   "uk",
   "ur",
   "uz",

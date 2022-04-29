@@ -6,8 +6,6 @@ package org.mozilla.fenix.components.metrics
 
 import androidx.annotation.VisibleForTesting
 import mozilla.components.browser.menu.facts.BrowserMenuFacts
-import mozilla.components.browser.toolbar.facts.ToolbarFacts
-import mozilla.components.compose.browser.awesomebar.AwesomeBarFacts as ComposeAwesomeBarFacts
 import mozilla.components.concept.awesomebar.AwesomeBar
 import mozilla.components.feature.autofill.facts.AutofillFacts
 import mozilla.components.feature.awesomebar.facts.AwesomeBarFacts
@@ -17,7 +15,6 @@ import mozilla.components.feature.awesomebar.provider.HistoryStorageSuggestionPr
 import mozilla.components.feature.awesomebar.provider.SearchSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.SessionSuggestionProvider
 import mozilla.components.feature.contextmenu.facts.ContextMenuFacts
-import mozilla.components.feature.customtabs.CustomTabsFacts
 import mozilla.components.feature.media.facts.MediaFacts
 import mozilla.components.feature.prompts.dialog.LoginDialogFacts
 import mozilla.components.feature.prompts.facts.CreditCardAutofillDialogFacts
@@ -33,10 +30,24 @@ import mozilla.components.support.base.facts.FactProcessor
 import mozilla.components.support.base.facts.Facts
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.webextensions.facts.WebExtensionFacts
+import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.ContextMenu
+import org.mozilla.fenix.GleanMetrics.AndroidAutofill
+import org.mozilla.fenix.GleanMetrics.Awesomebar
+import org.mozilla.fenix.GleanMetrics.BrowserSearch
+import org.mozilla.fenix.GleanMetrics.ContextualMenu
+import org.mozilla.fenix.GleanMetrics.CreditCards
+import org.mozilla.fenix.GleanMetrics.LoginDialog
+import org.mozilla.fenix.GleanMetrics.MediaNotification
+import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.PerfAwesomebar
+import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
+import org.mozilla.fenix.GleanMetrics.SyncedTabs
 import org.mozilla.fenix.search.awesomebar.ShortcutsSuggestionProvider
 import org.mozilla.fenix.utils.Settings
+import mozilla.components.compose.browser.awesomebar.AwesomeBarFacts as ComposeAwesomeBarFacts
 
 interface MetricController {
     fun start(type: MetricServiceType)
@@ -93,11 +104,151 @@ internal class ReleaseMetricController(
     init {
         Facts.registerProcessor(object : FactProcessor {
             override fun process(fact: Fact) {
-                fact.toEvent()?.also {
-                    track(it)
-                }
+                fact.process()
             }
         })
+    }
+
+    @VisibleForTesting
+    @Suppress("LongMethod")
+    internal fun Fact.process(): Unit = when (component to item) {
+        Component.FEATURE_PROMPTS to LoginDialogFacts.Items.DISPLAY -> {
+            LoginDialog.displayed.record(NoExtras())
+        }
+        Component.FEATURE_PROMPTS to LoginDialogFacts.Items.CANCEL -> {
+            LoginDialog.cancelled.record(NoExtras())
+        }
+        Component.FEATURE_PROMPTS to LoginDialogFacts.Items.NEVER_SAVE -> {
+            LoginDialog.neverSave.record(NoExtras())
+        }
+        Component.FEATURE_PROMPTS to LoginDialogFacts.Items.SAVE -> {
+            LoginDialog.saved.record(NoExtras())
+        }
+        Component.FEATURE_MEDIA to MediaFacts.Items.STATE -> {
+            when (action) {
+                Action.PLAY -> MediaState.play.record(NoExtras())
+                Action.PAUSE -> MediaState.pause.record(NoExtras())
+                Action.STOP -> MediaState.stop.record(NoExtras())
+                else -> Unit
+            }
+        }
+        Component.FEATURE_MEDIA to MediaFacts.Items.NOTIFICATION -> {
+            when (action) {
+                Action.PLAY -> MediaNotification.play.record(NoExtras())
+                Action.PAUSE -> MediaNotification.pause.record(NoExtras())
+                else -> Unit
+            }
+        }
+        Component.FEATURE_CONTEXTMENU to ContextMenuFacts.Items.ITEM -> {
+            metadata?.get("item")?.let { item ->
+                contextMenuAllowList[item]?.let { extraKey ->
+                    ContextMenu.itemTapped.record(ContextMenu.ItemTappedExtra(extraKey))
+                }
+            }
+            Unit
+        }
+
+        Component.BROWSER_MENU to BrowserMenuFacts.Items.WEB_EXTENSION_MENU_ITEM -> {
+            metadata?.get("id")?.let {
+                Addons.openAddonInToolbarMenu.record(Addons.OpenAddonInToolbarMenuExtra(it.toString()))
+            }
+            Unit
+        }
+        Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_FORM_DETECTED ->
+            CreditCards.formDetected.record(NoExtras())
+        Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_SUCCESS ->
+            CreditCards.autofilled.record(NoExtras())
+        Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_SHOWN ->
+            CreditCards.autofillPromptShown.record(NoExtras())
+        Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_EXPANDED ->
+            CreditCards.autofillPromptExpanded.record(NoExtras())
+        Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_DISMISSED ->
+            CreditCards.autofillPromptDismissed.record(NoExtras())
+
+        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_REQUEST -> {
+            val hasMatchingLogins = metadata?.get(AutofillFacts.Metadata.HAS_MATCHING_LOGINS) as Boolean?
+            if (hasMatchingLogins == true) {
+                AndroidAutofill.requestMatchingLogins.record(NoExtras())
+            } else {
+                AndroidAutofill.requestNoMatchingLogins.record(NoExtras())
+            }
+        }
+        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_SEARCH -> {
+            if (action == Action.SELECT) {
+                AndroidAutofill.searchItemSelected.record(NoExtras())
+            } else {
+                AndroidAutofill.searchDisplayed.record(NoExtras())
+            }
+        }
+        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_CONFIRMATION -> {
+            if (action == Action.CONFIRM) {
+                AndroidAutofill.confirmSuccessful.record(NoExtras())
+            } else {
+                AndroidAutofill.confirmCancelled.record(NoExtras())
+            }
+        }
+        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_LOCK -> {
+            if (action == Action.CONFIRM) {
+                AndroidAutofill.unlockSuccessful.record(NoExtras())
+            } else {
+                AndroidAutofill.unlockCancelled.record(NoExtras())
+            }
+        }
+        Component.FEATURE_SYNCEDTABS to SyncedTabsFacts.Items.SYNCED_TABS_SUGGESTION_CLICKED -> {
+            SyncedTabs.syncedTabsSuggestionClicked.record(NoExtras())
+        }
+        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.BOOKMARK_SUGGESTION_CLICKED -> {
+            Awesomebar.bookmarkSuggestionClicked.record(NoExtras())
+        }
+        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.CLIPBOARD_SUGGESTION_CLICKED -> {
+            Awesomebar.clipboardSuggestionClicked.record(NoExtras())
+        }
+        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.HISTORY_SUGGESTION_CLICKED -> {
+            Awesomebar.historySuggestionClicked.record(NoExtras())
+        }
+        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.SEARCH_ACTION_CLICKED -> {
+            Awesomebar.searchActionClicked.record(NoExtras())
+        }
+        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.SEARCH_SUGGESTION_CLICKED -> {
+            Awesomebar.searchSuggestionClicked.record(NoExtras())
+        }
+        Component.FEATURE_AWESOMEBAR to AwesomeBarFacts.Items.OPENED_TAB_SUGGESTION_CLICKED -> {
+            Awesomebar.openedTabSuggestionClicked.record(NoExtras())
+        }
+        Component.FEATURE_CONTEXTMENU to ContextMenuFacts.Items.TEXT_SELECTION_OPTION -> {
+            when (metadata?.get("textSelectionOption")?.toString()) {
+                CONTEXT_MENU_COPY -> ContextualMenu.copyTapped.record(NoExtras())
+                CONTEXT_MENU_SEARCH,
+                CONTEXT_MENU_SEARCH_PRIVATELY -> ContextualMenu.searchTapped.record(NoExtras())
+                CONTEXT_MENU_SELECT_ALL -> ContextualMenu.selectAllTapped.record(NoExtras())
+                CONTEXT_MENU_SHARE -> ContextualMenu.shareTapped.record(NoExtras())
+                else -> Unit
+            }
+        }
+
+        Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.HOMESCREEN_ICON_TAP -> {
+            ProgressiveWebApp.homescreenTap.record(NoExtras())
+        }
+        Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.INSTALL_SHORTCUT -> {
+            ProgressiveWebApp.installTap.record(NoExtras())
+        }
+
+        Component.FEATURE_SEARCH to AdsTelemetry.SERP_ADD_CLICKED -> {
+            BrowserSearch.adClicks[value!!].add()
+        }
+        Component.FEATURE_SEARCH to AdsTelemetry.SERP_SHOWN_WITH_ADDS -> {
+            BrowserSearch.withAds[value!!].add()
+        }
+        Component.FEATURE_SEARCH to InContentTelemetry.IN_CONTENT_SEARCH -> {
+            BrowserSearch.inContent[value!!].add()
+        }
+
+        else -> {
+            this.toEvent()?.also {
+                track(it)
+            }
+            Unit
+        }
     }
 
     override fun start(type: MetricServiceType) {
@@ -158,58 +309,6 @@ internal class ReleaseMetricController(
 
     @Suppress("LongMethod", "MaxLineLength")
     private fun Fact.toEvent(): Event? = when {
-        Component.FEATURE_PROMPTS == component && LoginDialogFacts.Items.DISPLAY == item -> Event.LoginDialogPromptDisplayed
-        Component.FEATURE_PROMPTS == component && LoginDialogFacts.Items.CANCEL == item -> Event.LoginDialogPromptCancelled
-        Component.FEATURE_PROMPTS == component && LoginDialogFacts.Items.NEVER_SAVE == item -> Event.LoginDialogPromptNeverSave
-        Component.FEATURE_PROMPTS == component && LoginDialogFacts.Items.SAVE == item -> Event.LoginDialogPromptSave
-        Component.FEATURE_PROMPTS == component && CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_FORM_DETECTED == item ->
-            Event.CreditCardFormDetected
-        Component.FEATURE_PROMPTS == component && CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_SUCCESS == item ->
-            Event.CreditCardAutofilled
-        Component.FEATURE_PROMPTS == component && CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_SHOWN == item ->
-            Event.CreditCardAutofillPromptShown
-        Component.FEATURE_PROMPTS == component && CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_EXPANDED == item ->
-            Event.CreditCardAutofillPromptExpanded
-        Component.FEATURE_PROMPTS == component && CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_PROMPT_DISMISSED == item ->
-            Event.CreditCardAutofillPromptDismissed
-
-        Component.FEATURE_CONTEXTMENU == component && ContextMenuFacts.Items.ITEM == item -> {
-            metadata?.get("item")?.let { Event.ContextMenuItemTapped.create(it.toString()) }
-        }
-        Component.FEATURE_CONTEXTMENU == component && ContextMenuFacts.Items.TEXT_SELECTION_OPTION == item -> {
-            when (metadata?.get("textSelectionOption")?.toString()) {
-                CONTEXT_MENU_COPY -> Event.ContextMenuCopyTapped
-                CONTEXT_MENU_SEARCH, CONTEXT_MENU_SEARCH_PRIVATELY -> Event.ContextMenuSearchTapped
-                CONTEXT_MENU_SELECT_ALL -> Event.ContextMenuSelectAllTapped
-                CONTEXT_MENU_SHARE -> Event.ContextMenuShareTapped
-                else -> null
-            }
-        }
-
-        Component.BROWSER_TOOLBAR == component && ToolbarFacts.Items.MENU == item -> {
-            metadata?.get("customTab")?.let { Event.CustomTabsMenuOpened } ?: Event.ToolbarMenuShown
-        }
-        Component.BROWSER_MENU == component && BrowserMenuFacts.Items.WEB_EXTENSION_MENU_ITEM == item -> {
-            metadata?.get("id")?.let { Event.AddonsOpenInToolbarMenu(it.toString()) }
-        }
-        Component.FEATURE_CUSTOMTABS == component && CustomTabsFacts.Items.CLOSE == item -> Event.CustomTabsClosed
-        Component.FEATURE_CUSTOMTABS == component && CustomTabsFacts.Items.ACTION_BUTTON == item -> Event.CustomTabsActionTapped
-
-        Component.FEATURE_MEDIA == component && MediaFacts.Items.NOTIFICATION == item -> {
-            when (action) {
-                Action.PLAY -> Event.NotificationMediaPlay
-                Action.PAUSE -> Event.NotificationMediaPause
-                else -> null
-            }
-        }
-        Component.FEATURE_MEDIA == component && MediaFacts.Items.STATE == item -> {
-            when (action) {
-                Action.PLAY -> Event.MediaPlayState
-                Action.PAUSE -> Event.MediaPauseState
-                Action.STOP -> Event.MediaStopState
-                else -> null
-            }
-        }
         Component.SUPPORT_WEBEXTENSIONS == component && WebExtensionFacts.Items.WEB_EXTENSIONS_INITIALIZED == item -> {
             metadata?.get("installed")?.let { installedAddons ->
                 if (installedAddons is List<*>) {
@@ -246,12 +345,7 @@ internal class ReleaseMetricController(
             }
             null
         }
-        Component.FEATURE_PWA == component && ProgressiveWebAppFacts.Items.HOMESCREEN_ICON_TAP == item -> {
-            Event.ProgressiveWebAppOpenFromHomescreenTap
-        }
-        Component.FEATURE_PWA == component && ProgressiveWebAppFacts.Items.INSTALL_SHORTCUT == item -> {
-            Event.ProgressiveWebAppInstallAsShortcut
-        }
+
         Component.FEATURE_TOP_SITES == component && TopSitesFacts.Items.COUNT == item -> {
             value?.let {
                 var count = 0
@@ -265,65 +359,7 @@ internal class ReleaseMetricController(
             }
             null
         }
-        Component.FEATURE_SYNCEDTABS == component && SyncedTabsFacts.Items.SYNCED_TABS_SUGGESTION_CLICKED == item -> {
-            Event.SyncedTabSuggestionClicked
-        }
-        Component.FEATURE_AWESOMEBAR == component && AwesomeBarFacts.Items.BOOKMARK_SUGGESTION_CLICKED == item -> {
-            Event.BookmarkSuggestionClicked
-        }
-        Component.FEATURE_AWESOMEBAR == component && AwesomeBarFacts.Items.CLIPBOARD_SUGGESTION_CLICKED == item -> {
-            Event.ClipboardSuggestionClicked
-        }
-        Component.FEATURE_AWESOMEBAR == component && AwesomeBarFacts.Items.HISTORY_SUGGESTION_CLICKED == item -> {
-            Event.HistorySuggestionClicked
-        }
-        Component.FEATURE_AWESOMEBAR == component && AwesomeBarFacts.Items.SEARCH_ACTION_CLICKED == item -> {
-            Event.SearchActionClicked
-        }
-        Component.FEATURE_AWESOMEBAR == component && AwesomeBarFacts.Items.SEARCH_SUGGESTION_CLICKED == item -> {
-            Event.SearchSuggestionClicked
-        }
-        Component.FEATURE_AWESOMEBAR == component && AwesomeBarFacts.Items.OPENED_TAB_SUGGESTION_CLICKED == item -> {
-            Event.OpenedTabSuggestionClicked
-        }
-        Component.FEATURE_SEARCH == component && AdsTelemetry.SERP_ADD_CLICKED == item -> {
-            Event.SearchAdClicked(value!!)
-        }
-        Component.FEATURE_SEARCH == component && AdsTelemetry.SERP_SHOWN_WITH_ADDS == item -> {
-            Event.SearchWithAds(value!!)
-        }
-        Component.FEATURE_SEARCH == component && InContentTelemetry.IN_CONTENT_SEARCH == item -> {
-            Event.SearchInContent(value!!)
-        }
-        Component.FEATURE_AUTOFILL == component && AutofillFacts.Items.AUTOFILL_REQUEST == item -> {
-            val hasMatchingLogins = metadata?.get(AutofillFacts.Metadata.HAS_MATCHING_LOGINS) as Boolean?
-            if (hasMatchingLogins == true) {
-                Event.AndroidAutofillRequestWithLogins
-            } else {
-                Event.AndroidAutofillRequestWithoutLogins
-            }
-        }
-        Component.FEATURE_AUTOFILL == component && AutofillFacts.Items.AUTOFILL_SEARCH == item -> {
-            if (action == Action.SELECT) {
-                Event.AndroidAutofillSearchItemSelected
-            } else {
-                Event.AndroidAutofillSearchDisplayed
-            }
-        }
-        Component.FEATURE_AUTOFILL == component && AutofillFacts.Items.AUTOFILL_LOCK == item -> {
-            if (action == Action.CONFIRM) {
-                Event.AndroidAutofillUnlockSuccessful
-            } else {
-                Event.AndroidAutofillUnlockCanceled
-            }
-        }
-        Component.FEATURE_AUTOFILL == component && AutofillFacts.Items.AUTOFILL_CONFIRMATION == item -> {
-            if (action == Action.CONFIRM) {
-                Event.AndroidAutofillConfirmationSuccessful
-            } else {
-                Event.AndroidAutofillConfirmationCanceled
-            }
-        }
+
         else -> null
     }
 
@@ -336,5 +372,19 @@ internal class ReleaseMetricController(
         const val CONTEXT_MENU_SEARCH_PRIVATELY = "CUSTOM_CONTEXT_MENU_SEARCH_PRIVATELY"
         const val CONTEXT_MENU_SELECT_ALL = "org.mozilla.geckoview.SELECT_ALL"
         const val CONTEXT_MENU_SHARE = "CUSTOM_CONTEXT_MENU_SHARE"
+
+        /**
+         * Non - Text selection long press context menu items to be tracked.
+         */
+        private val contextMenuAllowList = mapOf(
+            "mozac.feature.contextmenu.open_in_new_tab" to "open_in_new_tab",
+            "mozac.feature.contextmenu.open_in_private_tab" to "open_in_private_tab",
+            "mozac.feature.contextmenu.open_image_in_new_tab" to "open_image_in_new_tab",
+            "mozac.feature.contextmenu.save_image" to "save_image",
+            "mozac.feature.contextmenu.share_link" to "share_link",
+            "mozac.feature.contextmenu.copy_link" to "copy_link",
+            "mozac.feature.contextmenu.copy_image_location" to "copy_image_location",
+            "mozac.feature.contextmenu.share_image" to "share_image"
+        )
     }
 }

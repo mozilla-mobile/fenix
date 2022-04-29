@@ -39,13 +39,14 @@
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string name="recent_bookmarks_title">Останні закладки</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
-    <string name="recently_saved_bookmarks_content_description">Недавно збережені закладки</string>
+    <string moz:removedIn="100" name="recently_saved_bookmarks_content_description" tools:ignore="UnusedResources">Недавно збережені закладки</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
-    <string name="recently_saved_show_all">Показати всі</string>
+    <string moz:removedIn="101" name="recently_saved_show_all" tools:ignore="UnusedResources">Показати всі</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description_2">Показати всі збережені закладки</string>
-    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
-    <string moz:removedIn="97" name="recently_saved_show_all_content_description" tools:ignore="UnusedResources">Показати всі збережені закладки</string>
+
+    <!-- Text for the menu button to remove a recently saved bookmark from the user's home screen -->
+    <string name="recently_saved_menu_item_remove">Вилучити</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s розроблено Mozilla.</string>
@@ -68,7 +69,9 @@
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
-    <string name="open_in_app_cfr_info_message">Ви можете налаштувати Firefox на автоматичне відкривання посилань у програмах.</string>
+    <string moz:RemovedIn="99" name="open_in_app_cfr_info_message" tools:ignore="UnusedResources">Ви можете налаштувати Firefox на автоматичне відкривання посилань у програмах.</string>
+    <!-- Text for the info message. The first parameter is the name of the application.-->
+    <string name="open_in_app_cfr_info_message_2">Ви можете налаштувати %1$s на автоматичне відкривання посилань у програмах.</string>
     <!-- Text for the positive action button -->
     <string name="open_in_app_cfr_positive_button_text">Перейти до налаштувань</string>
     <!-- Text for the negative action button -->
@@ -96,7 +99,10 @@
     <!-- Text for title for the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_title">Закрити через місяць автоматично?</string>
     <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
-    <string name="tab_tray_inactive_auto_close_body">Firefox може закривати вкладки, які ви не переглядали протягом останнього місяця.</string>
+    <string moz:RemovedIn="99" name="tab_tray_inactive_auto_close_body" tools:ignore="UnusedResources">Firefox може закривати вкладки, які ви не переглядали протягом останнього місяця.</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs.
+        The first parameter is the name of the application.-->
+    <string name="tab_tray_inactive_auto_close_body_2">%1$s може закривати вкладки, які ви не переглядали впродовж останнього місяця.</string>
     <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_button_content_description">Закрити</string>
 
@@ -118,8 +124,6 @@
 
     <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
     <string name="recent_tabs_show_all_content_description_2">Кнопка показу всіх останніх вкладок</string>
-    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
-    <string moz:removedIn="97" name="recent_tabs_show_all_content_description2" tools:ignore="UnusedResources">Показати всі останні вкладки</string>
     <!-- Title for showing a group item in the 'Jump back in' section of the new tab
         The first parameter is the search term that the user used. (for example: your search for "cat")-->
     <string name="recent_tabs_search_term">Результати пошуку \&quot;%1$s\&quot;</string>
@@ -127,6 +131,14 @@
     <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
         %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
     <string name="recent_tabs_search_term_count_2">Сайтів: %d</string>
+
+    <!-- Text for button in synced tab card that opens synced tabs tray -->
+    <string name="recent_tabs_see_all_synced_tabs_button_text">Переглянути всі синхронізовані вкладки</string>
+    <!-- Accessibility description for device icon used for recent synced tab -->
+    <string name="recent_tabs_synced_device_icon_content_description">Синхронізований пристрій</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recent_tab_menu_item_remove">Вилучити</string>
 
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
@@ -138,8 +150,6 @@
 
     <!-- Content description for the button which navigates the user to show all of their history. -->
     <string name="past_explorations_show_all_content_description_2">Показати всі минулі пошуки</string>
-    <!-- Content description for the button which navigates the user to show all of their history. -->
-    <string moz:removedIn="97" name="past_explorations_show_all_content_description" tools:ignore="UnusedResources">Кнопка показу всіх попередніх пошуків</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate backward (browsing history) -->
@@ -169,8 +179,6 @@
     <string name="browser_menu_add_to_homescreen">Додати на головний екран</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Встановити</string>
-    <!-- Menu option on the toolbar that takes you to synced tabs page-->
-    <string moz:removedIn="98" name="synced_tabs" tools:ignore="UnusedResources">Синхронізовані вкладки</string>
     <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
     <string name="resync_button_content_description">Синхронізувати повторно</string>
     <!-- Browser menu button that opens the find in page menu -->
@@ -204,8 +212,6 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Редагувати</string>
 
-    <!-- Browser menu button that opens the Customize menu -->
-    <string moz:removedIn="98" name="browser_menu_customize_home" tools:ignore="UnusedResources">Налаштувати домівку</string>
     <!-- Button shown on the home page that opens the Customize home settings -->
     <string name="browser_menu_customize_home_1">Налаштувати домівку</string>
     <!-- Browser Toolbar -->
@@ -239,20 +245,27 @@
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="search_suggestions_onboarding_text">%s відправлятиме все, що ви вводите в адресному рядку, вашому типовому провайдеру пошуку.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
-    <string name="search_suggestions_onboarding_learn_more_link">Докладніше</string>
+    <string moz:RemovedIn="100" name="search_suggestions_onboarding_learn_more_link" tools:ignore="UnusedResources">Докладніше</string>
 
     <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
     <string name="search_engine_suggestions_title">Пошук в %s</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Пошук безпосередньо з панелі адреси</string>
 
+    <!-- Menu option in the search selector menu to open the search settings -->
+    <string name="search_settings_menu_item">Налаштування пошуку</string>
+
     <!-- Home onboarding -->
     <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
-    <string name="onboarding_home_screen_title_2">Що нового у Firefox</string>
+    <string moz:removedIn="99" name="onboarding_home_screen_title_2" tools:ignore="UnusedResources">Що нового у Firefox</string>
+    <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_title_3">Що нового у %1$s</string>
     <!-- Onboarding home screen dialog description text. -->
     <string name="onboarding_home_screen_description_2">Тепер легше повернутися туди, де ви зупинилися.</string>
     <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
-    <string name="onboarding_home_screen_section_home_title_2">Персоналізована сторінка домівки Firefox</string>
+    <string moz:RemovedIn="99" name="onboarding_home_screen_section_home_title_2" tools:ignore="UnusedResources">Персоналізована сторінка домівки Firefox</string>
+    <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_section_home_title_3">Персоналізована сторінка домівки %1$s</string>
     <!-- Onboarding home screen dialog description text for the home section. -->
     <string name="onboarding_home_screen_section_home_description_2">Переходьте до відкритих вкладок, закладок та історії перегляду.</string>
     <!-- Onboarding home screen dialog description text for the tab tray section. -->
@@ -269,7 +282,9 @@
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
-    <string name="search_widget_content_description">Відкрити нову вкладку Firefox</string>
+    <string moz:RemovedIn="99" name="search_widget_content_description" tools:ignore="UnusedResources">Відкрити нову вкладку Firefox</string>
+    <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
+    <string name="search_widget_content_description_2">Відкрити нову вкладку %1$s</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Пошук</string>
     <!-- Text preview for larger sized widgets -->
@@ -315,6 +330,26 @@
     <string name="preferences_screenshots_in_private_mode_disclaimer">Якщо дозволено, приватні вкладки також будуть видимі, коли відкрито декілька програм</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Додати ярлик приватного перегляду</string>
+    <!-- Preference for enabling "HTTPS-Only" mode -->
+    <string name="preferences_https_only_title">HTTPS-режим</string>
+    <!-- Description of the preference to enable "HTTPS-Only" mode. -->
+    <string name="preferences_https_only_summary">Намагатися автоматично доступатися до сайтів за допомогою протоколу шифрування HTTPS для поліпшення безпеки.</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to on -->
+    <string name="preferences_https_only_on">Увімкнено</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to off -->
+    <string name="preferences_https_only_off">Вимкнено</string>
+    <!-- Text displayed that links to website containing documentation about "HTTPS-Only" mode -->
+    <string name="preferences_http_only_learn_more">Докладніше</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_all_tabs">Увімкнути на всіх вкладках</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_private_tabs">Увімкнути лише у приватних вкладках</string>
+    <!-- Title shown in the error page for when trying to access a http website while https only mode is enabled. -->
+    <string name="errorpage_httpsonly_title">Захищений сайт недоступний</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the first. -->
+    <string name="errorpage_httpsonly_message_title">Швидше за все, вебсайт просто не підтримує HTTPS.</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the second. -->
+    <string name="errorpage_httpsonly_message_summary">Однак також можливе втручання зловмисників. Якщо ви продовжите перехід на вебсайт, вам не слід вводити будь-які конфіденційні дані. Якщо ви продовжите, HTTPS-режим буде тимчасово вимкнено для сайту.</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Доступність</string>
 
@@ -424,7 +459,7 @@
     <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
     <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_label" tools:ignore="UnusedResources">Торкніться логотипу, щоб змінити шпалери</string>
     <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string name="wallpaper_tap_to_change_switch_label_1">Змінюйте шпалери, торкнувшись логотипу домівки Firefox</string>
+    <string name="wallpaper_tap_to_change_switch_label_1">Змінювати шпалери торканням логотипу домівки Firefox</string>
     <!-- Description for switch which toggles the "tap-to-switch" behavior on home screen logo -->
     <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_description" tools:ignore="UnusedResources">Переглядайте та оновлюйте зображення, не залишаючи домівку.</string>
 
@@ -651,7 +686,9 @@
     <!-- Title of the active section on the studies list -->
     <string name="studies_active">Активні</string>
     <!-- Description for studies, it indicates why Firefox use studies -->
-    <string name="studies_description">Firefox може час від часу встановлювати та виконувати дослідження.</string>
+    <string moz:RemovedIn="99" name="studies_description" tools:ignore="UnusedResources">Firefox може час від часу встановлювати та виконувати дослідження.</string>
+    <!-- Description for studies, it indicates why Firefox use studies. The first parameter is the name of the application. -->
+    <string name="studies_description_2">%1$s може час від часу встановлювати й виконувати дослідження.</string>
     <!-- Learn more link for studies, links to an article for more information about studies. -->
     <string name="studies_learn_more">Докладніше</string>
 
@@ -766,6 +803,11 @@
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Історія відсутня</string>
 
+    <!-- Text for the button inside History screen that opens Synced History screen. History that is coming from other devices -->
+    <string name="history_synced_from_other_devices">Синхронізовано з інших пристроїв</string>
+    <!-- The page title for browsing history coming from other devices. -->
+    <string name="history_from_other_devices">З інших пристроїв</string>
+
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">Завантаження вилучено</string>
@@ -797,6 +839,8 @@
     <string name="bookmark_delete_folder_confirmation_dialog">Ви впевнені, що хочете видалити цю теку?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
     <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s видалить вибрані елементи.</string>
+    <!-- Text for the cancel button on delete bookmark dialog -->
+    <string name="bookmark_delete_negative">Скасувати</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Додати теку</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
@@ -853,6 +897,9 @@
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">ВІДНОВИТИ</string>
 
+    <!-- Text for the button to search all bookmarks -->
+    <string name="bookmark_search">Введіть пошукові терміни</string>
+
     <!-- Site Permissions -->
     <!-- Button label that take the user to the Android App setting -->
     <string name="phone_feature_go_to_settings">Перейти до налаштувань</string>
@@ -864,8 +911,16 @@
     <string name="phone_feature_recommended">Рекомендовано</string>
     <!-- Button label for clearing all the information of site permissions-->
     <string name="clear_permissions">Очистити дозволи</string>
+    <!-- Text for the OK button on Clear permissions dialog -->
+    <string name="clear_permissions_positive">Гаразд</string>
+    <!-- Text for the cancel button on Clear permissions dialog -->
+    <string name="clear_permissions_negative">Скасувати</string>
     <!-- Button label for clearing a site permission-->
     <string name="clear_permission">Очистити дозвіл</string>
+    <!-- Text for the OK button on Clear permission dialog -->
+    <string name="clear_permission_positive">Гаразд</string>
+    <!-- Text for the cancel button on Clear permission dialog -->
+    <string name="clear_permission_negative">Скасувати</string>
     <!-- Button label for clearing all the information on all sites-->
     <string name="clear_permissions_on_all_sites">Очистити дозволи на всіх сайтах</string>
     <!-- Preference for altering video and audio autoplay for all websites -->
@@ -966,6 +1021,11 @@
     <!-- Snackbar action to view the collection the user just created or updated -->
     <string name="create_collection_view">Переглянути</string>
 
+    <!-- Text for the OK button from collection dialogs -->
+    <string name="create_collection_positive">Гаразд</string>
+    <!-- Text for the cancel button from collection dialogs -->
+    <string name="create_collection_negative">Скасувати</string>
+
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Збірка %d</string>
 
@@ -982,6 +1042,10 @@
 
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Недавно використані</string>
+    <!-- Text for the copy link action in the share screen. -->
+    <string name="share_copy_link_to_clipboard">Копіювати у буфер обміну</string>
+    <!-- Toast shown after copying link to clipboard -->
+    <string name="toast_copy_link_to_clipboard">Скопійовано у буфер обміну</string>
     <!-- An option from the three dot menu to into sync -->
     <string name="sync_menu_sign_in">Увійти до синхронізації</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1033,7 +1097,9 @@
     <!-- Text shown in snackbar when user bookmarks a list of tabs -->
     <string name="snackbar_message_bookmarks_saved">Закладки збережено!</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
-    <string name="snackbar_added_to_top_sites">Додано до популярних сайтів!</string>
+    <string moz:RemovedIn="101" name="snackbar_added_to_top_sites" tools:ignore="UnusedResources">Додано до популярних сайтів!</string>
+    <!-- Text shown in snackbar when user adds a site to shortcuts -->
+    <string name="snackbar_added_to_shortcuts">Додано до ярликів!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
     <string name="snackbar_private_tab_closed">Приватну вкладку закрито</string>
     <!-- Text shown in snackbar when user closes all private tabs -->
@@ -1123,32 +1189,41 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">Видалення даних перегляду…</string>
 
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
+    <string name="delete_history_group_prompt_message">Це видалить усі елементи.</string>
+    <!-- Text for the cancel button for the history group deletion dialog -->
+    <string name="delete_history_group_prompt_cancel">Скасувати</string>
+    <!-- Text for the allow button for the history group dialog -->
+    <string name="delete_history_group_prompt_allow">Видалити</string>
+    <!-- Text for the snackbar confirmation that the history group was deleted -->
+    <string name="delete_history_group_snackbar">Групу видалено</string>
+
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header">Firefox Preview, відтепер, стає Firefox Nightly</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header" tools:ignore="UnusedResources">Firefox Preview, відтепер, стає Firefox Nightly</string>
 
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description">Firefox Nightly оновлюється щоночі та має нові експериментальні функції.
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description" tools:ignore="UnusedResources">Firefox Nightly оновлюється щоночі та має нові експериментальні функції.
         Однак, він може бути дещо нестабільнішим. Завантажте beta версію нашого браузера для стабільнішої роботи.</string>
 
     <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_button_2">Отримати Firefox для Android Beta</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_2" tools:ignore="UnusedResources">Отримати Firefox для Android Beta</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly переміщено</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header_preview_installed" tools:ignore="UnusedResources">Firefox Nightly переміщено</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_installed">Ця програма більше не отримуватиме оновлень безпеки. Припиніть користуватися нею та перейдіть на новий Nightly.
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description_preview_installed" tools:ignore="UnusedResources">Ця програма більше не отримуватиме оновлень безпеки. Припиніть користуватися нею та перейдіть на новий Nightly.
         \n\nЩоб перенести ваші закладки, дані входу та історію переглядів до іншої програми, створіть обліковий запис Firefox.</string>
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_installed">Перейдіть на новий Nightly</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_preview_installed" tools:ignore="UnusedResources">Перейдіть на новий Nightly</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_not_installed">Firefox Nightly переміщено</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header_preview_not_installed" tools:ignore="UnusedResources">Firefox Nightly переміщено</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_not_installed">Ця програма більше не отримуватиме оновлень безпеки. Припиніть користуватися нею та перейдіть на новий Nightly.
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description_preview_not_installed" tools:ignore="UnusedResources">Ця програма більше не отримуватиме оновлень безпеки. Припиніть користуватися нею та перейдіть на новий Nightly.
         \n\nЩоб перенести ваші закладки, дані входу та історію переглядів до іншої програми, створіть обліковий запис Firefox.</string>
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_not_installed">Отримайте новий Nightly</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_preview_not_installed" tools:ignore="UnusedResources">Отримайте новий Nightly</string>
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message
@@ -1157,8 +1232,10 @@
 
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">Синхронізуйте Firefox між пристроями</string>
-    <!-- Text for the button to learn more about signing in to your Firefox account -->
-    <string name="onboarding_manual_sign_in_description">Перенесіть свої закладки, історію та паролі у Firefox на цей пристрій.</string>
+    <!-- text for the Firefox account onboarding sign in card header. The first parameter is the name of the application.-->
+    <string moz:RemovedIn="100" name="onboarding_account_sign_in_header_2" tools:ignore="UnusedResources">Синхронізація %1$s між пристроями</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account. The first parameter is the name of the application.-->
+    <string name="onboarding_manual_sign_in_description_2">Перенесіть свої закладки, історію та паролі у %1$s на цьому пристрої.</string>
     <!-- text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in_1">Зареєструватись</string>
     <!-- text to display in the snackbar once account is signed-in -->
@@ -1167,7 +1244,9 @@
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">Постійна приватність</string>
     <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
-    <string name="onboarding_tracking_protection_description_3">Firefox автоматично блокує таємне стеження компаній за вами в Інтернеті.</string>
+    <string moz:RemovedIn="99" name="onboarding_tracking_protection_description_3" tools:ignore="UnusedResources">Firefox автоматично блокує таємне стеження компаній за вами в Інтернеті.</string>
+    <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
+    <string name="onboarding_tracking_protection_description_4">%1$s автоматично блокує таємне стеження компаній за вами в інтернеті.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Стандартний (типово)</string>
     <!-- text for standard blocking option button description -->
@@ -1475,7 +1554,11 @@
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Меню впорядкування паролів</string>
 
-    <!-- Credit Cards Autofill -->
+    <!-- Autofill -->
+    <!-- Preference and title for managing the autofill settings -->
+    <string name="preferences_autofill">Автозаповнення</string>
+    <!-- Preference and title for managing the settings for addresses -->
+    <string name="preferences_addresses">Адреси</string>
     <!-- Preference and title for managing the settings for credit cards -->
     <string name="preferences_credit_cards">Кредитні картки</string>
     <!-- Preference for saving and autofilling credit cards -->
@@ -1491,6 +1574,10 @@
 
     <!-- Preference option for managing saved credit cards -->
     <string name="preferences_credit_cards_manage_saved_cards">Керувати збереженими картками</string>
+    <!-- Preference option for adding an address -->
+    <string name="preferences_addresses_add_address">Додати адресу</string>
+    <!-- Preference option for managing saved addresses -->
+    <string name="preferences_addresses_manage_addresses">Керувати адресами</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Додати картку</string>
     <!-- Title of the "Edit card" screen -->
@@ -1509,11 +1596,15 @@
     <string name="credit_cards_menu_delete_card">Видалити картку</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">Видалити картку</string>
+    <!-- The text for the confirmation message of "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_confirmation">Ви впевнені, що хочете видалити цю кредитну картку?</string>
+    <!-- The text for the positive button on "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_button">Видалити</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
     <string name="credit_cards_menu_save">Зберегти</string>
     <!-- The text for the "Save" button for saving a credit card -->
     <string name="credit_cards_save_button">Зберегти</string>
-    <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
+    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting a credit card -->
     <string name="credit_cards_cancel_button">Скасувати</string>
 
     <!-- Title of the "Saved cards" screen -->
@@ -1539,6 +1630,31 @@
 
     <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
     <string name="credit_cards_biometric_prompt_unlock_message">Розблокуйте, щоб використовувати збережену інформацію про кредитну картку</string>
+
+    <!-- Title of the "Add address" screen -->
+    <string name="addresses_add_address">Додати адресу</string>
+    <!-- Title of the "Manage addresses" screen -->
+    <string name="addresses_manage_addresses">Керувати адресами</string>
+    <!-- The header for the full name of an address -->
+    <string name="addresses_full_name">Повна назва</string>
+    <!-- The header for the street address of an address -->
+    <string name="addresses_street_address">Вулиця</string>
+    <!-- The header for the city of an address -->
+    <string name="addresses_city">Місто</string>
+    <!-- The header for the state of an address -->
+    <string name="addresses_state">Область</string>
+    <!-- The header for the zip code of an address -->
+    <string name="addresses_zip">Поштовий індекс</string>
+    <!-- The header for the phone number of an address -->
+    <string name="addresses_phone">Телефон</string>
+    <!-- The header for the email of an address -->
+    <string name="addresses_email">Електронна пошта</string>
+    <!-- The text for the "Save" button for saving an address -->
+    <string name="addresses_save_button">Зберегти</string>
+    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting an address -->
+    <string name="addresses_cancel_button">Скасувати</string>
+    <!-- The text for the "Delete address" button for deleting an address -->
+    <string name="addressess_delete_address_button">Видалити адресу</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Додати засіб пошуку</string>
@@ -1582,17 +1698,17 @@
     <string name="search_delete_search_engine_success_message">%s видалено</string>
 
     <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
-    <string name="migration_title">Вітаємо в цілком новому %s</string>
+    <string moz:removedIn="100" name="migration_title" tools:ignore="UnusedResources">Вітаємо в цілком новому %s</string>
     <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
-    <string name="migration_description">На вас чекає цілком оновлений браузер, з удосконаленою швидкодією та функціями, які допомагають вам краще працювати в Інтернеті.\n\nБудь ласка, зачекайте доки ми оновимо %s та ваші</string>
+    <string moz:removedIn="100" name="migration_description" tools:ignore="UnusedResources">На вас чекає цілком оновлений браузер, з удосконаленою швидкодією та функціями, які допомагають вам краще працювати в Інтернеті.\n\nБудь ласка, зачекайте доки ми оновимо %s та ваші</string>
     <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
-    <string name="migration_updating_app_button_text">Оновлення %s…</string>
+    <string moz:removedIn="100" name="migration_updating_app_button_text" tools:ignore="UnusedResources">Оновлення %s…</string>
     <!-- Text on the enabled button. Placeholder replaced with app name-->
-    <string name="migration_update_app_button">Запустити %s</string>
+    <string moz:removedIn="100" name="migration_update_app_button" tools:ignore="UnusedResources">Запустити %s</string>
     <!-- Accessibility description text for a completed migration item -->
-    <string name="migration_icon_description">Міграція завершена</string>
+    <string moz:removedIn="100" name="migration_icon_description" tools:ignore="UnusedResources">Міграція завершена</string>
     <!--Text on list of migrated items (e.g. Settings, History, etc.)-->
-    <string name="migration_text_passwords">Паролі</string>
+    <string moz:removedIn="100" name="migration_text_passwords" tools:ignore="UnusedResources">Паролі</string>
 
     <!-- Heading for the instructions to allow a permission -->
     <string name="phone_feature_blocked_intro">Щоб дозволити це:</string>
@@ -1622,9 +1738,13 @@
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">Ви впевнені, що хочете видалити цю закладку?</string>
     <!-- Browser menu button that adds a top site to the home fragment -->
-    <string name="browser_menu_add_to_top_sites">Додати до популярних сайтів</string>
+    <string moz:RemovedIn="101" name="browser_menu_add_to_top_sites" tools:ignore="UnusedResources">Додати до популярних сайтів</string>
     <!-- Browser menu button that removes a top site from the home fragment -->
-    <string name="browser_menu_remove_from_top_sites">Прибрати з популярних сайтів</string>
+    <string moz:RemovedIn="101" name="browser_menu_remove_from_top_sites" tools:ignore="UnusedResources">Прибрати з популярних сайтів</string>
+    <!-- Browser menu button that adds a shortcut to the home fragment -->
+    <string name="browser_menu_add_to_shortcuts">Додати до ярликів</string>
+    <!-- Browser menu button that removes a shortcut from the home fragment -->
+    <string name="browser_menu_remove_from_shortcuts">Вилучити з ярликів</string>
     <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
      the certificate authority that verified the ticket-->
     <string name="certificate_info_verified_by">Засвідчено: %1$s</string>
@@ -1636,6 +1756,8 @@
     <string name="login_deletion_confirmation">Ви дійсно хочете видалити цей запис?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Видалити</string>
+    <!-- Negative action of a dialog asking to delete login -->
+    <string name="dialog_delete_negative">Скасувати</string>
     <!--  The saved login options menu description. -->
     <string name="login_options_menu">Опції запису</string>
     <!--  The editable text field for a login's web address. -->
@@ -1680,6 +1802,8 @@
     <string name="synced_tabs_enable_tab_syncing">Увімкніть синхронізацію вкладок.</string>
     <!-- Text displayed when user has no tabs that have been synced -->
     <string name="synced_tabs_no_tabs">У вас немає вкладок, відкритих у Firefox на інших пристроях.</string>
+    <!-- Text displayed when user has no tabs that have been synced. The first parameter is the name of the application.-->
+    <string moz:RemovedIn="100" name="synced_tabs_no_tabs_2" tools:ignore="UnusedResources">У вас немає вкладок, відкритих у %1$s на інших пристроях.</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">Переглядайте список вкладок з ваших інших пристроїв.</string>
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
@@ -1688,23 +1812,31 @@
     <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
     <string name="synced_tabs_no_open_tabs">Немає відкритих вкладок</string>
 
+    <!-- Content description for expanding a group of synced tabs. -->
+    <string name="synced_tabs_expand_group">Розгорнути групу синхронізованих вкладок</string>
+    <!-- Content description for collapsing a group of synced tabs. -->
+    <string name="synced_tabs_collapse_group">Згорнути групу синхронізованих вкладок</string>
+
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_title">Досягнуто ліміту популярних сайтів</string>
+    <string moz:RemovedIn="101" name="top_sites_max_limit_title" tools:ignore="UnusedResources">Досягнуто ліміту популярних сайтів</string>
+    <!-- Title text displayed in the dialog when shortcuts limit is reached. -->
+    <string name="shortcut_max_limit_title">Досягнуто обмеження кількості ярликів</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_content_2">Щоб додати новий популярний сайт, вилучіть один. Торкніться й утримуйте сайт, потім виберіть вилучити.</string>
+    <string moz:RemovedIn="101" name="top_sites_max_limit_content_2" tools:ignore="UnusedResources">Щоб додати новий популярний сайт, вилучіть один. Торкніться й утримуйте сайт, потім виберіть вилучити.</string>
+    <!-- Content description text displayed in the dialog when shortcut limit is reached. -->
+    <string name="shortcut_max_limit_content">Щоб додати новий ярлик, вилучіть один. Торкніться й утримуйте сайт, потім виберіть вилучити.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Гаразд, зрозуміло</string>
-
-    <!-- Label for the preference to show the shortcuts for the most visited top sites on the homepage -->
-    <string moz:removedIn="98" name="top_sites_toggle_top_recent_sites_3" tools:ignore="UnusedResources">Найвідвідуваніші сайти</string>
 
     <!-- Label for the preference to show the shortcuts for the most visited top sites on the homepage -->
     <string name="top_sites_toggle_top_recent_sites_4">Ярлики</string>
 	<!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Назва</string>
 	<!-- Hint for renaming title of a top site -->
-	<string name="top_site_name_hint">Назва популярного сайту</string>
+	<string moz:RemovedIn="101" name="top_site_name_hint" tools:ignore="UnusedResources">Назва популярного сайту</string>
+    <!-- Hint for renaming title of a shortcut -->
+    <string name="shortcut_name_hint">Назва ярлика</string>
 	<!-- Button caption to confirm the renaming of the top site. -->
 	<string name="top_sites_rename_dialog_ok">Гаразд</string>
 	<!-- Dialog button text for canceling the rename top site prompt. -->
@@ -1736,23 +1868,23 @@
 
     <!-- Inactive tabs survey -->
     <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
-    <string name="inactive_tabs_survey_header_1">Допоможіть удосконалити Firefox</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_header_1" tools:ignore="UnusedResources">Допоможіть удосконалити Firefox</string>
 
     <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
-    <string name="inactive_tabs_survey_content">Чому ви вимкнули неактивні вкладки?</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Чому ви вимкнули неактивні вкладки?</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_do_not_understand">Я не розумію, як це працює</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_not_understand" tools:ignore="UnusedResources">Я не розумію, як це працює</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_do_it_myself">Я бажаю очищувати старі вкладки самостійно</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_it_myself" tools:ignore="UnusedResources">Я бажаю очищувати старі вкладки самостійно</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_long_option_1">Двотижневий період занадто довгий</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_long_option_1" tools:ignore="UnusedResources">Двотижневий період занадто довгий</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_short_option_1">Двотижневий період занадто короткий</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_short_option_1" tools:ignore="UnusedResources">Двотижневий період занадто короткий</string>
     <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
-    <string name="inactive_tabs_survey_send_button">Надіслати</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Надіслати</string>
 
     <!-- Content description for inactive tabs survey close button -->
-    <string name="inactive_tabs_survey_close_button_content_description">Закрити</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Закрити</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Автоматично відкривати посилання з вебсайтів, електронних листів та повідомлень у Firefox.</string>
@@ -1782,4 +1914,9 @@
     <string name="pocket_stories_feature_caption">Частина родини Firefox. %s</string>
     <!-- Clickable text for opening an external link for more information about Pocket. -->
     <string name="pocket_stories_feature_learn_more">Докладніше</string>
+
+    <!-- Snackbar message for enrolling in a Nimbus experiment from the secret settings when Studies preference is Off.-->
+    <string name="experiments_snackbar">Увімкнути телеметрію для надсилання даних.</string>
+    <!-- Snackbar button text to navigate to telemetry settings.-->
+    <string name="experiments_snackbar_button">Перейти до налаштувань</string>
 </resources>

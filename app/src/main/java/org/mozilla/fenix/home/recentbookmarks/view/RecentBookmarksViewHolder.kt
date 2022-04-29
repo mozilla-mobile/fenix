@@ -7,24 +7,24 @@ package org.mozilla.fenix.home.recentbookmarks.view
 import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.LifecycleOwner
 import mozilla.components.lib.state.ext.observeAsComposableState
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
+import mozilla.components.service.glean.private.NoExtras
+import org.mozilla.fenix.R
+import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.ComposeViewHolder
-import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
+import org.mozilla.fenix.GleanMetrics.RecentBookmarks as RecentBookmarksMetrics
 
 class RecentBookmarksViewHolder(
     composeView: ComposeView,
     viewLifecycleOwner: LifecycleOwner,
-    private val store: HomeFragmentStore,
     val interactor: RecentBookmarksInteractor,
-    val metrics: MetricController
 ) : ComposeViewHolder(composeView, viewLifecycleOwner) {
 
     init {
-        metrics.track(Event.RecentBookmarksShown)
+        RecentBookmarksMetrics.shown.record(NoExtras())
     }
 
     companion object {
@@ -33,11 +33,18 @@ class RecentBookmarksViewHolder(
 
     @Composable
     override fun Content() {
-        val recentBookmarks = store.observeAsComposableState { state -> state.recentBookmarks }
+        val recentBookmarks = components.appStore
+            .observeAsComposableState { state -> state.recentBookmarks }
 
         RecentBookmarks(
             bookmarks = recentBookmarks.value ?: emptyList(),
-            onRecentBookmarkClick = interactor::onRecentBookmarkClicked
+            onRecentBookmarkClick = interactor::onRecentBookmarkClicked,
+            menuItems = listOf(
+                RecentBookmarksMenuItem(
+                    stringResource(id = R.string.recently_saved_menu_item_remove),
+                    onClick = { bookmark -> interactor.onRecentBookmarkRemoved(bookmark) }
+                )
+            )
         )
     }
 }

@@ -52,19 +52,19 @@ class ToolbarView(
             editMode()
 
             background = AppCompatResources.getDrawable(
-                context, context.theme.resolveAttribute(R.attr.foundation)
+                context, context.theme.resolveAttribute(R.attr.layer1)
             )
 
             edit.hint = context.getString(R.string.history_search_1)
 
             edit.colors = edit.colors.copy(
-                text = context.getColorFromAttr(R.attr.primaryText),
-                hint = context.getColorFromAttr(R.attr.secondaryText),
+                text = context.getColorFromAttr(R.attr.textPrimary),
+                hint = context.getColorFromAttr(R.attr.textSecondary),
                 suggestionBackground = ContextCompat.getColor(
                     context,
                     R.color.suggestion_highlight_color
                 ),
-                clear = context.getColorFromAttr(R.attr.primaryText)
+                clear = context.getColorFromAttr(R.attr.textPrimary)
             )
 
             edit.setUrlBackground(

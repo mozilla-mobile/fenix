@@ -18,6 +18,7 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
+import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isChecked
 import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -42,6 +43,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_PLAY_SERVICES
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.appName
+import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.hasCousin
 import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
 import org.mozilla.fenix.helpers.TestHelper.packageName
@@ -66,23 +68,25 @@ class SettingsRobot {
     fun verifyHomepageButton() = assertHomepageButton()
     fun verifyCreditCardsButton() = assertCreditCardsButton()
     fun verifyLanguageButton() = assertLanguageButton()
-    fun verifyDefaultBrowserIsDisaled() = assertDefaultBrowserIsDisabled()
+    fun verifyDefaultBrowserIsDisabled() = assertDefaultBrowserIsDisabled()
     fun clickDefaultBrowserSwitch() = toggleDefaultBrowserSwitch()
     fun verifyAndroidDefaultAppsMenuAppears() = assertAndroidDefaultAppsMenuAppears()
 
     // PRIVACY SECTION
     fun verifyPrivacyHeading() = assertPrivacyHeading()
 
+    fun verifyHTTPSOnlyModeButton() = assertHTTPSOnlyModeButton()
+    fun verifyHTTPSOnlyModeState(state: String) = assertHTTPSOnlyModeState(state)
     fun verifyEnhancedTrackingProtectionButton() = assertEnhancedTrackingProtectionButton()
     fun verifyLoginsAndPasswordsButton() = assertLoginsAndPasswordsButton()
-    fun verifyEnhancedTrackingProtectionValue(state: String) =
-        assertEnhancedTrackingProtectionValue(state)
+    fun verifyEnhancedTrackingProtectionState(state: String) =
+        assertEnhancedTrackingProtectionState(state)
     fun verifyPrivateBrowsingButton() = assertPrivateBrowsingButton()
     fun verifySitePermissionsButton() = assertSitePermissionsButton()
     fun verifyDeleteBrowsingDataButton() = assertDeleteBrowsingDataButton()
     fun verifyDeleteBrowsingDataOnQuitButton() = assertDeleteBrowsingDataOnQuitButton()
-    fun verifyDeleteBrowsingDataOnQuitValue(state: String) =
-        assertDeleteBrowsingDataValue(state)
+    fun verifyDeleteBrowsingDataOnQuitState(state: String) =
+        assertDeleteBrowsingDataState(state)
     fun verifyNotificationsButton() = assertNotificationsButton()
     fun verifyDataCollectionButton() = assertDataCollectionButton()
     fun verifyOpenLinksInAppsButton() = assertOpenLinksInAppsButton()
@@ -183,10 +187,15 @@ class SettingsRobot {
         }
 
         fun openLanguageSubMenu(interact: SettingsSubMenuLanguageRobot.() -> Unit): SettingsSubMenuLanguageRobot.Transition {
-            scrollToElementByText("Language")
-
-            fun languageButton() = onView(withText("Language"))
-            languageButton().click()
+            onView(withId(R.id.recycler_view))
+                .perform(
+                    RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(
+                        hasDescendant(
+                            withText(R.string.preferences_language)
+                        ),
+                        ViewActions.click()
+                    )
+                )
 
             SettingsSubMenuLanguageRobot().interact()
             return SettingsSubMenuLanguageRobot.Transition()
@@ -291,7 +300,7 @@ class SettingsRobot {
     }
 
     companion object {
-        const val DEFAULT_APPS_SETTINGS_ACTION = "android.settings.MANAGE_DEFAULT_APPS_SETTINGS"
+        const val DEFAULT_APPS_SETTINGS_ACTION = "android.app.role.action.REQUEST_ROLE"
     }
 }
 
@@ -383,6 +392,22 @@ private fun assertPrivacyHeading() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
+private fun assertHTTPSOnlyModeButton() {
+    scrollToElementByText(getStringResource(R.string.preferences_https_only_title))
+    onView(
+        withText(R.string.preferences_https_only_title)
+    ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
+private fun assertHTTPSOnlyModeState(state: String) {
+    onView(
+        allOf(
+            withText(R.string.preferences_https_only_title),
+            hasSibling(withText(state))
+        )
+    ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
+
 private fun assertEnhancedTrackingProtectionButton() {
     mDevice.wait(Until.findObject(By.text("Privacy and Security")), waitingTime)
     onView(withId(R.id.recycler_view)).perform(
@@ -392,7 +417,7 @@ private fun assertEnhancedTrackingProtectionButton() {
     ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertEnhancedTrackingProtectionValue(state: String) {
+private fun assertEnhancedTrackingProtectionState(state: String) {
     mDevice.wait(Until.findObject(By.text("Enhanced Tracking Protection")), waitingTime)
     onView(withText(state)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
@@ -428,9 +453,13 @@ private fun assertDeleteBrowsingDataOnQuitButton() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertDeleteBrowsingDataValue(state: String) {
-    mDevice.wait(Until.findObject(By.text("Delete browsing data on quit")), waitingTime)
-    onView(withText(state)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+private fun assertDeleteBrowsingDataState(state: String) {
+    onView(
+        allOf(
+            withText(R.string.preferences_delete_browsing_data_on_quit),
+            hasSibling(withText(state))
+        )
+    ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
 private fun assertNotificationsButton() {

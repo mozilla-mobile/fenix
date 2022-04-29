@@ -10,7 +10,7 @@
     android:id="@+id/panel_wrapper"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?foundation">
+    android:background="?attr/layer1">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/normal_mode"
@@ -28,7 +28,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/mozac_ic_back"
-            app:tint="?attr/primaryText" />
+            app:tint="?attr/textPrimary" />
 
         <TextView
             android:id="@+id/details"
@@ -37,7 +37,7 @@
             android:layout_height="@dimen/tracking_protection_item_height"
             android:paddingStart="0dp"
             android:paddingEnd="0dp"
-            android:textColor="?attr/primaryText"
+            android:textColor="?attr/textPrimary"
             app:fontFamily="@font/metropolis_semibold"
             app:layout_constraintStart_toEndOf="@+id/navigate_back"
             app:layout_constraintTop_toTopOf="parent"
@@ -50,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/tracking_protection_item_height"
             android:text="@string/enhanced_tracking_protection_blocked"
-            android:textColor="?attr/primaryText"
+            android:textColor="?attr/textPrimary"
             android:textStyle="bold"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
@@ -182,7 +182,7 @@
             android:id="@+id/line_divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?neutralFaded"
+            android:background="?borderPrimary"
             app:layout_constraintTop_toBottomOf="@id/tracking_content_loaded" />
 
         <TextView
@@ -192,7 +192,7 @@
             android:layout_height="@dimen/tracking_protection_item_height"
             android:text="@string/etp_settings"
             app:drawableStartCompat="@drawable/mozac_ic_settings"
-            app:drawableTint="?primaryText"
+            app:drawableTint="?attr/textPrimary"
             app:layout_constraintTop_toBottomOf="@id/line_divider" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -209,7 +209,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            app:tint="?attr/primaryText"
+            app:tint="?attr/textPrimary"
             android:contentDescription="@string/etp_back_button_content_description"
             app:layout_constraintBottom_toBottomOf="@+id/category_description"
             app:layout_constraintStart_toStartOf="parent"
@@ -224,7 +224,7 @@
             android:layout_marginStart="52dp"
             android:layout_marginTop="11dp"
             android:layout_marginEnd="19dp"
-            android:textColor="?attr/primaryText"
+            android:textColor="?attr/textPrimary"
             android:textSize="16sp"
             app:fontFamily="@font/metropolis_semibold"
             app:layout_constraintTop_toTopOf="parent"
@@ -236,7 +236,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="52dp"
             android:layout_marginEnd="19dp"
-            android:textColor="?secondaryText"
+            android:textColor="?attr/textSecondary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/category_title"
@@ -250,9 +250,7 @@
             android:layout_marginEnd="19dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:textColor="?secondaryText"
-            android:drawablePadding="16dp"
-            app:drawableTint="?accent"
+            android:textColor="?attr/textSecondary"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -264,7 +262,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/preference_etp_smartblock_learn_more"
-            android:textColor="?accent"
+            android:textColor="?textAccent"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/smartblock_description"
@@ -276,7 +274,7 @@
             android:layout_height="1dp"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="8dp"
-            android:background="?neutralFaded"
+            android:background="?borderPrimary"
             app:layout_constraintTop_toBottomOf="@id/smartblock_learn_more" />
 
         <androidx.appcompat.widget.LinearLayoutCompat

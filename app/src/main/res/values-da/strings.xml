@@ -41,13 +41,14 @@
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string name="recent_bookmarks_title">Seneste bogmærker</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
-    <string name="recently_saved_bookmarks_content_description">Bogmærker gemt for nylig</string>
+    <string moz:removedIn="100" name="recently_saved_bookmarks_content_description" tools:ignore="UnusedResources">Bogmærker gemt for nylig</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
-    <string name="recently_saved_show_all">Vis alle</string>
+    <string moz:removedIn="101" name="recently_saved_show_all" tools:ignore="UnusedResources">Vis alle</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description_2">Vis alle gemte bogmærker</string>
-    <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
-    <string moz:removedIn="97" name="recently_saved_show_all_content_description" tools:ignore="UnusedResources">Knap til visning af alle gemte bogmærker</string>
+
+    <!-- Text for the menu button to remove a recently saved bookmark from the user's home screen -->
+    <string name="recently_saved_menu_item_remove">Fjern</string>
 
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s er lavet af Mozilla.</string>
@@ -68,7 +69,9 @@
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
-    <string name="open_in_app_cfr_info_message">Du kan sætte Firefox til automatisk at åbne links i apps.</string>
+    <string moz:RemovedIn="99" name="open_in_app_cfr_info_message" tools:ignore="UnusedResources">Du kan sætte Firefox til automatisk at åbne links i apps.</string>
+    <!-- Text for the info message. The first parameter is the name of the application.-->
+    <string name="open_in_app_cfr_info_message_2">Du kan sætte %1$s til automatisk at åbne links i apps.</string>
     <!-- Text for the positive action button -->
     <string name="open_in_app_cfr_positive_button_text">Gå til indstillinger</string>
     <!-- Text for the negative action button -->
@@ -96,7 +99,10 @@
     <!-- Text for title for the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_title">Luk automatisk efter en måned?</string>
     <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
-    <string name="tab_tray_inactive_auto_close_body">Firefox kan lukke faneblade, du ikke har set i løbet af den seneste måned.</string>
+    <string moz:RemovedIn="99" name="tab_tray_inactive_auto_close_body" tools:ignore="UnusedResources">Firefox kan lukke faneblade, du ikke har set i løbet af den seneste måned.</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs.
+        The first parameter is the name of the application.-->
+    <string name="tab_tray_inactive_auto_close_body_2">%1$s kan lukke faneblade, du ikke har set i løbet af den seneste måned.</string>
     <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_button_content_description">Luk</string>
 
@@ -119,8 +125,6 @@
 
     <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
     <string name="recent_tabs_show_all_content_description_2">Knap til visning af alle seneste faneblade</string>
-    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
-    <string moz:removedIn="97" name="recent_tabs_show_all_content_description2" tools:ignore="UnusedResources">Vis alle seneste faneblade</string>
     <!-- Title for showing a group item in the 'Jump back in' section of the new tab
         The first parameter is the search term that the user used. (for example: your search for "cat")-->
     <string name="recent_tabs_search_term">Din søgning efter \&quot;%1$s\&quot;</string>
@@ -128,6 +132,14 @@
     <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
         %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
     <string name="recent_tabs_search_term_count_2">%d websteder</string>
+
+    <!-- Text for button in synced tab card that opens synced tabs tray -->
+    <string name="recent_tabs_see_all_synced_tabs_button_text">Vis alle synkroniserede faneblade</string>
+    <!-- Accessibility description for device icon used for recent synced tab -->
+    <string name="recent_tabs_synced_device_icon_content_description">Synkroniseret enhed</string>
+    <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
+         in the Recently visited section -->
+    <string name="recent_tab_menu_item_remove">Fjern</string>
 
     <!-- History Metadata -->
     <!-- Header text for a section on the home screen that displays grouped highlights from the
@@ -139,8 +151,6 @@
     <string name="recently_visited_menu_item_remove">Fjern</string>
     <!-- Content description for the button which navigates the user to show all of their history. -->
     <string name="past_explorations_show_all_content_description_2">Vis hele historikken</string>
-    <!-- Content description for the button which navigates the user to show all of their history. -->
-    <string moz:removedIn="97" name="past_explorations_show_all_content_description" tools:ignore="UnusedResources">Knap til visning af alle tidligere udforsket</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate backward (browsing history) -->
@@ -169,8 +179,6 @@
     <string name="browser_menu_add_to_homescreen">Føj til startskærm</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Installer</string>
-    <!-- Menu option on the toolbar that takes you to synced tabs page-->
-    <string name="synced_tabs">Synkroniserede faneblade</string>
     <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
     <string name="resync_button_content_description">Synkroniser igen</string>
     <!-- Browser menu button that opens the find in page menu -->
@@ -202,8 +210,6 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Rediger</string>
 
-    <!-- Browser menu button that opens the Customize menu -->
-    <string moz:removedIn="98" name="browser_menu_customize_home" tools:ignore="UnusedResources">Tilpas startside</string>
     <!-- Button shown on the home page that opens the Customize home settings -->
     <string name="browser_menu_customize_home_1">Tilpas startside</string>
     <!-- Browser Toolbar -->
@@ -236,7 +242,7 @@
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="search_suggestions_onboarding_text">%s deler alt, du skriver i adressefeltet, med din standard-søgetjeneste.</string>
     <!-- Search suggestion onboarding hint Learn more link text -->
-    <string name="search_suggestions_onboarding_learn_more_link">Læs mere</string>
+    <string moz:RemovedIn="100" name="search_suggestions_onboarding_learn_more_link" tools:ignore="UnusedResources">Læs mere</string>
 
     <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
     <string name="search_engine_suggestions_title">Søg med %s</string>
@@ -245,11 +251,15 @@
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
-    <string name="onboarding_home_screen_title_2">Nyheder i Firefox</string>
+    <string moz:removedIn="99" name="onboarding_home_screen_title_2" tools:ignore="UnusedResources">Nyheder i Firefox</string>
+    <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_title_3">Nyheder i %1$s</string>
     <!-- Onboarding home screen dialog description text. -->
     <string name="onboarding_home_screen_description_2">Det er blevet lettere at fortsætte, hvor du slap.</string>
     <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
-    <string name="onboarding_home_screen_section_home_title_2">Tilpasset startside i Firefox</string>
+    <string moz:RemovedIn="99" name="onboarding_home_screen_section_home_title_2" tools:ignore="UnusedResources">Tilpasset startside i Firefox</string>
+    <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
+    <string name="onboarding_home_screen_section_home_title_3">Tilpasset startside i %1$s</string>
     <!-- Onboarding home screen dialog description text for the home section. -->
     <string name="onboarding_home_screen_section_home_description_2">Hop til dine åbne faneblade, bogmærker og browserhistorik.</string>
     <!-- Onboarding home screen dialog description text for the tab tray section. -->
@@ -266,7 +276,9 @@
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
-    <string name="search_widget_content_description">Åbn et nyt Firefox-faneblad</string>
+    <string moz:RemovedIn="99" name="search_widget_content_description" tools:ignore="UnusedResources">Åbn et nyt Firefox-faneblad</string>
+    <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
+    <string name="search_widget_content_description_2">Åbn et nyt %1$s-faneblad</string>
     <!-- Text preview for smaller sized widgets -->
     <string name="search_widget_text_short">Søg</string>
     <!-- Text preview for larger sized widgets -->
@@ -311,6 +323,26 @@
     <string name="preferences_screenshots_in_private_mode_disclaimer">Hvis du tillader det, vil private faneblade også være synlige, når flere apps er åbne</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Tilføj genvej til privat browsing</string>
+    <!-- Preference for enabling "HTTPS-Only" mode -->
+    <string name="preferences_https_only_title">Tilstanden Kun-HTTPS</string>
+    <!-- Description of the preference to enable "HTTPS-Only" mode. -->
+    <string name="preferences_https_only_summary">Forsøger automatisk at oprette forbindelse til websteder ved hjælp af krypteringsprotokollen HTTPS for øget sikkerhed.</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to on -->
+    <string name="preferences_https_only_on">Til</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to off -->
+    <string name="preferences_https_only_off">Fra</string>
+    <!-- Text displayed that links to website containing documentation about "HTTPS-Only" mode -->
+    <string name="preferences_http_only_learn_more">Læs mere</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_all_tabs">Aktiver i alle faneblade</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_private_tabs">Aktiver kun i private faneblade</string>
+    <!-- Title shown in the error page for when trying to access a http website while https only mode is enabled. -->
+    <string name="errorpage_httpsonly_title">Sikkert websted er ikke tilgængeligt</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the first. -->
+    <string name="errorpage_httpsonly_message_title">Sandsynligvis understøtter webstedet simpelthen ikke HTTPS.</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the second. -->
+    <string name="errorpage_httpsonly_message_summary">Det er også muligt, at en ondsindet aktør er involveret. Hvis du fortsætter til webstedet, bør du ikke afgive nogen følsomme oplysninger. Hvis du fortsætter, vil kun-HTTPS blive slået midlertidigt fra for dette websted.</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Tilgængelighed</string>
     <!-- Preference to override the Firefox Account server -->
@@ -414,9 +446,11 @@
     <!-- Snackbar label for action to view selected wallpaper -->
     <string name="wallpaper_updated_snackbar_action">Vis</string>
     <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string name="wallpaper_tap_to_change_switch_label">Tryk på logoet for at skifte baggrund</string>
+    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_label" tools:ignore="UnusedResources">Tryk på logoet for at skifte baggrund</string>
+    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
+    <string name="wallpaper_tap_to_change_switch_label_1">Skift baggrund ved at trykke på Firefox-logoet på startsiden</string>
     <!-- Description for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string name="wallpaper_tap_to_change_switch_description">Skift mellem og opdater billedet uden at forlade startsiden.</string>
+    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_description" tools:ignore="UnusedResources">Skift mellem og opdater billedet uden at forlade startsiden.</string>
 
     <!-- This is the accessibility content description for the wallpapers functionality. Users are
     able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
@@ -639,7 +673,9 @@
     <!-- Title of the active section on the studies list -->
     <string name="studies_active">Aktive</string>
     <!-- Description for studies, it indicates why Firefox use studies -->
-    <string name="studies_description">Firefox kan installere og afvikle undersøgelser fra tid til anden.</string>
+    <string moz:RemovedIn="99" name="studies_description" tools:ignore="UnusedResources">Firefox kan installere og afvikle undersøgelser fra tid til anden.</string>
+    <!-- Description for studies, it indicates why Firefox use studies. The first parameter is the name of the application. -->
+    <string name="studies_description_2">%1$s kan installere og afvikle undersøgelser fra tid til anden.</string>
     <!-- Learn more link for studies, links to an article for more information about studies. -->
     <string name="studies_learn_more">Læs mere</string>
     <!-- Dialog message shown after removing a study -->
@@ -724,7 +760,9 @@
 
     <!-- History -->
     <!-- Text for the button to search all history -->
-    <string name="history_search">Indtast søgestreng</string>
+    <string moz:removedIn="99" name="history_search" tools:ignore="UnusedResources">Indtast søgestreng</string>
+    <!-- Text for the button to search all history -->
+    <string name="history_search_1">Indtast søgestrenge</string>
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Slet historik</string>
     <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
@@ -780,6 +818,8 @@
     <string name="bookmark_delete_folder_confirmation_dialog">Er du sikker på, at du vil slette denne mappe?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
     <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s vil slette de valgte elementer.</string>
+    <!-- Text for the cancel button on delete bookmark dialog -->
+    <string name="bookmark_delete_negative">Annuller</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Tilføj mappe</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
@@ -835,6 +875,9 @@
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">FORTRYD</string>
 
+    <!-- Text for the button to search all bookmarks -->
+    <string name="bookmark_search">Indtast søgestrenge</string>
+
     <!-- Site Permissions -->
     <!-- Button label that take the user to the Android App setting -->
     <string name="phone_feature_go_to_settings">Gå til indstillinger</string>
@@ -846,8 +889,16 @@
     <string name="phone_feature_recommended">Anbefalet</string>
     <!-- Button label for clearing all the information of site permissions-->
     <string name="clear_permissions">Ryd tilladelser</string>
+    <!-- Text for the OK button on Clear permissions dialog -->
+    <string name="clear_permissions_positive">OK</string>
+    <!-- Text for the cancel button on Clear permissions dialog -->
+    <string name="clear_permissions_negative">Annuller</string>
     <!-- Button label for clearing a site permission-->
     <string name="clear_permission">Ryd tilladelse</string>
+    <!-- Text for the OK button on Clear permission dialog -->
+    <string name="clear_permission_positive">OK</string>
+    <!-- Text for the cancel button on Clear permission dialog -->
+    <string name="clear_permission_negative">Annuller</string>
     <!-- Button label for clearing all the information on all sites-->
     <string name="clear_permissions_on_all_sites">Ryd tilladelser for alle websteder</string>
     <!-- Preference for altering video and audio autoplay for all websites -->
@@ -947,6 +998,11 @@
     <!-- Snackbar action to view the collection the user just created or updated -->
     <string name="create_collection_view">Vis</string>
 
+    <!-- Text for the OK button from collection dialogs -->
+    <string name="create_collection_positive">OK</string>
+    <!-- Text for the cancel button from collection dialogs -->
+    <string name="create_collection_negative">Annuller</string>
+
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Samling %d</string>
 
@@ -962,6 +1018,10 @@
     <string name="share_link_all_apps_subheader">Alle handlinger</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Brugt for nylig</string>
+    <!-- Text for the copy link action in the share screen. -->
+    <string name="share_copy_link_to_clipboard">Kopier til udklipsholder</string>
+    <!-- Toast shown after copying link to clipboard -->
+    <string name="toast_copy_link_to_clipboard">Kopieret til udklipsholder</string>
     <!-- An option from the three dot menu to into sync -->
     <string name="sync_menu_sign_in">Log ind for at synkronisere</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1013,7 +1073,9 @@
     <!-- Text shown in snackbar when user bookmarks a list of tabs -->
     <string name="snackbar_message_bookmarks_saved">Bogmærker gemt!</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
-    <string name="snackbar_added_to_top_sites">Føjet til foretrukne websteder!</string>
+    <string moz:RemovedIn="101" name="snackbar_added_to_top_sites" tools:ignore="UnusedResources">Føjet til foretrukne websteder!</string>
+    <!-- Text shown in snackbar when user adds a site to shortcuts -->
+    <string name="snackbar_added_to_shortcuts">Føjet til genveje!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
     <string name="snackbar_private_tab_closed">Privat faneblad lukket</string>
     <!-- Text shown in snackbar when user closes all private tabs -->
@@ -1105,29 +1167,29 @@
 
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header">Firefox Preview er nu Firefox Nightly</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header" tools:ignore="UnusedResources">Firefox Preview er nu Firefox Nightly</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description">Firefox Nightly bliver opdateret hver nat og har nye, eksperimentelle funktioner.
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description" tools:ignore="UnusedResources">Firefox Nightly bliver opdateret hver nat og har nye, eksperimentelle funktioner.
         Nightly kan dog være ustabil nogle gange. Hent vores beta-version, hvis du vil have en mere stabil browser.</string>
 
     <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_button_2">Hent Firefox Beta til Android</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_2" tools:ignore="UnusedResources">Hent Firefox Beta til Android</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_installed">Firefox Nightly er flyttet</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header_preview_installed" tools:ignore="UnusedResources">Firefox Nightly er flyttet</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_installed">Denne app modtager ikke længere sikkerhedsopdateringer. Stop med at bruge appen og skift til den nye Nightly.
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description_preview_installed" tools:ignore="UnusedResources">Denne app modtager ikke længere sikkerhedsopdateringer. Stop med at bruge appen og skift til den nye Nightly.
         \n\nOpret en Firefox-konto for at overføre dine bogmærker, logins og historik til en anden app.</string>
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_installed">Skift til den nye Nightly</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_preview_installed" tools:ignore="UnusedResources">Skift til den nye Nightly</string>
 
     <!-- text for firefox preview moving tip header. "Firefox Nightly" is intentionally hardcoded -->
-    <string name="tip_firefox_preview_moved_header_preview_not_installed">Firefox Nightly er flyttet</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header_preview_not_installed" tools:ignore="UnusedResources">Firefox Nightly er flyttet</string>
     <!-- text for firefox preview moving tip description -->
-    <string name="tip_firefox_preview_moved_description_preview_not_installed">Denne app modtager ikke længere sikkerhedsopdateringer. Hent den nye Nightly og stop med at bruge denne app.
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description_preview_not_installed" tools:ignore="UnusedResources">Denne app modtager ikke længere sikkerhedsopdateringer. Hent den nye Nightly og stop med at bruge denne app.
         \n\nOpret en Firefox-konto for at overføre dine bogmærker, logins og historik til en anden app.</string>
     <!-- text for firefox preview moving tip button  -->
-    <string name="tip_firefox_preview_moved_button_preview_not_installed">Hent den nye Nightly</string>
+    <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_preview_not_installed" tools:ignore="UnusedResources">Hent den nye Nightly</string>
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message
@@ -1136,8 +1198,10 @@
 
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string name="onboarding_account_sign_in_header_1">Synkroniser Firefox mellem enheder</string>
-    <!-- Text for the button to learn more about signing in to your Firefox account -->
-    <string name="onboarding_manual_sign_in_description">Synkroniser bogmærker, historik og adgangskoder med Firefox på denne enhed.</string>
+    <!-- text for the Firefox account onboarding sign in card header. The first parameter is the name of the application.-->
+    <string moz:RemovedIn="100" name="onboarding_account_sign_in_header_2" tools:ignore="UnusedResources">Synkroniser %1$s mellem enheder</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account. The first parameter is the name of the application.-->
+    <string name="onboarding_manual_sign_in_description_2">Synkroniser bogmærker, historik og adgangskoder med %1$s på denne enhed.</string>
     <!-- text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in_1">Tilmeld dig</string>
     <!-- text to display in the snackbar once account is signed-in -->
@@ -1145,7 +1209,9 @@
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">Altid aktiveret privatlivsbeskyttelse</string>
     <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
-    <string name="onboarding_tracking_protection_description_3">Firefox forhindrer automatisk virksomheder i at følge dig i smug på nettet.</string>
+    <string moz:RemovedIn="99" name="onboarding_tracking_protection_description_3" tools:ignore="UnusedResources">Firefox forhindrer automatisk virksomheder i at følge dig i smug på nettet.</string>
+    <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
+    <string name="onboarding_tracking_protection_description_4">%1$s forhindrer automatisk virksomheder i at følge dig i smug på nettet.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Standard</string>
     <!-- text for standard blocking option button description -->
@@ -1481,11 +1547,15 @@
     <string name="credit_cards_menu_delete_card">Slet kort</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">Slet kort</string>
+    <!-- The text for the confirmation message of "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_confirmation">Er du sikker på, at du vil slette dette betalingskort?</string>
+    <!-- The text for the positive button on "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_button">Slet</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
     <string name="credit_cards_menu_save">Gem</string>
     <!-- The text for the "Save" button for saving a credit card -->
     <string name="credit_cards_save_button">Gem</string>
-    <!-- The text for the "Cancel" button for cancelling adding or updating a credit card -->
+    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting a credit card -->
     <string name="credit_cards_cancel_button">Annuller</string>
 
     <!-- Title of the "Saved cards" screen -->
@@ -1552,17 +1622,17 @@
     <string name="search_delete_search_engine_success_message">%s blev slettet</string>
 
     <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
-    <string name="migration_title">Velkommen til den nye %s</string>
+    <string moz:removedIn="100" name="migration_title" tools:ignore="UnusedResources">Velkommen til den nye %s</string>
     <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
-    <string name="migration_description">En komplet redesignet browser venter forude! Du får både forbedret ydelse og nye funktioner, så du får mere ud af internettet.\n\n Vent venligst, mens vi opdaterer %s med dine</string>
+    <string moz:removedIn="100" name="migration_description" tools:ignore="UnusedResources">En komplet redesignet browser venter forude! Du får både forbedret ydelse og nye funktioner, så du får mere ud af internettet.\n\n Vent venligst, mens vi opdaterer %s med dine</string>
     <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
-    <string name="migration_updating_app_button_text">Opdaterer %s…</string>
+    <string moz:removedIn="100" name="migration_updating_app_button_text" tools:ignore="UnusedResources">Opdaterer %s…</string>
     <!-- Text on the enabled button. Placeholder replaced with app name-->
-    <string name="migration_update_app_button">Start %s</string>
+    <string moz:removedIn="100" name="migration_update_app_button" tools:ignore="UnusedResources">Start %s</string>
     <!-- Accessibility description text for a completed migration item -->
-    <string name="migration_icon_description">Migreringen er færdig</string>
+    <string moz:removedIn="100" name="migration_icon_description" tools:ignore="UnusedResources">Migreringen er færdig</string>
     <!--Text on list of migrated items (e.g. Settings, History, etc.)-->
-    <string name="migration_text_passwords">Adgangskoder</string>
+    <string moz:removedIn="100" name="migration_text_passwords" tools:ignore="UnusedResources">Adgangskoder</string>
 
     <!-- Heading for the instructions to allow a permission -->
     <string name="phone_feature_blocked_intro">For at tillade:</string>
@@ -1592,9 +1662,13 @@
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">Er du sikker på, at du vil slette dette bogmærke?</string>
     <!-- Browser menu button that adds a top site to the home fragment -->
-    <string name="browser_menu_add_to_top_sites">Føj til foretrukne websteder</string>
+    <string moz:RemovedIn="101" name="browser_menu_add_to_top_sites" tools:ignore="UnusedResources">Føj til foretrukne websteder</string>
     <!-- Browser menu button that removes a top site from the home fragment -->
-    <string name="browser_menu_remove_from_top_sites">Fjern fra foretrukne websteder</string>
+    <string moz:RemovedIn="101" name="browser_menu_remove_from_top_sites" tools:ignore="UnusedResources">Fjern fra foretrukne websteder</string>
+    <!-- Browser menu button that adds a shortcut to the home fragment -->
+    <string name="browser_menu_add_to_shortcuts">Føj til genveje</string>
+    <!-- Browser menu button that removes a shortcut from the home fragment -->
+    <string name="browser_menu_remove_from_shortcuts">Fjern fra genveje</string>
     <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
      the certificate authority that verified the ticket-->
     <string name="certificate_info_verified_by">Bekræftet af: %1$s</string>
@@ -1606,6 +1680,8 @@
     <string name="login_deletion_confirmation">Er du sikker på, at du vil slette dette login?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Slet</string>
+    <!-- Negative action of a dialog asking to delete login -->
+    <string name="dialog_delete_negative">Annuller</string>
     <!--  The saved login options menu description. -->
     <string name="login_options_menu">Login-indstillinger</string>
     <!--  The editable text field for a login's web address. -->
@@ -1649,6 +1725,8 @@
     <string name="synced_tabs_enable_tab_syncing">Aktiver synkronisering af faneblade.</string>
     <!-- Text displayed when user has no tabs that have been synced -->
     <string name="synced_tabs_no_tabs">Du har ikke nogen faneblade åbne i Firefox på dine andre enheder.</string>
+    <!-- Text displayed when user has no tabs that have been synced. The first parameter is the name of the application.-->
+    <string moz:RemovedIn="100" name="synced_tabs_no_tabs_2" tools:ignore="UnusedResources">Du har ikke nogen åbne faneblade i %1$s på dine andre enheder.</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">Se en liste med faneblade fra dine andre enheder.</string>
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
@@ -1657,23 +1735,31 @@
     <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
     <string name="synced_tabs_no_open_tabs">Ingen åbne faneblade</string>
 
+    <!-- Content description for expanding a group of synced tabs. -->
+    <string name="synced_tabs_expand_group">Udvid gruppe med synkroniserede faneblade</string>
+    <!-- Content description for collapsing a group of synced tabs. -->
+    <string name="synced_tabs_collapse_group">Sammenfold gruppe med synkroniserede faneblade</string>
+
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_title">Grænsen for foretrukne websteder er nået</string>
+    <string moz:RemovedIn="101" name="top_sites_max_limit_title" tools:ignore="UnusedResources">Grænsen for foretrukne websteder er nået</string>
+    <!-- Title text displayed in the dialog when shortcuts limit is reached. -->
+    <string name="shortcut_max_limit_title">Grænsen for genveje er nået</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_content_2">Fjern en webside for at erstatte den med en ny. Tryk og hold på websiden, og vælg så Fjern.</string>
+    <string moz:RemovedIn="101" name="top_sites_max_limit_content_2" tools:ignore="UnusedResources">Fjern en webside for at erstatte den med en ny. Tryk og hold på websiden, og vælg så Fjern.</string>
+    <!-- Content description text displayed in the dialog when shortcut limit is reached. -->
+    <string name="shortcut_max_limit_content">Fjern en genvej for at erstatte den med en ny. Tryk og hold på websiden, og vælg så Fjern.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Ok, forstået</string>
-
-    <!-- Label for the preference to show the shortcuts for the most visited top sites on the homepage -->
-    <string moz:removedIn="98" name="top_sites_toggle_top_recent_sites_3" tools:ignore="UnusedResources">Mest besøgte websteder</string>
 
     <!-- Label for the preference to show the shortcuts for the most visited top sites on the homepage -->
     <string name="top_sites_toggle_top_recent_sites_4">Genveje</string>
 	<!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Navn</string>
 	<!-- Hint for renaming title of a top site -->
-	<string name="top_site_name_hint">Navn på foretrukket websted</string>
+	<string moz:RemovedIn="101" name="top_site_name_hint" tools:ignore="UnusedResources">Navn på foretrukket websted</string>
+    <!-- Hint for renaming title of a shortcut -->
+    <string name="shortcut_name_hint">Genvejsnavn</string>
 	<!-- Button caption to confirm the renaming of the top site. -->
 	<string name="top_sites_rename_dialog_ok">OK</string>
 	<!-- Dialog button text for canceling the rename top site prompt. -->
@@ -1705,22 +1791,22 @@
 
     <!-- Inactive tabs survey -->
     <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
-    <string name="inactive_tabs_survey_header_1">Hjælp os med at gøre det bedre</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_header_1" tools:ignore="UnusedResources">Hjælp os med at gøre det bedre</string>
 
     <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
-    <string name="inactive_tabs_survey_content">Hvorfor deaktiverede du inaktive faner?</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Hvorfor deaktiverede du inaktive faner?</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_do_not_understand">Jeg forstår ikke, hvordan det fungerer</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_not_understand" tools:ignore="UnusedResources">Jeg forstår ikke, hvordan det fungerer</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_do_it_myself">Jeg rydder gerne op i gamle faneblade selv</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_it_myself" tools:ignore="UnusedResources">Jeg rydder gerne op i gamle faneblade selv</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_long_option_1">Det tager for lang tid, inden de bliver inaktive</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_long_option_1" tools:ignore="UnusedResources">Det tager for lang tid, inden de bliver inaktive</string>
     <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string name="inactive_tabs_survey_time_too_short_option_1">Det tager for kort tid, inden de bliver inaktive</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_short_option_1" tools:ignore="UnusedResources">Det tager for kort tid, inden de bliver inaktive</string>
     <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
-    <string name="inactive_tabs_survey_send_button">Send</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Send</string>
     <!-- Content description for inactive tabs survey close button -->
-    <string name="inactive_tabs_survey_close_button_content_description">Luk</string>
+    <string moz:RemovedIn="99" name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Luk</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Indstil links fra websteder, mails og beskeder til automatisk at blive åbnet i Firefox.</string>
@@ -1750,4 +1836,9 @@
     <string name="pocket_stories_feature_caption">En del af Firefox-familien. %s</string>
     <!-- Clickable text for opening an external link for more information about Pocket. -->
     <string name="pocket_stories_feature_learn_more">Læs mere</string>
+
+    <!-- Snackbar message for enrolling in a Nimbus experiment from the secret settings when Studies preference is Off.-->
+    <string name="experiments_snackbar">Aktiver telemetri for at sende data.</string>
+    <!-- Snackbar button text to navigate to telemetry settings.-->
+    <string name="experiments_snackbar_button">Gå til indstillinger</string>
 </resources>

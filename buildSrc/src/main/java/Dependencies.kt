@@ -6,7 +6,7 @@
 // FORCE REBUILD 2021-11-24
 
 object Versions {
-    const val kotlin = "1.5.31"
+    const val kotlin = "1.6.10"
     const val coroutines = "1.5.2"
 
     // These versions are linked: lint should be X+23.Y.Z of gradle_plugin version, according to:
@@ -14,14 +14,13 @@ object Versions {
     const val android_gradle_plugin = "7.0.0"
     const val android_lint_api = "30.0.0"
 
-    const val sentry = "1.7.10"
+    const val sentry = "5.6.2"
     const val leakcanary = "2.8.1"
     const val osslicenses_plugin = "0.10.4"
-    const val detekt = "1.17.1"
-    const val jna = "5.6.0"
+    const val detekt = "1.19.0"
+    const val jna = "5.8.0"
 
-    const val androidx_activity_compose = "1.4.0"
-    const val androidx_compose = "1.0.5"
+    const val androidx_compose = "1.1.1"
     const val androidx_appcompat = "1.3.0"
     const val androidx_benchmark = "1.0.0"
     const val androidx_biometric = "1.1.0"
@@ -35,7 +34,7 @@ object Versions {
     const val androidx_navigation = "2.3.3"
     const val androidx_recyclerview = "1.2.1"
     const val androidx_core = "1.3.2"
-    const val androidx_paging = "2.1.2"
+    const val androidx_paging = "3.1.1"
     const val androidx_transition = "1.4.0"
     const val androidx_work = "2.7.1"
     const val androidx_datastore = "1.0.0"
@@ -135,8 +134,8 @@ object Deps {
     const val mozilla_feature_webcompat = "org.mozilla.components:feature-webcompat:${Versions.mozilla_android_components}"
     const val mozilla_feature_webnotifications = "org.mozilla.components:feature-webnotifications:${Versions.mozilla_android_components}"
     const val mozilla_feature_webcompat_reporter = "org.mozilla.components:feature-webcompat-reporter:${Versions.mozilla_android_components}"
-    const val mozilla_service_pocket = "org.mozilla.components:service-pocket:${Versions.mozilla_android_components}"
 
+    const val mozilla_service_pocket = "org.mozilla.components:service-pocket:${Versions.mozilla_android_components}"
     const val mozilla_service_contile =
         "org.mozilla.components:service-contile:${Versions.mozilla_android_components}"
     const val mozilla_service_digitalassetlinks =
@@ -156,6 +155,8 @@ object Deps {
     const val mozilla_ui_tabcounter = "org.mozilla.components:ui-tabcounter:${Versions.mozilla_android_components}"
 
     const val mozilla_lib_crash = "org.mozilla.components:lib-crash:${Versions.mozilla_android_components}"
+    const val lib_crash_sentry =
+        "org.mozilla.components:lib-crash-sentry:${Versions.mozilla_android_components}"
     const val mozilla_lib_push_firebase = "org.mozilla.components:lib-push-firebase:${Versions.mozilla_android_components}"
     const val mozilla_lib_dataprotect = "org.mozilla.components:lib-dataprotect:${Versions.mozilla_android_components}"
     const val mozilla_lib_state = "org.mozilla.components:lib-state:${Versions.mozilla_android_components}"
@@ -170,7 +171,6 @@ object Deps {
     const val mozilla_support_utils = "org.mozilla.components:support-utils:${Versions.mozilla_android_components}"
     const val mozilla_support_test = "org.mozilla.components:support-test:${Versions.mozilla_android_components}"
     const val mozilla_support_test_libstate = "org.mozilla.components:support-test-libstate:${Versions.mozilla_android_components}"
-    const val mozilla_support_migration = "org.mozilla.components:support-migration:${Versions.mozilla_android_components}"
     const val mozilla_support_locale = "org.mozilla.components:support-locale:${Versions.mozilla_android_components}"
 
     const val sentry = "io.sentry:sentry-android:${Versions.sentry}"
@@ -226,14 +226,15 @@ object Deps {
     //   https://developer.android.com/jetpack/androidx/releases/test
     // For the full IDs of these test dependencies, see:
     //   https://developer.android.com/training/testing/set-up-project#android-test-dependencies
-    private const val androidx_test_shared_version = "1.3.0-alpha05" // this appears to be shared with many deps.
+    private const val androidx_test_shared_version = "1.4.0" // this appears to be shared with many deps.
     const val androidx_test_core = "androidx.test:core:$androidx_test_shared_version"
-    private const val androidx_espresso_version = "3.3.0-alpha05"
+    private const val androidx_espresso_version = "3.4.0"
     const val espresso_core = "androidx.test.espresso:espresso-core:$androidx_espresso_version"
     const val espresso_contrib = "androidx.test.espresso:espresso-contrib:$androidx_espresso_version"
     const val espresso_idling_resources = "androidx.test.espresso:espresso-idling-resource:$androidx_espresso_version"
     const val espresso_intents = "androidx.test.espresso:espresso-intents:$androidx_espresso_version"
     const val androidx_junit = "androidx.test.ext:junit:1.1.2-alpha05"
+    const val androidx_test_extensions = "androidx.test.ext:junit-ktx:1.1.3"
     // Monitor is unused
     const val orchestrator = "androidx.test:orchestrator:$androidx_test_shared_version"
     const val tools_test_runner = "androidx.test:runner:$androidx_test_shared_version"
@@ -278,5 +279,5 @@ object RepoMatching {
      * explicitly exclude it from this regex so it can be found on Maven Central. Note that the transitive
      * dependency com.google.guava is also not available on google's repo.
      */
-    const val comGoogleAndroid = "com\\.google\\.android\\.(?!apps\\.common\\.testing\\.accessibility\\.framework).*"
+    const val comGoogleAndroid = "com\\.google\\.android\\..*"
 }
