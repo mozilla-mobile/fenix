@@ -69,7 +69,7 @@ features:
       message-location:
         description: Where is the message to be put.
         type: Option<MessageSurfaceId>
-        default: null
+        default: homescreen-banner
 types:
   objects: {}
   enums:
