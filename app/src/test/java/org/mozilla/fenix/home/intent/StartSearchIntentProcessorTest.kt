@@ -10,18 +10,27 @@ import androidx.navigation.navOptions
 import io.mockk.Called
 import io.mockk.mockk
 import io.mockk.verify
+import mozilla.components.service.glean.testing.GleanTestRule
+import mozilla.components.support.test.robolectric.testContext
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.SearchWidget
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
 class StartSearchIntentProcessorTest {
+
+    @get:Rule
+    val gleanTestRule = GleanTestRule(testContext)
 
     private val metrics: MetricController = mockk(relaxed = true)
     private val navController: NavController = mockk(relaxed = true)
@@ -58,13 +67,17 @@ class StartSearchIntentProcessorTest {
             popUpTo = R.id.homeFragment
         }
 
-        verify { metrics.track(Event.SearchWidgetNewTabPressed) }
+        assertTrue(SearchWidget.newTabButton.testHasValue())
+        val recordedEvents = SearchWidget.newTabButton.testGetValue()
+        assertEquals(1, recordedEvents.size)
+        assertEquals(null, recordedEvents.single().extra)
+
         verify {
             navController.nav(
                 null,
                 NavGraphDirections.actionGlobalSearchDialog(
                     sessionId = null,
-                    searchAccessPoint = Event.PerformedSearch.SearchAccessPoint.WIDGET
+                    searchAccessPoint = MetricsUtils.Source.WIDGET
                 ),
                 options
             )

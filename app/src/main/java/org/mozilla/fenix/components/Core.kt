@@ -55,21 +55,22 @@ import mozilla.components.feature.webcompat.reporter.WebCompatReporterFeature
 import mozilla.components.feature.webnotifications.WebNotificationFeature
 import mozilla.components.lib.dataprotect.SecureAbove22Preferences
 import mozilla.components.service.contile.ContileTopSitesProvider
+import mozilla.components.service.contile.ContileTopSitesUpdater
 import mozilla.components.service.digitalassetlinks.RelationChecker
 import mozilla.components.service.digitalassetlinks.local.StatementApi
 import mozilla.components.service.digitalassetlinks.local.StatementRelationChecker
 import mozilla.components.service.location.LocationService
 import mozilla.components.service.location.MozillaLocationService
-import mozilla.components.service.pocket.Frequency
 import mozilla.components.service.pocket.PocketStoriesConfig
 import mozilla.components.service.pocket.PocketStoriesService
 import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStorage
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
+import mozilla.components.support.base.worker.Frequency
 import mozilla.components.support.locale.LocaleManager
 import org.mozilla.fenix.AppRequestInterceptor
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.search.SearchMigration
 import org.mozilla.fenix.downloads.DownloadService
@@ -121,7 +122,8 @@ class Core(
             clearColor = ContextCompat.getColor(
                 context,
                 R.color.fx_mobile_layer_color_1
-            )
+            ),
+            httpsOnlyMode = context.settings().getHttpsOnlyMode()
         )
 
         GeckoEngine(
@@ -241,7 +243,7 @@ class Core(
 
             WebNotificationFeature(
                 context, engine, icons, R.drawable.ic_status_logo,
-                permissionStorage.permissionsStorage, HomeActivity::class.java
+                permissionStorage.permissionsStorage, IntentReceiverActivity::class.java
             )
 
             MediaSessionFeature(context, MediaSessionService::class.java, this).start()
@@ -345,6 +347,15 @@ class Core(
             context = context,
             client = client,
             maxCacheAgeInMinutes = CONTILE_MAX_CACHE_AGE
+        )
+    }
+
+    @Suppress("MagicNumber")
+    val contileTopSitesUpdater by lazyMonitored {
+        ContileTopSitesUpdater(
+            context = context,
+            provider = contileTopSitesProvider,
+            frequency = Frequency(3, TimeUnit.HOURS)
         )
     }
 

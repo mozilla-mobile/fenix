@@ -44,7 +44,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentHistorySearchDialogBinding
 import org.mozilla.fenix.databinding.SearchSuggestionsHintBinding
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.library.history.awesomebar.AwesomeBarView
 import org.mozilla.fenix.library.history.toolbar.ToolbarView
@@ -92,7 +91,6 @@ class HistorySearchDialogFragment : AppCompatDialogFragment(), UserInteractionHa
         interactor = HistorySearchDialogInteractor(
             HistorySearchDialogController(
                 activity = activity,
-                metrics = activity.components.analytics.metrics,
                 fragmentStore = store,
                 clearToolbarFocus = {
                     dialogHandledAction = true
@@ -285,7 +283,7 @@ class HistorySearchDialogFragment : AppCompatDialogFragment(), UserInteractionHa
 
         if (voiceSearchButtonAlreadyAdded || !shouldShowVoiceSearch) return
 
-        toolbarView.view.addEditAction(
+        toolbarView.view.addEditActionEnd(
             BrowserToolbar.Button(
                 imageDrawable = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_microphone)!!,
                 contentDescription = requireContext().getString(R.string.voice_search_content_description),

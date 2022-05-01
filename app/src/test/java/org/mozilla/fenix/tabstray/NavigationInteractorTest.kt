@@ -14,7 +14,6 @@ import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import io.mockk.verifyOrder
 import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
@@ -24,22 +23,31 @@ import mozilla.components.browser.state.state.content.DownloadState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.TabEntry
 import mozilla.components.service.fxa.manager.FxaAccountManager
+import mozilla.components.service.glean.testing.GleanTestRule
+import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
+import org.junit.Assert
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
+import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.collections.CollectionsDialog
 import org.mozilla.fenix.collections.show
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.bookmarks.BookmarksUseCase
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import mozilla.components.browser.state.state.createTab as createStateTab
 import mozilla.components.browser.storage.sync.Tab as SyncTab
 
+@RunWith(FenixRobolectricTestRunner::class) // for gleanTestRule
 class NavigationInteractorTest {
     private lateinit var store: BrowserStore
     private lateinit var tabsTrayStore: TabsTrayStore
@@ -52,8 +60,12 @@ class NavigationInteractorTest {
     private val accountManager: FxaAccountManager = mockk(relaxed = true)
     private val activity: HomeActivity = mockk(relaxed = true)
 
+    val coroutinesTestRule: MainCoroutineRule = MainCoroutineRule()
+    val gleanTestRule = GleanTestRule(testContext)
+
     @get:Rule
-    val coroutinesTestRule = MainCoroutineRule()
+    val chain: RuleChain = RuleChain.outerRule(coroutinesTestRule).around(gleanTestRule)
+
     private val testDispatcher = coroutinesTestRule.testDispatcher
 
     @Before
@@ -65,6 +77,9 @@ class NavigationInteractorTest {
     @Test
     fun `onTabTrayDismissed calls dismissTabTray on DefaultNavigationInteractor`() {
         var dismissTabTrayInvoked = false
+
+        assertFalse(TabsTray.closed.testHasValue())
+
         createInteractor(
             dismissTabTray = {
                 dismissTabTrayInvoked = true
@@ -72,9 +87,7 @@ class NavigationInteractorTest {
         ).onTabTrayDismissed()
 
         assertTrue(dismissTabTrayInvoked)
-        verify {
-            metrics.track(Event.TabsTrayClosed)
-        }
+        assertTrue(TabsTray.closed.testHasValue())
     }
 
     @Test
@@ -103,8 +116,12 @@ class NavigationInteractorTest {
 
     @Test
     fun `onOpenRecentlyClosedClicked calls navigation on DefaultNavigationInteractor`() {
+        assertFalse(Events.recentlyClosedTabsOpened.testHasValue())
+
         createInteractor().onOpenRecentlyClosedClicked()
+
         verify(exactly = 1) { navController.navigate(TabsTrayFragmentDirections.actionGlobalRecentlyClosed()) }
+        assertTrue(Events.recentlyClosedTabsOpened.testHasValue())
     }
 
     @Test
@@ -162,8 +179,15 @@ class NavigationInteractorTest {
 
     @Test
     fun `onShareTabs calls navigation on DefaultNavigationInteractor`() {
-        createInteractor().onShareTabs(emptyList())
+
+        createInteractor().onShareTabs(listOf(testTab))
+
         verify(exactly = 1) { navController.navigate(any<NavDirections>()) }
+
+        assertTrue(TabsTray.shareSelectedTabs.testHasValue())
+        val snapshot = TabsTray.shareSelectedTabs.testGetValue()
+        Assert.assertEquals(1, snapshot.size)
+        Assert.assertEquals("1", snapshot.single().extra?.getValue("tab_count"))
     }
 
     @Test
@@ -171,8 +195,11 @@ class NavigationInteractorTest {
         mockkStatic("org.mozilla.fenix.collections.CollectionsDialogKt")
 
         every { any<CollectionsDialog>().show(any()) } answers { }
-        createInteractor().onSaveToCollections(emptyList())
-        verify(exactly = 1) { metrics.track(Event.TabsTraySaveToCollectionPressed) }
+        assertFalse(TabsTray.saveToCollection.testHasValue())
+
+        createInteractor().onSaveToCollections(listOf(testTab))
+
+        assertTrue(TabsTray.saveToCollection.testHasValue())
 
         unmockkStatic("org.mozilla.fenix.collections.CollectionsDialogKt")
     }
@@ -188,12 +215,18 @@ class NavigationInteractorTest {
 
         coVerify(exactly = 1) { bookmarksUseCase.addBookmark(any(), any(), any()) }
         assertTrue(showBookmarkSnackbarInvoked)
+
+        assertTrue(TabsTray.bookmarkSelectedTabs.testHasValue())
+        val snapshot = TabsTray.bookmarkSelectedTabs.testGetValue()
+        Assert.assertEquals(1, snapshot.size)
+        Assert.assertEquals("1", snapshot.single().extra?.getValue("tab_count"))
     }
 
     @Test
     fun `onSyncedTabsClicked sets metrics and opens browser`() {
         val tab = mockk<SyncTab>()
         val entry = mockk<TabEntry>()
+        assertFalse(Events.syncedTabOpened.testHasValue())
 
         every { tab.active() }.answers { entry }
         every { entry.url }.answers { "https://mozilla.org" }
@@ -206,9 +239,9 @@ class NavigationInteractorTest {
         ).onSyncedTabClicked(tab)
 
         assertTrue(dismissTabTrayInvoked)
-        verifyOrder {
-            metrics.track(Event.SyncedTabOpened)
+        assertTrue(Events.syncedTabOpened.testHasValue())
 
+        verify {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = "https://mozilla.org",
                 newTab = true,

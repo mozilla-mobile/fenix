@@ -99,7 +99,7 @@ open class DefaultToolbarMenu(
             isInPrimaryState = {
                 selectedSession?.content?.canGoBack ?: true
             },
-            secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.disabled, context),
+            secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.textDisabled, context),
             disableInSecondaryState = true,
             longClickListener = { onItemTapped.invoke(ToolbarMenu.Item.Back(viewHistory = true)) }
         ) {
@@ -113,7 +113,7 @@ open class DefaultToolbarMenu(
             isInPrimaryState = {
                 selectedSession?.content?.canGoForward ?: true
             },
-            secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.disabled, context),
+            secondaryImageTintResource = ThemeManager.resolveAttribute(R.attr.textDisabled, context),
             disableInSecondaryState = true,
             longClickListener = { onItemTapped.invoke(ToolbarMenu.Item.Forward(viewHistory = true)) }
         ) {
@@ -274,8 +274,8 @@ open class DefaultToolbarMenu(
     }
 
     val addRemoveTopSitesItem = TwoStateBrowserMenuImageText(
-        primaryLabel = context.getString(R.string.browser_menu_add_to_top_sites),
-        secondaryLabel = context.getString(R.string.browser_menu_remove_from_top_sites),
+        primaryLabel = context.getString(R.string.browser_menu_add_to_shortcuts),
+        secondaryLabel = context.getString(R.string.browser_menu_remove_from_shortcuts),
         primaryStateIconResource = R.drawable.ic_top_sites,
         secondaryStateIconResource = R.drawable.ic_top_sites,
         iconTintColorResource = primaryTextColor(),
@@ -302,12 +302,16 @@ open class DefaultToolbarMenu(
     val settingsItem = BrowserMenuHighlightableItem(
         label = context.getString(R.string.browser_menu_settings),
         startImageResource = R.drawable.mozac_ic_settings,
-        iconTintColorResource = if (hasAccountProblem)
-            ThemeManager.resolveAttribute(R.attr.syncDisconnected, context) else
-            primaryTextColor(),
-        textColorResource = if (hasAccountProblem)
-            ThemeManager.resolveAttribute(R.attr.primaryText, context) else
-            primaryTextColor(),
+        iconTintColorResource = if (hasAccountProblem) {
+            ThemeManager.resolveAttribute(R.attr.syncDisconnected, context)
+        } else {
+            primaryTextColor()
+        },
+        textColorResource = if (hasAccountProblem) {
+            ThemeManager.resolveAttribute(R.attr.textPrimary, context)
+        } else {
+            primaryTextColor()
+        },
         highlight = BrowserMenuHighlight.HighPriority(
             endImageResource = R.drawable.ic_sync_disconnected,
             backgroundTint = context.getColorFromAttr(R.attr.syncDisconnectedBackground),
@@ -399,7 +403,7 @@ open class DefaultToolbarMenu(
 
     @ColorRes
     @VisibleForTesting
-    internal fun primaryTextColor() = ThemeManager.resolveAttribute(R.attr.primaryText, context)
+    internal fun primaryTextColor() = ThemeManager.resolveAttribute(R.attr.textPrimary, context)
 
     @ColorRes
     @VisibleForTesting

@@ -45,6 +45,8 @@
     <string name="preferences_nimbus_use_preview_collection">Use Nimbus Preview Collection (requires restart)</string>
     <!-- Label for enabling the Task Continuity feature -->
     <string name="preferences_debug_settings_task_continuity" translatable="false">Enable Task Continuity</string>
+    <!-- Label for enabling the Unified Search feature -->
+    <string name="preferences_debug_settings_unified_search" translatable="false">Enable Unified Search</string>
 
     <!-- A secret menu option in the tabs tray for making a tab inactive for testing. -->
     <string name="inactive_tabs_menu_item">Make inactive</string>
@@ -54,22 +56,6 @@
 
     <!-- Name of the application for about page -->
     <string name="daylight_app_name" translatable="false">Firefox Daylight</string>
-
-    <!-- MP Migration -->
-    <string name="mp_homescreen_tip_title">Looking for your logins?</string>
-    <string name="mp_homescreen_tip_message">If you had a master password before Firefox updated, you’ll need to enter it to transfer your saved logins.</string>
-    <string name="mp_homescreen_button">Enter master password</string>
-    <string name="mp_dialog_title_recovery_transfer_saved_logins">Transfer saved logins</string>
-    <string name="mp_dialog_message_recovery_transfer_saved_logins">Enter your previous master password.</string>
-    <string name="mp_dialog_positive_transfer_saved_logins">Continue and transfer</string>
-    <string name="mp_dialog_negative_transfer_saved_logins">Cancel</string>
-    <string name="mp_dialog_error_transfer_saved_logins">Invalid password</string>
-    <string name="mp_dialog_title_transfer_success">Transfer successful</string>
-    <string name="mp_dialog_message_transfer_success">Your saved logins have been transferred to Firefox.</string>
-    <string name="mp_dialog_positive_transfer_success">View saved logins</string>
-    <string name="mp_dialog_close_transfer">Close</string>
-    <string name="mp_dialog_title_transfer_failure">Transfer failed</string>
-    <string name="mp_dialog_message_transfer_failure">An unknown error occurred and logins could not be transferred.</string>
 
     <!-- Secret debug info strings -->
     <string name="debug_info_region_home" translatable="false">Home region</string>

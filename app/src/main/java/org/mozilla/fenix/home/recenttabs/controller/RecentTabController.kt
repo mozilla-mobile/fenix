@@ -9,12 +9,16 @@ import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.navigation.NavController
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.tabs.TabsUseCases.SelectTabUseCase
+import mozilla.components.service.glean.private.NoExtras
+import org.mozilla.fenix.GleanMetrics.SearchTerms
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.ext.inProgressMediaTab
 import org.mozilla.fenix.home.HomeFragmentDirections
+import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
+import org.mozilla.fenix.GleanMetrics.RecentTabs as RecentTabs
 
 /**
  * An interface that handles the view manipulation of the recent tabs in the Home screen.
@@ -35,6 +39,11 @@ interface RecentTabController {
      * @see [RecentTabInteractor.onRecentTabShowAllClicked]
      */
     fun handleRecentTabShowAllClicked()
+
+    /**
+     * @see [RecentTabInteractor.onRemoveRecentTab]
+     */
+    fun handleRecentTabRemoved(tab: RecentTab.Tab)
 }
 
 /**
@@ -46,15 +55,15 @@ interface RecentTabController {
 class DefaultRecentTabsController(
     private val selectTabUseCase: SelectTabUseCase,
     private val navController: NavController,
-    private val metrics: MetricController,
-    private val store: BrowserStore
+    private val store: BrowserStore,
+    private val appStore: AppStore,
 ) : RecentTabController {
 
     override fun handleRecentTabClicked(tabId: String) {
         if (tabId == store.state.inProgressMediaTab?.id) {
-            metrics.track(Event.OpenInProgressMediaTab)
+            RecentTabs.inProgressMediaTabOpened.record(NoExtras())
         } else {
-            metrics.track(Event.OpenRecentTab)
+            RecentTabs.recentTabOpened.record(NoExtras())
         }
 
         selectTabUseCase.invoke(tabId)
@@ -63,17 +72,21 @@ class DefaultRecentTabsController(
 
     override fun handleRecentTabShowAllClicked() {
         dismissSearchDialogIfDisplayed()
-        metrics.track(Event.ShowAllRecentTabs)
+        RecentTabs.showAllClicked.record(NoExtras())
         navController.navigate(HomeFragmentDirections.actionGlobalTabsTrayFragment())
     }
 
     override fun handleRecentSearchGroupClicked(tabId: String) {
-        metrics.track(Event.JumpBackInGroupTapped)
+        SearchTerms.jumpBackInGroupTapped.record(NoExtras())
         navController.navigate(
             HomeFragmentDirections.actionGlobalTabsTrayFragment(
                 focusGroupTabId = tabId
             )
         )
+    }
+
+    override fun handleRecentTabRemoved(tab: RecentTab.Tab) {
+        appStore.dispatch(AppAction.RemoveRecentTab(tab))
     }
 
     @VisibleForTesting(otherwise = PRIVATE)

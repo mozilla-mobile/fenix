@@ -40,8 +40,8 @@ abstract class LibraryPageFragment<T> : Fragment() {
         super.onDetach()
         context?.let {
             activity?.findViewById<Toolbar>(R.id.navigationToolbar)?.setToolbarColors(
-                it.getColorFromAttr(R.attr.primaryText),
-                it.getColorFromAttr(R.attr.foundation)
+                it.getColorFromAttr(R.attr.textPrimary),
+                it.getColorFromAttr(R.attr.layer1)
             )
         }
     }

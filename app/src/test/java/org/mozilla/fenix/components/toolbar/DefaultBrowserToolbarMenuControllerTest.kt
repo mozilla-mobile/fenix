@@ -43,16 +43,25 @@ import mozilla.components.feature.top.sites.DefaultTopSitesStorage
 import mozilla.components.feature.top.sites.PinnedSiteStorage
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.feature.top.sites.TopSitesUseCases
+import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.test.ext.joinBlocking
+import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.Collections
+import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.ExperimentsDefaultBrowser
+import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
@@ -63,7 +72,6 @@ import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.accounts.AccountState
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.directionsEq
@@ -77,6 +85,8 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
+    @get:Rule
+    val gleanTestRule = GleanTestRule(testContext)
 
     @MockK private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @RelaxedMockK private lateinit var activity: HomeActivity
@@ -163,9 +173,15 @@ class DefaultBrowserToolbarMenuControllerTest {
                 bookmarkTappedInvoked = true
             }
         )
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARK)) }
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("bookmark", snapshot.single().extra?.getValue("item"))
+
         assertTrue(bookmarkTappedInvoked)
     }
 
@@ -191,9 +207,15 @@ class DefaultBrowserToolbarMenuControllerTest {
                 bookmarkTappedInvoked = true
             }
         )
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARK)) }
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("bookmark", snapshot.single().extra?.getValue("item"))
+
         assertTrue(bookmarkTappedInvoked)
     }
 
@@ -221,13 +243,15 @@ class DefaultBrowserToolbarMenuControllerTest {
     @Test
     fun `WHEN reader mode menu item is pressed THEN handle appearance change`() = runBlockingTest {
         val item = ToolbarMenu.Item.CustomizeReaderView
+        assertFalse(ReaderMode.appearance.testHasValue())
 
         val controller = createController(scope = this, store = browserStore)
 
         controller.handleToolbarItemInteraction(item)
 
         verify { readerModeController.showControls() }
-        verify { metrics.track(Event.ReaderModeAppearanceOpened) }
+        assertTrue(ReaderMode.appearance.testHasValue())
+        assertNull(ReaderMode.appearance.testGetValue().single().extra)
     }
 
     @Test
@@ -247,9 +271,15 @@ class DefaultBrowserToolbarMenuControllerTest {
         val item = ToolbarMenu.Item.Back(false)
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BACK)) }
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("back", snapshot.single().extra?.getValue("item"))
+
         verify { sessionUseCases.goBack(browserStore.state.selectedTabId!!) }
     }
 
@@ -258,11 +288,16 @@ class DefaultBrowserToolbarMenuControllerTest {
         val item = ToolbarMenu.Item.Back(true)
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("back", snapshot.single().extra?.getValue("item"))
         val directions = BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(null)
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BACK)) }
         verify { navController.navigate(directions) }
     }
 
@@ -271,9 +306,15 @@ class DefaultBrowserToolbarMenuControllerTest {
         val item = ToolbarMenu.Item.Forward(false)
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.FORWARD)) }
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("forward", snapshot.single().extra?.getValue("item"))
+
         verify { sessionUseCases.goForward(selectedTab.id) }
     }
 
@@ -282,11 +323,17 @@ class DefaultBrowserToolbarMenuControllerTest {
         val item = ToolbarMenu.Item.Forward(true)
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
+
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("forward", snapshot.single().extra?.getValue("item"))
 
         val directions = BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(null)
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.FORWARD)) }
         verify { navController.navigate(directions) }
     }
 
@@ -295,9 +342,15 @@ class DefaultBrowserToolbarMenuControllerTest {
         val item = ToolbarMenu.Item.Reload(false)
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.RELOAD)) }
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("reload", snapshot.single().extra?.getValue("item"))
+
         verify { sessionUseCases.reload(selectedTab.id) }
     }
 
@@ -306,9 +359,15 @@ class DefaultBrowserToolbarMenuControllerTest {
         val item = ToolbarMenu.Item.Reload(true)
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.RELOAD)) }
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("reload", snapshot.single().extra?.getValue("item"))
+
         verify {
             sessionUseCases.reload(
                 selectedTab.id,
@@ -322,9 +381,15 @@ class DefaultBrowserToolbarMenuControllerTest {
         val item = ToolbarMenu.Item.Stop
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.STOP)) }
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("stop", snapshot.single().extra?.getValue("item"))
+
         verify { sessionUseCases.stopLoading(selectedTab.id) }
     }
 
@@ -333,11 +398,16 @@ class DefaultBrowserToolbarMenuControllerTest {
         val item = ToolbarMenu.Item.Settings
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("settings", snapshot.single().extra?.getValue("item"))
         val directions = BrowserFragmentDirections.actionBrowserFragmentToSettingsFragment()
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SETTINGS)) }
         verify { navController.navigate(directions, null) }
     }
 
@@ -346,11 +416,16 @@ class DefaultBrowserToolbarMenuControllerTest {
         val item = ToolbarMenu.Item.Bookmarks
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("bookmarks", snapshot.single().extra?.getValue("item"))
         val directions = BrowserFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id)
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.BOOKMARKS)) }
         verify { navController.navigate(directions, null) }
     }
 
@@ -359,11 +434,16 @@ class DefaultBrowserToolbarMenuControllerTest {
         val item = ToolbarMenu.Item.History
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("history", snapshot.single().extra?.getValue("item"))
         val directions = BrowserFragmentDirections.actionGlobalHistoryFragment()
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.HISTORY)) }
         verify { navController.navigate(directions, null) }
     }
 
@@ -376,9 +456,15 @@ class DefaultBrowserToolbarMenuControllerTest {
         every { sessionUseCases.requestDesktopSite } returns requestDesktopSiteUseCase
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.DESKTOP_VIEW_ON)) }
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("desktop_view_on", snapshot.single().extra?.getValue("item"))
+
         verify {
             requestDesktopSiteUseCase.invoke(
                 true,
@@ -396,9 +482,15 @@ class DefaultBrowserToolbarMenuControllerTest {
         every { sessionUseCases.requestDesktopSite } returns requestDesktopSiteUseCase
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.DESKTOP_VIEW_OFF)) }
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("desktop_view_off", snapshot.single().extra?.getValue("item"))
+
         verify {
             requestDesktopSiteUseCase.invoke(
                 false,
@@ -408,25 +500,31 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN Add To Top Sites menu item is pressed THEN add site AND show snackbar`() = runBlockingTest {
+    fun `WHEN add to shortcuts menu item is pressed THEN add site AND show snackbar`() = runBlockingTest {
         val item = ToolbarMenu.Item.AddToTopSites
         val addPinnedSiteUseCase: TopSitesUseCases.AddPinnedSiteUseCase = mockk(relaxed = true)
 
         every { topSitesUseCase.addPinnedSites } returns addPinnedSiteUseCase
         every {
-            swipeRefreshLayout.context.getString(R.string.snackbar_added_to_top_sites)
-        } returns "Added to top sites!"
+            swipeRefreshLayout.context.getString(R.string.snackbar_added_to_shortcuts)
+        } returns "Added to shortcuts!"
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("add_to_top_sites", snapshot.single().extra?.getValue("item"))
+
         verify { addPinnedSiteUseCase.invoke(selectedTab.content.title, selectedTab.content.url) }
-        verify { snackbar.setText("Added to top sites!") }
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.ADD_TO_TOP_SITES)) }
+        verify { snackbar.setText("Added to shortcuts!") }
     }
 
     @Test
-    fun `GIVEN a top site page is open WHEN Remove from top sites is pressed THEN show snackbar`() = runBlockingTest {
+    fun `GIVEN a shortcut page is open WHEN remove from shortcuts is pressed THEN show snackbar`() = runBlockingTest {
         val snackbarMessage = "Site removed"
         val item = ToolbarMenu.Item.RemoveFromTopSites
         val removePinnedSiteUseCase: TopSitesUseCases.RemoveTopSiteUseCase =
@@ -440,10 +538,16 @@ class DefaultBrowserToolbarMenuControllerTest {
         } returns snackbarMessage
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("remove_from_top_sites", snapshot.single().extra?.getValue("item"))
+
         verify { snackbar.setText(snackbarMessage) }
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.REMOVE_FROM_TOP_SITES)) }
         verify { removePinnedSiteUseCase.invoke(topSite) }
     }
 
@@ -452,9 +556,14 @@ class DefaultBrowserToolbarMenuControllerTest {
         val item = ToolbarMenu.Item.AddonsManager
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.ADDONS_MANAGER)) }
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("addons_manager", snapshot.single().extra?.getValue("item"))
     }
 
     @Test
@@ -462,9 +571,14 @@ class DefaultBrowserToolbarMenuControllerTest {
         val item = ToolbarMenu.Item.AddToHomeScreen
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.ADD_TO_HOMESCREEN)) }
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("add_to_homescreen", snapshot.single().extra?.getValue("item"))
     }
 
     @Test
@@ -479,9 +593,15 @@ class DefaultBrowserToolbarMenuControllerTest {
         )
         browserStore = BrowserStore(BrowserState(tabs = listOf(regularTab), selectedTabId = regularTab.id))
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SHARE)) }
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("share", snapshot.single().extra?.getValue("item"))
+
         verify {
             navController.navigate(
                 directionsEq(
@@ -506,9 +626,15 @@ class DefaultBrowserToolbarMenuControllerTest {
         )
         browserStore = BrowserStore(BrowserState(tabs = listOf(readerTab), selectedTabId = readerTab.id))
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SHARE)) }
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("share", snapshot.single().extra?.getValue("item"))
+
         verify {
             navController.navigate(
                 directionsEq(
@@ -544,18 +670,25 @@ class DefaultBrowserToolbarMenuControllerTest {
         every { tabCollectionStorage.cachedTabCollections } returns cachedTabCollections
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
-        verify {
-            metrics.track(
-                Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SAVE_TO_COLLECTION)
-            )
-        }
-        verify {
-            metrics.track(
-                Event.CollectionSaveButtonPressed(DefaultBrowserToolbarController.TELEMETRY_BROWSER_IDENTIFIER)
-            )
-        }
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("save_to_collection", snapshot.single().extra?.getValue("item"))
+
+        assertTrue(Collections.saveButton.testHasValue())
+        val recordedEvents = Collections.saveButton.testGetValue()
+        assertEquals(1, recordedEvents.size)
+        val eventExtra = recordedEvents.single().extra
+        assertNotNull(eventExtra)
+        assertTrue(eventExtra!!.containsKey("from_screen"))
+        assertEquals(
+            DefaultBrowserToolbarMenuController.TELEMETRY_BROWSER_IDENTIFIER,
+            eventExtra["from_screen"]
+        )
 
         val directions = BrowserFragmentDirections.actionGlobalCollectionCreationFragment(
             saveCollectionStep = SaveCollectionStep.SelectCollection,
@@ -572,16 +705,25 @@ class DefaultBrowserToolbarMenuControllerTest {
         every { tabCollectionStorage.cachedTabCollections } returns cachedTabCollectionsEmpty
 
         val controller = createController(scope = this, store = browserStore)
+        assertFalse(Events.browserMenuAction.testHasValue())
+
         controller.handleToolbarItemInteraction(item)
 
-        verify { metrics.track(Event.BrowserMenuItemTapped(Event.BrowserMenuItemTapped.Item.SAVE_TO_COLLECTION)) }
-        verify {
-            metrics.track(
-                Event.CollectionSaveButtonPressed(
-                    DefaultBrowserToolbarController.TELEMETRY_BROWSER_IDENTIFIER
-                )
-            )
-        }
+        assertTrue(Events.browserMenuAction.testHasValue())
+        val snapshot = Events.browserMenuAction.testGetValue()
+        assertEquals(1, snapshot.size)
+        assertEquals("save_to_collection", snapshot.single().extra?.getValue("item"))
+
+        assertTrue(Collections.saveButton.testHasValue())
+        val recordedEvents = Collections.saveButton.testGetValue()
+        assertEquals(1, recordedEvents.size)
+        val eventExtra = recordedEvents.single().extra
+        assertNotNull(eventExtra)
+        assertTrue(eventExtra!!.containsKey("from_screen"))
+        assertEquals(
+            DefaultBrowserToolbarMenuController.TELEMETRY_BROWSER_IDENTIFIER,
+            eventExtra["from_screen"]
+        )
         val directions = BrowserFragmentDirections.actionGlobalCollectionCreationFragment(
             saveCollectionStep = SaveCollectionStep.NameCollection,
             tabIds = arrayOf(selectedTab.id),
@@ -640,6 +782,24 @@ class DefaultBrowserToolbarMenuControllerTest {
         controller.handleToolbarItemInteraction(item)
 
         verify { navController.navigate(turnOnSyncDirections, null) }
+    }
+
+    @Test
+    fun `GIVEN the default browser experiment WHEN SetDefaultBrowser menu item is pressed THEN proper metrics are recorded`() = runBlockingTest {
+        val item = ToolbarMenu.Item.SetDefaultBrowser
+
+        val store: BrowserStore = mockk()
+
+        val controller = createController(
+            scope = this, store = store,
+            bookmarkTapped = { _, _ -> }
+        )
+
+        assertFalse(ExperimentsDefaultBrowser.toolbarMenuClicked.testHasValue())
+
+        controller.handleToolbarItemInteraction(item)
+
+        assertTrue(ExperimentsDefaultBrowser.toolbarMenuClicked.testHasValue())
     }
 
     @Suppress("LongParameterList")
