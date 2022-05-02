@@ -7,11 +7,13 @@ package org.mozilla.fenix.home.intent
 import android.content.Intent
 import androidx.navigation.NavController
 import androidx.navigation.navOptions
+import mozilla.components.service.glean.private.NoExtras
+import org.mozilla.fenix.GleanMetrics.SearchWidget
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.nav
 
 /**
@@ -27,13 +29,13 @@ class StartSearchIntentProcessor(
         return if (event != null) {
             val source = when (event) {
                 SEARCH_WIDGET -> {
-                    metrics.track(Event.SearchWidgetNewTabPressed)
-                    Event.PerformedSearch.SearchAccessPoint.WIDGET
+                    SearchWidget.newTabButton.record(NoExtras())
+                    MetricsUtils.Source.WIDGET
                 }
                 STATIC_SHORTCUT_NEW_TAB,
                 STATIC_SHORTCUT_NEW_PRIVATE_TAB,
                 PRIVATE_BROWSING_PINNED_SHORTCUT -> {
-                    Event.PerformedSearch.SearchAccessPoint.SHORTCUT
+                    MetricsUtils.Source.SHORTCUT
                 }
                 else -> null
             }

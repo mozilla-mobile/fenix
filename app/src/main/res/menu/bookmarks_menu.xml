@@ -5,16 +5,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/bookmark_search"
+        android:icon="@drawable/mozac_ic_search"
+        android:title="@string/bookmark_search"
+        app:iconTint="?attr/textPrimary"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/add_bookmark_folder"
         android:icon="@drawable/ic_folder_new"
-        app:iconTint="?primaryText"
+        app:iconTint="?attr/textPrimary"
         android:title="@string/bookmark_add_folder"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/close_bookmarks"
-        android:icon="@drawable/mozac_ic_close"
-        app:iconTint="?primaryText"
+        android:icon="@drawable/ic_close"
+        app:iconTint="?attr/textPrimary"
         android:title="@string/content_description_close_button"
         app:showAsAction="ifRoom" />
 </menu>

@@ -6,32 +6,33 @@ package org.mozilla.fenix.home.topsites
 
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import mozilla.components.feature.top.sites.TopSite
+import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.ComponentTopSitesPagerBinding
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.sessioncontrol.AdapterItem
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
 
 class TopSitePagerViewHolder(
     view: View,
+    viewLifecycleOwner: LifecycleOwner,
     interactor: TopSiteInteractor
 ) : RecyclerView.ViewHolder(view) {
 
     private val binding = ComponentTopSitesPagerBinding.bind(view)
-    private val topSitesPagerAdapter = TopSitesPagerAdapter(interactor)
+    private val topSitesPagerAdapter = TopSitesPagerAdapter(viewLifecycleOwner, interactor)
     private val pageIndicator = binding.pageIndicator
     private var currentPage = 0
 
     private val topSitesPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             if (currentPage != position) {
-                pageIndicator.context.components.analytics.metrics.track(
-                    Event.TopSiteSwipeCarousel(
-                        position
+                TopSites.swipeCarousel.record(
+                    TopSites.SwipeCarouselExtra(
+                        position.toString()
                     )
                 )
             }

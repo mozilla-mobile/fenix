@@ -39,7 +39,7 @@ class CollectionCreationBottomBarView(
 
         iconButton.apply {
             val drawable = context.getDrawableWithTint(
-                R.drawable.mozac_ic_close,
+                R.drawable.ic_close,
                 ContextCompat.getColor(context, R.color.photonWhite)
             )
             setImageDrawable(drawable)
@@ -53,9 +53,11 @@ class CollectionCreationBottomBarView(
                 context.getString(R.string.create_collection_save_to_collection_empty)
             } else {
                 context.getString(
-                    if (state.selectedTabs.size == 1)
-                        R.string.create_collection_save_to_collection_tab_selected else
-                        R.string.create_collection_save_to_collection_tabs_selected,
+                    if (state.selectedTabs.size == 1) {
+                        R.string.create_collection_save_to_collection_tab_selected
+                    } else {
+                        R.string.create_collection_save_to_collection_tabs_selected
+                    },
                     state.selectedTabs.size
                 )
             }
@@ -84,7 +86,7 @@ class CollectionCreationBottomBarView(
 
         iconButton.apply {
             val drawable = context.getDrawableWithTint(
-                R.drawable.mozac_ic_new,
+                R.drawable.ic_new,
                 ContextCompat.getColor(context, R.color.photonWhite)
             )
             setImageDrawable(drawable)

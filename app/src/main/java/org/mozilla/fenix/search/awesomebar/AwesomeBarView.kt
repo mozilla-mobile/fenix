@@ -93,7 +93,7 @@ class AwesomeBarView(
 
     init {
         val components = activity.components
-        val primaryTextColor = activity.getColorFromAttr(R.attr.primaryText)
+        val primaryTextColor = activity.getColorFromAttr(R.attr.textPrimary)
 
         val engineForSpeculativeConnects = when (activity.browsingModeManager.mode) {
             BrowsingMode.Normal -> components.core.engine
@@ -148,7 +148,7 @@ class AwesomeBarView(
                 )
             )
 
-        val searchBitmap = getDrawable(activity, R.drawable.mozac_ic_search)!!.apply {
+        val searchBitmap = getDrawable(activity, R.drawable.ic_search)!!.apply {
             colorFilter = createBlendModeColorFilterCompat(primaryTextColor, SRC_IN)
         }.toBitmap()
 
@@ -333,9 +333,9 @@ class AwesomeBarView(
     private fun getSuggestionProviderForEngine(engine: SearchEngine): List<AwesomeBar.SuggestionProvider> {
         return searchSuggestionProviderMap.getOrPut(engine) {
             val components = activity.components
-            val primaryTextColor = activity.getColorFromAttr(R.attr.primaryText)
+            val primaryTextColor = activity.getColorFromAttr(R.attr.textPrimary)
 
-            val searchBitmap = getDrawable(activity, R.drawable.mozac_ic_search)!!.apply {
+            val searchBitmap = getDrawable(activity, R.drawable.ic_search)!!.apply {
                 colorFilter = createBlendModeColorFilterCompat(primaryTextColor, SRC_IN)
             }.toBitmap()
 

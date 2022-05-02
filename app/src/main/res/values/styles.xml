@@ -14,7 +14,7 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowBackground">@color/fx_mobile_layer_color_1</item>
         <item name="android:colorEdgeEffect">@color/accent_normal_theme</item>
-        <item name="android:colorAccent">@color/primary_text_normal_theme</item>
+        <item name="android:colorAccent">@color/fx_mobile_text_color_primary</item>
         <item name="android:textColorPrimary">@color/state_list_text_color</item>
         <item name="android:textColorSecondary">@color/secondary_state_list_text_color</item>
         <item name="alertDialogStyle">@style/DialogStyleNormal</item>
@@ -25,17 +25,56 @@
         <item name="android:textColorLink">@color/fx_mobile_text_color_accent</item>
 
         <item name="mozacInputLayoutErrorTextColor"
-            tools:ignore="UnusedResources">@color/destructive_normal_theme</item>
+            tools:ignore="UnusedResources">@color/fx_mobile_text_color_warning</item>
         <item name="mozacInputLayoutErrorIconColor"
-            tools:ignore="UnusedResources">@color/destructive_normal_theme</item>
+            tools:ignore="UnusedResources">@color/fx_mobile_text_color_warning</item>
         <item name="mozacLoginSelectHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectPromptHeaderTextStyle</item>
         <item name="mozacSelectCreditCardHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectPromptHeaderTextStyle</item>
 
         <!-- Design system color attributes -->
+
+        <!-- Layers -->
+        <!-- Default Screen background, Frontlayer background, App Bar Top, App Bar Bottom, Frontlayer header -->
+        <item name="layer1">@color/fx_mobile_layer_color_1</item>
+        <!-- Card background, Menu background, Dialog, Banner -->
+        <item name="layer2">@color/fx_mobile_layer_color_2</item>
         <!-- Search -->
         <item name="layer3">@color/fx_mobile_layer_color_3</item>
+        <!-- Selected tab -->
+        <item name="layerNonOpaque">@color/fx_mobile_layer_color_accent_nonopaque</item>
+        <item name="scrim">@color/fx_mobile_layer_color_scrim</item>
+
+        <!-- Action -->
+        <!-- Primary button, Snackbar, Floating action button, Chip selected -->
+        <item name="actionPrimary">@color/fx_mobile_action_color_primary</item>
+
+        <!-- Text -->
+        <!-- Primary text -->
+        <item name="textPrimary">@color/fx_mobile_text_color_primary</item>
+        <!-- Secondary text -->
+        <item name="textSecondary">@color/fx_mobile_text_color_secondary</item>
+        <!-- Disabled text -->
+        <item name="textDisabled">@color/fx_mobile_text_color_disabled</item>
+        <!-- Warning text -->
+        <item name="textWarning">@color/fx_mobile_text_color_warning</item>
         <!-- Small heading, Text link -->
         <item name="textAccent">@color/fx_mobile_text_color_accent</item>
+        <!-- Text Inverted/On Color -->
+        <item name="textOnColorPrimary">@color/fx_mobile_text_color_oncolor_primary</item>
+        <!-- Action Primary text -->
+        <item name="textActionPrimary">@color/fx_mobile_text_color_action_primary</item>
+
+        <!-- Icon -->
+        <!-- Secondary icon -->
+        <item name="iconSecondary">@color/fx_mobile_icon_color_secondary</item>
+        <!-- Active tab -->
+        <item name="iconActive">@color/fx_mobile_icon_color_active</item>
+        <!-- Icon inverted (on color) -->
+        <item name="iconOnColor">@color/fx_mobile_icon_color_oncolor</item>
+
+        <!-- Border -->
+        <!-- Default, Divider, Dotted -->
+        <item name="borderPrimary">@color/fx_mobile_border_color_primary</item>
 
         <!-- Active thumb color & Active track color (30% transparency) -->
         <item name="colorControlActivated">@color/accent_high_contrast_normal_theme</item>
@@ -44,35 +83,21 @@
         <!-- Inactive track color(30% transparency) -->
         <item name="android:colorForeground">@color/toggle_off_track_normal_theme</item>
         <!-- sets the toolbar back button color, radio buttons / unselected checkboxes -->
-        <item name="colorControlNormal">@color/primary_text_normal_theme</item>
+        <item name="colorControlNormal">@color/fx_mobile_text_color_primary</item>
 
         <!-- Updated color attributes -->
-        <item name="primaryText">@color/primary_text_normal_theme</item>
-        <item name="secondaryText">@color/secondary_text_normal_theme</item>
-        <item name="contrastText">@color/contrast_text_normal_theme</item>
         <item name="accent">@color/accent_normal_theme</item>
         <item name="accentBright">@color/photonViolet70</item>
         <item name="accentHighContrast">@color/accent_high_contrast_normal_theme</item>
-        <item name="foundation">@color/fx_mobile_layer_color_1</item>
-        <item name="above">@color/fx_mobile_layer_color_2</item>
-        <item name="inset">@color/inset_normal_theme</item>
-        <item name="tabRing">@color/tab_ring_normal_theme</item>
         <item name="neutral">@color/neutral_normal_theme</item>
         <item name="neutralFaded">@color/neutral_faded_normal_theme</item>
-        <item name="destructive">@color/destructive_normal_theme</item>
-        <item name="disabled">@color/disabled_normal_theme</item>
-        <item name="scrimStart">@color/fx_mobile_layer_color_scrim_start</item>
-        <item name="scrimEnd">@color/fx_mobile_layer_color_scrim_end</item>
-        <item name="snackbar">@color/fx_mobile_action_color_primary</item>
         <item name="accentUsedOnDarkBackground">@color/fx_mobile_text_color_accent</item>
         <item name="toolbarStartGradient">@color/fx_mobile_layer_color_1</item>
         <item name="toolbarCenterGradient">@color/fx_mobile_layer_color_1</item>
         <item name="toolbarEndGradient">@color/fx_mobile_layer_color_1</item>
-        <item name="toolbarDivider">@color/toolbar_divider_color_normal_theme</item>
         <item name="fillLinkFromClipboard">@color/fill_link_from_clipboard_normal_theme</item>
         <item name="syncDisconnected">@color/sync_disconnected_icon_fill_normal_theme</item>
         <item name="syncDisconnectedBackground">@color/sync_disconnected_background_normal_theme</item>
-        <item name="swipeDeleteBackground">@color/swipe_delete_background_normal_theme</item>
         <item name="onboardingDarkGradientStartBackground">@color/photonViolet70</item>
         <item name="onboardingDarkGradientEndBackground">@color/photonViolet40</item>
         <item name="onboardingSelected">@color/onboarding_illustration_selected_normal_theme</item>
@@ -84,20 +109,12 @@
         <item name="preferenceSectionHeader">@color/fx_mobile_text_color_accent</item>
         <item name="selectPromptHeaderTextColor">@color/fx_mobile_text_color_accent</item>
         <item name="menuItemButtonTintColor">@color/fx_mobile_text_color_accent</item>
-        <item name="recentlyUsedShareMenu">@color/recently_used_share_theme</item>
 
         <!-- Shared widget colors -->
-        <item name="mozac_primary_text_color">@color/primary_text_normal_theme</item>
-        <item name="mozac_caption_text_color">@color/caption_text_normal_theme</item>
+        <item name="mozac_primary_text_color">@color/fx_mobile_text_color_primary</item>
+        <item name="mozac_caption_text_color">@color/fx_mobile_text_color_secondary</item>
         <item name="mozac_widget_favicon_background_color">@color/fx_mobile_layer_color_2</item>
         <item name="mozac_widget_favicon_border_color">@color/fx_mobile_border_color_primary</item>
-
-        <item name="tabTrayItemMediaBackground">@color/accent_normal_theme</item>
-        <item name="tabTrayThumbnailItemBackground">@color/tab_tray_item_thumbnail_background_normal_theme</item>
-        <item name="tabTrayThumbnailIcon">@color/tab_tray_item_thumbnail_icon_normal_theme</item>
-
-        <!-- Tab History -->
-        <item name="tabHistoryItemSelectedBackground">@color/tab_history_item_selected_background_normal_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_normal</item>
@@ -105,9 +122,9 @@
         <item name="bottomBarBackground">@drawable/home_bottom_bar_background</item>
         <item name="bottomBarBackgroundTop">@drawable/home_bottom_bar_background_top</item>
         <item name="privateBrowsingButtonBackground">@android:color/transparent</item>
-        <item name="privateBrowsingButtonAccent">@color/primary_text_normal_theme</item>
+        <item name="privateBrowsingButtonAccent">@color/fx_mobile_text_color_primary</item>
 
-        <item name="tabCounterTintColor">?primaryText</item>
+        <item name="tabCounterTintColor">?attr/textPrimary</item>
     </style>
 
     <!-- A theme derived from the normal activity theme, but to look and behave like a dialog -->
@@ -140,14 +157,14 @@
     <style name="NormalTheme" parent="NormalThemeBase" />
 
     <style name="BaseDialogStyle" parent="Theme.MaterialComponents.Dialog.Alert">
-        <item name="colorControlNormal">?primaryText</item>
-        <item name="textColorAlertDialogListItem">?primaryText</item>
+        <item name="colorControlNormal">?attr/textPrimary</item>
+        <item name="textColorAlertDialogListItem">?attr/textPrimary</item>
         <item name="android:titleTextStyle">@style/HeaderTextStyle</item>
         <item name="android:windowTitleStyle">@style/HeaderTextStyle</item>
         <item name="dialogCornerRadius">@dimen/tab_corner_radius</item>
-        <item name="android:colorBackground">?above</item>
+        <item name="android:colorBackground">?attr/layer2</item>
         <item name="colorAccent">?accent</item>
-        <item name="android:textColorPrimary">?primaryText</item>
+        <item name="android:textColorPrimary">?attr/textPrimary</item>
     </style>
 
     <style name="DialogStyleLight" parent="BaseDialogStyle">
@@ -192,7 +209,7 @@
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
         <item name="android:progressBarStyleHorizontal">@style/progressBarStyleHorizontal</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowBackground">@color/foundation_private_theme</item>
+        <item name="android:windowBackground">@color/fx_mobile_private_layer_color_1</item>
         <item name="android:colorEdgeEffect">@color/accent_private_theme</item>
         <item name="android:colorAccent">@color/fx_mobile_private_text_color_primary</item>
         <item name="colorControlActivated">@color/accent_high_contrast_private_theme</item>
@@ -205,17 +222,56 @@
         <item name="bottomSheetDialogTheme">@style/BottomSheetPrivate</item>
 
         <item name="mozacInputLayoutErrorTextColor"
-            tools:ignore="UnusedResources">@color/fx_mobile_private_text_color_warning_dark</item>
+            tools:ignore="UnusedResources">@color/fx_mobile_private_text_color_warning</item>
         <item name="mozacInputLayoutErrorIconColor"
-            tools:ignore="UnusedResources">@color/fx_mobile_private_text_color_warning_dark</item>
+            tools:ignore="UnusedResources">@color/fx_mobile_private_text_color_warning</item>
         <item name="mozacLoginSelectHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectPromptHeaderTextStyle</item>
         <item name="mozacSelectCreditCardHeaderTextStyle" tools:ignore="UnusedResources">@style/SelectPromptHeaderTextStyle</item>
 
         <!-- Design system color attributes -->
+
+        <!-- Layers -->
+        <!-- Default Screen background, Frontlayer background, App Bar Top, App Bar Bottom, Frontlayer header -->
+        <item name="layer1">@color/fx_mobile_private_layer_color_1</item>
+        <!-- Card background, Menu background, Dialog, Banner -->
+        <item name="layer2">@color/fx_mobile_private_layer_color_2</item>
         <!-- Search -->
         <item name="layer3">@color/fx_mobile_private_layer_color_3</item>
+        <!-- Selected tab -->
+        <item name="layerNonOpaque">@color/fx_mobile_private_layer_color_accent_nonopaque</item>
+        <item name="scrim">@color/fx_mobile_private_layer_color_scrim</item>
+
+        <!-- Action -->
+        <!-- Primary button, Snackbar, Floating action button, Chip selected -->
+        <item name="actionPrimary">@color/fx_mobile_private_action_color_primary</item>
+
+        <!-- Text -->
+        <!-- Primary text -->
+        <item name="textPrimary">@color/fx_mobile_private_text_color_primary</item>
+        <!-- Secondary text -->
+        <item name="textSecondary">@color/fx_mobile_private_text_color_secondary</item>
+        <!-- Disabled text -->
+        <item name="textDisabled">@color/fx_mobile_private_text_color_disabled</item>
+        <!-- Warning text -->
+        <item name="textWarning">@color/fx_mobile_private_text_color_warning</item>
         <!-- Small heading, Text link -->
         <item name="textAccent">@color/fx_mobile_private_text_color_accent</item>
+        <!-- Text Inverted/On Color -->
+        <item name="textOnColorPrimary">@color/fx_mobile_private_text_color_oncolor_primary</item>
+        <!-- Action Primary text -->
+        <item name="textActionPrimary">@color/fx_mobile_private_text_color_action_primary</item>
+
+        <!-- Icon -->
+        <!-- Secondary icon -->
+        <item name="iconSecondary">@color/fx_mobile_private_icon_color_secondary</item>
+        <!-- Active tab -->
+        <item name="iconActive">@color/fx_mobile_private_icon_color_active</item>
+        <!-- Icon inverted (on color) -->
+        <item name="iconOnColor">@color/fx_mobile_private_icon_color_oncolor</item>
+
+        <!-- Border -->
+        <!-- Default, Divider, Dotted -->
+        <item name="borderPrimary">@color/fx_mobile_private_border_color_primary</item>
 
         <!-- Inactive thumb color -->
         <item name="colorSwitchThumbNormal">@color/toggle_off_knob_dark_theme</item>
@@ -225,32 +281,18 @@
         <item name="colorControlNormal">@color/fx_mobile_private_text_color_primary</item>
 
         <!-- Updated color attributes -->
-        <item name="primaryText">@color/fx_mobile_private_text_color_primary</item>
-        <item name="secondaryText">@color/secondary_text_private_theme</item>
-        <item name="contrastText">@color/fx_mobile_private_text_color_primary</item>
         <item name="accent">@color/accent_private_theme</item>
         <item name="accentBright">@color/photonViolet70</item>
         <item name="accentHighContrast">@color/accent_high_contrast_private_theme</item>
-        <item name="foundation">@color/foundation_private_theme</item>
-        <item name="above">@color/fx_mobile_private_layer_color_1</item>
-        <item name="inset">@color/fx_mobile_private_layer_color_1</item>
-        <item name="tabRing">@color/tab_ring_private_theme</item>
         <item name="neutral">@color/neutral_private_theme</item>
         <item name="neutralFaded">@color/neutral_faded_private_theme</item>
-        <item name="destructive">@color/fx_mobile_private_text_color_warning_dark</item>
-        <item name="disabled">@color/fx_mobile_private_text_color_disabled</item>
-        <item name="scrimStart">@color/scrimStart_private_theme</item>
-        <item name="scrimEnd">@color/scrimEnd_private_theme</item>
-        <item name="snackbar">@color/snackbar_private_theme</item>
         <item name="accentUsedOnDarkBackground">@color/accent_high_contrast_private_theme</item>
-        <item name="toolbarStartGradient">@color/toolbar_start_gradient_private_theme</item>
-        <item name="toolbarCenterGradient">@color/toolbar_center_gradient_private_theme</item>
-        <item name="toolbarEndGradient">@color/toolbar_end_gradient_private_theme</item>
-        <item name="toolbarDivider">@color/toolbar_divider_color_private_theme</item>
+        <item name="toolbarStartGradient">@color/fx_mobile_private_layer_color_4_start</item>
+        <item name="toolbarCenterGradient">@color/fx_mobile_private_layer_color_4_center</item>
+        <item name="toolbarEndGradient">@color/fx_mobile_private_layer_color_4_end</item>
         <item name="fillLinkFromClipboard">@color/accent_high_contrast_private_theme</item>
         <item name="syncDisconnected">@color/sync_disconnected_icon_fill_private_theme</item>
         <item name="syncDisconnectedBackground">@color/sync_disconnected_background_private_theme</item>
-        <item name="swipeDeleteBackground">@color/swipe_delete_background_private_theme</item>
         <item name="onboardingDarkGradientStartBackground">@color/photonViolet60</item>
         <item name="onboardingDarkGradientEndBackground">@color/photonPurple50</item>
         <item name="onboardingSelected">@color/accent_private_theme</item>
@@ -265,17 +307,9 @@
 
         <!-- Shared widget colors -->
         <item name="mozac_primary_text_color">@color/fx_mobile_private_text_color_primary</item>
-        <item name="mozac_caption_text_color">@color/caption_text_private_theme</item>
+        <item name="mozac_caption_text_color">@color/fx_mobile_private_text_color_secondary</item>
         <item name="mozac_widget_favicon_background_color">@color/photonInk50</item>
         <item name="mozac_widget_favicon_border_color">@color/photonInk50</item>
-
-        <!-- Tab Tray -->
-        <item name="tabTrayItemMediaBackground">@color/tab_tray_item_media_background_private_theme</item>
-        <item name="tabTrayThumbnailItemBackground">@color/tab_tray_item_thumbnail_background_normal_theme</item>
-        <item name="tabTrayThumbnailIcon">@color/tab_tray_item_thumbnail_icon_normal_theme</item>
-
-        <!-- Tab History -->
-        <item name="tabHistoryItemSelectedBackground">@color/tab_tray_item_selected_background_dark_theme</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_private</item>
@@ -287,10 +321,10 @@
     </style>
 
     <style name="Mozac.Browser.Menu" parent="" tools:ignore="UnusedResources">
-        <item name="cardBackgroundColor">?above</item>
+        <item name="cardBackgroundColor">?attr/layer2</item>
     </style>
     <style name="Mozac.Browser.Menu2" parent="" tools:ignore="UnusedResources">
-        <item name="cardBackgroundColor">?above</item>
+        <item name="cardBackgroundColor">?attr/layer2</item>
     </style>
 
     <style name="PrivateTheme" parent="PrivateThemeBase" />
@@ -303,7 +337,7 @@
 
     <!-- UI button styling -->
     <style name="NeutralButton" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="iconTint">@color/button_text_color</item>
+        <item name="iconTint">@color/fx_mobile_icon_color_action_secondary</item>
         <item name="iconPadding">8dp</item>
         <item name="iconGravity">textStart</item>
         <item name="android:textAlignment">center</item>
@@ -312,9 +346,9 @@
         <item name="android:layout_height">48dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">false</item>
-        <item name="backgroundTint">@color/grey_button_color</item>
-        <item name="android:textColor">@color/button_text_color</item>
-        <item name="rippleColor">?secondaryText</item>
+        <item name="backgroundTint">@color/fx_mobile_action_color_secondary</item>
+        <item name="android:textColor">@color/fx_mobile_text_color_action_secondary</item>
+        <item name="rippleColor">?attr/textSecondary</item>
         <item name="android:letterSpacing">0</item>
         <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
@@ -323,18 +357,18 @@
     <style name="NeutralOnboardingButton" parent="NeutralButton">
         <item name="android:background">@drawable/onboarding_padded_background</item>
         <item name="backgroundTint">?neutralFaded</item>
-        <item name="android:textColor">?primaryText</item>
+        <item name="android:textColor">?attr/textPrimary</item>
     </style>
 
     <style name="DestructiveButton" parent="NeutralButton">
-        <item name="iconTint">@color/destructive_normal_theme</item>
-        <item name="android:textColor">@color/destructive_normal_theme</item>
+        <item name="iconTint">@color/fx_mobile_text_color_warning</item>
+        <item name="android:textColor">@color/fx_mobile_text_color_warning</item>
     </style>
 
     <style name="PositiveButton" parent="NeutralButton">
-        <item name="backgroundTint">?accent</item>
-        <item name="iconTint">?contrastText</item>
-        <item name="android:textColor">?contrastText</item>
+        <item name="backgroundTint">?actionPrimary</item>
+        <item name="iconTint">?iconOnColor</item>
+        <item name="android:textColor">?textActionPrimary</item>
     </style>
 
     <style name="search_pill" parent="Widget.AppCompat.Button.Borderless">
@@ -377,51 +411,51 @@
 
     <style name="HeaderTextStyle" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="android:textSize">18sp</item>
-        <item name="android:textColor">?primaryText</item>
+        <item name="android:textColor">?attr/textPrimary</item>
         <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
     <style name="Header20TextStyle" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:textColor">?primaryText</item>
+        <item name="android:textColor">?attr/textPrimary</item>
         <item name="android:textSize">20sp</item>
         <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
     <style name="Header16TextStyle" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:textColor">?primaryText</item>
+        <item name="android:textColor">?attr/textPrimary</item>
         <item name="android:textSize">16sp</item>
         <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
     <style name="Header14TextStyle" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="android:textColor">?primaryText</item>
+        <item name="android:textColor">?attr/textPrimary</item>
         <item name="android:textSize">14sp</item>
         <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
 
     <style name="Body14TextStyle" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="android:textColor">?primaryText</item>
+        <item name="android:textColor">?attr/textPrimary</item>
         <item name="android:textSize">14sp</item>
     </style>
 
     <style name="Body16TextStyle" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:textColor">?primaryText</item>
+        <item name="android:textColor">?attr/textPrimary</item>
     </style>
 
-    <style name="Body12TextStyle" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:textColor">?primaryText</item>
+    <style name="Body12TextStyle" parent="TextAppearance.MaterialComponents.Body1" tools:ignore="UnusedResources">
+        <item name="android:textColor">?attr/textPrimary</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textAllCaps">false</item>
     </style>
 
-    <style name="Button14TextStyle" parent="TextAppearance.MaterialComponents.Button">
+    <style name="Button14TextStyle" parent="TextAppearance.MaterialComponents.Button" tools:ignore="UnusedResources">
         <item name="android:textSize">14sp</item>
         <item name="fontFamily">@font/metropolis</item>
         <item name="android:textAllCaps">false</item>
     </style>
 
     <style name="Subtitle12TextStyle" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:textColor">?secondaryText</item>
+        <item name="android:textColor">?attr/textSecondary</item>
         <item name="android:textSize">12sp</item>
         <item name="fontFamily">@font/metropolis_semibold</item>
     </style>
@@ -432,7 +466,7 @@
     </style>
 
     <style name="ListItemTextStyle" parent="TextAppearance.MaterialComponents.Subtitle1">
-        <item name="android:textColor">?primaryText</item>
+        <item name="android:textColor">?attr/textPrimary</item>
     </style>
 
     <style name="progressBarStyleHorizontal" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
@@ -449,7 +483,7 @@
     </style>
 
     <style name="QuickSettingsSmallText">
-        <item name="android:textColor">?secondaryText</item>
+        <item name="android:textColor">?attr/textSecondary</item>
         <item name="android:textSize">12sp</item>
         <item name="android:paddingEnd">16dp</item>
         <item name="android:gravity">top</item>
@@ -467,7 +501,7 @@
 
     <style name="QuickSettingsLargeText.Icon">
         <item name="android:drawablePadding">8dp</item>
-        <item name="drawableEndCompat">@drawable/mozac_ic_arrowhead_right</item>
+        <item name="drawableEndCompat">@drawable/ic_arrowhead_right</item>
     </style>
 
     <style name="QuickSettingsText.Icon">
@@ -503,7 +537,7 @@
     </style>
 
     <style name="SearchClipboardTitleStyle" parent="SearchClipboardStyle">
-        <item name="android:textColor">?primaryText</item>
+        <item name="android:textColor">?attr/textPrimary</item>
         <item name="android:textSize">@dimen/search_fragment_clipboard_title_text_size</item>
     </style>
 
@@ -531,7 +565,7 @@
     <style name="ShareHeaderTextStyle">
         <item name="android:singleLine">true</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/photonDarkGrey10</item>
+        <item name="android:textColor">?attr/textSecondary</item>
         <item name="android:textSize">@dimen/share_header_text_size</item>
         <item name="android:textStyle">bold</item>
         <item name="fontFamily">@font/metropolis_semibold</item>
@@ -551,7 +585,7 @@
     </style>
 
     <style name="AboutHeaderContentText" parent="TextAppearance.MaterialComponents.Subtitle1">
-        <item name="android:textColor">?primaryText</item>
+        <item name="android:textColor">?attr/textPrimary</item>
         <item name="android:lineSpacingExtra">@dimen/about_header_text_line_spacing_extra</item>
     </style>
 
@@ -626,8 +660,6 @@
         <item name="cardBackgroundColor">?mozac_widget_favicon_background_color</item>
         <item name="cardCornerRadius">@dimen/top_sites_card_radius</item>
         <item name="cardElevation">@dimen/top_sites_card_elevation</item>
-        <item name="strokeColor">@color/top_sites_border_color</item>
-        <item name="strokeWidth">@dimen/top_sites_card_stroke_width</item>
     </style>
 
     <style name="topSiteFavicon">
@@ -664,5 +696,11 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+    <style name="SearchSelectorIconStyle">
+        <item name="cornerFamily">rounded</item>
+        <item name="elevation">0dp</item>
+        <item name="cornerSize">2dp</item>
     </style>
 </resources>

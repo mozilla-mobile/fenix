@@ -10,16 +10,19 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
+import android.graphics.Matrix
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import androidx.appcompat.app.AppCompatDelegate
+import android.widget.ImageView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import mozilla.components.support.base.log.logger.Logger
-import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.asActivity
+import org.mozilla.fenix.perf.runBlockingIncrement
 import org.mozilla.fenix.utils.Settings
+import java.io.File
+import java.util.Date
 
 /**
  * Provides access to available wallpapers and manages their states.
@@ -27,11 +30,16 @@ import org.mozilla.fenix.utils.Settings
 @Suppress("TooManyFunctions")
 class WallpaperManager(
     private val settings: Settings,
-    private val wallpaperStorage: WallpaperStorage,
+    private val downloader: WallpaperDownloader,
+    private val fileManager: WallpaperFileManager,
+    private val currentLocale: String,
+    allWallpapers: List<Wallpaper> = availableWallpapers
 ) {
     val logger = Logger("WallpaperManager")
-    var availableWallpapers: List<Wallpaper> = loadWallpapers()
-        private set
+
+    val wallpapers = allWallpapers
+        .filter(::filterExpiredRemoteWallpapers)
+        .filter(::filterPromotionalWallpapers)
 
     var currentWallpaper: Wallpaper = getCurrentWallpaperFromSettings()
         set(value) {
@@ -39,56 +47,41 @@ class WallpaperManager(
             field = value
         }
 
+    init {
+        fileManager.clean(currentWallpaper, wallpapers.filterIsInstance<Wallpaper.Remote>())
+    }
+
     /**
      * Apply the [newWallpaper] into the [wallpaperContainer] and update the [currentWallpaper].
      */
-    fun updateWallpaper(wallpaperContainer: View, newWallpaper: Wallpaper) {
+    fun updateWallpaper(wallpaperContainer: ImageView, newWallpaper: Wallpaper) {
         val context = wallpaperContainer.context
         if (newWallpaper == defaultWallpaper) {
-            wallpaperContainer.setBackgroundColor(context.getColorFromAttr(DEFAULT_RESOURCE))
+            wallpaperContainer.visibility = View.GONE
             logger.info("Wallpaper update to default background")
         } else {
-            logger.info("Wallpaper update to ${newWallpaper.name}")
-            val bitmap = loadWallpaperFromAssets(newWallpaper, context)
-            wallpaperContainer.background = BitmapDrawable(context.resources, bitmap)
+            val bitmap = loadSavedWallpaper(context, newWallpaper)
+            if (bitmap == null) {
+                val message = "Could not load wallpaper bitmap. Resetting to default."
+                logger.error(message)
+                currentWallpaper = defaultWallpaper
+                wallpaperContainer.visibility = View.GONE
+                return
+            } else {
+                wallpaperContainer.visibility = View.VISIBLE
+                scaleBitmapToBottom(bitmap, wallpaperContainer)
+            }
         }
         currentWallpaper = newWallpaper
-
-        adjustTheme(wallpaperContainer.context)
     }
 
-    private fun adjustTheme(context: Context) {
-        val mode = if (currentWallpaper != defaultWallpaper) {
-            if (currentWallpaper.isDark) {
-                updateThemePreference(useDarkTheme = true)
-                logger.info("theme changed to useDarkTheme")
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                logger.info("theme changed to useLightTheme")
-                updateThemePreference(useLightTheme = true)
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        } else {
-            // For the default wallpaper, there is not need to adjust the theme,
-            // as we want to allow users decide which theme they want to have.
-            // The default wallpaper adapts to whichever theme the user has.
-            return
+    /**
+     * Download all known remote wallpapers.
+     */
+    suspend fun downloadAllRemoteWallpapers() {
+        for (wallpaper in wallpapers.filterIsInstance<Wallpaper.Remote>()) {
+            downloader.downloadWallpaper(wallpaper)
         }
-
-        if (AppCompatDelegate.getDefaultNightMode() != mode) {
-            AppCompatDelegate.setDefaultNightMode(mode)
-            logger.info("theme updated activity recreated")
-            context.asActivity()?.recreate()
-        }
-    }
-
-    private fun updateThemePreference(
-        useDarkTheme: Boolean = false,
-        useLightTheme: Boolean = false
-    ) {
-        settings.shouldUseDarkTheme = useDarkTheme
-        settings.shouldUseLightTheme = useLightTheme
-        settings.shouldFollowDeviceTheme = false
     }
 
     /**
@@ -96,7 +89,7 @@ class WallpaperManager(
      * the first available [Wallpaper] will be returned.
      */
     fun switchToNextWallpaper(): Wallpaper {
-        val values = availableWallpapers
+        val values = wallpapers
         val index = values.indexOf(currentWallpaper) + 1
 
         return if (index >= values.size) {
@@ -106,37 +99,111 @@ class WallpaperManager(
         }
     }
 
+    private fun filterExpiredRemoteWallpapers(wallpaper: Wallpaper): Boolean = when (wallpaper) {
+        is Wallpaper.Remote -> {
+            val notExpired = wallpaper.expirationDate?.let { Date().before(it) } ?: true
+            notExpired || wallpaper.name == settings.currentWallpaper
+        }
+        else -> true
+    }
+
+    private fun filterPromotionalWallpapers(wallpaper: Wallpaper): Boolean =
+        if (wallpaper is Wallpaper.Promotional) {
+            wallpaper.isAvailableInLocale(currentLocale)
+        } else {
+            true
+        }
+
     private fun getCurrentWallpaperFromSettings(): Wallpaper {
         val currentWallpaper = settings.currentWallpaper
         return if (currentWallpaper.isEmpty()) {
             defaultWallpaper
         } else {
-            availableWallpapers.find { it.name == currentWallpaper } ?: defaultWallpaper
+            wallpapers.find { it.name == currentWallpaper }
+                ?: fileManager.lookupExpiredWallpaper(currentWallpaper)
+                ?: defaultWallpaper
         }
     }
 
-    fun loadWallpaperFromAssets(wallpaper: Wallpaper, context: Context): Bitmap {
-        val path = if (isLandscape(context)) {
-            wallpaper.landscapePath
-        } else {
-            wallpaper.portraitPath
+    /**
+     * Load a wallpaper that is saved locally.
+     */
+    fun loadSavedWallpaper(context: Context, wallpaper: Wallpaper): Bitmap? =
+        when (wallpaper) {
+            is Wallpaper.Local -> loadWallpaperFromDrawables(context, wallpaper)
+            is Wallpaper.Remote -> loadWallpaperFromDisk(context, wallpaper)
+            else -> null
         }
-        return context.assets.open(path).use {
-            BitmapFactory.decodeStream(it)
+
+    private fun loadWallpaperFromDrawables(context: Context, wallpaper: Wallpaper.Local): Bitmap? = Result.runCatching {
+        BitmapFactory.decodeResource(context.resources, wallpaper.drawableId)
+    }.getOrNull()
+
+    /**
+     * Load a wallpaper from app-specific storage.
+     */
+    private fun loadWallpaperFromDisk(context: Context, wallpaper: Wallpaper.Remote): Bitmap? = Result.runCatching {
+        val path = wallpaper.getLocalPathFromContext(context)
+        runBlockingIncrement {
+            withContext(Dispatchers.IO) {
+                val file = File(context.filesDir, path)
+                BitmapFactory.decodeStream(file.inputStream())
+            }
         }
+    }.getOrNull()
+
+    private fun scaleBitmapToBottom(bitmap: Bitmap, view: ImageView) {
+        view.setImageBitmap(bitmap)
+        view.scaleType = ImageView.ScaleType.MATRIX
+        val matrix = Matrix()
+        view.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+            override fun onLayoutChange(
+                v: View?,
+                left: Int,
+                top: Int,
+                right: Int,
+                bottom: Int,
+                oldLeft: Int,
+                oldTop: Int,
+                oldRight: Int,
+                oldBottom: Int
+            ) {
+                val viewWidth: Float = view.width.toFloat()
+                val viewHeight: Float = view.height.toFloat()
+                val bitmapWidth = bitmap.width
+                val bitmapHeight = bitmap.height
+                val widthScale = viewWidth / bitmapWidth
+                val heightScale = viewHeight / bitmapHeight
+                val scale = widthScale.coerceAtLeast(heightScale)
+                matrix.postScale(scale, scale)
+                // The image is translated to its bottom such that any pertinent information is
+                // guaranteed to be shown.
+                // Majority of this math borrowed from // https://medium.com/@tokudu/how-to-whitelist-strictmode-violations-on-android-based-on-stacktrace-eb0018e909aa
+                // except that there is no need to translate horizontally in our case.
+                matrix.postTranslate(0f, (viewHeight - bitmapHeight * scale))
+                view.imageMatrix = matrix
+                view.removeOnLayoutChangeListener(this)
+            }
+        })
     }
 
-    private fun isLandscape(context: Context): Boolean {
-        return context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    /**
+     * Get the expected local path on disk for a wallpaper. This will differ depending
+     * on orientation and app theme.
+     */
+    private fun Wallpaper.Remote.getLocalPathFromContext(context: Context): String {
+        val orientation = if (context.isLandscape()) "landscape" else "portrait"
+        val theme = if (context.isDark()) "dark" else "light"
+        return Wallpaper.getBaseLocalPath(orientation, theme, name)
     }
 
-    private fun loadWallpapers(): List<Wallpaper> {
-        val wallpapersFromStorage = wallpaperStorage.loadAll()
-        return if (wallpapersFromStorage.isNotEmpty()) {
-            listOf(defaultWallpaper) + wallpapersFromStorage
-        } else {
-            listOf(defaultWallpaper)
-        }
+    private fun Context.isLandscape(): Boolean {
+        return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    }
+
+    private fun Context.isDark(): Boolean {
+        return resources.configuration.uiMode and
+            Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
     }
 
     /**
@@ -173,14 +240,21 @@ class WallpaperManager(
     }
 
     companion object {
-        const val DEFAULT_RESOURCE = R.attr.homeBackground
-        val defaultWallpaper = Wallpaper(
-            name = "default_wallpaper",
-            portraitPath = "",
-            landscapePath = "",
-            isDark = false,
-            themeCollection = WallpaperThemeCollection.None
+        val defaultWallpaper = Wallpaper.Default
+        private val localWallpapers: List<Wallpaper.Local> = listOf(
+            Wallpaper.Local.Firefox("amethyst", R.drawable.amethyst),
+            Wallpaper.Local.Firefox("cerulean", R.drawable.cerulean),
+            Wallpaper.Local.Firefox("sunrise", R.drawable.sunrise),
         )
+        private val remoteWallpapers: List<Wallpaper.Remote> = listOf(
+            Wallpaper.Remote.Firefox(
+                "twilight-hills"
+            ),
+            Wallpaper.Remote.Firefox(
+                "beach-vibe"
+            ),
+        )
+        private val availableWallpapers = listOf(defaultWallpaper) + localWallpapers + remoteWallpapers
         private const val ANIMATION_DELAY_MS = 1500L
     }
 }

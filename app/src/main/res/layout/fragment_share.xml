@@ -18,7 +18,7 @@
         android:id="@+id/closeSharingScrim"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/scrim_background"/>
+        android:background="?scrim"/>
 
     <FrameLayout
         android:id="@+id/closeSharingContent"
@@ -51,7 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="8dp"
-            android:background="?neutralFaded"
+            android:background="?borderPrimary"
             app:layout_constraintBottom_toTopOf="@id/appsShareLayout" />
 
         <androidx.constraintlayout.widget.Group

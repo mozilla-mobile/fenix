@@ -5,6 +5,8 @@
 package org.mozilla.fenix.share
 
 import android.content.ActivityNotFoundException
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_SEND
@@ -28,11 +30,11 @@ import mozilla.components.concept.sync.Device
 import mozilla.components.concept.sync.TabData
 import mozilla.components.feature.accounts.push.SendTabUseCases
 import mozilla.components.feature.share.RecentAppsStorage
+import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.ktx.kotlin.isExtensionUrl
+import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.share.listadapters.AppShareOption
 
@@ -91,6 +93,13 @@ class DefaultShareController(
     }
 
     override fun handleShareToApp(app: AppShareOption) {
+        if (app.packageName == ACTION_COPY_LINK_TO_CLIPBOARD) {
+            copyClipboard()
+            dismiss(ShareController.Result.SUCCESS)
+
+            return
+        }
+
         viewLifecycleScope.launch(dispatcher) {
             recentAppsStorage.updateRecentApp(app.activityName)
         }
@@ -111,6 +120,7 @@ class DefaultShareController(
             when (e) {
                 is SecurityException, is ActivityNotFoundException -> {
                     snackbar.setText(context.getString(R.string.share_error_snackbar))
+                    snackbar.setLength(FenixSnackbar.LENGTH_LONG)
                     snackbar.show()
                     ShareController.Result.SHARE_ERROR
                 }
@@ -126,7 +136,7 @@ class DefaultShareController(
     }
 
     override fun handleShareToDevice(device: Device) {
-        context.metrics.track(Event.SendTab)
+        SyncAccount.sendTab.record(NoExtras())
         shareToDevicesWithRetry { sendTabUseCases.sendToDeviceAsync(device.id, shareData.toTabData()) }
     }
 
@@ -135,7 +145,7 @@ class DefaultShareController(
     }
 
     override fun handleSignIn() {
-        context.metrics.track(Event.SignInToSendTab)
+        SyncAccount.signInToSendTab.record(NoExtras())
         val directions =
             ShareFragmentDirections.actionGlobalTurnOnSync(padSnackbar = true)
         navController.nav(R.id.shareFragment, directions)
@@ -216,5 +226,19 @@ class DefaultShareController(
 
     private fun String.toDataUri(): String {
         return "data:,${Uri.encode(this)}"
+    }
+
+    private fun copyClipboard() {
+        val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText(getShareSubject(), getShareText())
+
+        clipboardManager.setPrimaryClip(clipData)
+        snackbar.setText(context.getString(R.string.toast_copy_link_to_clipboard))
+        snackbar.setLength(FenixSnackbar.LENGTH_SHORT)
+        snackbar.show()
+    }
+
+    companion object {
+        const val ACTION_COPY_LINK_TO_CLIPBOARD = "org.mozilla.fenix.COPY_LINK_TO_CLIPBOARD"
     }
 }

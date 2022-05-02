@@ -8,7 +8,6 @@ package org.mozilla.fenix.home.pocket
 
 import android.net.Uri
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,7 +37,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mozilla.components.service.pocket.PocketRecommendedStory
-import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.ClickableSubstringLink
 import org.mozilla.fenix.compose.EagerFlingBehavior
@@ -50,8 +48,8 @@ import org.mozilla.fenix.compose.TabSubtitle
 import org.mozilla.fenix.compose.TabSubtitleWithInterdot
 import org.mozilla.fenix.compose.TabTitle
 import org.mozilla.fenix.theme.FirefoxTheme
+import org.mozilla.fenix.theme.Theme
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 private const val URI_PARAM_UTM_KEY = "utm_source"
 private const val POCKET_STORIES_UTM_VALUE = "pocket-newtab-android"
@@ -194,11 +192,6 @@ fun PoweredByPocketHeader(
     onLearnMoreClicked: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val color = when (isSystemInDarkTheme()) {
-        true -> PhotonColors.LightGrey30
-        false -> PhotonColors.DarkGrey90
-    }
-
     val link = stringResource(R.string.pocket_stories_feature_learn_more)
     val text = stringResource(R.string.pocket_stories_feature_caption, link)
     val linkStartIndex = text.indexOf(link)
@@ -211,7 +204,7 @@ fun PoweredByPocketHeader(
         Row(
             Modifier
                 .fillMaxWidth()
-                .semantics(mergeDescendants = true) { },
+                .semantics(mergeDescendants = true) {},
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -226,12 +219,17 @@ fun PoweredByPocketHeader(
             Column {
                 Text(
                     text = stringResource(R.string.pocket_stories_feature_title),
-                    color = color,
+                    color = FirefoxTheme.colors.textPrimary,
                     fontSize = 12.sp,
                     lineHeight = 16.sp
                 )
 
-                ClickableSubstringLink(text, color, linkStartIndex, linkEndIndex) {
+                ClickableSubstringLink(
+                    text = text,
+                    textColor = FirefoxTheme.colors.textPrimary,
+                    clickableStartIndex = linkStartIndex,
+                    clickableEndIndex = linkEndIndex
+                ) {
                     onLearnMoreClicked("https://www.mozilla.org/en-US/firefox/pocket/?$POCKET_FEATURE_UTM_KEY_VALUE")
                 }
             }
@@ -242,27 +240,29 @@ fun PoweredByPocketHeader(
 @Composable
 @Preview
 private fun PocketStoriesComposablesPreview() {
-    FirefoxTheme {
+    FirefoxTheme(theme = Theme.getTheme(isPrivate = false)) {
         Box(Modifier.background(FirefoxTheme.colors.layer2)) {
             Column {
                 PocketStories(
                     stories = getFakePocketStories(8),
                     contentPadding = 0.dp,
                     onStoryClicked = { _, _ -> },
-                    onDiscoverMoreClicked = { }
+                    onDiscoverMoreClicked = {}
                 )
                 Spacer(Modifier.height(10.dp))
 
                 PocketStoriesCategories(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor".split(" ").map {
-                        PocketRecommendedStoriesCategory(it)
-                    },
-                    emptyList(),
-                    { }
+                    categories = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
+                        .split(" ")
+                        .map { PocketRecommendedStoriesCategory(it) },
+                    selections = emptyList(),
+                    onCategoryClick = {}
                 )
                 Spacer(Modifier.height(10.dp))
 
-                PoweredByPocketHeader({ })
+                PoweredByPocketHeader(
+                    onLearnMoreClicked = {}
+                )
             }
         }
     }
@@ -273,20 +273,18 @@ private class PocketStoryProvider : PreviewParameterProvider<PocketRecommendedSt
     override val count = 8
 }
 
-private fun getFakePocketStories(limit: Int = 1): List<PocketRecommendedStory> {
+internal fun getFakePocketStories(limit: Int = 1): List<PocketRecommendedStory> {
     return mutableListOf<PocketRecommendedStory>().apply {
         for (index in 0 until limit) {
-            val randomNumber = Random.nextInt(0, 10)
-
             add(
                 PocketRecommendedStory(
-                    title = "This is a ${"very ".repeat(randomNumber)} long title",
+                    title = "This is a ${"very ".repeat(index)} long title",
                     publisher = "Publisher",
-                    url = "https://story$randomNumber.com",
+                    url = "https://story$index.com",
                     imageUrl = "",
-                    timeToRead = randomNumber,
-                    category = "Category #$randomNumber",
-                    timesShown = randomNumber.toLong()
+                    timeToRead = index,
+                    category = "Category #$index",
+                    timesShown = index.toLong()
                 )
             )
         }

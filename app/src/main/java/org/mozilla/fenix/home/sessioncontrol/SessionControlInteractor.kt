@@ -9,16 +9,20 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.pocket.PocketRecommendedStory
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.components.tips.Tip
-import org.mozilla.fenix.home.HomeFragmentState
+import org.mozilla.fenix.components.appstate.AppState
+import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketStoriesController
 import org.mozilla.fenix.home.pocket.PocketStoriesInteractor
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recentbookmarks.controller.RecentBookmarksController
 import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
+import org.mozilla.fenix.home.recentsyncedtabs.RecentSyncedTab
+import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recenttabs.controller.RecentTabController
+import org.mozilla.fenix.home.recentsyncedtabs.controller.RecentSyncedTabController
 import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
+import org.mozilla.fenix.home.recentsyncedtabs.interactor.RecentSyncedTabInteractor
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryGroup
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryHighlight
 import org.mozilla.fenix.home.recentvisits.controller.RecentVisitsController
@@ -44,7 +48,7 @@ interface TabSessionInteractor {
      *
      * * @param state The state the homepage from which to report desired metrics.
      */
-    fun reportSessionMetrics(state: HomeFragmentState)
+    fun reportSessionMetrics(state: AppState)
 }
 
 /**
@@ -166,13 +170,6 @@ interface OnboardingInteractor {
     fun showOnboardingDialog()
 }
 
-interface TipInteractor {
-    /**
-     * Dismisses the tip view adapter
-     */
-    fun onCloseTip(tip: Tip)
-}
-
 interface CustomizeHomeIteractor {
     /**
      * Opens the customize home settings page.
@@ -210,8 +207,21 @@ interface TopSiteInteractor {
      * Selects the given top site. Called when a user clicks on a top site.
      *
      * @param topSite The top site that was selected.
+     * @param position The position of the top site.
      */
-    fun onSelectTopSite(topSite: TopSite)
+    fun onSelectTopSite(topSite: TopSite, position: Int)
+
+    /**
+     * Navigates to the Homepage Settings. Called when an user clicks on the "Settings" top site
+     * menu item.
+     */
+    fun onSettingsClicked()
+
+    /**
+     * Opens the sponsor privacy support articles. Called when an user clicks on the
+     * "Our sponsors & your privacy" top site menu item.
+     */
+    fun onSponsorPrivacyClicked()
 
     /**
      * Called when top site menu is opened.
@@ -219,39 +229,45 @@ interface TopSiteInteractor {
     fun onTopSiteMenuOpened()
 }
 
-interface ExperimentCardInteractor {
+interface MessageCardInteractor {
     /**
-     * Called when set default browser button is clicked
+     * Called when a [Message]'s button is clicked
      */
-    fun onSetDefaultBrowserClicked()
+    fun onMessageClicked(message: Message)
 
     /**
-     * Called when close button on experiment card
+     * Called when close button on a [Message] card.
      */
-    fun onCloseExperimentCardClicked()
+    fun onMessageClosedClicked(message: Message)
+
+    /**
+     * Called when close button on a [Message] card.
+     */
+    fun onMessageDisplayed(message: Message)
 }
 
 /**
  * Interactor for the Home screen. Provides implementations for the CollectionInteractor,
- * OnboardingInteractor, TopSiteInteractor, TipInteractor, TabSessionInteractor,
- * ToolbarInteractor, ExperimentCardInteractor, RecentTabInteractor, RecentBookmarksInteractor
+ * OnboardingInteractor, TopSiteInteractor, TabSessionInteractor, ToolbarInteractor,
+ * ExperimentCardInteractor, RecentTabInteractor, RecentBookmarksInteractor
  * and others.
  */
 @SuppressWarnings("TooManyFunctions")
 class SessionControlInteractor(
     private val controller: SessionControlController,
     private val recentTabController: RecentTabController,
+    private val recentSyncedTabController: RecentSyncedTabController,
     private val recentBookmarksController: RecentBookmarksController,
     private val recentVisitsController: RecentVisitsController,
     private val pocketStoriesController: PocketStoriesController
 ) : CollectionInteractor,
     OnboardingInteractor,
     TopSiteInteractor,
-    TipInteractor,
     TabSessionInteractor,
     ToolbarInteractor,
-    ExperimentCardInteractor,
+    MessageCardInteractor,
     RecentTabInteractor,
+    RecentSyncedTabInteractor,
     RecentBookmarksInteractor,
     RecentVisitsInteractor,
     CustomizeHomeIteractor,
@@ -297,8 +313,16 @@ class SessionControlInteractor(
         controller.handleRenameCollectionTapped(collection)
     }
 
-    override fun onSelectTopSite(topSite: TopSite) {
-        controller.handleSelectTopSite(topSite)
+    override fun onSelectTopSite(topSite: TopSite, position: Int) {
+        controller.handleSelectTopSite(topSite, position)
+    }
+
+    override fun onSettingsClicked() {
+        controller.handleTopSiteSettingsClicked()
+    }
+
+    override fun onSponsorPrivacyClicked() {
+        controller.handleSponsorPrivacyClicked()
     }
 
     override fun onStartBrowsingClicked() {
@@ -319,10 +343,6 @@ class SessionControlInteractor(
 
     override fun onAddTabsToCollectionTapped() {
         controller.handleCreateCollection()
-    }
-
-    override fun onCloseTip(tip: Tip) {
-        controller.handleCloseTip(tip)
     }
 
     override fun onPrivateBrowsingLearnMoreClicked() {
@@ -353,14 +373,6 @@ class SessionControlInteractor(
         controller.handleMenuOpened()
     }
 
-    override fun onSetDefaultBrowserClicked() {
-        controller.handleSetDefaultBrowser()
-    }
-
-    override fun onCloseExperimentCardClicked() {
-        controller.handleCloseExperimentCard()
-    }
-
     override fun onRecentTabClicked(tabId: String) {
         recentTabController.handleRecentTabClicked(tabId)
     }
@@ -373,12 +385,28 @@ class SessionControlInteractor(
         recentTabController.handleRecentTabShowAllClicked()
     }
 
+    override fun onRemoveRecentTab(tab: RecentTab.Tab) {
+        recentTabController.handleRecentTabRemoved(tab)
+    }
+
+    override fun onRecentSyncedTabClicked(tab: RecentSyncedTab) {
+        recentSyncedTabController.handleRecentSyncedTabClick(tab)
+    }
+
+    override fun onSyncedTabShowAllClicked() {
+        recentSyncedTabController.handleSyncedTabShowAllClicked()
+    }
+
     override fun onRecentBookmarkClicked(bookmark: RecentBookmark) {
         recentBookmarksController.handleBookmarkClicked(bookmark)
     }
 
     override fun onShowAllBookmarksClicked() {
         recentBookmarksController.handleShowAllBookmarksClicked()
+    }
+
+    override fun onRecentBookmarkRemoved(bookmark: RecentBookmark) {
+        recentBookmarksController.handleBookmarkRemoved(bookmark)
     }
 
     override fun onHistoryShowAllClicked() {
@@ -427,7 +455,19 @@ class SessionControlInteractor(
         pocketStoriesController.handleDiscoverMoreClicked(link)
     }
 
-    override fun reportSessionMetrics(state: HomeFragmentState) {
+    override fun reportSessionMetrics(state: AppState) {
         controller.handleReportSessionMetrics(state)
+    }
+
+    override fun onMessageClicked(message: Message) {
+        controller.handleMessageClicked(message)
+    }
+
+    override fun onMessageClosedClicked(message: Message) {
+        controller.handleMessageClosed(message)
+    }
+
+    override fun onMessageDisplayed(message: Message) {
+        controller.handleMessageDisplayed(message)
     }
 }

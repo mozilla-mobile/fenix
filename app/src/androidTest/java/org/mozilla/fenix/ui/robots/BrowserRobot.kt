@@ -456,6 +456,11 @@ class BrowserRobot {
     }
 
     fun saveLoginFromPrompt(optionToSaveLogin: String) {
+        mDevice.waitForObjects(
+            mDevice.findObject(
+                UiSelector().resourceId("$packageName:id/feature_prompt_login_fragment")
+            )
+        )
         mDevice.findObject(text(optionToSaveLogin)).click()
     }
 
@@ -575,17 +580,62 @@ class BrowserRobot {
     }
 
     fun fillAndSubmitLoginCredentials(userName: String, password: String) {
-        userNameTextBox.click()
         userNameTextBox.setText(userName)
-
-        passwordTextBox.click()
         passwordTextBox.setText(password)
 
         submitLoginButton.click()
-        mDevice.waitForIdle()
+
+        mDevice.waitForObjects(mDevice.findObject(UiSelector().resourceId("$packageName:id/save_confirm")))
     }
 
-    fun verifyPrefilledLoginCredentials(userName: String, shortcutTitle: String) {
+    fun clearUserNameLoginCredential() {
+        mDevice.waitForObjects(userNameTextBox)
+        userNameTextBox.clearTextField()
+        mDevice.waitForIdle(waitingTime)
+    }
+
+    fun clickSuggestedLoginsButton() {
+        var currentTries = 0
+        while (currentTries++ < 3) {
+            try {
+                mDevice.waitForObjects(suggestedLogins)
+                suggestedLogins.click()
+                mDevice.waitForObjects(suggestedLogins)
+                break
+            } catch (e: UiObjectNotFoundException) {
+                userNameTextBox.click()
+            }
+        }
+    }
+
+    fun clickLoginSuggestion(userName: String) {
+        val loginSuggestion =
+            mDevice.findObject(
+                UiSelector()
+                    .textContains(userName)
+                    .resourceId("$packageName:id/username")
+            )
+
+        loginSuggestion.click()
+    }
+
+    fun verifySuggestedUserName(userName: String) {
+        mDevice.findObject(
+            UiSelector()
+                .resourceId("$packageName:id/mozac_feature_login_multiselect_expand")
+        ).waitForExists(waitingTime)
+
+        assertTrue(
+            mDevice.findObject(UiSelector().textContains(userName)).waitForExists(waitingTime)
+        )
+    }
+
+    fun verifyPrefilledLoginCredentials(userName: String) {
+        mDevice.waitForObjects(userNameTextBox)
+        assertTrue(userNameTextBox.text.equals(userName))
+    }
+
+    fun verifyPrefilledPWALoginCredentials(userName: String, shortcutTitle: String) {
         mDevice.waitForIdle(waitingTime)
 
         var currentTries = 0
@@ -640,7 +690,7 @@ class BrowserRobot {
 
         fun openTabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
             mDevice.findObject(
-                UiSelector().descriptionContains("open tab. Tap to switch tabs.")
+                UiSelector().descriptionContains("Tap to switch tabs.")
             ).waitForExists(waitingTime)
 
             tabsCounter().click()
@@ -699,6 +749,8 @@ class BrowserRobot {
 
             val tabCrashedCloseButton = mDevice.findObject(text("Close tab"))
             tabCrashedCloseButton.click()
+
+            mDevice.waitForIdle()
 
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()
@@ -818,6 +870,8 @@ private var progressBar =
         UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_progress")
     )
 
+private val suggestedLogins = mDevice.findObject(UiSelector().resourceId("$packageName:id/loginSelectBar"))
+
 // Permissions test page elements & prompts
 // Test page used located at https://mozilla-mobile.github.io/testapp/permissions
 private val cameraButton = mDevice.findObject(UiSelector().text("Open camera"))
@@ -835,7 +889,6 @@ private val getLocationButton = mDevice.findObject(UiSelector().text("Get Locati
 val userNameTextBox =
     mDevice.findObject(
         UiSelector()
-            .index(0)
             .resourceId("username")
             .className("android.widget.EditText")
             .packageName("$packageName")
@@ -844,7 +897,6 @@ val userNameTextBox =
 private val submitLoginButton =
     mDevice.findObject(
         UiSelector()
-            .index(2)
             .resourceId("submit")
             .textContains("Submit Query")
             .className("android.widget.Button")
@@ -854,7 +906,6 @@ private val submitLoginButton =
 val passwordTextBox =
     mDevice.findObject(
         UiSelector()
-            .index(1)
             .resourceId("password")
             .className("android.widget.EditText")
             .packageName("$packageName")

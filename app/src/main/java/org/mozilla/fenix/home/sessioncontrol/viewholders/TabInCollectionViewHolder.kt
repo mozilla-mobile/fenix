@@ -51,7 +51,7 @@ class TabInCollectionViewHolder(
         }
 
         view.setSecondaryButton(
-            icon = R.drawable.mozac_ic_close,
+            icon = R.drawable.ic_close,
             contentDescription = R.string.remove_tab_from_collection
         ) {
             interactor.onCollectionRemoveTab(collection, tab, wasSwiped = false)
@@ -78,7 +78,7 @@ class TabInCollectionViewHolder(
         if (isLastItem) {
             view.background = AppCompatResources.getDrawable(context, R.drawable.rounded_bottom_corners)
         } else {
-            view.setBackgroundColor(context.getColorFromAttr(R.attr.above))
+            view.setBackgroundColor(context.getColorFromAttr(R.attr.layer2))
         }
     }
 

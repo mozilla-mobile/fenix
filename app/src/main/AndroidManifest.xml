@@ -6,7 +6,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"
+        tools:ignore="ScopedStorage"
+        />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -165,6 +169,15 @@
                 <data android:scheme="https" />
             </intent-filter>
 
+            <!--Exposed specific deep links for third-party apps to open wallpaper settings.-->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="${deepLinkScheme}"
+                    android:host="settings_wallpapers"/>
+            </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -221,18 +234,14 @@
         </activity>
 
         <activity
-                android:name=".migration.MigrationProgressActivity"
-                android:noHistory="true"
-                android:launchMode="singleInstance"
-                android:exported="false">
-        </activity>
-
-        <activity
             android:name=".crashes.CrashListActivity"
             android:exported="false" />
 
         <activity android:name=".widget.VoiceSearchActivity"
-            android:theme="@style/Theme.AppCompat.Translucent"/>
+            android:theme="@style/Theme.AppCompat.Translucent"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
+            />
 
         <activity
             android:name=".settings.account.AuthCustomTabActivity"

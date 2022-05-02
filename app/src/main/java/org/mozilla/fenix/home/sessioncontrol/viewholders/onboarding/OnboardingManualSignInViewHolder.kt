@@ -7,10 +7,10 @@ package org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding
 import android.view.View
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
+import mozilla.components.service.glean.private.NoExtras
+import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.OnboardingManualSigninBinding
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.home.HomeFragmentDirections
 
 class OnboardingManualSignInViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -18,7 +18,7 @@ class OnboardingManualSignInViewHolder(view: View) : RecyclerView.ViewHolder(vie
 
     init {
         binding.fxaSignInButton.setOnClickListener {
-            it.context.components.analytics.metrics.track(Event.OnboardingManualSignIn)
+            Onboarding.fxaManualSignin.record(NoExtras())
 
             val directions = HomeFragmentDirections.actionGlobalTurnOnSync()
             Navigation.findNavController(view).navigate(directions)
@@ -27,7 +27,11 @@ class OnboardingManualSignInViewHolder(view: View) : RecyclerView.ViewHolder(vie
 
     fun bind() {
         val context = itemView.context
-        binding.headerText.text = context.getString(R.string.onboarding_account_sign_in_header_1)
+        val appName = context.getString(R.string.app_name)
+        binding.headerText.text =
+            context.getString(R.string.onboarding_account_sign_in_header_1)
+        binding.descriptionText.text =
+            context.getString(R.string.onboarding_manual_sign_in_description_2, appName)
     }
 
     companion object {

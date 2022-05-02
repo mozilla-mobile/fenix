@@ -6,15 +6,14 @@ package org.mozilla.fenix.home.pocket
 
 import androidx.annotation.VisibleForTesting
 import androidx.navigation.NavController
-import mozilla.components.lib.state.Store
+import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.service.pocket.PocketRecommendedStory
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.GleanMetrics.Pocket
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.home.HomeFragmentAction
-import org.mozilla.fenix.home.HomeFragmentStore
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppAction
 
 /**
  * Contract for how all user interactions with the Pocket recommended stories feature are to be handled.
@@ -61,31 +60,30 @@ interface PocketStoriesController {
  * Default behavior for handling all user interactions with the Pocket recommended stories feature.
  *
  * @param homeActivity [HomeActivity] used to open URLs in a new tab.
- * @param homeStore [Store] from which to read the current Pocket recommendations and dispatch new actions on.
+ * @param appStore [AppStore] from which to read the current Pocket recommendations and dispatch new actions on.
  * @param navController [NavController] used for navigation.
  */
 internal class DefaultPocketStoriesController(
     private val homeActivity: HomeActivity,
-    private val homeStore: HomeFragmentStore,
+    private val appStore: AppStore,
     private val navController: NavController,
-    private val metrics: MetricController
 ) : PocketStoriesController {
     override fun handleStoriesShown(storiesShown: List<PocketRecommendedStory>) {
-        homeStore.dispatch(HomeFragmentAction.PocketStoriesShown(storiesShown))
-        metrics.track(Event.PocketHomeRecsShown)
+        appStore.dispatch(AppAction.PocketStoriesShown(storiesShown))
+        Pocket.homeRecsShown.record(NoExtras())
     }
 
     override fun handleCategoryClick(categoryClicked: PocketRecommendedStoriesCategory) {
-        val initialCategoriesSelections = homeStore.state.pocketStoriesCategoriesSelections
+        val initialCategoriesSelections = appStore.state.pocketStoriesCategoriesSelections
 
         // First check whether the category is clicked to be deselected.
         if (initialCategoriesSelections.map { it.name }.contains(categoryClicked.name)) {
-            homeStore.dispatch(HomeFragmentAction.DeselectPocketStoriesCategory(categoryClicked.name))
-            metrics.track(
-                Event.PocketHomeRecsCategoryClicked(
-                    categoryClicked.name,
-                    initialCategoriesSelections.size,
-                    false
+            appStore.dispatch(AppAction.DeselectPocketStoriesCategory(categoryClicked.name))
+            Pocket.homeRecsCategoryClicked.record(
+                Pocket.HomeRecsCategoryClickedExtra(
+                    categoryName = categoryClicked.name,
+                    newState = "deselected",
+                    selectedTotal = initialCategoriesSelections.size.toString()
                 )
             )
             return
@@ -100,37 +98,45 @@ internal class DefaultPocketStoriesController(
                 null
             }
         oldestCategoryToDeselect?.let {
-            homeStore.dispatch(HomeFragmentAction.DeselectPocketStoriesCategory(it.name))
+            appStore.dispatch(AppAction.DeselectPocketStoriesCategory(it.name))
         }
 
         // Finally update the selection.
-        homeStore.dispatch(HomeFragmentAction.SelectPocketStoriesCategory(categoryClicked.name))
+        appStore.dispatch(AppAction.SelectPocketStoriesCategory(categoryClicked.name))
 
-        metrics.track(
-            Event.PocketHomeRecsCategoryClicked(
-                categoryClicked.name,
-                initialCategoriesSelections.size,
-                true
+        Pocket.homeRecsCategoryClicked.record(
+            Pocket.HomeRecsCategoryClickedExtra(
+                categoryName = categoryClicked.name,
+                newState = "selected",
+                selectedTotal = initialCategoriesSelections.size.toString()
             )
         )
     }
 
-    override fun handleStoryClicked(storyClicked: PocketRecommendedStory, storyPosition: Pair<Int, Int>) {
+    override fun handleStoryClicked(
+        storyClicked: PocketRecommendedStory,
+        storyPosition: Pair<Int, Int>
+    ) {
         dismissSearchDialogIfDisplayed()
         homeActivity.openToBrowserAndLoad(storyClicked.url, true, BrowserDirection.FromHome)
-        metrics.track(Event.PocketHomeRecsStoryClicked(storyClicked.timesShown.inc(), storyPosition))
+        Pocket.homeRecsStoryClicked.record(
+            Pocket.HomeRecsStoryClickedExtra(
+                position = "${storyPosition.first}x${storyPosition.second}",
+                timesShown = storyClicked.timesShown.inc().toString()
+            )
+        )
     }
 
     override fun handleLearnMoreClicked(link: String) {
         dismissSearchDialogIfDisplayed()
         homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome)
-        metrics.track(Event.PocketHomeRecsLearnMoreClicked)
+        Pocket.homeRecsLearnMoreClicked.record(NoExtras())
     }
 
     override fun handleDiscoverMoreClicked(link: String) {
         dismissSearchDialogIfDisplayed()
         homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome)
-        metrics.track(Event.PocketHomeRecsDiscoverMoreClicked)
+        Pocket.homeRecsDiscoverClicked.record(NoExtras())
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)

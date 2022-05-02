@@ -20,14 +20,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import mozilla.components.lib.state.ext.consumeFrom
+import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.FragmentEditLoginBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.redirectToReAuth
-import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.toEditable
 import org.mozilla.fenix.settings.logins.LoginsAction
@@ -233,7 +233,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
                 layout.setErrorIconTintList(
                     ColorStateList.valueOf(
-                        ContextCompat.getColor(requireContext(), R.color.destructive_normal_theme)
+                        ContextCompat.getColor(requireContext(), R.color.fx_mobile_text_color_warning)
                     )
                 )
                 clearButton.isVisible = false
@@ -250,7 +250,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
             layout.setErrorIconTintList(
                 ColorStateList.valueOf(
-                    ContextCompat.getColor(requireContext(), R.color.destructive_normal_theme)
+                    ContextCompat.getColor(requireContext(), R.color.fx_mobile_text_color_warning)
                 )
             )
         }
@@ -288,7 +288,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
                 binding.usernameText.text.toString(),
                 binding.passwordText.text.toString()
             )
-            requireComponents.analytics.metrics.track(Event.EditLoginSave)
+            Logins.saveEditedLogin.record(NoExtras())
             true
         }
         else -> false

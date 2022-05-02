@@ -17,9 +17,10 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
-import org.mozilla.fenix.home.HomeFragmentState
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryGroup
@@ -35,7 +36,7 @@ class SessionControlViewTest {
 
         every { settings.hasShownHomeOnboardingDialog } returns false
 
-        val state = HomeFragmentState(recentBookmarks = recentBookmarks)
+        val state = AppState(recentBookmarks = recentBookmarks)
 
         assertTrue(state.shouldShowHomeOnboardingDialog(settings))
     }
@@ -47,7 +48,7 @@ class SessionControlViewTest {
 
         every { settings.hasShownHomeOnboardingDialog } returns false
 
-        val state = HomeFragmentState(recentTabs = recentTabs)
+        val state = AppState(recentTabs = recentTabs)
 
         assertTrue(state.shouldShowHomeOnboardingDialog(settings))
     }
@@ -59,7 +60,7 @@ class SessionControlViewTest {
 
         every { settings.hasShownHomeOnboardingDialog } returns false
 
-        val state = HomeFragmentState(recentHistory = historyMetadata)
+        val state = AppState(recentHistory = historyMetadata)
 
         assertTrue(state.shouldShowHomeOnboardingDialog(settings))
     }
@@ -71,7 +72,7 @@ class SessionControlViewTest {
 
         every { settings.hasShownHomeOnboardingDialog } returns false
 
-        val state = HomeFragmentState(pocketStories = pocketArticles)
+        val state = AppState(pocketStories = pocketArticles)
 
         assertTrue(state.shouldShowHomeOnboardingDialog(settings))
     }
@@ -83,7 +84,7 @@ class SessionControlViewTest {
 
         every { settings.hasShownHomeOnboardingDialog } returns true
 
-        val state = HomeFragmentState(pocketStories = pocketArticles)
+        val state = AppState(pocketStories = pocketArticles)
 
         assertFalse(state.shouldShowHomeOnboardingDialog(settings))
     }
@@ -94,14 +95,13 @@ class SessionControlViewTest {
         val interactor = mockk<SessionControlInteractor>(relaxed = true)
         val view = RecyclerView(testContext)
         val controller = SessionControlView(
-            mockk(relaxed = true),
             view,
             mockk(relaxed = true),
             interactor
         )
         val recentTabs = listOf<RecentTab>(mockk(relaxed = true))
 
-        val state = HomeFragmentState(recentTabs = recentTabs)
+        val state = AppState(recentTabs = recentTabs)
 
         controller.update(state)
 
@@ -116,13 +116,12 @@ class SessionControlViewTest {
         val interactor = mockk<SessionControlInteractor>(relaxed = true)
         val view = RecyclerView(testContext)
         val controller = SessionControlView(
-            mockk(relaxed = true),
             view,
             mockk(relaxed = true),
             interactor
         )
 
-        val state = HomeFragmentState()
+        val state = AppState()
 
         controller.update(state)
 
@@ -133,6 +132,7 @@ class SessionControlViewTest {
 
     @Test
     fun `GIVEN recent Bookmarks WHEN normalModeAdapterItems is called THEN add a customize home button`() {
+        val settings: Settings = mockk()
         val topSites = emptyList<TopSite>()
         val collections = emptyList<TabCollection>()
         val expandedCollections = emptySet<Long>()
@@ -141,14 +141,20 @@ class SessionControlViewTest {
         val historyMetadata = emptyList<RecentHistoryGroup>()
         val pocketArticles = emptyList<PocketRecommendedStory>()
 
+        every { settings.showTopSitesFeature } returns true
+        every { settings.showRecentTabsFeature } returns true
+        every { settings.showRecentBookmarksFeature } returns true
+        every { settings.historyMetadataUIFeature } returns true
+        every { settings.showPocketRecommendationsFeature } returns true
+
         val results = normalModeAdapterItems(
+            settings,
             topSites,
             collections,
             expandedCollections,
-            null,
             recentBookmarks,
             false,
-            false,
+            null,
             recentTabs,
             historyMetadata,
             pocketArticles
@@ -161,7 +167,42 @@ class SessionControlViewTest {
     }
 
     @Test
+    fun `GIVEN a nimbusMessageCard WHEN normalModeAdapterItems is called THEN add a NimbusMessageCard`() {
+        val settings: Settings = mockk()
+        val topSites = emptyList<TopSite>()
+        val collections = emptyList<TabCollection>()
+        val expandedCollections = emptySet<Long>()
+        val recentBookmarks = listOf(RecentBookmark())
+        val recentTabs = emptyList<RecentTab.Tab>()
+        val historyMetadata = emptyList<RecentHistoryGroup>()
+        val pocketArticles = emptyList<PocketRecommendedStory>()
+        val nimbusMessageCard: Message = mockk()
+
+        every { settings.showTopSitesFeature } returns true
+        every { settings.showRecentTabsFeature } returns true
+        every { settings.showRecentBookmarksFeature } returns true
+        every { settings.historyMetadataUIFeature } returns true
+        every { settings.showPocketRecommendationsFeature } returns true
+
+        val results = normalModeAdapterItems(
+            settings,
+            topSites,
+            collections,
+            expandedCollections,
+            recentBookmarks,
+            false,
+            nimbusMessageCard,
+            recentTabs,
+            historyMetadata,
+            pocketArticles
+        )
+
+        assertTrue(results.contains(AdapterItem.NimbusMessageCard(nimbusMessageCard)))
+    }
+
+    @Test
     fun `GIVEN recent tabs WHEN normalModeAdapterItems is called THEN add a customize home button`() {
+        val settings: Settings = mockk()
         val topSites = emptyList<TopSite>()
         val collections = emptyList<TabCollection>()
         val expandedCollections = emptySet<Long>()
@@ -170,14 +211,20 @@ class SessionControlViewTest {
         val historyMetadata = emptyList<RecentHistoryGroup>()
         val pocketArticles = emptyList<PocketRecommendedStory>()
 
+        every { settings.showTopSitesFeature } returns true
+        every { settings.showRecentTabsFeature } returns true
+        every { settings.showRecentBookmarksFeature } returns true
+        every { settings.historyMetadataUIFeature } returns true
+        every { settings.showPocketRecommendationsFeature } returns true
+
         val results = normalModeAdapterItems(
+            settings,
             topSites,
             collections,
             expandedCollections,
-            null,
             recentBookmarks,
             false,
-            false,
+            null,
             recentTabs,
             historyMetadata,
             pocketArticles
@@ -191,6 +238,7 @@ class SessionControlViewTest {
 
     @Test
     fun `GIVEN history metadata WHEN normalModeAdapterItems is called THEN add a customize home button`() {
+        val settings: Settings = mockk()
         val topSites = emptyList<TopSite>()
         val collections = emptyList<TabCollection>()
         val expandedCollections = emptySet<Long>()
@@ -199,14 +247,20 @@ class SessionControlViewTest {
         val historyMetadata = listOf(RecentHistoryGroup("title", emptyList()))
         val pocketArticles = emptyList<PocketRecommendedStory>()
 
+        every { settings.showTopSitesFeature } returns true
+        every { settings.showRecentTabsFeature } returns true
+        every { settings.showRecentBookmarksFeature } returns true
+        every { settings.historyMetadataUIFeature } returns true
+        every { settings.showPocketRecommendationsFeature } returns true
+
         val results = normalModeAdapterItems(
+            settings,
             topSites,
             collections,
             expandedCollections,
-            null,
             recentBookmarks,
             false,
-            false,
+            null,
             recentTabs,
             historyMetadata,
             pocketArticles
@@ -220,6 +274,7 @@ class SessionControlViewTest {
 
     @Test
     fun `GIVEN pocket articles WHEN normalModeAdapterItems is called THEN add a customize home button`() {
+        val settings: Settings = mockk()
         val topSites = emptyList<TopSite>()
         val collections = emptyList<TabCollection>()
         val expandedCollections = emptySet<Long>()
@@ -228,14 +283,20 @@ class SessionControlViewTest {
         val historyMetadata = emptyList<RecentHistoryGroup>()
         val pocketArticles = listOf(PocketRecommendedStory("", "", "", "", "", 1, 1))
 
+        every { settings.showTopSitesFeature } returns true
+        every { settings.showRecentTabsFeature } returns true
+        every { settings.showRecentBookmarksFeature } returns true
+        every { settings.historyMetadataUIFeature } returns true
+        every { settings.showPocketRecommendationsFeature } returns true
+
         val results = normalModeAdapterItems(
+            settings,
             topSites,
             collections,
             expandedCollections,
-            null,
             recentBookmarks,
             false,
-            false,
+            null,
             recentTabs,
             historyMetadata,
             pocketArticles
@@ -243,11 +304,14 @@ class SessionControlViewTest {
 
         assertTrue(results[0] is AdapterItem.TopPlaceholderItem)
         assertTrue(results[1] is AdapterItem.PocketStoriesItem)
-        assertTrue(results[2] is AdapterItem.CustomizeHomeButton)
+        assertTrue(results[2] is AdapterItem.PocketCategoriesItem)
+        assertTrue(results[3] is AdapterItem.PocketRecommendationsFooterItem)
+        assertTrue(results[4] is AdapterItem.CustomizeHomeButton)
     }
 
     @Test
     fun `GIVEN none recentBookmarks,recentTabs, historyMetadata or pocketArticles WHEN normalModeAdapterItems is called THEN the customize home button is not added`() {
+        val settings: Settings = mockk()
         val topSites = emptyList<TopSite>()
         val collections = emptyList<TabCollection>()
         val expandedCollections = emptySet<Long>()
@@ -256,14 +320,20 @@ class SessionControlViewTest {
         val historyMetadata = emptyList<RecentHistoryGroup>()
         val pocketArticles = emptyList<PocketRecommendedStory>()
 
+        every { settings.showTopSitesFeature } returns true
+        every { settings.showRecentTabsFeature } returns true
+        every { settings.showRecentBookmarksFeature } returns true
+        every { settings.historyMetadataUIFeature } returns true
+        every { settings.showPocketRecommendationsFeature } returns true
+
         val results = normalModeAdapterItems(
+            settings,
             topSites,
             collections,
             expandedCollections,
-            null,
             recentBookmarks,
             false,
-            false,
+            null,
             recentTabs,
             historyMetadata,
             pocketArticles
@@ -274,6 +344,7 @@ class SessionControlViewTest {
 
     @Test
     fun `GIVEN all items THEN top placeholder item is always the first item`() {
+        val settings: Settings = mockk()
         val collection = mockk<TabCollection> {
             every { id } returns 123L
         }
@@ -285,14 +356,20 @@ class SessionControlViewTest {
         val historyMetadata = listOf<RecentHistoryGroup>(mockk())
         val pocketArticles = listOf<PocketRecommendedStory>(mockk())
 
+        every { settings.showTopSitesFeature } returns true
+        every { settings.showRecentTabsFeature } returns true
+        every { settings.showRecentBookmarksFeature } returns true
+        every { settings.historyMetadataUIFeature } returns true
+        every { settings.showPocketRecommendationsFeature } returns true
+
         val results = normalModeAdapterItems(
+            settings,
             topSites,
             collections,
             expandedCollections,
-            null,
             recentBookmarks,
             false,
-            false,
+            null,
             recentTabs,
             historyMetadata,
             pocketArticles

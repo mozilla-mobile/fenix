@@ -6,15 +6,15 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/delete_bookmark_button"
-        android:icon="@drawable/mozac_ic_delete"
-        app:iconTint="?primaryText"
+        android:icon="@drawable/ic_delete"
+        app:iconTint="?attr/textPrimary"
         android:title="@string/bookmark_menu_delete_button"
         android:contentDescription="@string/bookmark_menu_delete_button"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/save_bookmark_button"
         android:icon= "@drawable/mozac_ic_check"
-        app:iconTint="?primaryText"
+        app:iconTint="?attr/textPrimary"
         android:title="@string/bookmark_menu_save_button"
         android:contentDescription="@string/bookmark_menu_save_button"
         app:showAsAction="ifRoom" />

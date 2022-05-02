@@ -2,25 +2,21 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from __future__ import absolute_import, print_function, unicode_literals
-
 import os
-import re
 
-from mozilla_version.fenix import FenixVersion
-from six import text_type
 from taskgraph.parameters import extend_parameters_schema
 from voluptuous import All, Any, Optional, Range, Required
 
-from .release_promotion import read_version_file
 
-extend_parameters_schema({
-    Required("pull_request_number"): Any(All(int, Range(min=1)), None),
-    Required("release_type"): text_type,
-    Optional("shipping_phase"): Any('build', 'ship', None),
-    Required("version"): text_type,
-    Required("next_version"): Any(None, text_type),
-})
+extend_parameters_schema(
+    {
+        Required("pull_request_number"): Any(All(int, Range(min=1)), None),
+        Required("release_type", default=""): str,
+        Optional("shipping_phase"): Any("build", "ship", None),
+        Required("version", default=""): str,
+        Required("next_version", default=""): Any(None, str),
+    }
+)
 
 
 def get_decision_parameters(graph_config, parameters):

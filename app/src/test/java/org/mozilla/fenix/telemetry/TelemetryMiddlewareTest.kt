@@ -6,7 +6,6 @@ package org.mozilla.fenix.telemetry
 
 import androidx.test.core.app.ApplicationProvider
 import io.mockk.mockk
-import io.mockk.verify
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.TabListAction
@@ -14,11 +13,11 @@ import mozilla.components.browser.state.engine.EngineMiddleware
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.state.recover.RecoverableTab
+import mozilla.components.browser.state.state.recover.TabState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.base.android.Clock
 import mozilla.components.support.test.ext.joinBlocking
-import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
@@ -29,7 +28,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
@@ -75,24 +75,32 @@ class TelemetryMiddlewareTest {
     @Test
     fun `WHEN a tab is added THEN the open tab count is updated`() {
         assertEquals(0, settings.openTabsCount)
+        assertFalse(Metrics.hasOpenTabs.testHasValue())
 
         store.dispatch(TabListAction.AddTabAction(createTab("https://mozilla.org"))).joinBlocking()
         assertEquals(1, settings.openTabsCount)
-        verify(exactly = 1) { metrics.track(Event.HaveOpenTabs) }
+
+        assertTrue(Metrics.hasOpenTabs.testHasValue())
+        assertTrue(Metrics.hasOpenTabs.testGetValue())
     }
 
     @Test
     fun `WHEN a private tab is added THEN the open tab count is not updated`() {
         assertEquals(0, settings.openTabsCount)
+        assertFalse(Metrics.hasOpenTabs.testHasValue())
 
         store.dispatch(TabListAction.AddTabAction(createTab("https://mozilla.org", private = true))).joinBlocking()
         assertEquals(0, settings.openTabsCount)
-        verify(exactly = 1) { metrics.track(Event.HaveNoOpenTabs) }
+
+        assertTrue(Metrics.hasOpenTabs.testHasValue())
+        assertFalse(Metrics.hasOpenTabs.testGetValue())
     }
 
     @Test
     fun `WHEN multiple tabs are added THEN the open tab count is updated`() {
         assertEquals(0, settings.openTabsCount)
+        assertFalse(Metrics.hasOpenTabs.testHasValue())
+
         store.dispatch(
             TabListAction.AddMultipleTabsAction(
                 listOf(
@@ -103,11 +111,15 @@ class TelemetryMiddlewareTest {
         ).joinBlocking()
 
         assertEquals(2, settings.openTabsCount)
-        verify(exactly = 1) { metrics.track(Event.HaveOpenTabs) }
+
+        assertTrue(Metrics.hasOpenTabs.testHasValue())
+        assertTrue(Metrics.hasOpenTabs.testGetValue())
     }
 
     @Test
     fun `WHEN a tab is removed THEN the open tab count is updated`() {
+        assertFalse(Metrics.hasOpenTabs.testHasValue())
+
         store.dispatch(
             TabListAction.AddMultipleTabsAction(
                 listOf(
@@ -117,15 +129,18 @@ class TelemetryMiddlewareTest {
             )
         ).joinBlocking()
         assertEquals(2, settings.openTabsCount)
-        verify(exactly = 1) { metrics.track(Event.HaveOpenTabs) }
 
         store.dispatch(TabListAction.RemoveTabAction("1")).joinBlocking()
         assertEquals(1, settings.openTabsCount)
-        verify(exactly = 2) { metrics.track(Event.HaveOpenTabs) }
+
+        assertTrue(Metrics.hasOpenTabs.testHasValue())
+        assertTrue(Metrics.hasOpenTabs.testGetValue())
     }
 
     @Test
     fun `WHEN all tabs are removed THEN the open tab count is updated`() {
+        assertFalse(Metrics.hasOpenTabs.testHasValue())
+
         store.dispatch(
             TabListAction.AddMultipleTabsAction(
                 listOf(
@@ -135,15 +150,21 @@ class TelemetryMiddlewareTest {
             )
         ).joinBlocking()
         assertEquals(2, settings.openTabsCount)
-        verify(exactly = 1) { metrics.track(Event.HaveOpenTabs) }
+
+        assertTrue(Metrics.hasOpenTabs.testHasValue())
+        assertTrue(Metrics.hasOpenTabs.testGetValue())
 
         store.dispatch(TabListAction.RemoveAllTabsAction()).joinBlocking()
         assertEquals(0, settings.openTabsCount)
-        verify(exactly = 1) { metrics.track(Event.HaveNoOpenTabs) }
+
+        assertTrue(Metrics.hasOpenTabs.testHasValue())
+        assertFalse(Metrics.hasOpenTabs.testGetValue())
     }
 
     @Test
     fun `WHEN all normal tabs are removed THEN the open tab count is updated`() {
+        assertFalse(Metrics.hasOpenTabs.testHasValue())
+
         store.dispatch(
             TabListAction.AddMultipleTabsAction(
                 listOf(
@@ -154,19 +175,23 @@ class TelemetryMiddlewareTest {
             )
         ).joinBlocking()
         assertEquals(2, settings.openTabsCount)
-        verify(exactly = 1) { metrics.track(Event.HaveOpenTabs) }
+        assertTrue(Metrics.hasOpenTabs.testHasValue())
+        assertTrue(Metrics.hasOpenTabs.testGetValue())
 
         store.dispatch(TabListAction.RemoveAllNormalTabsAction).joinBlocking()
         assertEquals(0, settings.openTabsCount)
-        verify(exactly = 1) { metrics.track(Event.HaveNoOpenTabs) }
+        assertTrue(Metrics.hasOpenTabs.testHasValue())
+        assertFalse(Metrics.hasOpenTabs.testGetValue())
     }
 
     @Test
     fun `WHEN tabs are restored THEN the open tab count is updated`() {
         assertEquals(0, settings.openTabsCount)
+        assertFalse(Metrics.hasOpenTabs.testHasValue())
+
         val tabsToRestore = listOf(
-            RecoverableTab(url = "https://mozilla.org", id = "1"),
-            RecoverableTab(url = "https://firefox.com", id = "2")
+            RecoverableTab(null, TabState(url = "https://mozilla.org", id = "1")),
+            RecoverableTab(null, TabState(url = "https://firefox.com", id = "2"))
         )
 
         store.dispatch(
@@ -176,29 +201,38 @@ class TelemetryMiddlewareTest {
             )
         ).joinBlocking()
         assertEquals(2, settings.openTabsCount)
-        verify(exactly = 1) { metrics.track(Event.HaveOpenTabs) }
+
+        assertTrue(Metrics.hasOpenTabs.testHasValue())
+        assertTrue(Metrics.hasOpenTabs.testGetValue())
     }
 
     @Test
     fun `GIVEN a normal page is loading WHEN loading is complete THEN we record a UriOpened event`() {
         val tab = createTab(id = "1", url = "https://mozilla.org")
+        assertFalse(Events.normalAndPrivateUriCount.testHasValue())
+
         store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
         store.dispatch(ContentAction.UpdateLoadingStateAction(tab.id, true)).joinBlocking()
-        verify(exactly = 0) { metrics.track(Event.NormalAndPrivateUriOpened) }
+        assertFalse(Events.normalAndPrivateUriCount.testHasValue())
 
         store.dispatch(ContentAction.UpdateLoadingStateAction(tab.id, false)).joinBlocking()
-        verify(exactly = 1) { metrics.track(Event.NormalAndPrivateUriOpened) }
+        assertTrue(Events.normalAndPrivateUriCount.testHasValue())
+        val count = Events.normalAndPrivateUriCount.testGetValue()
+        assertEquals(1, count)
     }
 
     @Test
     fun `GIVEN a private page is loading WHEN loading is complete THEN we record a UriOpened event`() {
         val tab = createTab(id = "1", url = "https://mozilla.org", private = true)
+        assertFalse(Events.normalAndPrivateUriCount.testHasValue())
+
         store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
         store.dispatch(ContentAction.UpdateLoadingStateAction(tab.id, true)).joinBlocking()
-        verify(exactly = 0) { metrics.track(Event.NormalAndPrivateUriOpened) }
+        assertFalse(Events.normalAndPrivateUriCount.testHasValue())
 
         store.dispatch(ContentAction.UpdateLoadingStateAction(tab.id, false)).joinBlocking()
-        verify(exactly = 1) { metrics.track(Event.NormalAndPrivateUriOpened) }
+        val count = Events.normalAndPrivateUriCount.testGetValue()
+        assertEquals(1, count)
     }
 
     @Test
@@ -206,9 +240,9 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.RestoreAction(
                 listOf(
-                    RecoverableTab(url = "https://www.mozilla.org", id = "foreground"),
-                    RecoverableTab(url = "https://getpocket.com", id = "background_pocket"),
-                    RecoverableTab(url = "https://theverge.com", id = "background_verge")
+                    RecoverableTab(null, TabState(url = "https://www.mozilla.org", id = "foreground")),
+                    RecoverableTab(null, TabState(url = "https://getpocket.com", id = "background_pocket")),
+                    RecoverableTab(null, TabState(url = "https://theverge.com", id = "background_verge"))
                 ),
                 selectedTabId = "foreground",
                 restoreLocation = TabListAction.RestoreAction.RestoreLocation.BEGINNING
@@ -230,9 +264,9 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.RestoreAction(
                 listOf(
-                    RecoverableTab(url = "https://www.mozilla.org", id = "foreground"),
-                    RecoverableTab(url = "https://getpocket.com", id = "background_pocket"),
-                    RecoverableTab(url = "https://theverge.com", id = "background_verge")
+                    RecoverableTab(null, TabState(url = "https://www.mozilla.org", id = "foreground")),
+                    RecoverableTab(null, TabState(url = "https://getpocket.com", id = "background_pocket")),
+                    RecoverableTab(null, TabState(url = "https://theverge.com", id = "background_verge"))
                 ),
                 selectedTabId = "foreground",
                 restoreLocation = TabListAction.RestoreAction.RestoreLocation.BEGINNING
@@ -264,9 +298,9 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.RestoreAction(
                 listOf(
-                    RecoverableTab(url = "https://www.mozilla.org", id = "foreground"),
-                    RecoverableTab(url = "https://getpocket.com", id = "background_pocket"),
-                    RecoverableTab(url = "https://theverge.com", id = "background_verge")
+                    RecoverableTab(null, TabState(url = "https://www.mozilla.org", id = "foreground")),
+                    RecoverableTab(null, TabState(url = "https://getpocket.com", id = "background_pocket")),
+                    RecoverableTab(null, TabState(url = "https://theverge.com", id = "background_verge"))
                 ),
                 selectedTabId = "foreground",
                 restoreLocation = TabListAction.RestoreAction.RestoreLocation.BEGINNING
@@ -278,7 +312,7 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             EngineAction.LinkEngineSessionAction(
                 tabId = "foreground",
-                engineSession = mock()
+                engineSession = mockk(relaxed = true)
             )
         ).joinBlocking()
 
@@ -301,9 +335,9 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             TabListAction.RestoreAction(
                 listOf(
-                    RecoverableTab(url = "https://www.mozilla.org", id = "foreground"),
-                    RecoverableTab(url = "https://getpocket.com", id = "background_pocket"),
-                    RecoverableTab(url = "https://theverge.com", id = "background_verge")
+                    RecoverableTab(null, TabState(url = "https://www.mozilla.org", id = "foreground")),
+                    RecoverableTab(null, TabState(url = "https://getpocket.com", id = "background_pocket")),
+                    RecoverableTab(null, TabState(url = "https://theverge.com", id = "background_verge"))
                 ),
                 selectedTabId = "foreground",
                 restoreLocation = TabListAction.RestoreAction.RestoreLocation.BEGINNING
@@ -315,7 +349,7 @@ class TelemetryMiddlewareTest {
         store.dispatch(
             EngineAction.LinkEngineSessionAction(
                 tabId = "background_pocket",
-                engineSession = mock()
+                engineSession = mockk(relaxed = true)
             )
         ).joinBlocking()
 

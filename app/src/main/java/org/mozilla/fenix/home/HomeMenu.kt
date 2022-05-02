@@ -55,7 +55,7 @@ class HomeMenu(
         data class DesktopMode(val checked: Boolean) : Item()
     }
 
-    private val primaryTextColor = ThemeManager.resolveAttribute(R.attr.primaryText, context)
+    private val primaryTextColor = ThemeManager.resolveAttribute(R.attr.textPrimary, context)
     private val syncDisconnectedColor =
         ThemeManager.resolveAttribute(R.attr.syncDisconnected, context)
     private val syncDisconnectedBackgroundColor =
@@ -102,7 +102,7 @@ class HomeMenu(
     }
 
     val desktopItem = BrowserMenuImageSwitch(
-        imageResource = R.drawable.mozac_ic_device_desktop,
+        imageResource = R.drawable.ic_desktop,
         label = context.getString(R.string.browser_menu_desktop_site),
         initialState = { context.settings().openNextTabInDesktopMode }
     ) { checked ->
@@ -131,7 +131,7 @@ class HomeMenu(
 
         val downloadsItem = BrowserMenuImageText(
             context.getString(R.string.library_downloads),
-            R.drawable.mozac_ic_download,
+            R.drawable.ic_download,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Downloads)
@@ -139,7 +139,7 @@ class HomeMenu(
 
         val extensionsItem = BrowserMenuImageText(
             context.getString(R.string.browser_menu_add_ons),
-            R.drawable.mozac_ic_extensions,
+            R.drawable.ic_addons_extensions,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Extensions)
@@ -166,7 +166,7 @@ class HomeMenu(
         }
 
         val customizeHomeItem = BrowserMenuImageText(
-            context.getString(R.string.browser_menu_customize_home),
+            context.getString(R.string.browser_menu_customize_home_1),
             R.drawable.ic_customize,
             primaryTextColor
         ) {
@@ -175,14 +175,9 @@ class HomeMenu(
 
         // Use nimbus to set the icon and title.
         val nimbusValidation = FxNimbus.features.nimbusValidation.value()
-        val settingsIcon = context.resources.getIdentifier(
-            nimbusValidation.settingsIcon,
-            "drawable",
-            context.packageName
-        )
         val settingsItem = BrowserMenuImageText(
             nimbusValidation.settingsTitle,
-            settingsIcon,
+            R.drawable.mozac_ic_settings,
             primaryTextColor
         ) {
             onItemTapped.invoke(Item.Settings)

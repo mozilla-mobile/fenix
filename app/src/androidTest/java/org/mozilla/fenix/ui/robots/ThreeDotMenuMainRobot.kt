@@ -114,6 +114,17 @@ class ThreeDotMenuMainRobot {
         onView(withId(R.id.share_tab_url)).check(matches(isDisplayed()))
     }
 
+    fun openAddonsSubList() {
+        // when there are add-ons installed, there is an overflow Add-ons sub-menu
+        // in that case we use this method instead or before openAddonsManagerMenu()
+        clickAddonsManagerButton()
+    }
+
+    fun verifyAddonAvailableInMainMenu(addonName: String) {
+        onView(withText(addonName))
+            .check(matches(isDisplayed()))
+    }
+
     class Transition {
 
         private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -188,7 +199,7 @@ class ThreeDotMenuMainRobot {
             mDevice.wait(
                 Until
                     .findObject(
-                        By.textContains("$packageName:id/browser_menu_customize_home")
+                        By.textContains("$packageName:id/browser_menu_customize_home_1")
                     ),
                 waitingTime
             )
@@ -276,7 +287,7 @@ class ThreeDotMenuMainRobot {
         }
 
         fun openWhatsNew(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            mDevice.waitNotNull(Until.findObject(By.text("What’s New")), waitingTime)
+            mDevice.waitNotNull(Until.findObject(By.text("What’s new")), waitingTime)
             whatsNewButton().click()
 
             BrowserRobot().interact()
@@ -329,9 +340,6 @@ class ThreeDotMenuMainRobot {
 
         fun openAddonsManagerMenu(interact: SettingsSubMenuAddonsManagerRobot.() -> Unit): SettingsSubMenuAddonsManagerRobot.Transition {
             clickAddonsManagerButton()
-            mDevice.findObject(
-                UiSelector().text("Recommended")
-            ).waitForExists(waitingTime)
 
             SettingsSubMenuAddonsManagerRobot().interact()
             return SettingsSubMenuAddonsManagerRobot.Transition()
@@ -379,7 +387,7 @@ private fun customizeHomeButton() =
     onView(
         allOf(
             withId(R.id.text),
-            withText(R.string.browser_menu_customize_home)
+            withText(R.string.browser_menu_customize_home_1)
         )
     )
 
@@ -455,7 +463,7 @@ private fun assertFindInPageButton() = findInPageButton()
 
 private fun whatsNewButton() = onView(
     allOf(
-        withText("What’s New"),
+        withText("What’s new"),
         withEffectiveVisibility(Visibility.VISIBLE)
     )
 )
@@ -486,13 +494,13 @@ private fun assertReaderViewAppearanceButton(visible: Boolean) {
 }
 
 private fun addToTopSitesButton() =
-    onView(allOf(withText(R.string.browser_menu_add_to_top_sites)))
+    onView(allOf(withText(R.string.browser_menu_add_to_shortcuts)))
 
 private fun assertAddToTopSitesButton() {
     onView(withId(R.id.mozac_browser_menu_recyclerView))
         .perform(
             RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
-                hasDescendant(withText(R.string.browser_menu_add_to_top_sites))
+                hasDescendant(withText(R.string.browser_menu_add_to_shortcuts))
             )
         ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }

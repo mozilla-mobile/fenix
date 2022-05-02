@@ -23,6 +23,11 @@ interface HistoryInteractor : SelectionInteractor<History> {
     fun onModeSwitched()
 
     /**
+     * Called when search is tapped
+     */
+    fun onSearch()
+
+    /**
      * Called when delete all is tapped
      */
     fun onDeleteAll()
@@ -42,6 +47,11 @@ interface HistoryInteractor : SelectionInteractor<History> {
      * Called when the user clicks on recently closed tab button.
      */
     fun onRecentlyClosedClicked()
+
+    /**
+     * Called when the user clicks on synced history button.
+     */
+    fun onSyncedHistoryClicked()
 }
 
 /**
@@ -72,6 +82,10 @@ class DefaultHistoryInteractor(
         historyController.handleModeSwitched()
     }
 
+    override fun onSearch() {
+        historyController.handleSearch()
+    }
+
     override fun onDeleteAll() {
         historyController.handleDeleteAll()
     }
@@ -86,5 +100,9 @@ class DefaultHistoryInteractor(
 
     override fun onRecentlyClosedClicked() {
         historyController.handleEnterRecentlyClosed()
+    }
+
+    override fun onSyncedHistoryClicked() {
+        historyController.handleEnterSyncedHistory()
     }
 }

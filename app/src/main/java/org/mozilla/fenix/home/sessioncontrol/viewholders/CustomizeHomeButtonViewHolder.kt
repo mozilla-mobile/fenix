@@ -5,7 +5,6 @@
 package org.mozilla.fenix.home.sessioncontrol.viewholders
 
 import android.view.View
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,11 +24,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LifecycleOwner
-import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.ComposeViewHolder
 import org.mozilla.fenix.home.sessioncontrol.CustomizeHomeIteractor
 import org.mozilla.fenix.theme.FirefoxTheme
+import org.mozilla.fenix.theme.Theme
 
 class CustomizeHomeButtonViewHolder(
     composeView: ComposeView,
@@ -62,11 +61,6 @@ class CustomizeHomeButtonViewHolder(
 fun CustomizeHomeButton(
     onButtonClick: () -> Unit
 ) {
-    val backgroundColor = when (isSystemInDarkTheme()) {
-        true -> PhotonColors.DarkGrey50
-        false -> PhotonColors.LightGrey40
-    }
-
     Button(
         onClick = { onButtonClick() },
         modifier = Modifier
@@ -75,8 +69,8 @@ fun CustomizeHomeButton(
             .height(36.dp),
         elevation = ButtonDefaults.elevation(defaultElevation = 0.dp, pressedElevation = 0.dp),
         colors = outlinedButtonColors(
-            backgroundColor = backgroundColor,
-            contentColor = FirefoxTheme.colors.textPrimary
+            backgroundColor = FirefoxTheme.colors.actionTertiary,
+            contentColor = FirefoxTheme.colors.textActionTertiary
         )
     ) {
         Text(
@@ -93,5 +87,9 @@ fun CustomizeHomeButton(
 @Composable
 @Preview
 fun CustomizeHomeButtonPreview() {
-    CustomizeHomeButton(onButtonClick = {})
+    FirefoxTheme(theme = Theme.getTheme(isPrivate = false)) {
+        CustomizeHomeButton(
+            onButtonClick = {}
+        )
+    }
 }

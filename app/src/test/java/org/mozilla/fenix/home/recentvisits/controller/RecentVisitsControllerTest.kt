@@ -22,34 +22,40 @@ import mozilla.components.concept.storage.HistoryMetadata
 import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.concept.storage.HistoryMetadataStorage
 import mozilla.components.feature.tabs.TabsUseCases.SelectOrAddUseCase
+import mozilla.components.service.glean.testing.GleanTestRule
+import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.RecentSearches
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
-import org.mozilla.fenix.home.HomeFragmentAction
-import org.mozilla.fenix.home.HomeFragmentAction.RemoveRecentHistoryHighlight
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeFragmentDirections
-import org.mozilla.fenix.home.HomeFragmentStore
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryGroup
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryHighlight
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@RunWith(FenixRobolectricTestRunner::class)
 class RecentVisitsControllerTest {
 
+    @get:Rule
+    val gleanTestRule = GleanTestRule(testContext)
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
     private val testDispatcher = coroutinesTestRule.testDispatcher
 
     private val selectOrAddTabUseCase: SelectOrAddUseCase = mockk(relaxed = true)
     private val navController = mockk<NavController>(relaxed = true)
-    private val metrics: MetricController = mockk(relaxed = true)
 
     private lateinit var storage: HistoryMetadataStorage
-    private lateinit var homeFragmentStore: HomeFragmentStore
+    private lateinit var appStore: AppStore
     private lateinit var store: BrowserStore
     private val scope = TestCoroutineScope()
 
@@ -61,18 +67,17 @@ class RecentVisitsControllerTest {
             every { id } returns R.id.homeFragment
         }
         storage = mockk(relaxed = true)
-        homeFragmentStore = mockk(relaxed = true)
+        appStore = mockk(relaxed = true)
         store = mockk(relaxed = true)
 
         controller = spyk(
             DefaultRecentVisitsController(
-                homeStore = homeFragmentStore,
+                appStore = appStore,
                 store = store,
                 selectOrAddTabUseCase = selectOrAddTabUseCase,
                 navController = navController,
                 scope = scope,
                 storage = storage,
-                metrics = metrics
             )
         )
     }
@@ -141,15 +146,16 @@ class RecentVisitsControllerTest {
                 )
             )
         )
+        assertFalse(RecentSearches.groupDeleted.testHasValue())
 
         controller.handleRemoveRecentHistoryGroup(historyGroup.title)
 
         testDispatcher.advanceUntilIdle()
         verify {
             store.dispatch(HistoryMetadataAction.DisbandSearchGroupAction(searchTerm = historyGroup.title))
-            homeFragmentStore.dispatch(HomeFragmentAction.DisbandSearchGroupAction(searchTerm = historyGroup.title))
-            metrics.track(Event.RecentSearchesGroupDeleted)
+            appStore.dispatch(AppAction.DisbandSearchGroupAction(searchTerm = historyGroup.title))
         }
+        assertTrue(RecentSearches.groupDeleted.testHasValue())
 
         coVerify {
             storage.deleteHistoryMetadata(historyGroup.title)
@@ -174,7 +180,7 @@ class RecentVisitsControllerTest {
         controller.handleRemoveRecentHistoryHighlight(highlightUrl)
 
         verify {
-            homeFragmentStore.dispatch(RemoveRecentHistoryHighlight(highlightUrl))
+            appStore.dispatch(AppAction.RemoveRecentHistoryHighlight(highlightUrl))
             scope.launch {
                 storage.deleteHistoryMetadataForUrl(highlightUrl)
             }
