@@ -270,6 +270,10 @@
         android:name="org.mozilla.fenix.library.history.HistoryFragment"
         android:label="@string/library_history"
         tools:layout="@layout/fragment_history">
+        <argument
+            android:name="search"
+            android:defaultValue="false"
+            app:argType="boolean" />
 
         <action
             android:id="@+id/action_global_history_search_dialog"

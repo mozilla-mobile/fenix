@@ -44,6 +44,10 @@ interface SearchController {
     fun handleSearchTermsTapped(searchTerms: String)
     fun handleSearchShortcutEngineSelected(searchEngine: SearchEngine)
     fun handleClickSearchEngineSettings()
+    /**
+     * Handle when when search icon is tapped.
+     */
+    fun handleClickHistorySearch()
     fun handleExistingSessionSelected(tabId: String)
     fun handleSearchShortcutsButtonClicked()
     fun handleCameraPermissionsNeeded()
@@ -211,6 +215,12 @@ class SearchDialogController(
         navController.navigateSafe(R.id.searchDialogFragment, directions)
     }
 
+    override fun handleClickHistorySearch() {
+        clearToolbarFocus()
+        val directions = SearchDialogFragmentDirections.actionGlobalHistoryFragment(search = true)
+        navController.navigateSafe(R.id.searchDialogFragment, directions)
+    }
+
     override fun handleExistingSessionSelected(tabId: String) {
         clearToolbarFocus()
 
@@ -243,6 +253,7 @@ class SearchDialogController(
     override fun handleMenuItemTapped(item: SearchSelectorMenu.Item) {
         when (item) {
             SearchSelectorMenu.Item.SearchSettings -> handleClickSearchEngineSettings()
+            SearchSelectorMenu.Item.History -> handleClickHistorySearch()
             is SearchSelectorMenu.Item.SearchEngine -> handleSearchShortcutEngineSelected(item.searchEngine)
         }
     }

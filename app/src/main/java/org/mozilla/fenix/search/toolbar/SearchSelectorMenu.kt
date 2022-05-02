@@ -38,6 +38,11 @@ class SearchSelectorMenu(
         object SearchSettings : Item()
 
         /**
+         * The menu item to search history.
+         */
+        object History : Item()
+
+        /**
          * The menu item to display a search engine.
          *
          * @param searchEngine The [SearchEngine] that was selected.
@@ -61,7 +66,19 @@ class SearchSelectorMenu(
                 )
             ) {
                 interactor.onMenuItemTapped(Item.SearchSettings)
-            }
+            },
+            TextMenuCandidate(
+                text = context.getString(R.string.search_history_menu_item),
+                start = DrawableMenuIcon(
+                    drawable = AppCompatResources.getDrawable(
+                        context,
+                        R.drawable.ic_history
+                    ),
+                    tint = context.getColorFromAttr(R.attr.textPrimary)
+                )
+            ) {
+                interactor.onMenuItemTapped(Item.History)
+            },
         )
     }
 }

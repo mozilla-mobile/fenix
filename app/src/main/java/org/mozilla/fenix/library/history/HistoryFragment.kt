@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -192,6 +193,11 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             history.collect {
                 historyView.historyAdapter.submitData(it)
             }
+        }
+
+        val args: HistoryFragmentArgs by navArgs()
+        if (args.search) {
+            historyInteractor.onSearch()
         }
     }
 

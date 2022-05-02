@@ -405,6 +405,15 @@ class SearchDialogControllerTest {
         verify { controller.handleClickSearchEngineSettings() }
     }
 
+    @Test
+    fun `GIVEN history menu item WHEN search selector menu item is tapped THEN show history search`() {
+        val controller = spyk(createController())
+
+        controller.handleMenuItemTapped(SearchSelectorMenu.Item.History)
+
+        verify { controller.handleClickHistorySearch() }
+    }
+
     private fun createController(
         clearToolbarFocus: () -> Unit = { },
         focusToolbar: () -> Unit = { },

@@ -240,6 +240,8 @@
     <string name="search_engine_suggestions_description">Search directly from the address bar</string>
     <!-- Menu option in the search selector menu to open the search settings -->
     <string name="search_settings_menu_item">Search settings</string>
+    <!-- Menu option in the search selector menu to search history -->
+    <string name="search_history_menu_item">History</string>
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
