@@ -56,8 +56,6 @@ class SettingsFragmentTest {
         mockkObject(Config)
         every { Config.channel } returns ReleaseChannel.Nightly
 
-        FxNimbus.api = NimbusDisabled(testContext)
-
         val activity = Robolectric.buildActivity(FragmentActivity::class.java).create().get()
         activity.supportFragmentManager.beginTransaction()
             .add(settingsFragment, "test")
