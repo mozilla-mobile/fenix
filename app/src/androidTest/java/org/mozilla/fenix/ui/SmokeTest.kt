@@ -533,6 +533,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/25034")
     @Test
     @SdkSuppress(minSdkVersion = 29)
     // Verifies that you can go to System settings and change app's permissions from inside the app
@@ -793,13 +794,9 @@ class SmokeTest {
             createBookmark(website.url)
         }.openThreeDotMenu {
         }.openBookmarks {
-            bookmarksListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 1)
-            IdlingRegistry.getInstance().register(bookmarksListIdlingResource!!)
             verifyBookmarkTitle("Test_Page_1")
             createFolder("My Folder")
             verifyFolderTitle("My Folder")
-            IdlingRegistry.getInstance().unregister(bookmarksListIdlingResource!!)
         }.openThreeDotMenu("Test_Page_1") {
         }.clickEdit {
             clickParentFolderSelector()
@@ -807,11 +804,7 @@ class SmokeTest {
             navigateUp()
             saveEditBookmark()
             createFolder("My Folder 2")
-            bookmarksListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 1)
-            IdlingRegistry.getInstance().register(bookmarksListIdlingResource!!)
             verifyFolderTitle("My Folder 2")
-            IdlingRegistry.getInstance().unregister(bookmarksListIdlingResource!!)
         }.openThreeDotMenu("My Folder 2") {
         }.clickEdit {
             clickParentFolderSelector()

@@ -6,8 +6,6 @@ package org.mozilla.fenix.components.metrics
 
 import androidx.annotation.VisibleForTesting
 import mozilla.components.browser.menu.facts.BrowserMenuFacts
-import mozilla.components.browser.toolbar.facts.ToolbarFacts
-import mozilla.components.compose.browser.awesomebar.AwesomeBarFacts as ComposeAwesomeBarFacts
 import mozilla.components.concept.awesomebar.AwesomeBar
 import mozilla.components.feature.autofill.facts.AutofillFacts
 import mozilla.components.feature.awesomebar.facts.AwesomeBarFacts
@@ -17,7 +15,6 @@ import mozilla.components.feature.awesomebar.provider.HistoryStorageSuggestionPr
 import mozilla.components.feature.awesomebar.provider.SearchSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.SessionSuggestionProvider
 import mozilla.components.feature.contextmenu.facts.ContextMenuFacts
-import mozilla.components.feature.customtabs.CustomTabsFacts
 import mozilla.components.feature.media.facts.MediaFacts
 import mozilla.components.feature.prompts.dialog.LoginDialogFacts
 import mozilla.components.feature.prompts.facts.CreditCardAutofillDialogFacts
@@ -42,8 +39,6 @@ import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.BrowserSearch
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
 import org.mozilla.fenix.GleanMetrics.CreditCards
-import org.mozilla.fenix.GleanMetrics.CustomTab
-import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.LoginDialog
 import org.mozilla.fenix.GleanMetrics.MediaNotification
 import org.mozilla.fenix.GleanMetrics.MediaState
@@ -52,6 +47,7 @@ import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
 import org.mozilla.fenix.search.awesomebar.ShortcutsSuggestionProvider
 import org.mozilla.fenix.utils.Settings
+import mozilla.components.compose.browser.awesomebar.AwesomeBarFacts as ComposeAwesomeBarFacts
 
 interface MetricController {
     fun start(type: MetricServiceType)
@@ -143,17 +139,6 @@ internal class ReleaseMetricController(
                 else -> Unit
             }
         }
-        Component.BROWSER_TOOLBAR to ToolbarFacts.Items.MENU -> {
-            metadata?.get("customTab")?.let { CustomTab.menu.record(NoExtras()) }
-                ?: Events.toolbarMenuVisible.record(NoExtras())
-        }
-        Component.FEATURE_CUSTOMTABS to CustomTabsFacts.Items.ACTION_BUTTON -> {
-            CustomTab.actionButton.record(NoExtras())
-        }
-        Component.FEATURE_CUSTOMTABS to CustomTabsFacts.Items.CLOSE -> {
-            CustomTab.closed.record(NoExtras())
-        }
-
         Component.FEATURE_CONTEXTMENU to ContextMenuFacts.Items.ITEM -> {
             metadata?.get("item")?.let { item ->
                 contextMenuAllowList[item]?.let { extraKey ->
@@ -257,12 +242,57 @@ internal class ReleaseMetricController(
         Component.FEATURE_SEARCH to InContentTelemetry.IN_CONTENT_SEARCH -> {
             BrowserSearch.inContent[value!!].add()
         }
+        Component.SUPPORT_WEBEXTENSIONS to WebExtensionFacts.Items.WEB_EXTENSIONS_INITIALIZED -> {
+            metadata?.get("installed")?.let { installedAddons ->
+                if (installedAddons is List<*>) {
+                    settings.installedAddonsCount = installedAddons.size
+                    settings.installedAddonsList = installedAddons.joinToString(",")
+                }
+            }
 
-        else -> {
-            this.toEvent()?.also {
-                track(it)
+            metadata?.get("enabled")?.let { enabledAddons ->
+                if (enabledAddons is List<*>) {
+                    settings.enabledAddonsCount = enabledAddons.size
+                    settings.enabledAddonsList = enabledAddons.joinToString(",")
+                }
             }
             Unit
+        }
+        Component.COMPOSE_AWESOMEBAR to ComposeAwesomeBarFacts.Items.PROVIDER_DURATION -> {
+            metadata?.get(ComposeAwesomeBarFacts.MetadataKeys.DURATION_PAIR)?.let { providerTiming ->
+                require(providerTiming is Pair<*, *>) { "Expected providerTiming to be a Pair" }
+                when (val provider = providerTiming.first as AwesomeBar.SuggestionProvider) {
+                    is HistoryStorageSuggestionProvider -> PerfAwesomebar.historySuggestions
+                    is BookmarksStorageSuggestionProvider -> PerfAwesomebar.bookmarkSuggestions
+                    is SessionSuggestionProvider -> PerfAwesomebar.sessionSuggestions
+                    is SearchSuggestionProvider -> PerfAwesomebar.searchEngineSuggestions
+                    is ClipboardSuggestionProvider -> PerfAwesomebar.clipboardSuggestions
+                    is ShortcutsSuggestionProvider -> PerfAwesomebar.shortcutsSuggestions
+                    // NB: add PerfAwesomebar.syncedTabsSuggestions once we're using SyncedTabsSuggestionProvider
+                    else -> {
+                        Logger("Metrics").error("Unknown suggestion provider: $provider")
+                        null
+                    }
+                }?.accumulateSamples(longArrayOf(providerTiming.second as Long))
+            }
+            Unit
+        }
+        Component.FEATURE_TOP_SITES to TopSitesFacts.Items.COUNT -> {
+            value?.let {
+                var count = 0
+                try {
+                    count = it.toInt()
+                } catch (e: NumberFormatException) {
+                    // Do nothing
+                }
+
+                settings.topSitesSize = count
+            }
+            Unit
+        }
+
+        else -> {
+            // no-op
         }
     }
 
@@ -308,74 +338,11 @@ internal class ReleaseMetricController(
             }
     }
 
-    @VisibleForTesting
-    internal fun factToEvent(
-        fact: Fact
-    ): Event? {
-        return fact.toEvent()
-    }
-
     private fun isInitialized(type: MetricServiceType): Boolean = initialized.contains(type)
 
     private fun isTelemetryEnabled(type: MetricServiceType): Boolean = when (type) {
         MetricServiceType.Data -> isDataTelemetryEnabled()
         MetricServiceType.Marketing -> isMarketingDataTelemetryEnabled()
-    }
-
-    @Suppress("LongMethod", "MaxLineLength")
-    private fun Fact.toEvent(): Event? = when {
-        Component.SUPPORT_WEBEXTENSIONS == component && WebExtensionFacts.Items.WEB_EXTENSIONS_INITIALIZED == item -> {
-            metadata?.get("installed")?.let { installedAddons ->
-                if (installedAddons is List<*>) {
-                    settings.installedAddonsCount = installedAddons.size
-                    settings.installedAddonsList = installedAddons.joinToString(",")
-                }
-            }
-
-            metadata?.get("enabled")?.let { enabledAddons ->
-                if (enabledAddons is List<*>) {
-                    settings.enabledAddonsCount = enabledAddons.size
-                    settings.enabledAddonsList = enabledAddons.joinToString(",")
-                }
-            }
-
-            null
-        }
-        Component.COMPOSE_AWESOMEBAR == component && ComposeAwesomeBarFacts.Items.PROVIDER_DURATION == item -> {
-            metadata?.get(ComposeAwesomeBarFacts.MetadataKeys.DURATION_PAIR)?.let { providerTiming ->
-                require(providerTiming is Pair<*, *>) { "Expected providerTiming to be a Pair" }
-                when (val provider = providerTiming.first as AwesomeBar.SuggestionProvider) {
-                    is HistoryStorageSuggestionProvider -> PerfAwesomebar.historySuggestions
-                    is BookmarksStorageSuggestionProvider -> PerfAwesomebar.bookmarkSuggestions
-                    is SessionSuggestionProvider -> PerfAwesomebar.sessionSuggestions
-                    is SearchSuggestionProvider -> PerfAwesomebar.searchEngineSuggestions
-                    is ClipboardSuggestionProvider -> PerfAwesomebar.clipboardSuggestions
-                    is ShortcutsSuggestionProvider -> PerfAwesomebar.shortcutsSuggestions
-                    // NB: add PerfAwesomebar.syncedTabsSuggestions once we're using SyncedTabsSuggestionProvider
-                    else -> {
-                        Logger("Metrics").error("Unknown suggestion provider: $provider")
-                        null
-                    }
-                }?.accumulateSamples(longArrayOf(providerTiming.second as Long))
-            }
-            null
-        }
-
-        Component.FEATURE_TOP_SITES == component && TopSitesFacts.Items.COUNT == item -> {
-            value?.let {
-                var count = 0
-                try {
-                    count = it.toInt()
-                } catch (e: NumberFormatException) {
-                    // Do nothing
-                }
-
-                settings.topSitesSize = count
-            }
-            null
-        }
-
-        else -> null
     }
 
     companion object {
