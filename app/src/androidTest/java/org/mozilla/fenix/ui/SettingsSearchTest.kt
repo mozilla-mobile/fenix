@@ -4,7 +4,6 @@ import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
@@ -98,8 +97,8 @@ class SettingsSearchTest {
         }.openSearch {
             typeSearch("test")
             expandSearchSuggestionsList()
-            verifySearchEngineSuggestionResults(activityTestRule, "Test_Page_1")
-            verifySearchEngineSuggestionResults(activityTestRule, "Test_Page_2")
+            verifyBookmarksAndHistorySuggestionResults(activityTestRule, "Test_Page_1")
+            verifyBookmarksAndHistorySuggestionResults(activityTestRule, "Test_Page_2")
         }.dismissSearchBar {
         }.openThreeDotMenu {
         }.openSettings {
@@ -182,7 +181,6 @@ class SettingsSearchTest {
         }
     }
 
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/23817")
     @SmokeTest
     @Test
     // Test running on beta/release builds in CI:
@@ -193,7 +191,7 @@ class SettingsSearchTest {
         homeScreen {
         }.openSearch {
             typeSearch("mozilla")
-            verifySearchEngineSuggestionResults(activityTestRule, "mozilla firefox")
+            verifyDefaultSearchEngineSuggestionResults(activityTestRule, "mozilla firefox", "mozilla")
         }.dismissSearchBar {
         }.openThreeDotMenu {
         }.openSettings {

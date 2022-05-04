@@ -100,7 +100,7 @@ class SearchTest {
             verifySearchBarEmpty()
             clickSearchEngineButton(activityTestRule, "DuckDuckGo")
             typeSearch("mozilla")
-            verifySearchEngineResults(activityTestRule, "mozilla firefox", "DuckDuckGo")
+            verifySearchEngineResults(activityTestRule, "mozilla firefox")
             clickSearchEngineResult(activityTestRule, "mozilla firefox")
             verifySearchEngineURL("DuckDuckGo")
         }

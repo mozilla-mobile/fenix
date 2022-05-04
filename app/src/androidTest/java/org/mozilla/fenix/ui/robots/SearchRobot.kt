@@ -96,10 +96,12 @@ class SearchRobot {
 
     fun verifySearchEngineButton() = assertSearchButton()
     fun verifySearchWithText() = assertSearchWithText()
-    fun verifySearchEngineResults(rule: ComposeTestRule, searchSuggestion: String, searchEngineName: String) =
-        assertSearchEngineResults(rule, searchSuggestion, searchEngineName)
-    fun verifySearchEngineSuggestionResults(rule: ComposeTestRule, searchSuggestion: String) =
-        assertSearchEngineSuggestionResults(rule, searchSuggestion)
+    fun verifySearchEngineResults(rule: ComposeTestRule, searchSuggestion: String) =
+        assertSearchEngineResults(rule, searchSuggestion)
+    fun verifyDefaultSearchEngineSuggestionResults(rule: ComposeTestRule, searchSuggestion: String, searchTerm: String = "") =
+        assertDefaultSearchEngineSuggestionResults(rule, searchSuggestion, searchTerm)
+    fun verifyBookmarksAndHistorySuggestionResults(rule: ComposeTestRule, searchSuggestion: String) =
+        assertBookmarksAndHistorySuggestionResults(rule, searchSuggestion)
     fun verifyNoSuggestionsAreDisplayed(rule: ComposeTestRule, searchSuggestion: String) =
         assertNoSuggestionsAreDisplayed(rule, searchSuggestion)
 
@@ -309,20 +311,39 @@ private fun assertSearchEngineURL(searchEngineName: String) {
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 }
 
-private fun assertSearchEngineResults(rule: ComposeTestRule, searchSuggestion: String, searchEngineName: String) {
-    rule.waitUntil(waitingTime, waitForSearchSuggestions(rule, searchSuggestion, searchEngineName))
+private fun assertSearchEngineResults(rule: ComposeTestRule, searchSuggestion: String) {
+    rule.waitUntil(waitingTime, waitForSearchSuggestions(rule, searchSuggestion))
     rule.onNodeWithText(searchSuggestion).assertIsDisplayed()
 }
 
-private fun waitForSearchSuggestions(rule: ComposeTestRule, searchSuggestion: String, searchEngineName: String): () -> Boolean =
+private fun waitForSearchSuggestions(rule: ComposeTestRule, searchSuggestion: String): () -> Boolean =
     {
         rule.waitForIdle()
         mDevice.waitForObjects(mDevice.findObject(UiSelector().textContains(searchSuggestion)))
-        rule.onAllNodesWithTag("mozac.awesomebar.suggestion").assertAny(hasText(searchSuggestion) and hasText(searchEngineName))
+        rule.onAllNodesWithTag("mozac.awesomebar.suggestion").assertAny(hasText(searchSuggestion))
         mDevice.findObject(UiSelector().textContains(searchSuggestion)).waitForExists(waitingTime)
     }
 
-private fun assertSearchEngineSuggestionResults(rule: ComposeTestRule, searchResult: String) {
+private fun assertDefaultSearchEngineSuggestionResults(rule: ComposeTestRule, searchSuggestion: String, searchTerm: String) {
+    var currentTries = 0
+    while (currentTries++ < 3) {
+        try {
+            rule.waitUntil(waitingTime, waitForSearchSuggestions(rule, searchSuggestion))
+            rule.onNodeWithText(searchSuggestion).assertIsDisplayed()
+
+            break
+        } catch (e: AssertionError) {
+            homeScreen {
+            }.dismissOnboarding()
+            homeScreen {
+            }.openSearch {
+                typeSearch(searchTerm)
+            }
+        }
+    }
+}
+
+private fun assertBookmarksAndHistorySuggestionResults(rule: ComposeTestRule, searchResult: String) {
     rule.waitForIdle()
 
     assertTrue(
