@@ -40,6 +40,7 @@ gcloud:
   test-targets:
    - notPackage org.mozilla.fenix.screenshots
    - notPackage org.mozilla.fenix.syncintegration
+   - class org.mozilla.fenix.ui.SettingsSearchTest#toggleSearchSuggestionsTest
 
   device:
    - model: Pixel2
@@ -53,7 +54,7 @@ flank:
   max-test-shards: -1
   # num-test-runs: the amount of times to run the tests.
   # 1 runs the tests once. 10 runs all the tests 10x
-  num-test-runs: 1
+  num-test-runs: 50
   ### Output Style flag
   ## Output style of execution status. May be one of [verbose, multi, single, compact].
   ## For runs with only one test execution the default value is 'verbose', in other cases
