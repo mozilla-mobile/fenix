@@ -434,10 +434,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      * Indicates if the Firefox logo on the home screen should be animated,
      * to show users that they can change the wallpaper by tapping on the Firefox logo.
      */
-    var shouldAnimateFirefoxLogo by featureFlagPreference(
+    var shouldAnimateFirefoxLogo by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_show_logo_animation),
-        default = FeatureFlags.showWallpapers,
-        featureFlag = FeatureFlags.showWallpapers
+        default = true,
     )
 
     /**
@@ -1270,7 +1269,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var showContileFeature by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_enable_contile),
         default = { homescreenSections[HomeScreenSection.CONTILE_TOP_SITES] == true },
-        featureFlag = FeatureFlags.contileFeature,
+        featureFlag = true,
     )
 
     /**
