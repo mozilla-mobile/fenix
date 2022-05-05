@@ -341,6 +341,8 @@ private fun assertDefaultSearchEngineSuggestionResults(rule: ComposeTestRule, se
             }
         }
     }
+    rule.waitUntil(waitingTime, waitForSearchSuggestions(rule, searchSuggestion))
+    rule.onNodeWithText(searchSuggestion).assertIsDisplayed()
 }
 
 private fun assertBookmarksAndHistorySuggestionResults(rule: ComposeTestRule, searchResult: String) {
