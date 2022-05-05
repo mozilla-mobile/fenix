@@ -322,7 +322,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
     private fun startMetricsIfEnabled() {
         if (settings().isTelemetryEnabled) {
-            components.analytics.metrics.start(MetricServiceType.Data)
+            Glean.setUploadEnabled(true)
         }
 
         if (settings().isMarketingTelemetryEnabled) {
