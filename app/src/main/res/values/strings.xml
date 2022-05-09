@@ -752,6 +752,10 @@
     <string name="history_synced_from_other_devices">Synced from other devices</string>
     <!-- The page title for browsing history coming from other devices. -->
     <string name="history_from_other_devices">From other devices</string>
+    <!-- Content description for expanding a group of synced tabs. -->
+    <string name="history_synced_expand_group">Expand a group of synced history items</string>
+    <!-- Content description for collapsing a group of synced tabs. -->
+    <string name="history_synced_collapse_group">Collapse a group of synced history items</string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
