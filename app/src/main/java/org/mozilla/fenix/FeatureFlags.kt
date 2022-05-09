@@ -90,5 +90,5 @@ object FeatureFlags {
     /**
      * Enables receiving from the messaging framework.
      */
-    val messagingFeature = Config.channel.isNightlyOrDebug
+    const val messagingFeature = true
 }
