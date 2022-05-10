@@ -7,7 +7,7 @@ package org.mozilla.fenix.library.history
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.telemetry.glean.testing.GleanTestRule
@@ -21,7 +21,6 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -32,7 +31,6 @@ class HistorySearchControllerTest {
 
     @MockK(relaxed = true) private lateinit var activity: HomeActivity
     @MockK(relaxed = true) private lateinit var store: HistorySearchFragmentStore
-    @MockK(relaxed = true) private lateinit var metrics: MetricController
 
     @Before
     fun setUp() {
@@ -40,7 +38,7 @@ class HistorySearchControllerTest {
     }
 
     @Test
-    fun `WHEN editing is cancelled THEN clearToolbarFocus is called`() = runBlockingTest {
+    fun `WHEN editing is cancelled THEN clearToolbarFocus is called`() = runTest {
         var clearToolbarFocusInvoked = false
         createController(
             clearToolbarFocus = {

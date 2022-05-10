@@ -5,9 +5,13 @@
 package org.mozilla.fenix.settings.address
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.SecureFragment
@@ -27,6 +31,16 @@ class AddressEditorFragment : SecureFragment(R.layout.fragment_address_editor) {
     private lateinit var addressEditorView: AddressEditorView
     private lateinit var interactor: AddressEditorInteractor
 
+    private val args by navArgs<AddressEditorFragmentArgs>()
+
+    /**
+     * Returns true if an existing address is being edited, and false otherwise.
+     */
+    private val isEditing: Boolean
+        get() = args.address != null
+
+    private lateinit var menu: Menu
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -41,18 +55,49 @@ class AddressEditorFragment : SecureFragment(R.layout.fragment_address_editor) {
         )
 
         val binding = FragmentAddressEditorBinding.bind(view)
+        setHasOptionsMenu(true)
 
-        addressEditorView = AddressEditorView(binding, interactor)
+        addressEditorView = AddressEditorView(binding, interactor, args.address)
         addressEditorView.bind()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        menu.close()
     }
 
     override fun onResume() {
         super.onResume()
-        showToolbar(getString(R.string.addresses_add_address))
+        if (isEditing) {
+            showToolbar(getString(R.string.addresses_edit_address))
+        } else {
+            showToolbar(getString(R.string.addresses_add_address))
+        }
     }
 
     override fun onStop() {
         super.onStop()
         this.view?.hideKeyboard()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.address_editor, menu)
+        this.menu = menu
+
+        menu.findItem(R.id.delete_address_button).isVisible = isEditing
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.delete_address_button -> {
+            args.address?.let {
+                addressEditorView.showConfirmDeleteAddressDialog(requireContext(), it.guid)
+            }
+            true
+        }
+        R.id.save_address_button -> {
+            addressEditorView.saveAddress()
+            true
+        }
+        else -> false
     }
 }

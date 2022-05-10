@@ -23,7 +23,7 @@ import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.state.action.CustomTabListAction
 import mozilla.components.browser.state.state.BrowserState
@@ -48,6 +48,7 @@ import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
+import mozilla.components.support.test.rule.runTestOnMain
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -72,7 +73,6 @@ import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.accounts.AccountState
-import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.directionsEq
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -92,7 +92,6 @@ class DefaultBrowserToolbarMenuControllerTest {
     @RelaxedMockK private lateinit var activity: HomeActivity
     @RelaxedMockK private lateinit var navController: NavController
     @RelaxedMockK private lateinit var openInFenixIntent: Intent
-    @RelaxedMockK private lateinit var metrics: MetricController
     @RelaxedMockK private lateinit var settings: Settings
     @RelaxedMockK private lateinit var searchUseCases: SearchUseCases
     @RelaxedMockK private lateinit var sessionUseCases: SessionUseCases
@@ -151,7 +150,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun handleToolbarBookmarkPressWithReaderModeInactive() = runBlockingTest {
+    fun handleToolbarBookmarkPressWithReaderModeInactive() = runTest {
         val item = ToolbarMenu.Item.Bookmark
 
         val expectedTitle = "Mozilla"
@@ -186,7 +185,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `IF reader mode is active WHEN bookmark menu item is pressed THEN menu item is handled`() = runBlockingTest {
+    fun `IF reader mode is active WHEN bookmark menu item is pressed THEN menu item is handled`() = runTest {
         val item = ToolbarMenu.Item.Bookmark
         val expectedTitle = "Mozilla"
         val readerUrl = "moz-extension://1234"
@@ -220,7 +219,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN open in Fenix menu item is pressed THEN menu item is handled correctly`() = runBlockingTest {
+    fun `WHEN open in Fenix menu item is pressed THEN menu item is handled correctly`() = runTest {
         val customTab = createCustomTab("https://mozilla.org")
         browserStore.dispatch(CustomTabListAction.AddCustomTabAction(customTab)).joinBlocking()
         val controller = createController(
@@ -241,7 +240,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN reader mode menu item is pressed THEN handle appearance change`() = runBlockingTest {
+    fun `WHEN reader mode menu item is pressed THEN handle appearance change`() = runTest {
         val item = ToolbarMenu.Item.CustomizeReaderView
         assertFalse(ReaderMode.appearance.testHasValue())
 
@@ -255,7 +254,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN quit menu item is pressed THEN menu item is handled correctly`() = runBlockingTest {
+    fun `WHEN quit menu item is pressed THEN menu item is handled correctly`() = runTest {
         val item = ToolbarMenu.Item.Quit
         val testScope = this
 
@@ -267,7 +266,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN backwards nav menu item is pressed THEN the session navigates back with active session`() = runBlockingTest {
+    fun `WHEN backwards nav menu item is pressed THEN the session navigates back with active session`() = runTest {
         val item = ToolbarMenu.Item.Back(false)
 
         val controller = createController(scope = this, store = browserStore)
@@ -284,7 +283,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN backwards nav menu item is long pressed THEN the session navigates back with no active session`() = runBlockingTest {
+    fun `WHEN backwards nav menu item is long pressed THEN the session navigates back with no active session`() = runTest {
         val item = ToolbarMenu.Item.Back(true)
 
         val controller = createController(scope = this, store = browserStore)
@@ -302,7 +301,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN forward nav menu item is pressed THEN the session navigates forward to active session`() = runBlockingTest {
+    fun `WHEN forward nav menu item is pressed THEN the session navigates forward to active session`() = runTest {
         val item = ToolbarMenu.Item.Forward(false)
 
         val controller = createController(scope = this, store = browserStore)
@@ -319,7 +318,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN forward nav menu item is long pressed THEN the browser navigates forward with no active session`() = runBlockingTest {
+    fun `WHEN forward nav menu item is long pressed THEN the browser navigates forward with no active session`() = runTest {
         val item = ToolbarMenu.Item.Forward(true)
 
         val controller = createController(scope = this, store = browserStore)
@@ -338,7 +337,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN reload nav menu item is pressed THEN the session reloads from cache`() = runBlockingTest {
+    fun `WHEN reload nav menu item is pressed THEN the session reloads from cache`() = runTest {
         val item = ToolbarMenu.Item.Reload(false)
 
         val controller = createController(scope = this, store = browserStore)
@@ -355,7 +354,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN reload nav menu item is long pressed THEN the session reloads with no cache`() = runBlockingTest {
+    fun `WHEN reload nav menu item is long pressed THEN the session reloads with no cache`() = runTest {
         val item = ToolbarMenu.Item.Reload(true)
 
         val controller = createController(scope = this, store = browserStore)
@@ -377,7 +376,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN stop nav menu item is pressed THEN the session stops loading`() = runBlockingTest {
+    fun `WHEN stop nav menu item is pressed THEN the session stops loading`() = runTest {
         val item = ToolbarMenu.Item.Stop
 
         val controller = createController(scope = this, store = browserStore)
@@ -394,7 +393,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN settings menu item is pressed THEN menu item is handled`() = runBlockingTest {
+    fun `WHEN settings menu item is pressed THEN menu item is handled`() = runTest {
         val item = ToolbarMenu.Item.Settings
 
         val controller = createController(scope = this, store = browserStore)
@@ -412,7 +411,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN bookmark menu item is pressed THEN navigate to bookmarks page`() = runBlockingTest {
+    fun `WHEN bookmark menu item is pressed THEN navigate to bookmarks page`() = runTest {
         val item = ToolbarMenu.Item.Bookmarks
 
         val controller = createController(scope = this, store = browserStore)
@@ -430,7 +429,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN history menu item is pressed THEN navigate to history page`() = runBlockingTest {
+    fun `WHEN history menu item is pressed THEN navigate to history page`() = runTest {
         val item = ToolbarMenu.Item.History
 
         val controller = createController(scope = this, store = browserStore)
@@ -448,7 +447,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN request desktop menu item is toggled On THEN desktop site is requested for the session`() = runBlockingTest {
+    fun `WHEN request desktop menu item is toggled On THEN desktop site is requested for the session`() = runTest {
         val requestDesktopSiteUseCase: SessionUseCases.RequestDesktopSiteUseCase =
             mockk(relaxed = true)
         val item = ToolbarMenu.Item.RequestDesktop(true)
@@ -474,7 +473,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN request desktop menu item is toggled Off THEN mobile site is requested for the session`() = runBlockingTest {
+    fun `WHEN request desktop menu item is toggled Off THEN mobile site is requested for the session`() = runTest {
         val requestDesktopSiteUseCase: SessionUseCases.RequestDesktopSiteUseCase =
             mockk(relaxed = true)
         val item = ToolbarMenu.Item.RequestDesktop(false)
@@ -500,7 +499,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN add to shortcuts menu item is pressed THEN add site AND show snackbar`() = runBlockingTest {
+    fun `WHEN add to shortcuts menu item is pressed THEN add site AND show snackbar`() = runTestOnMain {
         val item = ToolbarMenu.Item.AddToTopSites
         val addPinnedSiteUseCase: TopSitesUseCases.AddPinnedSiteUseCase = mockk(relaxed = true)
 
@@ -524,7 +523,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `GIVEN a shortcut page is open WHEN remove from shortcuts is pressed THEN show snackbar`() = runBlockingTest {
+    fun `GIVEN a shortcut page is open WHEN remove from shortcuts is pressed THEN show snackbar`() = runTestOnMain {
         val snackbarMessage = "Site removed"
         val item = ToolbarMenu.Item.RemoveFromTopSites
         val removePinnedSiteUseCase: TopSitesUseCases.RemoveTopSiteUseCase =
@@ -552,7 +551,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN addon extensions menu item is pressed THEN navigate to addons manager`() = runBlockingTest {
+    fun `WHEN addon extensions menu item is pressed THEN navigate to addons manager`() = runTest {
         val item = ToolbarMenu.Item.AddonsManager
 
         val controller = createController(scope = this, store = browserStore)
@@ -567,7 +566,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN Add To Home Screen menu item is pressed THEN add site`() = runBlockingTest {
+    fun `WHEN Add To Home Screen menu item is pressed THEN add site`() = runTest {
         val item = ToolbarMenu.Item.AddToHomeScreen
 
         val controller = createController(scope = this, store = browserStore)
@@ -582,7 +581,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `IF reader mode is inactive WHEN share menu item is pressed THEN navigate to share screen`() = runBlockingTest {
+    fun `IF reader mode is inactive WHEN share menu item is pressed THEN navigate to share screen`() = runTest {
         val item = ToolbarMenu.Item.Share
         val title = "Mozilla"
         val url = "https://mozilla.org"
@@ -615,7 +614,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `IF reader mode is active WHEN share menu item is pressed THEN navigate to share screen`() = runBlockingTest {
+    fun `IF reader mode is active WHEN share menu item is pressed THEN navigate to share screen`() = runTest {
         val item = ToolbarMenu.Item.Share
         val title = "Mozilla"
         val readerUrl = "moz-extension://1234"
@@ -648,7 +647,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN Find In Page menu item is pressed THEN launch finder`() = runBlockingTest {
+    fun `WHEN Find In Page menu item is pressed THEN launch finder`() = runTest {
         val item = ToolbarMenu.Item.FindInPage
 
         var launcherInvoked = false
@@ -664,7 +663,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `IF one or more collection exists WHEN Save To Collection menu item is pressed THEN navigate to save collection page`() = runBlockingTest {
+    fun `IF one or more collection exists WHEN Save To Collection menu item is pressed THEN navigate to save collection page`() = runTest {
         val item = ToolbarMenu.Item.SaveToCollection
         val cachedTabCollections: List<TabCollection> = mockk(relaxed = true)
         every { tabCollectionStorage.cachedTabCollections } returns cachedTabCollections
@@ -699,7 +698,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `IF no collection exists WHEN Save To Collection menu item is pressed THEN navigate to create collection page`() = runBlockingTest {
+    fun `IF no collection exists WHEN Save To Collection menu item is pressed THEN navigate to create collection page`() = runTest {
         val item = ToolbarMenu.Item.SaveToCollection
         val cachedTabCollectionsEmpty: List<TabCollection> = emptyList()
         every { tabCollectionStorage.cachedTabCollections } returns cachedTabCollectionsEmpty
@@ -733,7 +732,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `WHEN New Tab menu item is pressed THEN navigate to a new tab home`() = runBlockingTest {
+    fun `WHEN New Tab menu item is pressed THEN navigate to a new tab home`() = runTest {
         val item = ToolbarMenu.Item.NewTab
 
         val controller = createController(scope = this, store = browserStore)
@@ -752,7 +751,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `GIVEN account exists and the user is signed in WHEN sign in to sync menu item is pressed THEN navigate to account settings`() = runBlockingTest {
+    fun `GIVEN account exists and the user is signed in WHEN sign in to sync menu item is pressed THEN navigate to account settings`() = runTest {
         val item = ToolbarMenu.Item.SyncAccount(AccountState.AUTHENTICATED)
         val accountSettingsDirections = BrowserFragmentDirections.actionGlobalAccountSettingsFragment()
         val controller = createController(scope = this, store = browserStore)
@@ -763,7 +762,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `GIVEN account exists and the user is not signed in WHEN sign in to sync menu item is pressed THEN navigate to account problem fragment`() = runBlockingTest {
+    fun `GIVEN account exists and the user is not signed in WHEN sign in to sync menu item is pressed THEN navigate to account problem fragment`() = runTest {
         val item = ToolbarMenu.Item.SyncAccount(AccountState.NEEDS_REAUTHENTICATION)
         val accountProblemDirections = BrowserFragmentDirections.actionGlobalAccountProblemFragment()
         val controller = createController(scope = this, store = browserStore)
@@ -774,7 +773,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `GIVEN account doesn't exist WHEN sign in to sync menu item is pressed THEN navigate to sign in`() = runBlockingTest {
+    fun `GIVEN account doesn't exist WHEN sign in to sync menu item is pressed THEN navigate to sign in`() = runTest {
         val item = ToolbarMenu.Item.SyncAccount(AccountState.NO_ACCOUNT)
         val turnOnSyncDirections = BrowserFragmentDirections.actionGlobalTurnOnSync()
         val controller = createController(scope = this, store = browserStore)
@@ -785,7 +784,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
-    fun `GIVEN the default browser experiment WHEN SetDefaultBrowser menu item is pressed THEN proper metrics are recorded`() = runBlockingTest {
+    fun `GIVEN the default browser experiment WHEN SetDefaultBrowser menu item is pressed THEN proper metrics are recorded`() = runTest {
         val item = ToolbarMenu.Item.SetDefaultBrowser
 
         val store: BrowserStore = mockk()
@@ -814,7 +813,6 @@ class DefaultBrowserToolbarMenuControllerTest {
         store = store,
         activity = activity,
         navController = navController,
-        metrics = metrics,
         settings = settings,
         findInPageLauncher = findInPageLauncher,
         browserAnimator = browserAnimator,

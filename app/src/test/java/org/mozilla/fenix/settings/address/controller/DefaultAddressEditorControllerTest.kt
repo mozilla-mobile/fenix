@@ -6,14 +6,16 @@ package org.mozilla.fenix.settings.address.controller
 
 import androidx.navigation.NavController
 import io.mockk.coVerify
+import io.mockk.coVerifySequence
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import kotlinx.coroutines.test.TestCoroutineScope
-import kotlinx.coroutines.test.runBlockingTest
+import mozilla.components.concept.storage.Address
 import mozilla.components.concept.storage.UpdatableAddressFields
 import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStorage
 import mozilla.components.support.test.rule.MainCoroutineRule
+import mozilla.components.support.test.rule.runTestOnMain
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -25,7 +27,6 @@ class DefaultAddressEditorControllerTest {
 
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
-    private val testCoroutineScope = TestCoroutineScope()
 
     private lateinit var controller: DefaultAddressEditorController
 
@@ -34,7 +35,7 @@ class DefaultAddressEditorControllerTest {
         controller = spyk(
             DefaultAddressEditorController(
                 storage = storage,
-                lifecycleScope = testCoroutineScope,
+                lifecycleScope = coroutinesTestRule.scope,
                 navController = navController,
             )
         )
@@ -50,7 +51,7 @@ class DefaultAddressEditorControllerTest {
     }
 
     @Test
-    fun `GIVEN a new address record WHEN save address is called THEN save the new address record to storage`() = testCoroutineScope.runBlockingTest {
+    fun `GIVEN a new address record WHEN save address is called THEN save the new address record to storage`() = runTestOnMain {
         val addressFields = UpdatableAddressFields(
             givenName = "John",
             additionalName = "",
@@ -70,6 +71,20 @@ class DefaultAddressEditorControllerTest {
 
         coVerify {
             storage.addAddress(addressFields)
+            navController.popBackStack()
+        }
+    }
+
+    @Test
+    fun `GIVEN an existing address record WHEN save address is called THEN update the address record to storage`() = runTestOnMain {
+        val address: Address = mockk()
+        val addressFields: UpdatableAddressFields = mockk()
+        every { address.guid } returns "123"
+
+        controller.handleUpdateAddress(address.guid, addressFields)
+
+        coVerifySequence {
+            storage.updateAddress("123", addressFields)
             navController.popBackStack()
         }
     }

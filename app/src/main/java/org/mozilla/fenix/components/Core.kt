@@ -199,10 +199,7 @@ class Core(
                 RecentlyClosedMiddleware(recentlyClosedTabsStorage, RECENTLY_CLOSED_MAX),
                 DownloadMiddleware(context, DownloadService::class.java),
                 ReaderViewMiddleware(),
-                TelemetryMiddleware(
-                    context.settings(),
-                    metrics
-                ),
+                TelemetryMiddleware(context.settings()),
                 ThumbnailsMiddleware(thumbnailStorage),
                 UndoMiddleware(context.getUndoDelay()),
                 RegionMiddleware(context, locationService),
@@ -312,7 +309,7 @@ class Core(
     /**
      * The storage component to sync and persist tabs in a Firefox Sync account.
      */
-    val lazyRemoteTabsStorage = lazyMonitored { RemoteTabsStorage() }
+    val lazyRemoteTabsStorage = lazyMonitored { RemoteTabsStorage(context) }
 
     val recentlyClosedTabsStorage = lazyMonitored { RecentlyClosedTabsStorage(context, engine, crashReporter) }
 

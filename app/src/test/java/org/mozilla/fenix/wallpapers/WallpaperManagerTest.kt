@@ -7,12 +7,11 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.slot
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.utils.Settings
 import java.util.Calendar
 import java.util.Date
@@ -24,7 +23,6 @@ class WallpaperManagerTest {
     private val fakeCalendar = Calendar.getInstance()
 
     private val mockSettings: Settings = mockk()
-    private val mockMetrics: MetricController = mockk()
     private val mockDownloader: WallpaperDownloader = mockk {
         coEvery { downloadWallpaper(any()) } just runs
     }
@@ -34,8 +32,6 @@ class WallpaperManagerTest {
 
     @Test
     fun `WHEN wallpaper set THEN current wallpaper updated in settings`() {
-        every { mockMetrics.track(any()) } just runs
-
         val currentCaptureSlot = slot<String>()
         every { mockSettings.currentWallpaper } returns ""
         every { mockSettings.currentWallpaper = capture(currentCaptureSlot) } just runs
@@ -49,7 +45,7 @@ class WallpaperManagerTest {
     }
 
     @Test
-    fun `GIVEN no remote wallpapers expired and locale in promo WHEN downloading remote wallpapers THEN all downloaded`() = runBlockingTest {
+    fun `GIVEN no remote wallpapers expired and locale in promo WHEN downloading remote wallpapers THEN all downloaded`() = runTest {
         every { mockSettings.currentWallpaper } returns ""
         val fakeRemoteWallpapers = listOf("first", "second", "third").map { name ->
             makeFakeRemoteWallpaper(TimeRelation.LATER, name)
@@ -69,7 +65,7 @@ class WallpaperManagerTest {
     }
 
     @Test
-    fun `GIVEN no remote wallpapers expired and locale not in promo WHEN downloading remote wallpapers THEN none downloaded`() = runBlockingTest {
+    fun `GIVEN no remote wallpapers expired and locale not in promo WHEN downloading remote wallpapers THEN none downloaded`() = runTest {
         every { mockSettings.currentWallpaper } returns ""
         val fakeRemoteWallpapers = listOf("first", "second", "third").map { name ->
             makeFakeRemoteWallpaper(TimeRelation.LATER, name)
@@ -89,7 +85,7 @@ class WallpaperManagerTest {
     }
 
     @Test
-    fun `GIVEN no remote wallpapers expired and locale not in promo WHEN downloading remote wallpapers THEN non-promo wallpapers downloaded`() = runBlockingTest {
+    fun `GIVEN no remote wallpapers expired and locale not in promo WHEN downloading remote wallpapers THEN non-promo wallpapers downloaded`() = runTest {
         every { mockSettings.currentWallpaper } returns ""
         val fakePromoWallpapers = listOf("first", "second", "third").map { name ->
             makeFakeRemoteWallpaper(TimeRelation.LATER, name)

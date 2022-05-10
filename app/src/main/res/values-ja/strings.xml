@@ -73,8 +73,6 @@
     <string name="cfr_neg_button_text">追加しない</string>
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
-    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
-    <string moz:RemovedIn="99" name="open_in_app_cfr_info_message" tools:ignore="UnusedResources">アプリ内のリンクを Firefox で自動的に開くように設定できます。</string>
     <!-- Text for the info message. The first parameter is the name of the application.-->
     <string name="open_in_app_cfr_info_message_2">アプリ内のリンクを %1$sで自動的に開くように設定できます。</string>
     <!-- Text for the positive action button -->
@@ -103,8 +101,6 @@
 
     <!-- Text for title for the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_title">1 か月後に自動的に閉じますか？</string>
-    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
-    <string moz:RemovedIn="99" name="tab_tray_inactive_auto_close_body" tools:ignore="UnusedResources">Firefox は 1 か月以上表示していないタブを閉じることができます。</string>
     <!-- Text for the body for the auto-close dialog of the inactive tabs.
         The first parameter is the name of the application.-->
     <string name="tab_tray_inactive_auto_close_body_2">%1$s は 1 か月以上表示していないタブを閉じることができます。</string>
@@ -257,16 +253,14 @@
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">アドレスバーから直接検索します</string>
 
-    <!-- Home onboarding -->
-    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
-    <string moz:removedIn="99" name="onboarding_home_screen_title_2" tools:ignore="UnusedResources">Firefox の新機能</string>
+    <!-- Menu option in the search selector menu to open the search settings -->
+    <string name="search_settings_menu_item">検索設定</string>
 
+    <!-- Home onboarding -->
     <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
     <string name="onboarding_home_screen_title_3">%1$s の新機能</string>
     <!-- Onboarding home screen dialog description text. -->
     <string name="onboarding_home_screen_description_2">前回のページから再開するのが簡単になりました。</string>
-    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
-    <string moz:RemovedIn="99" name="onboarding_home_screen_section_home_title_2" tools:ignore="UnusedResources">個人に合わせた Firefox ホームページ</string>
     <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
     <string name="onboarding_home_screen_section_home_title_3">個人に合わせた %1$s ホームページ</string>
     <!-- Onboarding home screen dialog description text for the home section. -->
@@ -284,8 +278,6 @@
     <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">個人に合わせた Firefox ホームページにより、前回のページから簡単に再開できるようになりました。最近のタブ、ブックマーク、検索結果を見つけられます。</string>
 
     <!-- Search Widget -->
-    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
-    <string moz:RemovedIn="99" name="search_widget_content_description" tools:ignore="UnusedResources">新しい Firefox タブを開く</string>
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
     <string name="search_widget_content_description_2">%1$s の新しいタブで開く</string>
     <!-- Text preview for smaller sized widgets -->
@@ -457,11 +449,7 @@
     <!-- Snackbar label for action to view selected wallpaper -->
     <string name="wallpaper_updated_snackbar_action">表示</string>
     <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_label" tools:ignore="UnusedResources">ロゴをタップして壁紙変更</string>
-    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
     <string name="wallpaper_tap_to_change_switch_label_1">Firefox ホームページのロゴをタップして壁紙を変更する</string>
-    <!-- Description for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_description" tools:ignore="UnusedResources">ホームページから離れることなく画像を繰り返し更新できます。</string>
 
     <!-- This is the accessibility content description for the wallpapers functionality. Users are
     able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
@@ -686,8 +674,6 @@
     <string name="studies_remove">削除</string>
     <!-- Title of the active section on the studies list -->
     <string name="studies_active">有効</string>
-    <!-- Description for studies, it indicates why Firefox use studies -->
-    <string moz:RemovedIn="99" name="studies_description" tools:ignore="UnusedResources">Firefox が調査をインストールして実行することがあります。</string>
     <!-- Description for studies, it indicates why Firefox use studies. The first parameter is the name of the application. -->
     <string name="studies_description_2">%1$s が調査をインストールして実行することがあります。</string>
     <!-- Learn more link for studies, links to an article for more information about studies. -->
@@ -777,8 +763,6 @@
 
     <!-- History -->
     <!-- Text for the button to search all history -->
-    <string moz:removedIn="99" name="history_search" tools:ignore="UnusedResources">検索語を入力</string>
-    <!-- Text for the button to search all history -->
     <string name="history_search_1">検索語を入力</string>
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">履歴を削除</string>
@@ -804,6 +788,11 @@
 
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">履歴はありません</string>
+
+    <!-- Text for the button inside History screen that opens Synced History screen. History that is coming from other devices -->
+    <string name="history_synced_from_other_devices">他の端末から同期</string>
+    <!-- The page title for browsing history coming from other devices. -->
+    <string name="history_from_other_devices">他の端末から</string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1195,6 +1184,15 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">閲覧データを削除しています...</string>
 
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
+    <string name="delete_history_group_prompt_message">この操作はすべての項目を削除します。</string>
+    <!-- Text for the cancel button for the history group deletion dialog -->
+    <string name="delete_history_group_prompt_cancel">キャンセル</string>
+    <!-- Text for the allow button for the history group dialog -->
+    <string name="delete_history_group_prompt_allow">削除</string>
+    <!-- Text for the snackbar confirmation that the history group was deleted -->
+    <string name="delete_history_group_snackbar">グループを削除しました</string>
+
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
     <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header" tools:ignore="UnusedResources">Firefox Preview が Firefox Nightly になりました</string>
@@ -1237,8 +1235,6 @@
     <string name="onboarding_firefox_account_sync_is_on">Sync が有効です</string>
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">プライバシー重視</string>
-    <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
-    <string moz:RemovedIn="99" name="onboarding_tracking_protection_description_3" tools:ignore="UnusedResources">Firefox はウェブ上であなたを密かに追跡する組織を自動的に遮断します。</string>
     <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
     <string name="onboarding_tracking_protection_description_4">%1$s はウェブ上であなたを密かに追跡する組織を自動的に遮断します。</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
@@ -1545,7 +1541,11 @@
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">ログイン情報メニューの並べ替え</string>
 
-    <!-- Credit Cards Autofill -->
+    <!-- Autofill -->
+    <!-- Preference and title for managing the autofill settings -->
+    <string name="preferences_autofill">自動補完</string>
+    <!-- Preference and title for managing the settings for addresses -->
+    <string name="preferences_addresses">所在地フォーム</string>
     <!-- Preference and title for managing the settings for credit cards -->
     <string name="preferences_credit_cards">クレジットカード</string>
 
@@ -1561,6 +1561,10 @@
     <string name="preferences_credit_cards_add_credit_card">クレジットカードを追加</string>
     <!-- Preference option for managing saved credit cards -->
     <string name="preferences_credit_cards_manage_saved_cards">保存したカードを管理</string>
+    <!-- Preference option for adding an address -->
+    <string name="preferences_addresses_add_address">アドレスを追加</string>
+    <!-- Preference option for managing saved addresses -->
+    <string name="preferences_addresses_manage_addresses">アドレスの管理</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">カードの追加</string>
 
@@ -1615,6 +1619,37 @@
 
     <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
     <string name="credit_cards_biometric_prompt_unlock_message">ロックを解除して保存したクレジットカード情報を使用します</string>
+
+    <!-- Title of the "Add address" screen -->
+    <string name="addresses_add_address">アドレスを追加</string>
+    <!-- Title of the "Manage addresses" screen -->
+    <string name="addresses_manage_addresses">アドレスの管理</string>
+    <!-- The header for the full name of an address -->
+    <string moz:removedIn="102" name="addresses_full_name" tools:ignore="UnusedResources">フルネーム</string>
+    <!-- The header for the first name of an address -->
+    <string name="addresses_first_name">名</string>
+    <!-- The header for the middle name of an address -->
+    <string name="addresses_middle_name">ミドルネーム</string>
+    <!-- The header for the last name of an address -->
+    <string name="addresses_last_name">姓</string>
+    <!-- The header for the street address of an address -->
+    <string name="addresses_street_address">番地</string>
+    <!-- The header for the city of an address -->
+    <string name="addresses_city">市区町村</string>
+    <!-- The header for the state of an address -->
+    <string name="addresses_state">都道府県</string>
+    <!-- The header for the zip code of an address -->
+    <string name="addresses_zip">郵便番号</string>
+    <!-- The header for the phone number of an address -->
+    <string name="addresses_phone">電話番号</string>
+    <!-- The header for the email of an address -->
+    <string name="addresses_email">メールアドレス</string>
+    <!-- The text for the "Save" button for saving an address -->
+    <string name="addresses_save_button">保存</string>
+    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting an address -->
+    <string name="addresses_cancel_button">キャンセル</string>
+    <!-- The text for the "Delete address" button for deleting an address -->
+    <string name="addressess_delete_address_button">アドレスを削除</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">検索エンジンの追加</string>
@@ -1826,25 +1861,6 @@
 
     <!-- Text for the snackbar to confirm auto-close is enabled for inactive tabs -->
     <string name="inactive_tabs_auto_close_message_snackbar">自動的に閉じる機能が有効です</string>
-
-    <!-- Inactive tabs survey -->
-    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_header_1" tools:ignore="UnusedResources">Firefox の改善に協力する</string>
-
-    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_content" tools:ignore="UnusedResources">タブの休止を無効にしたのはなぜですか？</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_not_understand" tools:ignore="UnusedResources">仕組みが分からない</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_it_myself" tools:ignore="UnusedResources">古いタブは自分で片づけたい</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_long_option_1" tools:ignore="UnusedResources">2 週間の期間が長すぎる</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_short_option_1" tools:ignore="UnusedResources">2 週間の期間が短すぎる</string>
-    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">送信</string>
-    <!-- Content description for inactive tabs survey close button -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">閉じる</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">ウェブサイトやメール、メッセージのリンクを自動的に Firefox で開きます。</string>

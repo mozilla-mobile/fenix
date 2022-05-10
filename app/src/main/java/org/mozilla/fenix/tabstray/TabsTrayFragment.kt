@@ -43,7 +43,6 @@ import org.mozilla.fenix.databinding.FragmentTabTrayDialogBinding
 import org.mozilla.fenix.databinding.TabsTrayTabCounter2Binding
 import org.mozilla.fenix.databinding.TabstrayMultiselectItemsBinding
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
@@ -59,7 +58,6 @@ import org.mozilla.fenix.tabstray.ext.anchorWithAction
 import org.mozilla.fenix.tabstray.ext.bookmarkMessage
 import org.mozilla.fenix.tabstray.ext.collectionMessage
 import org.mozilla.fenix.tabstray.ext.make
-import org.mozilla.fenix.tabstray.ext.orDefault
 import org.mozilla.fenix.tabstray.ext.showWithTheme
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsIntegration
@@ -153,9 +151,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                     focusGroupTabId = args.focusGroupTabId
                 ),
                 middlewares = listOf(
-                    TabsTrayMiddleware(
-                        metrics = requireContext().metrics
-                    )
+                    TabsTrayMiddleware()
                 )
             )
         }
@@ -195,7 +191,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 tabsTrayStore = tabsTrayStore,
                 browserStore = requireComponents.core.store,
                 navController = findNavController(),
-                metrics = requireComponents.analytics.metrics,
                 dismissTabTray = ::dismissTabsTray,
                 dismissTabTrayAndNavigateHome = ::dismissTabsTrayAndNavigateHome,
                 bookmarksUseCase = requireComponents.useCases.bookmarksUseCases,
@@ -215,7 +210,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             navigateToHomeAndDeleteSession = ::navigateToHomeAndDeleteSession,
             navigationInteractor = navigationInteractor,
             profiler = requireComponents.core.engine.profiler,
-            metrics = requireComponents.analytics.metrics,
             tabsUseCases = requireComponents.useCases.tabsUseCases,
             selectTabPosition = ::selectTabPosition,
             dismissTray = ::dismissTabsTray,
@@ -559,7 +553,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
     internal fun showCollectionSnackbar(
         tabSize: Int,
         isNewCollection: Boolean = false,
-        collectionToSelect: Long?
     ) {
         runIfFragmentIsAttached {
             FenixSnackbar
@@ -569,7 +562,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                     findNavController().navigate(
                         TabsTrayFragmentDirections.actionGlobalHome(
                             focusOnAddressBar = false,
-                            focusOnCollection = collectionToSelect.orDefault()
                         )
                     )
                     dismissTabsTray()

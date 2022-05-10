@@ -69,8 +69,6 @@
     <string name="cfr_neg_button_text">Nej tack</string>
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
-    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
-    <string moz:RemovedIn="99" name="open_in_app_cfr_info_message" tools:ignore="UnusedResources">Du kan ställa in Firefox att automatiskt öppna länkar i appar.</string>
     <!-- Text for the info message. The first parameter is the name of the application.-->
     <string name="open_in_app_cfr_info_message_2">Du kan ställa in %1$s att automatiskt öppna länkar i appar.</string>
     <!-- Text for the positive action button -->
@@ -101,8 +99,6 @@
 
     <!-- Text for title for the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_title">Stäng automatiskt efter en månad?</string>
-    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
-    <string moz:RemovedIn="99" name="tab_tray_inactive_auto_close_body" tools:ignore="UnusedResources">Firefox kan stänga flikar som du inte har besökt under den senaste månaden.</string>
     <!-- Text for the body for the auto-close dialog of the inactive tabs.
         The first parameter is the name of the application.-->
     <string name="tab_tray_inactive_auto_close_body_2">%1$s kan stänga flikar som du inte har besökt under den senaste månaden.</string>
@@ -255,16 +251,14 @@
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Sök direkt från adressfältet</string>
 
-    <!-- Home onboarding -->
-    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
-    <string moz:removedIn="99" name="onboarding_home_screen_title_2" tools:ignore="UnusedResources">Vad är nytt i Firefox</string>
+    <!-- Menu option in the search selector menu to open the search settings -->
+    <string name="search_settings_menu_item">Sökinställningar</string>
 
+    <!-- Home onboarding -->
     <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
     <string name="onboarding_home_screen_title_3">Vad är nytt i %1$s</string>
     <!-- Onboarding home screen dialog description text. -->
     <string name="onboarding_home_screen_description_2">Det är nu enklare att fortsätta där du slutade.</string>
-    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
-    <string moz:RemovedIn="99" name="onboarding_home_screen_section_home_title_2" tools:ignore="UnusedResources">Personlig Firefox-startsida</string>
     <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
     <string name="onboarding_home_screen_section_home_title_3">Personlig startsida för %1$s</string>
     <!-- Onboarding home screen dialog description text for the home section. -->
@@ -283,8 +277,6 @@
     <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Din personliga Firefox-startsida gör det nu lättare att fortsätta där du slutade. Hitta dina senaste flikar, bokmärken och sökresultat.</string>
 
     <!-- Search Widget -->
-    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
-    <string moz:RemovedIn="99" name="search_widget_content_description" tools:ignore="UnusedResources">Öppna en ny Firefox-flik</string>
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
     <string name="search_widget_content_description_2">Öppna en ny %1$s-flik</string>
     <!-- Text preview for smaller sized widgets -->
@@ -457,11 +449,7 @@
     <string name="wallpaper_updated_snackbar_action">Visa</string>
 
     <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_label" tools:ignore="UnusedResources">Tryck på logotypen för att byta bakgrund</string>
-    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
     <string name="wallpaper_tap_to_change_switch_label_1">Ändra bakgrundsbild genom att trycka på Firefox startsidas logotyp</string>
-    <!-- Description for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_description" tools:ignore="UnusedResources">Bläddra igenom och uppdatera bilden utan att lämna startsidan.</string>
 
     <!-- This is the accessibility content description for the wallpapers functionality. Users are
     able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
@@ -686,8 +674,6 @@
     <string name="studies_remove">Ta bort</string>
     <!-- Title of the active section on the studies list -->
     <string name="studies_active">Aktiv</string>
-    <!-- Description for studies, it indicates why Firefox use studies -->
-    <string moz:RemovedIn="99" name="studies_description" tools:ignore="UnusedResources">Firefox kan installera och köra undersökningar då och då.</string>
     <!-- Description for studies, it indicates why Firefox use studies. The first parameter is the name of the application. -->
     <string name="studies_description_2">%1$s kan installera och köra undersökningar då och då.</string>
     <!-- Learn more link for studies, links to an article for more information about studies. -->
@@ -776,8 +762,6 @@
 
     <!-- History -->
     <!-- Text for the button to search all history -->
-    <string moz:removedIn="99" name="history_search" tools:ignore="UnusedResources">Ange sökterm</string>
-    <!-- Text for the button to search all history -->
     <string name="history_search_1">Ange söktermer</string>
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Rensa historik</string>
@@ -803,6 +787,11 @@
 
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Ingen historik här</string>
+
+    <!-- Text for the button inside History screen that opens Synced History screen. History that is coming from other devices -->
+    <string name="history_synced_from_other_devices">Synkroniserad från andra enheter</string>
+    <!-- The page title for browsing history coming from other devices. -->
+    <string name="history_from_other_devices">Från andra enheter</string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1189,6 +1178,15 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">Tar bort surfsdata…</string>
 
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
+    <string name="delete_history_group_prompt_message">Detta tar bort alla objekt.</string>
+    <!-- Text for the cancel button for the history group deletion dialog -->
+    <string name="delete_history_group_prompt_cancel">Avbryt</string>
+    <!-- Text for the allow button for the history group dialog -->
+    <string name="delete_history_group_prompt_allow">Ta bort</string>
+    <!-- Text for the snackbar confirmation that the history group was deleted -->
+    <string name="delete_history_group_snackbar">Grupp borttagen</string>
+
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
     <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header" tools:ignore="UnusedResources">Firefox Preview är nu Firefox Nightly</string>
@@ -1234,8 +1232,6 @@
     <string name="onboarding_firefox_account_sync_is_on">Synkronisering är på</string>
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">Alltid med integritet</string>
-    <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
-    <string moz:RemovedIn="99" name="onboarding_tracking_protection_description_3" tools:ignore="UnusedResources">Firefox hindrar automatiskt företag från att i hemlighet följa dig på nätet.</string>
     <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
     <string name="onboarding_tracking_protection_description_4">%1$s hindrar automatiskt företag från att i hemlighet följa dig på nätet.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
@@ -1541,7 +1537,11 @@
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Sortera inloggningsmenyn</string>
 
-    <!-- Credit Cards Autofill -->
+    <!-- Autofill -->
+    <!-- Preference and title for managing the autofill settings -->
+    <string name="preferences_autofill">Autofyll</string>
+    <!-- Preference and title for managing the settings for addresses -->
+    <string name="preferences_addresses">Adresser</string>
     <!-- Preference and title for managing the settings for credit cards -->
     <string name="preferences_credit_cards">Kreditkort</string>
     <!-- Preference for saving and autofilling credit cards -->
@@ -1557,6 +1557,10 @@
 
     <!-- Preference option for managing saved credit cards -->
     <string name="preferences_credit_cards_manage_saved_cards">Hantera sparade kreditkort</string>
+    <!-- Preference option for adding an address -->
+    <string name="preferences_addresses_add_address">Lägg till adress</string>
+    <!-- Preference option for managing saved addresses -->
+    <string name="preferences_addresses_manage_addresses">Hantera adresser</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Lägg till kreditkort</string>
     <!-- Title of the "Edit card" screen -->
@@ -1609,6 +1613,37 @@
 
     <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
     <string name="credit_cards_biometric_prompt_unlock_message">Lås upp för att använda lagrad kreditkortsinformation</string>
+
+    <!-- Title of the "Add address" screen -->
+    <string name="addresses_add_address">Lägg till adress</string>
+    <!-- Title of the "Manage addresses" screen -->
+    <string name="addresses_manage_addresses">Hantera adresser</string>
+    <!-- The header for the full name of an address -->
+    <string moz:removedIn="102" name="addresses_full_name" tools:ignore="UnusedResources">Fullständigt namn</string>
+    <!-- The header for the first name of an address -->
+    <string name="addresses_first_name">Förnamn</string>
+    <!-- The header for the middle name of an address -->
+    <string name="addresses_middle_name">Mellannamn</string>
+    <!-- The header for the last name of an address -->
+    <string name="addresses_last_name">Efternamn</string>
+    <!-- The header for the street address of an address -->
+    <string name="addresses_street_address">Gatuadress</string>
+    <!-- The header for the city of an address -->
+    <string name="addresses_city">Postort</string>
+    <!-- The header for the state of an address -->
+    <string name="addresses_state">Region</string>
+    <!-- The header for the zip code of an address -->
+    <string name="addresses_zip">Postnummer</string>
+    <!-- The header for the phone number of an address -->
+    <string name="addresses_phone">Telefon</string>
+    <!-- The header for the email of an address -->
+    <string name="addresses_email">E-post</string>
+    <!-- The text for the "Save" button for saving an address -->
+    <string name="addresses_save_button">Spara</string>
+    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting an address -->
+    <string name="addresses_cancel_button">Avbryt</string>
+    <!-- The text for the "Delete address" button for deleting an address -->
+    <string name="addressess_delete_address_button">Ta bort adress</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Lägg till sökmotor</string>
@@ -1819,25 +1854,6 @@
 
     <!-- Text for the snackbar to confirm auto-close is enabled for inactive tabs -->
     <string name="inactive_tabs_auto_close_message_snackbar">Automatisk stängning aktiverad</string>
-
-    <!-- Inactive tabs survey -->
-    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_header_1" tools:ignore="UnusedResources">Hjälp till att förbättra Firefox</string>
-
-    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Varför inaktiverade du inaktiva flikar?</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_not_understand" tools:ignore="UnusedResources">Jag förstår inte hur det fungerar</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_it_myself" tools:ignore="UnusedResources">Jag gillar att rensa bort gamla flikar själv</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_long_option_1" tools:ignore="UnusedResources">Tidsperioden på två veckor är för lång</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_short_option_1" tools:ignore="UnusedResources">Tidsperioden på två veckor är för kort</string>
-    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Skicka</string>
-    <!-- Content description for inactive tabs survey close button -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Stäng</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Ställ in länkar från webbplatser, e-post och meddelanden så att de öppnas automatiskt i Firefox.</string>

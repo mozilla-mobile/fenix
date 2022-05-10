@@ -28,6 +28,16 @@ interface AddressEditorController {
      * @see [AddressEditorInteractor.onSaveAddress]
      */
     fun handleSaveAddress(addressFields: UpdatableAddressFields)
+
+    /**
+     * @see [AddressEditorInteractor.onDeleteAddress]
+     */
+    fun handleDeleteAddress(guid: String)
+
+    /**
+     * @see [AddressEditorInteractor.onUpdateAddress]
+     */
+    fun handleUpdateAddress(guid: String, addressFields: UpdatableAddressFields)
 }
 
 /**
@@ -51,6 +61,26 @@ class DefaultAddressEditorController(
     override fun handleSaveAddress(addressFields: UpdatableAddressFields) {
         lifecycleScope.launch {
             storage.addAddress(addressFields)
+
+            lifecycleScope.launch(Dispatchers.Main) {
+                navController.popBackStack()
+            }
+        }
+    }
+
+    override fun handleDeleteAddress(guid: String) {
+        lifecycleScope.launch {
+            storage.deleteAddress(guid)
+
+            lifecycleScope.launch(Dispatchers.Main) {
+                navController.popBackStack()
+            }
+        }
+    }
+
+    override fun handleUpdateAddress(guid: String, addressFields: UpdatableAddressFields) {
+        lifecycleScope.launch {
+            storage.updateAddress(guid, addressFields)
 
             lifecycleScope.launch(Dispatchers.Main) {
                 navController.popBackStack()

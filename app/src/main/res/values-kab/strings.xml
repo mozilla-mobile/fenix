@@ -72,8 +72,6 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="cfr_neg_button_text">Ala, tanemmirt</string>
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
-    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
-    <string moz:RemovedIn="99" name="open_in_app_cfr_info_message" tools:ignore="UnusedResources">Tzemreḍ ad tesbaduḍ akken ad yeldi iseɣwan s wudem awurman deg isnasen.</string>
     <!-- Text for the info message. The first parameter is the name of the application.-->
     <string name="open_in_app_cfr_info_message_2">Tzemreḍ ad tesbaduḍ %1$s akken ad yeldi iseɣwan s wudem awurman deg yisnasen.</string>
     <!-- Text for the positive action button -->
@@ -102,8 +100,6 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
 
     <!-- Text for title for the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_title">Amdal awurman seld yiwen wayyur?</string>
-    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
-    <string moz:RemovedIn="99" name="tab_tray_inactive_auto_close_body" tools:ignore="UnusedResources">Firefox izmer ad imdel accaren i twalaḍ aggur iɛeddan.</string>
     <!-- Text for the body for the auto-close dialog of the inactive tabs.
         The first parameter is the name of the application.-->
     <string name="tab_tray_inactive_auto_close_body_2">%1$s izmer ad imdel accaren i twalaḍ ayyur iɛeddan.</string>
@@ -253,16 +249,14 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Nadi srid seg ufeggag n tansiwin</string>
 
-    <!-- Home onboarding -->
-    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
-    <string moz:removedIn="99" name="onboarding_home_screen_title_2" tools:ignore="UnusedResources">D acu i d amaynut deg Firefox</string>
+    <!-- Menu option in the search selector menu to open the search settings -->
+    <string name="search_settings_menu_item">Nadi ismenyifen</string>
 
+    <!-- Home onboarding -->
     <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
     <string name="onboarding_home_screen_title_3">D acu i d maynut deg %1$s</string>
     <!-- Onboarding home screen dialog description text. -->
     <string name="onboarding_home_screen_description_2">Akka tura fessus ad tkemmleḍ ansi akken i tḥebseḍ.</string>
-    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
-    <string moz:RemovedIn="99" name="onboarding_home_screen_section_home_title_2" tools:ignore="UnusedResources">Asebter agejdan n Firefox yettwasagnen</string>
     <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
     <string name="onboarding_home_screen_section_home_title_3">Asebter agejdan n %1$s yettwasagnen</string>
     <!-- Onboarding home screen dialog description text for the home section. -->
@@ -281,8 +275,6 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Asebter-inek•inem n Firefox udmawan yettarra tura fessus ugar akemmel seg wanda akken i tḥebseḍ. Af accaren-ik•im n melmi kan, ticraḍ n yisebtar, d yigmaḍ n unadi.</string>
 
     <!-- Search Widget -->
-    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
-    <string moz:RemovedIn="99" name="search_widget_content_description" tools:ignore="UnusedResources">Ldi iccer amaynut n Firefox</string>
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
     <string name="search_widget_content_description_2">Ldi-t iccer amaynut %1$s</string>
     <!-- Text preview for smaller sized widgets -->
@@ -409,7 +401,7 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="preferences_open_links_in_apps">Ldi iseɣwan deg isnasen</string>
 
     <!-- Preference for open download with an external download manager app -->
-    <string name="preferences_external_download_manager">Amsefrak n usider azɣaray</string>
+    <string name="preferences_external_download_manager">Amsefrak n usader azɣaray</string>
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Izegrar</string>
 
@@ -457,11 +449,7 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="wallpaper_updated_snackbar_action">Wali</string>
 
     <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_label" tools:ignore="UnusedResources">Sit ɣef ulugu i ubeddel n tugna n ugilal</string>
-    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
     <string name="wallpaper_tap_to_change_switch_label_1">Beddel tugna n ugilal s tira n ulugu n usebter agejdan n Firefox</string>
-    <!-- Description for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_description" tools:ignore="UnusedResources">Lqeḍ rnu leqqem tugna war ma teffɣeḍ seg usebtar agejdan.</string>
 
     <!-- This is the accessibility content description for the wallpapers functionality. Users are
     able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
@@ -689,8 +677,6 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="studies_remove">Kkes</string>
     <!-- Title of the active section on the studies list -->
     <string name="studies_active">Rmed</string>
-    <!-- Description for studies, it indicates why Firefox use studies -->
-    <string moz:RemovedIn="99" name="studies_description" tools:ignore="UnusedResources">Firefox yezmer ad isebded yerna ad iseddu leqraya seg wakud ɣer wayeḍ.</string>
     <!-- Description for studies, it indicates why Firefox use studies. The first parameter is the name of the application. -->
     <string name="studies_description_2">%1$s yezmer ad isebded yerna ad iseddu leqraya seg wakud ɣer wayeḍ.</string>
     <!-- Learn more link for studies, links to an article for more information about studies. -->
@@ -778,8 +764,6 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
 
     <!-- History -->
     <!-- Text for the button to search all history -->
-    <string moz:removedIn="99" name="history_search" tools:ignore="UnusedResources">Sekcem awal n unadi</string>
-    <!-- Text for the button to search all history -->
     <string name="history_search_1">Sekcem awalen n unadi</string>
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Kkes amazray</string>
@@ -805,6 +789,11 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
 
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Ulac amazray dagi</string>
+
+    <!-- Text for the button inside History screen that opens Synced History screen. History that is coming from other devices -->
+    <string name="history_synced_from_other_devices">Yemtawi seg yibenk-nniḍen</string>
+    <!-- The page title for browsing history coming from other devices. -->
+    <string name="history_from_other_devices">Seg yibenkan-nniḍen</string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1189,12 +1178,21 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">Tiksa n isefka n tunigin…</string>
 
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
+    <string name="delete_history_group_prompt_message">Aya ad yekkes akk iferdisen</string>
+    <!-- Text for the cancel button for the history group deletion dialog -->
+    <string name="delete_history_group_prompt_cancel">Sefsex</string>
+    <!-- Text for the allow button for the history group dialog -->
+    <string name="delete_history_group_prompt_allow">Kkes</string>
+    <!-- Text for the snackbar confirmation that the history group was deleted -->
+    <string name="delete_history_group_snackbar">Agraw yettwakksen</string>
+
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
     <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header" tools:ignore="UnusedResources">Firefox Preview  tura yuɣal d Firefox Nightly</string>
     <!-- text for firefox preview moving tip description -->
     <string moz:RemovedIn="100" name="tip_firefox_preview_moved_description" tools:ignore="UnusedResources">Firefox Nightly iseɛɛu llqem yal iḍ u ttilint deg-s timahilin tirmitanin timaynutin.
-        Dacu, yezmer ad yenɣes urkad. Sider iminig-nneɣ beta i tarmit irekden ugar.</string>
+        Dacu, yezmer ad yenɣes urkad. Sader iminig-nneɣ beta i tarmit irekden ugar.</string>
 
     <!-- text for firefox preview moving tip button. "Firefox for Android Beta" is intentionally hardcoded -->
     <string moz:RemovedIn="100" name="tip_firefox_preview_moved_button_2" tools:ignore="UnusedResources">Awi-d Firefox i Android Beta</string>
@@ -1232,8 +1230,6 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="onboarding_firefox_account_sync_is_on">Amtawi yermed</string>
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">Tabaḍnit tezga tettwaḍmen</string>
-    <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
-    <string moz:RemovedIn="99" name="onboarding_tracking_protection_description_3" tools:ignore="UnusedResources">Firefox yessewḥal s wudem awurman tikebbaniyin ara ak-iḍefren deg web.</string>
     <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
     <string name="onboarding_tracking_protection_description_4">%1$s yessewḥal s wudem awurman tikebbaniyin ara ak-iḍefren deg web.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
@@ -1544,7 +1540,11 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Umuɣ n usemyizwer n yinekcam</string>
 
-    <!-- Credit Cards Autofill -->
+    <!-- Autofill -->
+    <!-- Preference and title for managing the autofill settings -->
+    <string name="preferences_autofill">Taččart tawurmant</string>
+    <!-- Preference and title for managing the settings for addresses -->
+    <string name="preferences_addresses">Tansiwin</string>
     <!-- Preference and title for managing the settings for credit cards -->
     <string name="preferences_credit_cards">Tikarḍiwin n usmad</string>
     <!-- Preference for saving and autofilling credit cards -->
@@ -1559,6 +1559,10 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="preferences_credit_cards_add_credit_card">Rnu takarḍa n usmad</string>
     <!-- Preference option for managing saved credit cards -->
     <string name="preferences_credit_cards_manage_saved_cards">Sefrek tikerḍiwin yettwaskelsen</string>
+    <!-- Preference option for adding an address -->
+    <string name="preferences_addresses_add_address">Rnu tansa</string>
+    <!-- Preference option for managing saved addresses -->
+    <string name="preferences_addresses_manage_addresses">Sefrek tansiwin</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Rnu takarḍa</string>
     <!-- Title of the "Edit card" screen -->
@@ -1609,6 +1613,37 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="credit_cards_biometric_prompt_message_pin">Serreḥ i ibenk-inek·inem</string>
     <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
     <string name="credit_cards_biometric_prompt_unlock_message">Kkes asekkeṛ i wakken ad tesqedceḍ talɣut n tkarḍa n usmad</string>
+
+    <!-- Title of the "Add address" screen -->
+    <string name="addresses_add_address">Rnu tansa</string>
+    <!-- Title of the "Manage addresses" screen -->
+    <string name="addresses_manage_addresses">Sefrek tansiwin</string>
+    <!-- The header for the full name of an address -->
+    <string moz:removedIn="102" name="addresses_full_name" tools:ignore="UnusedResources">Isem ummid</string>
+    <!-- The header for the first name of an address -->
+    <string name="addresses_first_name">Aɣara</string>
+    <!-- The header for the middle name of an address -->
+    <string name="addresses_middle_name">Isem alemmas</string>
+    <!-- The header for the last name of an address -->
+    <string name="addresses_last_name">Isem</string>
+    <!-- The header for the street address of an address -->
+    <string name="addresses_street_address">Tansa n taddart</string>
+    <!-- The header for the city of an address -->
+    <string name="addresses_city">Aɣrem</string>
+    <!-- The header for the state of an address -->
+    <string name="addresses_state">Addad</string>
+    <!-- The header for the zip code of an address -->
+    <string name="addresses_zip">Zip</string>
+    <!-- The header for the phone number of an address -->
+    <string name="addresses_phone">Uṭṭun n tiliɣri</string>
+    <!-- The header for the email of an address -->
+    <string name="addresses_email">Imayl</string>
+    <!-- The text for the "Save" button for saving an address -->
+    <string name="addresses_save_button">Sekles</string>
+    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting an address -->
+    <string name="addresses_cancel_button">Sefsex</string>
+    <!-- The text for the "Delete address" button for deleting an address -->
+    <string name="addressess_delete_address_button">Kkes tansa</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Rnu amsedday n unadi</string>
@@ -1823,25 +1858,6 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
 
     <!-- Text for the snackbar to confirm auto-close is enabled for inactive tabs -->
     <string name="inactive_tabs_auto_close_message_snackbar">Amdal awurman yermed</string>
-
-    <!-- Inactive tabs survey -->
-    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_header_1" tools:ignore="UnusedResources">Mudd afus i tneflit n Firefox</string>
-
-    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Ayɣer i tsenseḍ accaren irurmiden?</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_not_understand" tools:ignore="UnusedResources">Ur fhimeɣ ara amek i iteddu</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_it_myself" tools:ignore="UnusedResources">Bɣiɣ d nekk ara isefḍen accaren iqburen</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_long_option_1" tools:ignore="UnusedResources">Azal n sin yimalas ɣezzif aṭas</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_short_option_1" tools:ignore="UnusedResources">Azal n sin yimalas wezzil aṭas</string>
-    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Azen</string>
-    <!-- Content description for inactive tabs survey close button -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Mdel</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Sbadu iseɣwan seg yismal web, seg yimaylen d yiznan i twaledyawt s wudem awurman deg Firefox.</string>

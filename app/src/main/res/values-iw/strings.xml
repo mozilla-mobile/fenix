@@ -69,8 +69,6 @@
     <string name="cfr_neg_button_text">לא תודה</string>
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
-    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
-    <string moz:RemovedIn="99" name="open_in_app_cfr_info_message" tools:ignore="UnusedResources">באפשרותך להגדיר ש־Firefox יפתח קישורים ביישומים באופן אוטומטי.</string>
     <!-- Text for the info message. The first parameter is the name of the application.-->
     <string name="open_in_app_cfr_info_message_2">באפשרותך להגדיר ש־%1$s יפתח קישורים ביישומים באופן אוטומטי.</string>
     <!-- Text for the positive action button -->
@@ -99,8 +97,6 @@
 
     <!-- Text for title for the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_title">לסגור באופן אוטומטי לאחר חודש אחד?</string>
-    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
-    <string moz:RemovedIn="99" name="tab_tray_inactive_auto_close_body" tools:ignore="UnusedResources">‏Firefox יכול לסגור לשוניות שלא נצפו במהלך החודש האחרון.</string>
     <!-- Text for the body for the auto-close dialog of the inactive tabs.
         The first parameter is the name of the application.-->
     <string name="tab_tray_inactive_auto_close_body_2">‏%1$s יכול לסגור לשוניות שלא נצפו במהלך החודש האחרון.</string>
@@ -246,15 +242,14 @@
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">חיפוש ישירות משורת הכתובת</string>
 
+    <!-- Menu option in the search selector menu to open the search settings -->
+    <string name="search_settings_menu_item">הגדרות חיפוש</string>
+
     <!-- Home onboarding -->
-    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
-    <string moz:removedIn="99" name="onboarding_home_screen_title_2" tools:ignore="UnusedResources">מה חדש ב־Firefox</string>
     <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
     <string name="onboarding_home_screen_title_3">מה חדש ב־%1$s</string>
     <!-- Onboarding home screen dialog description text. -->
     <string name="onboarding_home_screen_description_2">עכשיו קל יותר לחזור למקום שבו הפסקת.</string>
-    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
-    <string moz:RemovedIn="99" name="onboarding_home_screen_section_home_title_2" tools:ignore="UnusedResources">מסך בית מותאם אישית של Firefox</string>
     <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
     <string name="onboarding_home_screen_section_home_title_3">מסך בית מותאם אישית של %1$s</string>
     <!-- Onboarding home screen dialog description text for the home section. -->
@@ -273,8 +268,6 @@
     <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">כעת קל יותר להמשיך מהמקום שבו הפסקת, במסך הבית של Firefox המותאם אישית שלך. ניתן למצוא את הלשוניות האחרונות, הסימניות ותוצאות החיפוש שלך.</string>
 
     <!-- Search Widget -->
-    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
-    <string moz:RemovedIn="99" name="search_widget_content_description" tools:ignore="UnusedResources">פתיחת לשונית חדשה ב־Firefox</string>
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
     <string name="search_widget_content_description_2">פתיחת לשונית %1$s חדשה</string>
     <!-- Text preview for smaller sized widgets -->
@@ -655,8 +648,6 @@
     <string name="studies_remove">הסרה</string>
     <!-- Title of the active section on the studies list -->
     <string name="studies_active">פעיל</string>
-    <!-- Description for studies, it indicates why Firefox use studies -->
-    <string moz:RemovedIn="99" name="studies_description" tools:ignore="UnusedResources">‏Firefox עשוי להתקין ולהריץ מחקרים מדי פעם בפעם.</string>
 
     <!-- Description for studies, it indicates why Firefox use studies. The first parameter is the name of the application. -->
     <string name="studies_description_2">‏%1$s עשוי להתקין ולהריץ מחקרים מדי פעם בפעם.</string>
@@ -746,8 +737,6 @@
 
     <!-- History -->
     <!-- Text for the button to search all history -->
-    <string moz:removedIn="99" name="history_search" tools:ignore="UnusedResources">נא להקליד מונח לחיפוש</string>
-    <!-- Text for the button to search all history -->
     <string name="history_search_1">נא להקליד מונחים לחיפוש</string>
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">מחיקת היסטוריה</string>
@@ -772,6 +761,11 @@
     <string name="history_older">ישן יותר</string>
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">אין היסטוריה כאן</string>
+
+    <!-- Text for the button inside History screen that opens Synced History screen. History that is coming from other devices -->
+    <string name="history_synced_from_other_devices">סונכרן ממכשירים אחרים</string>
+    <!-- The page title for browsing history coming from other devices. -->
+    <string name="history_from_other_devices">ממכשירים אחרים</string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1157,6 +1151,15 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">בתהליך מחיקת נתוני גלישה…</string>
 
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
+    <string name="delete_history_group_prompt_message">פעולה זו תמחק את כל הפריטים.</string>
+    <!-- Text for the cancel button for the history group deletion dialog -->
+    <string name="delete_history_group_prompt_cancel">ביטול</string>
+    <!-- Text for the allow button for the history group dialog -->
+    <string name="delete_history_group_prompt_allow">מחיקה</string>
+    <!-- Text for the snackbar confirmation that the history group was deleted -->
+    <string name="delete_history_group_snackbar">הקבוצה נמחקה</string>
+
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
     <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header" tools:ignore="UnusedResources">‏Firefox Preview הוא עכשיו Firefox Nightly</string>
@@ -1199,8 +1202,6 @@
     <string name="onboarding_firefox_account_sync_is_on">הסנכרון פעיל</string>
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">פרטיות תמיד מופעלת</string>
-    <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
-    <string moz:RemovedIn="99" name="onboarding_tracking_protection_description_3" tools:ignore="UnusedResources">‏Firefox מונע באופן אוטומטי מחברות לעקוב אחריך בסתר ברחבי הרשת.</string>
     <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
     <string name="onboarding_tracking_protection_description_4">‏%1$s מונע באופן אוטומטי מחברות לעקוב אחריך בסתר ברחבי הרשת.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
@@ -1506,7 +1507,11 @@
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">תפריט מיון כניסות</string>
 
-    <!-- Credit Cards Autofill -->
+    <!-- Autofill -->
+    <!-- Preference and title for managing the autofill settings -->
+    <string name="preferences_autofill">מילוי אוטומטי</string>
+    <!-- Preference and title for managing the settings for addresses -->
+    <string name="preferences_addresses">כתובות</string>
     <!-- Preference and title for managing the settings for credit cards -->
     <string name="preferences_credit_cards">כרטיסי אשראי</string>
     <!-- Preference for saving and autofilling credit cards -->
@@ -1522,6 +1527,10 @@
 
     <!-- Preference option for managing saved credit cards -->
     <string name="preferences_credit_cards_manage_saved_cards">ניהול כרטיסים שמורים</string>
+    <!-- Preference option for adding an address -->
+    <string name="preferences_addresses_add_address">הוספת כתובת</string>
+    <!-- Preference option for managing saved addresses -->
+    <string name="preferences_addresses_manage_addresses">ניהול כתובות</string>
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">הוספת כרטיס</string>
     <!-- Title of the "Edit card" screen -->
@@ -1574,6 +1583,35 @@
 
     <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
     <string name="credit_cards_biometric_prompt_unlock_message">יש לבטל את הנעילה כדי להשתמש בפרטי כרטיס האשראי השמור</string>
+
+    <!-- Title of the "Add address" screen -->
+    <string name="addresses_add_address">הוספת כתובת</string>
+    <!-- Title of the "Manage addresses" screen -->
+    <string name="addresses_manage_addresses">ניהול כתובות</string>
+    <!-- The header for the full name of an address -->
+    <string moz:removedIn="102" name="addresses_full_name" tools:ignore="UnusedResources">שם מלא</string>
+    <!-- The header for the first name of an address -->
+    <string name="addresses_first_name">שם פרטי</string>
+    <!-- The header for the middle name of an address -->
+    <string name="addresses_middle_name">שם אמצעי</string>
+    <!-- The header for the last name of an address -->
+    <string name="addresses_last_name">שם משפחה</string>
+    <!-- The header for the street address of an address -->
+    <string name="addresses_street_address">כתובת רחוב</string>
+    <!-- The header for the city of an address -->
+    <string name="addresses_city">עיר</string>
+    <!-- The header for the state of an address -->
+    <string name="addresses_state">מדינה</string>
+    <!-- The header for the phone number of an address -->
+    <string name="addresses_phone">טלפון</string>
+    <!-- The header for the email of an address -->
+    <string name="addresses_email">דוא״ל</string>
+    <!-- The text for the "Save" button for saving an address -->
+    <string name="addresses_save_button">שמירה</string>
+    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting an address -->
+    <string name="addresses_cancel_button">ביטול</string>
+    <!-- The text for the "Delete address" button for deleting an address -->
+    <string name="addressess_delete_address_button">מחיקת כתובת</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">הוספת מנוע חיפוש</string>
@@ -1785,25 +1823,6 @@
 
     <!-- Text for the snackbar to confirm auto-close is enabled for inactive tabs -->
     <string name="inactive_tabs_auto_close_message_snackbar">סגירה אוטומטית מופעלת</string>
-
-    <!-- Inactive tabs survey -->
-    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_header_1" tools:ignore="UnusedResources">סיוע בשיפור Firefox</string>
-
-    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_content" tools:ignore="UnusedResources">מדוע השבתת את הלשוניות הלא פעילות?</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_not_understand" tools:ignore="UnusedResources">אני לא מבין איך זה עובד</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_it_myself" tools:ignore="UnusedResources">אני רוצה לנקות לשוניות ישנות בעצמי</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_long_option_1" tools:ignore="UnusedResources">פרק הזמן של שבועיים ארוך מדי</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_short_option_1" tools:ignore="UnusedResources">פרק הזמן של שבועיים קצר מדי</string>
-    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">שליחה</string>
-    <!-- Content description for inactive tabs survey close button -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">סגירה</string>
 
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">הגדרת קישורים מאתרים, מהודעות דוא״ל ומהודעות לפתיחה אוטומטית ב־Firefox.</string>

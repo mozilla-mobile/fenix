@@ -25,7 +25,6 @@ import org.mozilla.fenix.collections.CollectionsDialog
 import org.mozilla.fenix.collections.show
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.bookmarks.BookmarksUseCase
-import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.tabstray.ext.getTabSessionState
 import org.mozilla.fenix.tabstray.ext.isActiveDownload
@@ -102,7 +101,6 @@ class DefaultNavigationInteractor(
     private val activity: HomeActivity,
     private val browserStore: BrowserStore,
     private val navController: NavController,
-    private val metrics: MetricController,
     private val dismissTabTray: () -> Unit,
     private val dismissTabTrayAndNavigateHome: (sessionId: String) -> Unit,
     private val bookmarksUseCase: BookmarksUseCase,
@@ -111,7 +109,6 @@ class DefaultNavigationInteractor(
     private val showCollectionSnackbar: (
         tabSize: Int,
         isNewCollection: Boolean,
-        collectionToSelect: Long?
     ) -> Unit,
     private val showBookmarkSnackbar: (tabSize: Int) -> Unit,
     private val showCancelledDownloadWarning: (downloadCount: Int, tabId: String?, source: String?) -> Unit,
@@ -226,7 +223,7 @@ class DefaultNavigationInteractor(
                     )
                 }
                 id?.apply {
-                    showCollectionSnackbar(tabs.size, isNewCollection, id)
+                    showCollectionSnackbar(tabs.size, isNewCollection)
                 }
             },
             onNegativeButtonClick = {}
