@@ -611,6 +611,7 @@ class DefaultSessionControlController(
     override fun handleSetDefaultBrowser() {
         settings.userDismissedExperimentCard = true
         activity.openSetDefaultBrowserOption()
+        appStore.dispatch(AppAction.RemoveSetDefaultBrowserCard)
     }
 
     override fun handleCloseExperimentCard() {
