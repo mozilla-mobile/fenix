@@ -6,7 +6,10 @@
 
 package org.mozilla.fenix.home.pocket
 
+import android.content.Context
+import android.graphics.Rect
 import android.net.Uri
+import androidx.annotation.FloatRange
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,9 +26,19 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toAndroidRect
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -49,6 +62,8 @@ import org.mozilla.fenix.compose.TabSubtitleWithInterdot
 import org.mozilla.fenix.compose.TabTitle
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.theme.Theme
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 private const val URI_PARAM_UTM_KEY = "utm_source"
@@ -136,18 +151,81 @@ fun PocketStories(
                             onDiscoverMoreClicked("https://getpocket.com/explore?$POCKET_FEATURE_UTM_KEY_VALUE")
                         }
                     } else {
-                        PocketStory(story) {
-                            val uri = Uri.parse(story.url)
-                                .buildUpon()
-                                .appendQueryParameter(URI_PARAM_UTM_KEY, POCKET_STORIES_UTM_VALUE)
-                                .build().toString()
-                            onStoryClicked(it.copy(url = uri), rowIndex to columnIndex)
+                        if (rowIndex == 0 && columnIndex == 0) {
+                            Box(
+                                modifier = Modifier
+                                    .onShown(0.5f) {
+                                        // TODO
+                                    }
+                            ) {
+                                PocketStory(story) {
+                                    val uri = Uri.parse(story.url)
+                                        .buildUpon()
+                                        .appendQueryParameter(URI_PARAM_UTM_KEY, POCKET_STORIES_UTM_VALUE)
+                                        .build().toString()
+                                    onStoryClicked(it.copy(url = uri), rowIndex to columnIndex)
+                                }
+                            }
+                        } else {
+                            PocketStory(story) {
+                                val uri = Uri.parse(story.url)
+                                    .buildUpon()
+                                    .appendQueryParameter(URI_PARAM_UTM_KEY, POCKET_STORIES_UTM_VALUE)
+                                    .build().toString()
+                                onStoryClicked(it.copy(url = uri), rowIndex to columnIndex)
+                            }
                         }
                     }
                 }
             }
         }
     }
+}
+
+private fun Modifier.onShown(
+    @FloatRange(from = 0.0, to = 1.0) threshold: Float,
+    onVisible: () -> Unit,
+): Modifier {
+    return composed {
+        val context = LocalContext.current
+        var wasEventReported by remember { mutableStateOf(false) }
+
+        onGloballyPositioned { coordinates ->
+            @Suppress("CollapsibleIfStatements")
+            if (!wasEventReported) {
+                if (coordinates.isVisible(context, threshold)) {
+                    wasEventReported = true
+                    onVisible()
+                }
+            }
+        }
+    }
+}
+
+private fun LayoutCoordinates.isVisible(
+    context: Context,
+    @FloatRange(from = 0.0, to = 1.0) threshold: Float,
+): Boolean {
+    if (!isAttached) return false
+
+    val screenBounds = Rect(
+        /*left = */0,
+        /*top = */0,
+        /*right = */context.resources.displayMetrics.widthPixels,
+        /*bottom = */context.resources.displayMetrics.heightPixels
+    )
+
+    return boundsInWindow().toAndroidRect().getIntersectPercentage(screenBounds) >= threshold
+}
+
+@FloatRange(from = 0.0, to = 1.0)
+private fun Rect.getIntersectPercentage(other: Rect): Float {
+    val composableArea = height() * width()
+    val heightOverlap = max(0, min(bottom, other.bottom) - max(top, other.top))
+    val widthOverlap = max(0, min(right, other.right) - max(left, other.left))
+    val intersectionArea = heightOverlap * widthOverlap
+
+    return (intersectionArea.toFloat() / composableArea)
 }
 
 /**
