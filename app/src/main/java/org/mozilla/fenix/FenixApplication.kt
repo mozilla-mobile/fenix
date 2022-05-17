@@ -404,7 +404,27 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             // experiment on features close to startup.
             // But we need viaduct (the RustHttp client) to be ready before we do.
             components.analytics.experiments.initialize()
+
+            setupMessaging()
         }
+    }
+
+    private fun setupMessaging() {
+        if (!FeatureFlags.messagingFeature) {
+            return
+        }
+
+        fun restore() {
+            components.appStore.dispatch(AppAction.MessagingAction.Restore)
+        }
+
+        components.analytics.experiments.register(object : NimbusInterface.Observer {
+            override fun onUpdatesApplied(updated: List<EnrolledExperiment>) {
+                restore()
+            }
+        })
+
+        restore()
     }
 
     override fun onTrimMemory(level: Int) {
@@ -749,11 +769,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             }
         )
         components.analytics.experiments.register(object : NimbusInterface.Observer {
-            override fun onExperimentsFetched() {
-                if (FeatureFlags.messagingFeature && settings().isExperimentationEnabled) {
-                    components.appStore.dispatch(AppAction.MessagingAction.Restore)
-                }
-            }
             override fun onUpdatesApplied(updated: List<EnrolledExperiment>) {
                 CustomizeHome.jumpBackIn.set(settings.showRecentTabsFeature)
                 CustomizeHome.recentlySaved.set(settings.showRecentBookmarksFeature)
