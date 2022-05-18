@@ -45,6 +45,7 @@ import mozilla.components.service.glean.net.ConceptFetchHttpUploader
 import mozilla.components.support.base.facts.register
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.ktx.android.content.isMainProcess
 import mozilla.components.support.ktx.android.content.runOnlyInMainProcess
 import mozilla.components.support.locale.LocaleAwareApplication
@@ -403,28 +404,29 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             // We want to ensure Nimbus is initialized as early as possible so we can
             // experiment on features close to startup.
             // But we need viaduct (the RustHttp client) to be ready before we do.
-            components.analytics.experiments.initialize()
-
-            setupMessaging()
+            components.analytics.experiments.apply {
+                initialize()
+                setupNimbusObserver(this)
+            }
         }
     }
 
-    private fun setupMessaging() {
-        if (!FeatureFlags.messagingFeature) {
-            return
-        }
-
-        fun restore() {
-            components.appStore.dispatch(AppAction.MessagingAction.Restore)
-        }
-
-        components.analytics.experiments.register(object : NimbusInterface.Observer {
+    private fun setupNimbusObserver(nimbus: Observable<NimbusInterface.Observer>) {
+        nimbus.register(object : NimbusInterface.Observer {
             override fun onUpdatesApplied(updated: List<EnrolledExperiment>) {
-                restore()
+                onNimbusStartupAndUpdate()
             }
         })
 
-        restore()
+        onNimbusStartupAndUpdate()
+    }
+
+    private fun onNimbusStartupAndUpdate() {
+        val settings = settings()
+        if (FeatureFlags.messagingFeature && settings.isExperimentationEnabled) {
+            components.appStore.dispatch(AppAction.MessagingAction.Restore)
+        }
+        reportHomeScreenSectionMetrics(settings)
     }
 
     override fun onTrimMemory(level: Int) {
@@ -760,6 +762,11 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
     @VisibleForTesting
     internal fun reportHomeScreenMetrics(settings: Settings) {
+        reportOpeningScreenMetrics(settings)
+        reportHomeScreenSectionMetrics(settings)
+    }
+
+    private fun reportOpeningScreenMetrics(settings: Settings) {
         CustomizeHome.openingScreen.set(
             when {
                 settings.alwaysOpenTheHomepageWhenOpeningTheApp -> "homepage"
@@ -768,16 +775,18 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 else -> ""
             }
         )
-        components.analytics.experiments.register(object : NimbusInterface.Observer {
-            override fun onUpdatesApplied(updated: List<EnrolledExperiment>) {
-                CustomizeHome.jumpBackIn.set(settings.showRecentTabsFeature)
-                CustomizeHome.recentlySaved.set(settings.showRecentBookmarksFeature)
-                CustomizeHome.mostVisitedSites.set(settings.showTopSitesFeature)
-                CustomizeHome.recentlyVisited.set(settings.historyMetadataUIFeature)
-                CustomizeHome.pocket.set(settings.showPocketRecommendationsFeature)
-                CustomizeHome.contile.set(settings.showContileFeature)
-            }
-        })
+    }
+
+    private fun reportHomeScreenSectionMetrics(settings: Settings) {
+        // These settings are backed by Nimbus features.
+        // We break them out here so they can be recorded when
+        // `nimbus.applyPendingExperiments()` is called.
+        CustomizeHome.jumpBackIn.set(settings.showRecentTabsFeature)
+        CustomizeHome.recentlySaved.set(settings.showRecentBookmarksFeature)
+        CustomizeHome.mostVisitedSites.set(settings.showTopSitesFeature)
+        CustomizeHome.recentlyVisited.set(settings.historyMetadataUIFeature)
+        CustomizeHome.pocket.set(settings.showPocketRecommendationsFeature)
+        CustomizeHome.contile.set(settings.showContileFeature)
     }
 
     protected fun recordOnInit() {
