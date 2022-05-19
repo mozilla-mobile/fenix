@@ -361,15 +361,6 @@
     <ID>UndocumentedPublicClass:SearchEngineMenu.kt$SearchEngineMenu$Item</ID>
     <ID>UndocumentedPublicClass:SearchEngineMenu.kt$SearchEngineMenu.Item$Delete : Item</ID>
     <ID>UndocumentedPublicClass:SearchEngineMenu.kt$SearchEngineMenu.Item$Edit : Item</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchEngineSource$Default : SearchEngineSource</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchEngineSource$None : SearchEngineSource</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchEngineSource$Shortcut : SearchEngineSource</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchFragmentAction$AllowSearchSuggestionsInPrivateModePrompt : SearchFragmentAction</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchFragmentAction$SearchShortcutEngineSelected : SearchFragmentAction</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchFragmentAction$SetShowSearchSuggestions : SearchFragmentAction</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchFragmentAction$ShowSearchShortcutEnginePicker : SearchFragmentAction</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchFragmentAction$UpdateClipboardHasUrl : SearchFragmentAction</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchFragmentAction$UpdateQuery : SearchFragmentAction</ID>
     <ID>UndocumentedPublicClass:SearchStringValidator.kt$SearchStringValidator</ID>
     <ID>UndocumentedPublicClass:SearchStringValidator.kt$SearchStringValidator$Result</ID>
     <ID>UndocumentedPublicClass:SearchWidgetProvider.kt$SearchWidgetProvider : AppWidgetProvider</ID>
@@ -458,7 +449,6 @@
     <ID>UndocumentedPublicClass:SupportUtils.kt$SupportUtils</ID>
     <ID>UndocumentedPublicClass:SupportUtils.kt$SupportUtils$MozillaPage</ID>
     <ID>UndocumentedPublicClass:SupportUtils.kt$SupportUtils$SumoTopic</ID>
-    <ID>UndocumentedPublicClass:SwipeToDeleteCallback.kt$SwipeToDeleteCallback : SimpleCallback</ID>
     <ID>UndocumentedPublicClass:SwitchWithDescription.kt$SwitchWithDescription : ConstraintLayout</ID>
     <ID>UndocumentedPublicClass:Tab.kt$Tab</ID>
     <ID>UndocumentedPublicClass:TabCollectionStorage.kt$TabCollectionStorage : Observable</ID>

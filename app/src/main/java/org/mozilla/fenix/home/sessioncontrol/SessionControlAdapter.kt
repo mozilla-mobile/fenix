@@ -15,12 +15,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
-import mozilla.components.ui.widgets.WidgetSiteItemView
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.home.BottomSpacerViewHolder
 import org.mozilla.fenix.home.TopPlaceholderViewHolder
 import org.mozilla.fenix.home.collections.CollectionViewHolder
+import org.mozilla.fenix.home.collections.TabInCollectionViewHolder
 import org.mozilla.fenix.home.pocket.PocketCategoriesViewHolder
 import org.mozilla.fenix.home.pocket.PocketRecommendationsHeaderViewHolder
 import org.mozilla.fenix.home.pocket.PocketStoriesViewHolder
@@ -34,7 +34,6 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHol
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CustomizeHomeButtonViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.NoCollectionsMessageViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.PrivateBrowsingDescriptionViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.MessageCardViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingFinishViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingHeaderViewHolder
@@ -130,6 +129,10 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
     ) : AdapterItem(TabInCollectionViewHolder.LAYOUT_ID) {
         override fun sameAs(other: AdapterItem) =
             other is TabInCollectionItem && tab.id == other.tab.id
+
+        override fun contentsSameAs(other: AdapterItem): Boolean {
+            return other is TabInCollectionItem && this.isLastTab == other.isLastTab
+        }
     }
 
     object OnboardingHeader : AdapterItem(OnboardingHeaderViewHolder.LAYOUT_ID)
@@ -280,8 +283,13 @@ class SessionControlAdapter(
             )
             CollectionViewHolder.LAYOUT_ID -> return CollectionViewHolder(
                 composeView = ComposeView(parent.context),
-                viewLifecycleOwner,
+                viewLifecycleOwner = viewLifecycleOwner,
                 interactor = interactor
+            )
+            TabInCollectionViewHolder.LAYOUT_ID -> return TabInCollectionViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor,
             )
         }
 
@@ -292,10 +300,6 @@ class SessionControlAdapter(
                 view = view,
                 viewLifecycleOwner = viewLifecycleOwner,
                 interactor = interactor
-            )
-            TabInCollectionViewHolder.LAYOUT_ID -> TabInCollectionViewHolder(
-                view as WidgetSiteItemView,
-                interactor
             )
             OnboardingHeaderViewHolder.LAYOUT_ID -> OnboardingHeaderViewHolder(view)
             OnboardingSectionHeaderViewHolder.LAYOUT_ID -> OnboardingSectionHeaderViewHolder(view)
@@ -340,6 +344,11 @@ class SessionControlAdapter(
                 // The composition will live until the ViewTreeLifecycleOwner to which it's attached to is destroyed.
             }
             is CollectionViewHolder -> {
+                // Dispose the underlying composition immediately.
+                // This ViewHolder can be removed / re-added and we need it to show a fresh new composition.
+                holder.composeView.disposeComposition()
+            }
+            is TabInCollectionViewHolder -> {
                 // Dispose the underlying composition immediately.
                 // This ViewHolder can be removed / re-added and we need it to show a fresh new composition.
                 holder.composeView.disposeComposition()
