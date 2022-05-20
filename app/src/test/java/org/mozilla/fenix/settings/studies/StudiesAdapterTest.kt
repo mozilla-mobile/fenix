@@ -25,6 +25,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.experiments.nimbus.internal.EnrolledExperiment
 import org.mozilla.fenix.R
+import org.mozilla.fenix.gleanplumb.MESSAGING_FEATURE_ID
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.studies.CustomViewHolder.SectionViewHolder
 import org.mozilla.fenix.settings.studies.CustomViewHolder.StudyViewHolder
@@ -122,8 +123,28 @@ class StudiesAdapterTest {
         val study = mockk<EnrolledExperiment>()
 
         every { study.slug } returns "slug"
+        every { study.featureIds } returns listOf()
 
         adapter = spyk(StudiesAdapter(delegate, listOf(study), false))
+
+        val list = adapter.createListWithSections(listOf(study))
+
+        assertEquals(2, list.size)
+        assertTrue(list[0] is Section)
+        assertTrue(list[1] is EnrolledExperiment)
+    }
+
+    @Test
+    fun `WHEN calling createListWithSections THEN returns the section + experiments, filtering messages`() {
+        val study = mockk<EnrolledExperiment>()
+        every { study.slug } returns "slug"
+        every { study.featureIds } returns listOf("dummy")
+
+        val message = mockk<EnrolledExperiment>()
+        every { message.slug } returns "aMessage"
+        every { message.featureIds } returns listOf(MESSAGING_FEATURE_ID)
+
+        adapter = spyk(StudiesAdapter(delegate, listOf(study, message), false))
 
         val list = adapter.createListWithSections(listOf(study))
 
