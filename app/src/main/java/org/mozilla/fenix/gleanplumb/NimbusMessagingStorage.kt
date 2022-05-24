@@ -51,7 +51,7 @@ class NimbusMessagingStorage(
         val storageMetadata = metadataStorage.getMetadata()
 
         return nimbusMessages.mapNotNull { (key, value) ->
-            val action = sanitizeAction(key, value.action, nimbusActions) ?: return@mapNotNull null
+            val action = sanitizeAction(key, value.action, nimbusActions, value.isControl) ?: return@mapNotNull null
             Message(
                 id = key,
                 data = value,
@@ -124,20 +124,26 @@ class NimbusMessagingStorage(
     internal fun sanitizeAction(
         messageId: String,
         unsafeAction: String,
-        nimbusActions: Map<String, String>
+        nimbusActions: Map<String, String>,
+        isControl: Boolean
     ): String? {
-        return if (unsafeAction.startsWith("http")) {
-            unsafeAction
-        } else {
-            val safeAction = nimbusActions[unsafeAction]
-            if (safeAction.isNullOrBlank() || safeAction.isEmpty()) {
-                if (!malFormedMap.containsKey(unsafeAction)) {
-                    reportMalformedMessage(messageId)
-                }
-                malFormedMap[unsafeAction] = messageId
-                return null
+
+        return when {
+            unsafeAction.startsWith("http") -> {
+                unsafeAction
             }
-            safeAction
+            isControl -> "CONTROL_ACTION"
+            else -> {
+                val safeAction = nimbusActions[unsafeAction]
+                if (safeAction.isNullOrBlank() || safeAction.isEmpty()) {
+                    if (!malFormedMap.containsKey(unsafeAction)) {
+                        reportMalformedMessage(messageId)
+                    }
+                    malFormedMap[unsafeAction] = messageId
+                    return null
+                }
+                safeAction
+            }
         }
     }
 
