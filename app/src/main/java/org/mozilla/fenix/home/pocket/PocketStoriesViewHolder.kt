@@ -23,16 +23,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.lib.state.ext.observeAsComposableState
-import mozilla.components.service.pocket.PocketRecommendedStory
+import mozilla.components.service.pocket.PocketStory.PocketRecommendedStory
 import org.mozilla.fenix.R
-import org.mozilla.fenix.R.string
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.ComposeViewHolder
 import org.mozilla.fenix.compose.SectionHeader
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.theme.Theme
-
-internal const val POCKET_STORIES_TO_SHOW_COUNT = 8
 
 /**
  * [RecyclerView.ViewHolder] for displaying the list of [PocketRecommendedStory]s from [AppStore].
@@ -93,7 +90,7 @@ fun PocketStoriesViewHolderPreview() {
     FirefoxTheme(theme = Theme.getTheme(isPrivate = false)) {
         Column {
             SectionHeader(
-                text = stringResource(string.pocket_stories_header_1),
+                text = stringResource(R.string.pocket_stories_header_1),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
@@ -102,8 +99,9 @@ fun PocketStoriesViewHolderPreview() {
 
             Spacer(Modifier.height(16.dp))
 
+            @Suppress("MagicNumber")
             PocketStories(
-                stories = getFakePocketStories(POCKET_STORIES_TO_SHOW_COUNT),
+                stories = getFakePocketStories(8),
                 contentPadding = 0.dp,
                 onStoryClicked = { _, _ -> },
                 onDiscoverMoreClicked = {}
