@@ -37,12 +37,16 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import mozilla.components.service.pocket.PocketRecommendedStory
+import mozilla.components.service.pocket.PocketStory
+import mozilla.components.service.pocket.PocketStory.PocketRecommendedStory
+import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
+import mozilla.components.service.pocket.PocketStory.PocketSponsoredStoryShim
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.ClickableSubstringLink
 import org.mozilla.fenix.compose.EagerFlingBehavior
 import org.mozilla.fenix.compose.ListItemTabLarge
 import org.mozilla.fenix.compose.ListItemTabLargePlaceholder
+import org.mozilla.fenix.compose.ListItemTabSurface
 import org.mozilla.fenix.compose.SelectableChip
 import org.mozilla.fenix.compose.StaggeredHorizontalGrid
 import org.mozilla.fenix.compose.PrimaryText
@@ -57,7 +61,7 @@ private const val POCKET_STORIES_UTM_VALUE = "pocket-newtab-android"
 private const val POCKET_FEATURE_UTM_KEY_VALUE = "utm_source=ff_android"
 
 /**
- * Placeholder [PocketRecommendedStory] allowing to combine other items in the same list that shows stories.
+ * Placeholder [PocketStory] allowing to combine other items in the same list that shows stories.
  * It uses empty values for it's properties ensuring that no conflict is possible since real stories have
  * mandatory values.
  */
@@ -114,11 +118,68 @@ fun PocketStory(
 }
 
 /**
- * Displays a list of [PocketRecommendedStory]es on 3 by 3 grid.
+ * Displays a single [PocketSponsoredStory].
+ *
+ * @param story The [PocketSponsoredStory] to be displayed.
+ * @param onStoryClick Callback for when the user taps on this story.
+ */
+@Composable
+fun PocketSponsoredStory(
+    story: PocketSponsoredStory,
+    onStoryClick: (PocketSponsoredStory) -> Unit
+) {
+    val (imageWidth, imageHeight) = with(LocalDensity.current) {
+        116.dp.toPx().roundToInt() to 84.dp.toPx().roundToInt()
+    }
+    val imageUrl = story.imageUrl.replace(
+        "&resize=w[0-9]+-h[0-9]+".toRegex(),
+        "&resize=w$imageWidth-h$imageHeight"
+    )
+
+    ListItemTabSurface(imageUrl, { onStoryClick(story) }) {
+        PrimaryText(
+            text = story.title,
+            fontSize = 14.sp,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 2,
+        )
+
+        Spacer(Modifier.height(9.dp))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(id = R.drawable.pocket_star_stroke),
+                contentDescription = null,
+                tint = FirefoxTheme.colors.iconSecondary,
+            )
+
+            Spacer(Modifier.width(8.dp))
+
+            SecondaryText(
+                text = stringResource(R.string.pocket_stories_sponsor_indication),
+                fontSize = 12.sp,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+            )
+        }
+
+        Spacer(Modifier.height(7.dp))
+
+        SecondaryText(
+            text = story.sponsor,
+            fontSize = 12.sp,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+        )
+    }
+}
+
+/**
+ * Displays a list of [PocketStory]es on 3 by 3 grid.
  * If there aren't enough stories to fill all columns placeholders containing an external link
  * to go to Pocket for more recommendations are added.
  *
- * @param stories The list of [PocketRecommendedStory]ies to be displayed. Expect a list with 8 items.
+ * @param stories The list of [PocketStory]ies to be displayed. Expect a list with 8 items.
  * @param contentPadding Dimension for padding the content after it has been clipped.
  * This space will be used for shadows and also content rendering when the list is scrolled.
  * @param onStoryClicked Callback for when the user taps on a recommended story.
@@ -126,9 +187,9 @@ fun PocketStory(
  */
 @Composable
 fun PocketStories(
-    @PreviewParameter(PocketStoryProvider::class) stories: List<PocketRecommendedStory>,
+    @PreviewParameter(PocketStoryProvider::class) stories: List<PocketStory>,
     contentPadding: Dp,
-    onStoryClicked: (PocketRecommendedStory, Pair<Int, Int>) -> Unit,
+    onStoryClicked: (PocketStory, Pair<Int, Int>) -> Unit,
     onDiscoverMoreClicked: (String) -> Unit
 ) {
     // Show stories in at most 3 rows but on any number of columns depending on the data received.
@@ -151,13 +212,17 @@ fun PocketStories(
                         ListItemTabLargePlaceholder(stringResource(R.string.pocket_stories_placeholder_text)) {
                             onDiscoverMoreClicked("https://getpocket.com/explore?$POCKET_FEATURE_UTM_KEY_VALUE")
                         }
-                    } else {
+                    } else if (story is PocketRecommendedStory) {
                         PocketStory(story) {
                             val uri = Uri.parse(story.url)
                                 .buildUpon()
                                 .appendQueryParameter(URI_PARAM_UTM_KEY, POCKET_STORIES_UTM_VALUE)
                                 .build().toString()
                             onStoryClicked(it.copy(url = uri), rowIndex to columnIndex)
+                        }
+                    } else if (story is PocketSponsoredStory) {
+                        PocketSponsoredStory(story) {
+                            onStoryClicked(story, rowIndex to columnIndex)
                         }
                     }
                 }
@@ -284,25 +349,36 @@ private fun PocketStoriesComposablesPreview() {
     }
 }
 
-private class PocketStoryProvider : PreviewParameterProvider<PocketRecommendedStory> {
+private class PocketStoryProvider : PreviewParameterProvider<PocketStory> {
     override val values = getFakePocketStories(7).asSequence()
     override val count = 8
 }
 
-internal fun getFakePocketStories(limit: Int = 1): List<PocketRecommendedStory> {
-    return mutableListOf<PocketRecommendedStory>().apply {
+internal fun getFakePocketStories(limit: Int = 1): List<PocketStory> {
+    return mutableListOf<PocketStory>().apply {
         for (index in 0 until limit) {
-            add(
-                PocketRecommendedStory(
-                    title = "This is a ${"very ".repeat(index)} long title",
-                    publisher = "Publisher",
-                    url = "https://story$index.com",
-                    imageUrl = "",
-                    timeToRead = index,
-                    category = "Category #$index",
-                    timesShown = index.toLong()
+            when (index % 2 == 0) {
+                true -> add(
+                    PocketRecommendedStory(
+                        title = "This is a ${"very ".repeat(index)} long title",
+                        publisher = "Publisher",
+                        url = "https://story$index.com",
+                        imageUrl = "",
+                        timeToRead = index,
+                        category = "Category #$index",
+                        timesShown = index.toLong()
+                    )
                 )
-            )
+                false -> add(
+                    PocketSponsoredStory(
+                        title = "This is a ${"very ".repeat(index)} long title",
+                        url = "https://sponsored-story$index.com",
+                        imageUrl = "",
+                        sponsor = "Mozilla",
+                        shim = PocketSponsoredStoryShim("", "")
+                    )
+                )
+            }
         }
     }
 }

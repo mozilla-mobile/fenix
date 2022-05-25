@@ -5,11 +5,11 @@
 package org.mozilla.fenix.components.appstate
 
 import androidx.annotation.VisibleForTesting
+import mozilla.components.service.pocket.PocketStory.PocketRecommendedStory
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.ext.filterOutTab
 import org.mozilla.fenix.ext.getFilteredStories
 import org.mozilla.fenix.ext.recentSearchGroup
-import org.mozilla.fenix.home.pocket.POCKET_STORIES_TO_SHOW_COUNT
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesSelectedCategory
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
@@ -110,9 +110,7 @@ internal object AppStoreReducer {
 
             // Selecting a category means the stories to be displayed needs to also be changed.
             updatedCategoriesState.copy(
-                pocketStories = updatedCategoriesState.getFilteredStories(
-                    POCKET_STORIES_TO_SHOW_COUNT
-                )
+                pocketStories = updatedCategoriesState.getFilteredStories()
             )
         }
         is AppAction.DeselectPocketStoriesCategory -> {
@@ -124,18 +122,14 @@ internal object AppStoreReducer {
 
             // Deselecting a category means the stories to be displayed needs to also be changed.
             updatedCategoriesState.copy(
-                pocketStories = updatedCategoriesState.getFilteredStories(
-                    POCKET_STORIES_TO_SHOW_COUNT
-                )
+                pocketStories = updatedCategoriesState.getFilteredStories()
             )
         }
         is AppAction.PocketStoriesCategoriesChange -> {
             val updatedCategoriesState = state.copy(pocketStoriesCategories = action.storiesCategories)
             // Whenever categories change stories to be displayed needs to also be changed.
             updatedCategoriesState.copy(
-                pocketStories = updatedCategoriesState.getFilteredStories(
-                    POCKET_STORIES_TO_SHOW_COUNT
-                )
+                pocketStories = updatedCategoriesState.getFilteredStories()
             )
         }
         is AppAction.PocketStoriesCategoriesSelectionsChange -> {
@@ -145,15 +139,21 @@ internal object AppStoreReducer {
             )
             // Whenever categories change stories to be displayed needs to also be changed.
             updatedCategoriesState.copy(
-                pocketStories = updatedCategoriesState.getFilteredStories(
-                    POCKET_STORIES_TO_SHOW_COUNT
-                )
+                pocketStories = updatedCategoriesState.getFilteredStories()
             )
         }
-        is AppAction.PocketStoriesChange -> state.copy(pocketStories = action.pocketStories)
+        is AppAction.PocketStoriesClean -> state.copy(
+            pocketStoriesCategories = emptyList(),
+            pocketStoriesCategoriesSelections = emptyList(),
+            pocketStories = emptyList(),
+            pocketSponsoredStories = emptyList()
+        )
+        is AppAction.PocketSponsoredStoriesChange -> state.copy(
+            pocketSponsoredStories = action.sponsoredStories
+        )
         is AppAction.PocketStoriesShown -> {
             var updatedCategories = state.pocketStoriesCategories
-            action.storiesShown.forEach { shownStory ->
+            action.storiesShown.filterIsInstance<PocketRecommendedStory>().forEach { shownStory ->
                 updatedCategories = updatedCategories.map { category ->
                     when (category.name == shownStory.category) {
                         true -> {

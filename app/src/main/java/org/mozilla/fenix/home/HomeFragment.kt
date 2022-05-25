@@ -228,8 +228,16 @@ class HomeFragment : Fragment() {
                     .map { (category, stories) -> PocketRecommendedStoriesCategory(category, stories) }
 
                 components.appStore.dispatch(AppAction.PocketStoriesCategoriesChange(categories))
+
+                if (FeatureFlags.isPocketSponsoredStoriesFeatureEnabled(requireContext())) {
+                    components.appStore.dispatch(
+                        AppAction.PocketSponsoredStoriesChange(
+                            components.core.pocketStoriesService.getSponsoredStories()
+                        )
+                    )
+                }
             } else {
-                components.appStore.dispatch(AppAction.PocketStoriesChange(emptyList()))
+                components.appStore.dispatch(AppAction.PocketStoriesClean)
             }
         }
 
