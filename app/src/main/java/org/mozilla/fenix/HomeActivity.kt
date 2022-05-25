@@ -294,7 +294,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             if (settings().showPocketRecommendationsFeature) {
                 components.core.pocketStoriesService.startPeriodicStoriesRefresh()
             }
-            if (FeatureFlags.isPocketSponsoredStoriesFeatureEnabled(this@HomeActivity)) {
+            if (settings().showPocketSponsoredStories) {
                 components.core.pocketStoriesService.startPeriodicSponsoredStoriesRefresh()
             }
         }
