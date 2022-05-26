@@ -94,9 +94,7 @@ class NavigationToolbarRobot {
             interact: BrowserRobot.() -> Unit
         ): BrowserRobot.Transition {
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
-
             openEditURLView()
-
             awesomeBar().setText(url.toString())
             mDevice.pressEnter()
 

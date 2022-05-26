@@ -76,7 +76,9 @@ class DownloadRobot {
 
     class Transition {
         fun clickDownload(interact: DownloadRobot.() -> Unit): Transition {
+            Log.i("Andi", "In clickDownloadButton from the prompt")
             downloadButton().click()
+            Log.i("Andi", "Download button clicked")
 
             DownloadRobot().interact()
             return Transition()
@@ -136,45 +138,58 @@ fun downloadRobot(interact: DownloadRobot.() -> Unit): DownloadRobot.Transition 
 private fun assertDownloadPrompt(fileName: String) {
     var currentTries = 0
     while (currentTries++ < 3) {
+        Log.i("Andi", "While block: $currentTries")
         try {
+            Log.i("Andi", "Try block")
+            Log.i("Andi", "Waiting to assert download button")
             assertTrue(
                 "Download prompt button not visible",
                 mDevice.findObject(UiSelector().resourceId("$packageName:id/download_button"))
                     .waitForExists(waitingTime)
             )
+            Log.i("Andi", "Asserted download button")
+            Log.i("Andi", "Waiting to file name")
             assertTrue(
                 "$fileName title doesn't match",
                 mDevice.findObject(UiSelector().text(fileName))
                     .waitForExists(waitingTime)
             )
-
+            Log.i("Andi", "Asserted file name")
             break
         } catch (e: AssertionError) {
+            Log.i("Andi", "Catch block")
             Log.e("DOWNLOAD_ROBOT", "Failed to find locator: ${e.localizedMessage}")
 
             browserScreen {
             }.clickDownloadLink(fileName) {
             }
+            Log.i("Andi", "Click again the link")
         }
     }
 }
 
 private fun assertDownloadNotificationPopup() {
+    Log.i("Andi", "Waiting for Open button")
     assertTrue(
         "Download notification Open button not found",
         mDevice.findObject(UiSelector().text("Open"))
             .waitForExists(waitingTime)
     )
+    Log.i("Andi", "Open button asserted")
+    Log.i("Andi", "Waiting for download complete prompt")
     assertTrue(
         "Download completed notification text doesn't match",
         mDevice.findObject(UiSelector().textContains("Download completed"))
             .waitForExists(waitingTime)
     )
+    Log.i("Andi", "Asserted download complete prompt")
+    Log.i("Andi", "Waiting for download complete file name")
     assertTrue(
         "Downloaded file name not visible",
         mDevice.findObject(UiSelector().resourceId("$packageName:id/download_dialog_filename"))
             .waitForExists(waitingTime)
     )
+    Log.i("Andi", "Asserted download complete file name")
 }
 
 private fun closePromptButton() =

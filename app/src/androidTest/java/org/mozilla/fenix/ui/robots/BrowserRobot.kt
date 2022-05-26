@@ -786,12 +786,14 @@ class BrowserRobot {
 
         fun clickDownloadLink(title: String, interact: DownloadRobot.() -> Unit): DownloadRobot.Transition {
             val downloadLink = mDevice.findObject(UiSelector().textContains(title))
-
+            Log.i("Andi", "Waiting to assert link")
             assertTrue(
                 "$title download link not found",
                 downloadLink.waitForExists(waitingTime)
             )
+            Log.i("Andi", "Asserted link")
             downloadLink.click()
+            Log.i("Andi", "Clicked link")
 
             DownloadRobot().interact()
             return DownloadRobot.Transition()

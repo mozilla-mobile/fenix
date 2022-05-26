@@ -6,6 +6,7 @@
 
 package org.mozilla.fenix.ui
 
+import android.util.Log
 import android.view.View
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.core.net.toUri
@@ -946,6 +947,7 @@ class SmokeTest {
         val pwaPage = "https://mozilla-mobile.github.io/testapp/"
 
         navigationToolbar {
+            Log.i("Andi", "Navigation toolbar transition")
         }.enterURLAndEnterToBrowser(pwaPage.toUri()) {
             verifyNotificationDotOnMainMenu()
         }.openThreeDotMenu {
