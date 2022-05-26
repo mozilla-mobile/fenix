@@ -70,6 +70,32 @@
         android:visibility="visible"
         app:layout_constraintTop_toBottomOf="@id/exceptions_empty_message" />
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/custom_search_engine_suggest_string_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:hintTextColor="?attr/textSecondary"
+        android:textColorHint="?attr/textSecondary"
+        app:hintTextAppearance="@style/EngineTextField"
+        android:paddingBottom="8dp"
+        app:errorEnabled="true">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_suggest_string"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/accessibility_min_height"
+            android:hint="@string/search_add_custom_engine_suggest_string_hint"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/search_add_custom_engine_suggest_string_example"
+        android:lineHeight="18sp"
+        android:labelFor="@id/edit_suggest_string"
+        android:textColor="@android:color/tertiary_text_dark" />
+
     <ProgressBar
         android:id="@+id/progress"
         style="@style/Widget.AppCompat.ProgressBar"

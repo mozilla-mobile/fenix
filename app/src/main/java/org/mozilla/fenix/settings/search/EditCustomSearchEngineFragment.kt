@@ -56,12 +56,14 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
         super.onViewCreated(view, savedInstanceState)
 
         val url = searchEngine.resultUrls[0]
+        val suggestUrl = searchEngine.suggestUrl ?: ""
 
         _binding = FragmentAddSearchEngineBinding.bind(view)
         customSearchEngine = binding.customSearchEngine
 
         customSearchEngine.editEngineName.setText(searchEngine.name)
         customSearchEngine.editSearchString.setText(url.toEditableUrl())
+        customSearchEngine.editSuggestString.setText(suggestUrl.toEditableUrl())
 
         customSearchEngine.customSearchEnginesLearnMore.setOnClickListener {
             (activity as HomeActivity).openToBrowserAndLoad(
@@ -103,58 +105,75 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
     private fun saveCustomEngine() {
         customSearchEngine.customSearchEngineNameField.error = ""
         customSearchEngine.customSearchEngineSearchStringField.error = ""
+        customSearchEngine.customSearchEngineSuggestStringField.error = ""
 
         val name = customSearchEngine.editEngineName.text?.toString()?.trim() ?: ""
         val searchString = customSearchEngine.editSearchString.text?.toString() ?: ""
+        val suggestString = customSearchEngine.editSuggestString.text?.toString() ?: ""
 
-        if (checkForErrors(name, searchString)) {
+        if (checkForErrors(name, searchString, suggestString)) {
             return
         }
 
         lifecycleScope.launch(Main) {
-            val result = withContext(IO) {
+            val searchStringResult = withContext(IO) {
                 SearchStringValidator.isSearchStringValid(
                     requireComponents.core.client,
                     searchString,
                 )
             }
+            if (searchStringResult == SearchStringValidator.Result.CannotReach) {
+                customSearchEngine.customSearchEngineSearchStringField.error = resources
+                    .getString(R.string.search_add_custom_engine_error_cannot_reach, name)
+            }
 
-            when (result) {
-                SearchStringValidator.Result.CannotReach -> {
-                    customSearchEngine.customSearchEngineSearchStringField.error = resources
-                        .getString(R.string.search_add_custom_engine_error_cannot_reach, name)
-                }
-
-                SearchStringValidator.Result.Success -> {
-                    val update = searchEngine.copy(
-                        name = name,
-                        resultUrls = listOf(searchString.toSearchUrl()),
-                        icon = requireComponents.core.icons.loadIcon(IconRequest(searchString))
-                            .await().bitmap,
+            val suggestStringResult = if (suggestString.isBlank()) {
+                SearchStringValidator.Result.Success
+            } else {
+                withContext(IO) {
+                    SearchStringValidator.isSearchStringValid(
+                        requireComponents.core.client,
+                        suggestString,
                     )
-
-                    requireComponents.useCases.searchUseCases.addSearchEngine(update)
-
-                    val successMessage = resources
-                        .getString(R.string.search_edit_custom_engine_success_message, name)
-
-                    view?.also {
-                        FenixSnackbar.make(
-                            view = it,
-                            duration = FenixSnackbar.LENGTH_SHORT,
-                            isDisplayedWithBrowserToolbar = false,
-                        )
-                            .setText(successMessage)
-                            .show()
-                    }
-
-                    findNavController().popBackStack()
                 }
+            }
+            if (suggestStringResult == SearchStringValidator.Result.CannotReach) {
+                customSearchEngine.customSearchEngineSuggestStringField.error = resources
+                    .getString(R.string.search_add_custom_engine_error_cannot_reach, name)
+            }
+
+            if ((searchStringResult == SearchStringValidator.Result.Success)
+                && (suggestStringResult == SearchStringValidator.Result.Success)
+            ) {
+                val update = searchEngine.copy(
+                    name = name,
+                    resultUrls = listOf(searchString.toSearchUrl()),
+                    icon = requireComponents.core.icons.loadIcon(IconRequest(searchString))
+                        .await().bitmap,
+                    suggestUrl = suggestString.toSearchUrl(),
+                )
+
+                requireComponents.useCases.searchUseCases.addSearchEngine(update)
+
+                val successMessage = resources
+                    .getString(R.string.search_edit_custom_engine_success_message, name)
+
+                view?.also {
+                    FenixSnackbar.make(
+                        view = it,
+                        duration = FenixSnackbar.LENGTH_SHORT,
+                        isDisplayedWithBrowserToolbar = false,
+                    )
+                        .setText(successMessage)
+                        .show()
+                }
+
+                findNavController().popBackStack()
             }
         }
     }
 
-    private fun checkForErrors(name: String, searchString: String): Boolean {
+    private fun checkForErrors(name: String, searchString: String, suggestString: String): Boolean {
         return when {
             name.isEmpty() -> {
                 customSearchEngine.customSearchEngineNameField.error = resources
@@ -168,6 +187,11 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
             }
             !searchString.contains("%s") -> {
                 customSearchEngine.customSearchEngineSearchStringField.error =
+                    resources.getString(R.string.search_add_custom_engine_error_missing_template)
+                true
+            }
+            suggestString.isNotBlank() && !suggestString.contains("%s") -> {
+                customSearchEngine.customSearchEngineSuggestStringField.error =
                     resources.getString(R.string.search_add_custom_engine_error_missing_template)
                 true
             }
