@@ -7234,7 +7234,7 @@ credit_cards:
     description: |
       User saved a credit card using the autofill save prompt.
     bugs:
-      - https://github.com/mozilla-mobile/android-components/issues/10343
+      - https://github.com/mozilla-mobile/fenix/issues/25397
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/25411
     data_sensitivity:
@@ -7250,7 +7250,7 @@ credit_cards:
     description: |
       User updated a credit card using the autofill save prompt.
     bugs:
-      - https://github.com/mozilla-mobile/android-components/issues/10343
+      - https://github.com/mozilla-mobile/fenix/issues/25397
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/25411
     data_sensitivity:
