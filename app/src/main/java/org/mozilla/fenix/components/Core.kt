@@ -17,6 +17,7 @@ import mozilla.components.browser.engine.gecko.permission.GeckoSitePermissionsSt
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.session.storage.SessionStorage
 import mozilla.components.browser.state.engine.EngineMiddleware
+import mozilla.components.browser.state.engine.middleware.SessionPrioritizationMiddleware
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.SearchState
@@ -199,11 +200,17 @@ class Core(
     val applicationSearchEngines: List<SearchEngine> by lazyMonitored {
         listOf(
             createApplicationSearchEngine(
+                id = BOOKMARKS_SEARCH_ENGINE_ID,
+                name = context.getString(R.string.library_bookmarks),
+                url = "",
+                icon = getDrawable(context, R.drawable.ic_bookmarks_search)?.toBitmap()!!,
+            ),
+            createApplicationSearchEngine(
                 id = HISTORY_SEARCH_ENGINE_ID,
                 name = context.getString(R.string.library_history),
                 url = "",
                 icon = getDrawable(context, R.drawable.ic_history_search)?.toBitmap()!!,
-            )
+            ),
         )
     }
 
@@ -231,7 +238,8 @@ class Core(
                 AdsTelemetryMiddleware(adsTelemetry),
                 LastMediaAccessMiddleware(),
                 HistoryMetadataMiddleware(historyMetadataService),
-                SearchTermTabGroupMiddleware()
+                SearchTermTabGroupMiddleware(),
+                SessionPrioritizationMiddleware()
             )
 
         BrowserStore(
@@ -512,6 +520,7 @@ class Core(
         const val HISTORY_METADATA_MAX_AGE_IN_MS = 14 * 24 * 60 * 60 * 1000 // 14 days
         private const val CONTILE_MAX_CACHE_AGE = 60L // 60 minutes
         const val HISTORY_SEARCH_ENGINE_ID = "history_search_engine_id"
+        const val BOOKMARKS_SEARCH_ENGINE_ID = "bookmarks_search_engine_id"
 
         // Maximum number of suggestions returned from the history search engine source.
         const val METADATA_HISTORY_SUGGESTION_LIMIT = 100
