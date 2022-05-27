@@ -66,7 +66,8 @@ fun FirefoxTheme(
 
     ProvideFirefoxColors(colors) {
         MaterialTheme(
-            content = content
+            typography = FenixTypography,
+            content = content,
         )
     }
 }
