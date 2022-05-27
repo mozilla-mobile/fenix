@@ -597,6 +597,9 @@ abstract class BaseBrowserFragment :
                 isCreditCardAutofillEnabled = {
                     context.settings().shouldAutofillCreditCardDetails
                 },
+                isAddressAutofillEnabled = {
+                    context.settings().shouldAutofillAddressDetails && FeatureFlags.addressesFeature
+                },
                 loginExceptionStorage = context.components.core.loginExceptionStorage,
                 shareDelegate = object : ShareDelegate {
                     override fun showShareSheet(
@@ -1318,7 +1321,7 @@ abstract class BaseBrowserFragment :
      * Exit fullscreen mode when exiting PIP mode
      */
     private fun pipModeChanged(session: SessionState) {
-        if (!session.content.pictureInPictureEnabled && session.content.fullScreen) {
+        if (!session.content.pictureInPictureEnabled && session.content.fullScreen && isAdded) {
             onBackPressed()
             fullScreenChanged(false)
         }

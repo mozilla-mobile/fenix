@@ -23,16 +23,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.lib.state.ext.observeAsComposableState
-import mozilla.components.service.pocket.PocketRecommendedStory
+import mozilla.components.service.pocket.PocketStory.PocketRecommendedStory
 import org.mozilla.fenix.R
-import org.mozilla.fenix.R.string
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.ComposeViewHolder
 import org.mozilla.fenix.compose.SectionHeader
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.theme.Theme
-
-internal const val POCKET_STORIES_TO_SHOW_COUNT = 8
 
 /**
  * [RecyclerView.ViewHolder] for displaying the list of [PocketRecommendedStory]s from [AppStore].
@@ -62,7 +59,9 @@ class PocketStoriesViewHolder(
             // We should report back when a certain story is actually being displayed.
             // Cannot do it reliably so for now we'll just mass report everything as being displayed.
             stories?.let {
-                interactor.onStoriesShown(it)
+                // Only report here the impressions for recommended stories.
+                // Sponsored stories use a different API for more accurate tracking.
+                interactor.onStoriesShown(it.filterIsInstance<PocketRecommendedStory>())
             }
         }
 
@@ -80,6 +79,7 @@ class PocketStoriesViewHolder(
             PocketStories(
                 stories ?: emptyList(),
                 horizontalPadding,
+                interactor::onStoryShown,
                 interactor::onStoryClicked,
                 interactor::onDiscoverMoreClicked
             )
@@ -93,7 +93,7 @@ fun PocketStoriesViewHolderPreview() {
     FirefoxTheme(theme = Theme.getTheme(isPrivate = false)) {
         Column {
             SectionHeader(
-                text = stringResource(string.pocket_stories_header_1),
+                text = stringResource(R.string.pocket_stories_header_1),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
@@ -102,9 +102,11 @@ fun PocketStoriesViewHolderPreview() {
 
             Spacer(Modifier.height(16.dp))
 
+            @Suppress("MagicNumber")
             PocketStories(
-                stories = getFakePocketStories(POCKET_STORIES_TO_SHOW_COUNT),
+                stories = getFakePocketStories(8),
                 contentPadding = 0.dp,
+                onStoryShown = {},
                 onStoryClicked = { _, _ -> },
                 onDiscoverMoreClicked = {}
             )

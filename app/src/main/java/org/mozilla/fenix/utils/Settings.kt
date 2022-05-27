@@ -53,6 +53,7 @@ import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_ALL
 import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_AUDIBLE
 import org.mozilla.fenix.wallpapers.WallpaperManager
 import java.security.InvalidParameterException
+import java.util.UUID
 
 private const val AUTOPLAY_USER_SETTING = "AUTOPLAY_USER_SETTING"
 
@@ -1257,10 +1258,39 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
+    /**
+     * Stores the user choice from the "Autofill Addresses" settings for whether
+     * save and autofill addresses should be enabled or not.
+     * If set to `true` when the user focuses on address fields in a webpage an Android prompt is shown,
+     * allowing the selection of an address details to be automatically filled in the webpage fields.
+     */
+    var shouldAutofillAddressDetails by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_addresses_save_and_autofill_addresses),
+        default = true
+    )
+
     var showPocketRecommendationsFeature by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_pocket_homescreen_recommendations),
         featureFlag = FeatureFlags.isPocketRecommendationsFeatureEnabled(appContext),
         default = { homescreenSections[HomeScreenSection.POCKET] == true },
+    )
+
+    /**
+     * Indicates if the Pocket recommendations homescreen section should also show sponsored stories.
+     */
+    val showPocketSponsoredStories by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_pocket_sponsored_stories),
+        default = { FxNimbus.features.pocketSponsoredStories.value(appContext).enabled },
+        featureFlag = FeatureFlags.isPocketSponsoredStoriesFeatureEnabled(appContext)
+    )
+
+    /**
+     * Get the profile id to use in the sponsored stories communications with the Pocket endpoint.
+     */
+    val pocketSponsoredStoriesProfileId by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_pocket_sponsored_stories_profile),
+        default = UUID.randomUUID().toString(),
+        persistDefaultIfNotExists = true
     )
 
     /**
@@ -1277,7 +1307,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var enableTaskContinuityEnhancements by featureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_enable_task_continuity),
-        default = false,
+        default = FeatureFlags.taskContinuityFeature,
         featureFlag = FeatureFlags.taskContinuityFeature,
     )
 

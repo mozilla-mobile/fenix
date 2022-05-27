@@ -63,6 +63,13 @@ object FeatureFlags {
     }
 
     /**
+     * Show Pocket sponsored stories in between Pocket recommended stories on home.
+     */
+    fun isPocketSponsoredStoriesFeatureEnabled(context: Context): Boolean {
+        return isPocketRecommendationsFeatureEnabled(context) && Config.channel.isDebug
+    }
+
+    /**
      * Enables showing the homescreen onboarding card.
      */
     const val showHomeOnboarding = false
@@ -80,7 +87,7 @@ object FeatureFlags {
     /**
      * Enables the Task Continuity enhancements.
      */
-    val taskContinuityFeature = Config.channel.isDebug
+    val taskContinuityFeature = Config.channel.isNightlyOrDebug
 
     /**
      * Enables the Unified Search feature.

@@ -10,7 +10,9 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import io.mockk.verifyOrder
-import mozilla.components.service.pocket.PocketRecommendedStory
+import mozilla.components.service.pocket.PocketStory
+import mozilla.components.service.pocket.PocketStory.PocketRecommendedStory
+import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.telemetry.glean.testing.GleanTestRule
 import org.junit.Assert.assertEquals
@@ -143,10 +145,21 @@ class DefaultPocketStoriesControllerTest {
     }
 
     @Test
+    fun `WHEN a new story is shown THEN update the State`() {
+        val store = spyk(AppStore())
+        val controller = DefaultPocketStoriesController(mockk(), store, mockk())
+        val storyShown: PocketStory = mockk()
+
+        controller.handleStoryShown(storyShown)
+
+        verify { store.dispatch(AppAction.PocketStoriesShown(listOf(storyShown))) }
+    }
+
+    @Test
     fun `WHEN new stories are shown THEN update the State and record telemetry`() {
         val store = spyk(AppStore())
         val controller = DefaultPocketStoriesController(mockk(), store, mockk())
-        val storiesShown: List<PocketRecommendedStory> = mockk()
+        val storiesShown: List<PocketStory> = mockk()
         assertFalse(Pocket.homeRecsShown.testHasValue())
 
         controller.handleStoriesShown(storiesShown)
@@ -158,7 +171,7 @@ class DefaultPocketStoriesControllerTest {
     }
 
     @Test
-    fun `WHEN a story is clicked then open that story's url using HomeActivity and record telemetry`() {
+    fun `WHEN a recommended story is clicked THEN open that story's url using HomeActivity and record telemetry`() {
         val story = PocketRecommendedStory(
             title = "",
             url = "testLink",
@@ -183,6 +196,28 @@ class DefaultPocketStoriesControllerTest {
         assertEquals("1x2", event.single().extra!!["position"])
         assertTrue(event.single().extra!!.containsKey("times_shown"))
         assertEquals(story.timesShown.inc().toString(), event.single().extra!!["times_shown"])
+    }
+
+    @Test
+    fun `WHEN a sponsored story is clicked THEN open that story's url using HomeActivity and don't record telemetry`() {
+        val story = PocketSponsoredStory(
+            id = 7,
+            title = "",
+            url = "testLink",
+            imageUrl = "",
+            sponsor = "",
+            shim = mockk(),
+            priority = 3,
+            caps = mockk(),
+        )
+        val homeActivity: HomeActivity = mockk(relaxed = true)
+        val controller = DefaultPocketStoriesController(homeActivity, mockk(), mockk(relaxed = true))
+        assertFalse(Pocket.homeRecsStoryClicked.testHasValue())
+
+        controller.handleStoryClicked(story, 1 to 2)
+
+        verify { homeActivity.openToBrowserAndLoad(story.url, true, BrowserDirection.FromHome) }
+        assertFalse(Pocket.homeRecsStoryClicked.testHasValue())
     }
 
     @Test

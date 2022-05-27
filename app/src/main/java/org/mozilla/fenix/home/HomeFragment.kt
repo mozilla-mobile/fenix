@@ -63,7 +63,6 @@ import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.ui.tabcounter.TabCounterMenu
 import org.mozilla.fenix.Config
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.StartOnHome
@@ -228,8 +227,16 @@ class HomeFragment : Fragment() {
                     .map { (category, stories) -> PocketRecommendedStoriesCategory(category, stories) }
 
                 components.appStore.dispatch(AppAction.PocketStoriesCategoriesChange(categories))
+
+                if (requireContext().settings().showPocketSponsoredStories) {
+                    components.appStore.dispatch(
+                        AppAction.PocketSponsoredStoriesChange(
+                            components.core.pocketStoriesService.getSponsoredStories()
+                        )
+                    )
+                }
             } else {
-                components.appStore.dispatch(AppAction.PocketStoriesChange(emptyList()))
+                components.appStore.dispatch(AppAction.PocketStoriesClean)
             }
         }
 
@@ -268,7 +275,7 @@ class HomeFragment : Fragment() {
                 view = binding.root
             )
 
-            if (FeatureFlags.taskContinuityFeature) {
+            if (requireContext().settings().enableTaskContinuityEnhancements) {
                 recentSyncedTabFeature.set(
                     feature = syncedTabFeature,
                     owner = viewLifecycleOwner,

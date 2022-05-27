@@ -9,7 +9,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
-import mozilla.components.service.pocket.PocketRecommendedStory
+import mozilla.components.service.pocket.PocketStory
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -238,8 +238,17 @@ class SessionControlInteractorTest {
     }
 
     @Test
+    fun `GIVEN a PocketStoriesInteractor WHEN a story is shown THEN handle it in a PocketStoriesController`() {
+        val shownStory: PocketStory = mockk()
+
+        interactor.onStoryShown(shownStory)
+
+        verify { pocketStoriesController.handleStoryShown(shownStory) }
+    }
+
+    @Test
     fun `GIVEN a PocketStoriesInteractor WHEN stories are shown THEN handle it in a PocketStoriesController`() {
-        val shownStories: List<PocketRecommendedStory> = mockk()
+        val shownStories: List<PocketStory> = mockk()
 
         interactor.onStoriesShown(shownStories)
 
@@ -257,7 +266,7 @@ class SessionControlInteractorTest {
 
     @Test
     fun `GIVEN a PocketStoriesInteractor WHEN a story is clicked THEN handle it in a PocketStoriesController`() {
-        val clickedStory: PocketRecommendedStory = mockk()
+        val clickedStory: PocketStory = mockk()
         val storyGridLocation = 1 to 2
 
         interactor.onStoryClicked(clickedStory, storyGridLocation)
