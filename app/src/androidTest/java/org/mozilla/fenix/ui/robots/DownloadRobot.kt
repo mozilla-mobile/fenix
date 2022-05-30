@@ -164,6 +164,15 @@ private fun assertDownloadPrompt(fileName: String) {
             }.clickDownloadLink(fileName) {
             }
             Log.i("Andi", "Click again the link")
+        } finally {
+            Log.i("Andi", "Finally block")
+            Log.i("Andi", "Waiting to assert download button")
+            assertTrue(
+                "Download prompt button not visible",
+                mDevice.findObject(UiSelector().resourceId("$packageName:id/download_button"))
+                    .waitForExists(waitingTime)
+            )
+            Log.i("Andi", "Asserted download button")
         }
     }
 }
