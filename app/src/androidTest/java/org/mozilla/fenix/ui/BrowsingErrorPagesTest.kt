@@ -7,7 +7,6 @@ package org.mozilla.fenix.ui
 import androidx.core.net.toUri
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
@@ -80,7 +79,6 @@ class BrowsingErrorPagesTest {
         }
     }
 
-    @Ignore("Failing, see https://github.com/mozilla-mobile/fenix/issues/25380")
     @SmokeTest
     @Test
     fun blockHarmfulPageTest() {
