@@ -33,8 +33,8 @@ messaging:
       type: string
       description: What should be displayed when a control message is selected.
       enum:
-        - show-next-message
         - show-none
+        - show-next-message
     styles:
       type: json
       description: "A map of styles to configure message appearance.\n"
@@ -55,6 +55,14 @@ nimbus-validation:
     settings-title:
       type: string
       description: The title of displayed in the Settings screen and app menu.
+pocket-sponsored-stories:
+  description: A feature showing sponsored stories in between the other Pocket recommended stories on homescreen.
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    enabled:
+      type: boolean
+      description: "If true, the Pocket stories shown on homescreen should contain sponsored stories also."
 search-term-groups:
   description: A feature allowing the grouping of URLs around the search term that it came from.
   hasExposure: true

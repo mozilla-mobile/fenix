@@ -176,6 +176,26 @@ class SearchFragmentStoreTest {
     }
 
     @Test
+    fun `WHEN bookmarks engine selected action dispatched THEN update search engine source`() = runTest {
+        val initialState = emptyDefaultState()
+        val store = SearchFragmentStore(initialState)
+
+        store.dispatch(SearchFragmentAction.SearchBookmarksEngineSelected(searchEngine)).join()
+        assertNotSame(initialState, store.state)
+        assertEquals(SearchEngineSource.Bookmarks(searchEngine), store.state.searchEngineSource)
+    }
+
+    @Test
+    fun `WHEN tabs engine selected action dispatched THEN update search engine source`() = runTest {
+        val initialState = emptyDefaultState()
+        val store = SearchFragmentStore(initialState)
+
+        store.dispatch(SearchFragmentAction.SearchTabsEngineSelected(searchEngine)).join()
+        assertNotSame(initialState, store.state)
+        assertEquals(SearchEngineSource.Tabs(searchEngine), store.state.searchEngineSource)
+    }
+
+    @Test
     fun showSearchShortcutEnginePicker() = runTest {
         val initialState = emptyDefaultState()
         val store = SearchFragmentStore(initialState)
