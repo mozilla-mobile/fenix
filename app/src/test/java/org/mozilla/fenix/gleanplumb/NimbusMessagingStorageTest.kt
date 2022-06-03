@@ -9,7 +9,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -62,7 +62,7 @@ class NimbusMessagingStorageTest {
     }
 
     @Test
-    fun `WHEN calling getMessages THEN provide a list of available messages`() = runBlockingTest {
+    fun `WHEN calling getMessages THEN provide a list of available messages`() = runTest {
         val message = storage.getMessages().first()
 
         assertEquals("message-1", message.id)
@@ -71,7 +71,7 @@ class NimbusMessagingStorageTest {
 
     @Test
     fun `WHEN calling getMessages THEN provide a list of sorted messages by priority`() =
-        runBlockingTest {
+        runTest {
             val messages = mapOf(
                 "low-message" to createMessageData(style = "low-priority"),
                 "high-message" to createMessageData(style = "high-priority"),
@@ -111,7 +111,7 @@ class NimbusMessagingStorageTest {
 
     @Test
     fun `GIVEN pressed message WHEN calling getMessages THEN filter out the pressed message`() =
-        runBlockingTest {
+        runTest {
             val metadataList = mapOf(
                 "pressed-message" to Message.Metadata(id = "pressed-message", pressed = true),
                 "normal-message" to Message.Metadata(id = "normal-message", pressed = false)
@@ -147,7 +147,7 @@ class NimbusMessagingStorageTest {
 
     @Test
     fun `GIVEN dismissed message WHEN calling getMessages THEN filter out the dismissed message`() =
-        runBlockingTest {
+        runTest {
             val metadataList = mapOf(
                 "dismissed-message" to Message.Metadata(id = "dismissed-message", dismissed = true),
                 "normal-message" to Message.Metadata(id = "normal-message", dismissed = false)
@@ -183,7 +183,7 @@ class NimbusMessagingStorageTest {
 
     @Test
     fun `GIVEN a message that the maxDisplayCount WHEN calling getMessages THEN filter out the message`() =
-        runBlockingTest {
+        runTest {
             val metadataList = mapOf(
                 "shown-many-times-message" to Message.Metadata(
                     id = "shown-many-times-message",
@@ -223,7 +223,7 @@ class NimbusMessagingStorageTest {
         }
 
     @Test
-    fun `GIVEN a malformed message WHEN calling getMessages THEN provide a list of messages ignoring the malformed one`() = runBlockingTest {
+    fun `GIVEN a malformed message WHEN calling getMessages THEN provide a list of messages ignoring the malformed one`() = runTest {
         val messages = storage.getMessages()
         val firstMessage = messages.first()
 
@@ -237,9 +237,9 @@ class NimbusMessagingStorageTest {
     fun `GIVEN a malformed action WHEN calling sanitizeAction THEN return null`() {
         val actionsMap = mapOf("action-1" to "action-1-url")
 
-        val notFoundAction = storage.sanitizeAction("messageId", "no-found-action", actionsMap)
-        val emptyAction = storage.sanitizeAction("messageId", "", actionsMap)
-        val blankAction = storage.sanitizeAction("messageId", " ", actionsMap)
+        val notFoundAction = storage.sanitizeAction("messageId", "no-found-action", actionsMap, false)
+        val emptyAction = storage.sanitizeAction("messageId", "", actionsMap, false)
+        val blankAction = storage.sanitizeAction("messageId", " ", actionsMap, false)
 
         assertNull(notFoundAction)
         assertNull(emptyAction)
@@ -248,7 +248,30 @@ class NimbusMessagingStorageTest {
     }
 
     @Test
-    fun `WHEN calling updateMetadata THEN delegate to metadataStorage`() = runBlockingTest {
+    fun `GIVEN a previously stored malformed action WHEN calling sanitizeAction THEN return null and not report malFormed`() {
+        val actionsMap = mapOf("action-1" to "action-1-url")
+
+        storage.malFormedMap["malformed-action"] = "messageId"
+
+        val action = storage.sanitizeAction("messageId", "malformed-action", actionsMap, false)
+
+        assertNull(action)
+        assertFalse(malformedWasReported)
+    }
+
+    @Test
+    fun `GIVEN a non-previously stored malformed action WHEN calling sanitizeAction THEN return null and report malFormed`() {
+        val actionsMap = mapOf("action-1" to "action-1-url")
+
+        val action = storage.sanitizeAction("messageId", "malformed-action", actionsMap, false)
+
+        assertNull(action)
+        assertTrue(storage.malFormedMap.containsKey("malformed-action"))
+        assertTrue(malformedWasReported)
+    }
+
+    @Test
+    fun `WHEN calling updateMetadata THEN delegate to metadataStorage`() = runTest {
 
         storage.updateMetadata(mockk(relaxed = true))
 
@@ -259,9 +282,19 @@ class NimbusMessagingStorageTest {
     fun `GIVEN a valid action WHEN calling sanitizeAction THEN return the action`() {
         val actionsMap = mapOf("action-1" to "action-1-url")
 
-        val validAction = storage.sanitizeAction("messageId", "action-1", actionsMap)
+        val validAction = storage.sanitizeAction("messageId", "action-1", actionsMap, false)
 
         assertEquals("action-1-url", validAction)
+    }
+
+    @Test
+    fun `GIVEN a valid action for control message WHEN calling sanitizeAction THEN return a empty action`() {
+        val actionsMap = mapOf("action-1" to "action-1-url")
+
+        val validAction = storage.sanitizeAction("messageId", "", actionsMap, true)
+
+        assertEquals("CONTROL_ACTION", validAction)
+        assertFalse(malformedWasReported)
     }
 
     @Test
@@ -276,6 +309,29 @@ class NimbusMessagingStorageTest {
         assertNull(notFoundTrigger)
         assertNull(emptyTrigger)
         assertNull(blankTrigger)
+        assertTrue(malformedWasReported)
+    }
+
+    @Test
+    fun `GIVEN a previously stored malformed trigger WHEN calling sanitizeTriggers THEN no report malformed and return null`() {
+        val triggersMap = mapOf("trigger-1" to "trigger-1-expression")
+
+        storage.malFormedMap[" "] = "messageId"
+
+        val trigger = storage.sanitizeTriggers("messageId", listOf(" "), triggersMap)
+
+        assertNull(trigger)
+        assertFalse(malformedWasReported)
+    }
+
+    @Test
+    fun `GIVEN a non previously stored malformed trigger WHEN calling sanitizeTriggers THEN report malformed and return null`() {
+        val triggersMap = mapOf("trigger-1" to "trigger-1-expression")
+
+        val trigger = storage.sanitizeTriggers("messageId", listOf(" "), triggersMap)
+
+        assertNull(trigger)
+        assertTrue(storage.malFormedMap.containsKey(" "))
         assertTrue(malformedWasReported)
     }
 
@@ -372,6 +428,52 @@ class NimbusMessagingStorageTest {
         val result = storage.isMessageEligible(message, helper)
 
         assertFalse(result)
+    }
+
+    @Test
+    fun `GIVEN a previously malformed trigger WHEN calling isMessageEligible THEN return false and not evaluate`() {
+        val helper: GleanPlumbMessageHelper = mockk(relaxed = true)
+        val message = Message(
+            "same-id",
+            mockk(relaxed = true),
+            action = "action",
+            mockk(relaxed = true),
+            listOf("trigger"),
+            Message.Metadata("same-id")
+        )
+
+        storage.malFormedMap["trigger"] = "same-id"
+
+        every { helper.evalJexl(any()) } throws NimbusException.EvaluationException("")
+
+        val result = storage.isMessageEligible(message, helper)
+
+        assertFalse(result)
+        verify(exactly = 0) { helper.evalJexl("trigger") }
+        assertFalse(malformedWasReported)
+    }
+
+    @Test
+    fun `GIVEN a non previously malformed trigger WHEN calling isMessageEligible THEN return false and not evaluate`() {
+        val helper: GleanPlumbMessageHelper = mockk(relaxed = true)
+        val message = Message(
+            "same-id",
+            mockk(relaxed = true),
+            action = "action",
+            mockk(relaxed = true),
+            listOf("trigger"),
+            Message.Metadata("same-id")
+        )
+
+        every { helper.evalJexl(any()) } throws NimbusException.EvaluationException("")
+
+        assertFalse(storage.malFormedMap.containsKey("trigger"))
+
+        val result = storage.isMessageEligible(message, helper)
+
+        assertFalse(result)
+        assertTrue(storage.malFormedMap.containsKey("trigger"))
+        assertTrue(malformedWasReported)
     }
 
     @Test

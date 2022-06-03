@@ -14,8 +14,6 @@ import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import io.mockk.verifyOrder
-import kotlinx.coroutines.test.runBlockingTest
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.state.BrowserState
@@ -27,6 +25,7 @@ import mozilla.components.service.fxa.manager.FxaAccountManager
 import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
+import mozilla.components.support.test.rule.runTestOnMain
 import org.junit.Assert
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -36,14 +35,13 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.collections.CollectionsDialog
 import org.mozilla.fenix.collections.show
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.bookmarks.BookmarksUseCase
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import mozilla.components.browser.state.state.createTab as createStateTab
 import mozilla.components.browser.storage.sync.Tab as SyncTab
@@ -54,7 +52,6 @@ class NavigationInteractorTest {
     private lateinit var tabsTrayStore: TabsTrayStore
     private val testTab: TabSessionState = createStateTab(url = "https://mozilla.org")
     private val navController: NavController = mockk(relaxed = true)
-    private val metrics: MetricController = mockk(relaxed = true)
     private val bookmarksUseCase: BookmarksUseCase = mockk(relaxed = true)
     private val context: Context = mockk(relaxed = true)
     private val collectionStorage: TabCollectionStorage = mockk(relaxed = true)
@@ -117,8 +114,12 @@ class NavigationInteractorTest {
 
     @Test
     fun `onOpenRecentlyClosedClicked calls navigation on DefaultNavigationInteractor`() {
+        assertFalse(Events.recentlyClosedTabsOpened.testHasValue())
+
         createInteractor().onOpenRecentlyClosedClicked()
+
         verify(exactly = 1) { navController.navigate(TabsTrayFragmentDirections.actionGlobalRecentlyClosed()) }
+        assertTrue(Events.recentlyClosedTabsOpened.testHasValue())
     }
 
     @Test
@@ -202,7 +203,7 @@ class NavigationInteractorTest {
     }
 
     @Test
-    fun `onBookmarkTabs calls navigation on DefaultNavigationInteractor`() = runBlockingTest {
+    fun `onBookmarkTabs calls navigation on DefaultNavigationInteractor`() = runTestOnMain {
         var showBookmarkSnackbarInvoked = false
         createInteractor(
             showBookmarkSnackbar = {
@@ -223,6 +224,7 @@ class NavigationInteractorTest {
     fun `onSyncedTabsClicked sets metrics and opens browser`() {
         val tab = mockk<SyncTab>()
         val entry = mockk<TabEntry>()
+        assertFalse(Events.syncedTabOpened.testHasValue())
 
         every { tab.active() }.answers { entry }
         every { entry.url }.answers { "https://mozilla.org" }
@@ -235,9 +237,9 @@ class NavigationInteractorTest {
         ).onSyncedTabClicked(tab)
 
         assertTrue(dismissTabTrayInvoked)
-        verifyOrder {
-            metrics.track(Event.SyncedTabOpened)
+        assertTrue(Events.syncedTabOpened.testHasValue())
 
+        verify {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = "https://mozilla.org",
                 newTab = true,
@@ -251,7 +253,7 @@ class NavigationInteractorTest {
         browserStore: BrowserStore = store,
         dismissTabTray: () -> Unit = { },
         dismissTabTrayAndNavigateHome: (String) -> Unit = { _ -> },
-        showCollectionSnackbar: (Int, Boolean, Long?) -> Unit = { _, _, _ -> },
+        showCollectionSnackbar: (Int, Boolean) -> Unit = { _, _ -> },
         showBookmarkSnackbar: (Int) -> Unit = { _ -> },
         showCancelledDownloadWarning: (Int, String?, String?) -> Unit = { _, _, _ -> }
     ): NavigationInteractor {
@@ -260,7 +262,6 @@ class NavigationInteractorTest {
             activity,
             browserStore,
             navController,
-            metrics,
             dismissTabTray,
             dismissTabTrayAndNavigateHome,
             bookmarksUseCase,

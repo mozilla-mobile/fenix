@@ -44,7 +44,6 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.databinding.ComponentTabstray2Binding
 import org.mozilla.fenix.databinding.ComponentTabstrayFabBinding
 import org.mozilla.fenix.databinding.FragmentTabTrayDialogBinding
@@ -214,6 +213,7 @@ class TabsTrayFragmentTest {
     @Test
     fun `WHEN setupPager is called THEN it sets the tray adapter and disables user initiated scrolling`() {
         val store: TabsTrayStore = mockk()
+        val lifecycleOwner = mockk<LifecycleOwner>(relaxed = true)
         val trayInteractor: TabsTrayInteractor = mockk()
         val browserInteractor: BrowserTrayInteractor = mockk()
         val navigationInteractor: NavigationInteractor = mockk()
@@ -221,13 +221,19 @@ class TabsTrayFragmentTest {
         every { context.components.core.store } returns browserStore
 
         fragment.setupPager(
-            context, store, trayInteractor, browserInteractor, navigationInteractor
+            context = context,
+            lifecycleOwner = lifecycleOwner,
+            store = store,
+            trayInteractor = trayInteractor,
+            browserInteractor = browserInteractor,
+            navigationInteractor = navigationInteractor,
         )
 
         val adapter = (tabsTrayBinding.tabsTray.adapter as TrayPagerAdapter)
         assertSame(context, adapter.context)
+        assertSame(lifecycleOwner, adapter.lifecycleOwner)
         assertSame(store, adapter.tabsTrayStore)
-        assertSame(trayInteractor, adapter.interactor)
+        assertSame(trayInteractor, adapter.tabsTrayInteractor)
         assertSame(browserInteractor, adapter.browserInteractor)
         assertSame(navigationInteractor, adapter.navInteractor)
         assertSame(browserStore, adapter.browserStore)
@@ -239,8 +245,6 @@ class TabsTrayFragmentTest {
         try {
             mockkStatic("org.mozilla.fenix.tabstray.ext.BrowserMenuKt")
             val navigationInteractor: NavigationInteractor = mockk()
-            val metrics: MetricController = mockk(relaxed = true)
-            every { context.components.analytics.metrics } returns metrics
             every { context.components.core.store } returns mockk()
             every { fragment.tabsTrayStore } returns mockk()
             val menu: BrowserMenu = mockk {
@@ -351,8 +355,6 @@ class TabsTrayFragmentTest {
     @Test
     fun `WHEN dismissTabsTray is called THEN it dismisses the tray`() {
         every { fragment.dismissAllowingStateLoss() } just Runs
-        val metrics: MetricController = mockk(relaxed = true)
-        every { context.components.analytics.metrics } returns metrics
 
         fragment.dismissTabsTray()
 

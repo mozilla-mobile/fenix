@@ -8,18 +8,13 @@ import androidx.annotation.VisibleForTesting
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
 import org.mozilla.fenix.GleanMetrics.Metrics
+import org.mozilla.fenix.GleanMetrics.SearchTerms
 import org.mozilla.fenix.GleanMetrics.TabsTray
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
 
 /**
  * [Middleware] that reacts to various [TabsTrayAction]s.
- *
- * @property metrics reference to the configured [MetricController] to record general page load events.
  */
-class TabsTrayMiddleware(
-    private val metrics: MetricController
-) : Middleware<TabsTrayState, TabsTrayAction> {
+class TabsTrayMiddleware : Middleware<TabsTrayState, TabsTrayAction> {
 
     private var shouldReportInactiveTabMetrics: Boolean = true
     private var shouldReportSearchGroupMetrics: Boolean = true
@@ -45,15 +40,23 @@ class TabsTrayMiddleware(
                     shouldReportSearchGroupMetrics = false
                     val tabGroups = action.tabPartition?.tabGroups ?: emptyList()
 
-                    metrics.track(Event.SearchTermGroupCount(tabGroups.size))
+                    SearchTerms.numberOfSearchTermGroup.record(
+                        SearchTerms.NumberOfSearchTermGroupExtra(
+                            tabGroups.size.toString()
+                        )
+                    )
 
                     if (tabGroups.isNotEmpty()) {
                         val tabsPerGroup = tabGroups.map { it.tabIds.size }
                         val averageTabsPerGroup = tabsPerGroup.average()
-                        metrics.track(Event.AverageTabsPerSearchTermGroup(averageTabsPerGroup))
+                        SearchTerms.averageTabsPerGroup.record(
+                            SearchTerms.AverageTabsPerGroupExtra(
+                                averageTabsPerGroup.toString()
+                            )
+                        )
 
                         val tabGroupSizeMapping = tabsPerGroup.map { generateTabGroupSizeMappedValue(it) }
-                        metrics.track(Event.SearchTermGroupSizeDistribution(tabGroupSizeMapping))
+                        SearchTerms.groupSizeDistribution.accumulateSamples(tabGroupSizeMapping.toLongArray())
                     }
                 }
             }

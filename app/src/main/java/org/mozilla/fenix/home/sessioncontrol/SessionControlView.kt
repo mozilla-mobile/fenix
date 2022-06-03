@@ -7,17 +7,15 @@ package org.mozilla.fenix.home.sessioncontrol
 import android.view.View
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
-import mozilla.components.service.pocket.PocketRecommendedStory
-import org.mozilla.fenix.components.AppStore
+import mozilla.components.service.pocket.PocketStory
 import org.mozilla.fenix.components.appstate.AppState
-import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
@@ -40,7 +38,7 @@ internal fun normalModeAdapterItems(
     nimbusMessageCard: Message? = null,
     recentTabs: List<RecentTab>,
     recentVisits: List<RecentlyVisitedItem>,
-    pocketStories: List<PocketRecommendedStory>
+    pocketStories: List<PocketStory>
 ): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
     var shouldShowCustomizeHome = false
@@ -180,7 +178,6 @@ private fun collectionTabItems(collection: TabCollection) =
     }
 
 class SessionControlView(
-    store: AppStore,
     val containerView: View,
     viewLifecycleOwner: LifecycleOwner,
     internal val interactor: SessionControlInteractor
@@ -189,7 +186,6 @@ class SessionControlView(
     val view: RecyclerView = containerView as RecyclerView
 
     private val sessionControlAdapter = SessionControlAdapter(
-        store,
         interactor,
         viewLifecycleOwner,
         containerView.context.components
@@ -205,13 +201,6 @@ class SessionControlView(
                     JumpBackInCFRDialog(view).showIfNeeded()
                 }
             }
-            val itemTouchHelper =
-                ItemTouchHelper(
-                    SwipeToDeleteCallback(
-                        interactor
-                    )
-                )
-            itemTouchHelper.attachToRecyclerView(this)
         }
     }
 

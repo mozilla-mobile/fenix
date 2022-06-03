@@ -7,21 +7,30 @@ package org.mozilla.fenix.library.history
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import mozilla.components.concept.engine.EngineSession
+import mozilla.components.support.test.robolectric.testContext
+import mozilla.telemetry.glean.testing.GleanTestRule
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
+@RunWith(FenixRobolectricTestRunner::class)
 class HistorySearchControllerTest {
+
+    @get:Rule
+    val gleanTestRule = GleanTestRule(testContext)
 
     @MockK(relaxed = true) private lateinit var activity: HomeActivity
     @MockK(relaxed = true) private lateinit var store: HistorySearchFragmentStore
-    @MockK(relaxed = true) private lateinit var metrics: MetricController
 
     @Before
     fun setUp() {
@@ -29,7 +38,7 @@ class HistorySearchControllerTest {
     }
 
     @Test
-    fun `WHEN editing is cancelled THEN clearToolbarFocus is called`() = runBlockingTest {
+    fun `WHEN editing is cancelled THEN clearToolbarFocus is called`() = runTest {
         var clearToolbarFocusInvoked = false
         createController(
             clearToolbarFocus = {
@@ -62,12 +71,14 @@ class HistorySearchControllerTest {
     fun `WHEN url is tapped THEN openToBrowserAndLoad is called`() {
         val url = "https://www.google.com/"
         val flags = EngineSession.LoadUrlFlags.none()
+        assertFalse(History.searchResultTapped.testHasValue())
 
         createController().handleUrlTapped(url, flags)
         createController().handleUrlTapped(url)
 
+        assertTrue(History.searchResultTapped.testHasValue())
+        assertNull(History.searchResultTapped.testGetValue().last().extra)
         verify {
-            metrics.track(Event.HistorySearchResultTapped)
             activity.openToBrowserAndLoad(
                 searchTermOrURL = url,
                 newTab = true,
@@ -82,7 +93,6 @@ class HistorySearchControllerTest {
     ): HistorySearchDialogController {
         return HistorySearchDialogController(
             activity = activity,
-            metrics = metrics,
             fragmentStore = store,
             clearToolbarFocus = clearToolbarFocus,
         )

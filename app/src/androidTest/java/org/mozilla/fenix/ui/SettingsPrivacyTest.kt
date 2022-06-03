@@ -4,6 +4,8 @@
 
 package org.mozilla.fenix.ui
 
+import android.os.Build
+import android.view.autofill.AutofillManager
 import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
@@ -16,9 +18,11 @@ import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.openAppFromExternalLink
 import org.mozilla.fenix.helpers.TestHelper.restartApp
 import org.mozilla.fenix.ui.robots.addToHomeScreen
@@ -38,6 +42,7 @@ class SettingsPrivacyTest {
     private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     private lateinit var mockWebServer: MockWebServer
     private val pageShortcutName = "TestShortcut"
+    private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule()
@@ -49,8 +54,14 @@ class SettingsPrivacyTest {
             start()
         }
 
-        val settings = activityTestRule.activity.applicationContext.settings()
-        settings.shouldShowJumpBackInCFR = false
+        featureSettingsHelper.setJumpBackCFREnabled(false)
+        featureSettingsHelper.disablePwaCFR(true)
+
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
+            val autofillManager: AutofillManager =
+                appContext.getSystemService(AutofillManager::class.java)
+            autofillManager.disableAutofillServices()
+        }
     }
 
     @After
@@ -59,10 +70,6 @@ class SettingsPrivacyTest {
     }
 
     @Test
-    @Ignore(
-        "New https-only setting was added. Test needs refactoring. " +
-            "See https://github.com/mozilla-mobile/fenix/issues/24495"
-    )
     // Walks through settings privacy menu and sub-menus to ensure all items are present
     fun settingsPrivacyItemsTest() {
         homeScreen {
@@ -76,10 +83,13 @@ class SettingsPrivacyTest {
         }.openPrivateBrowsingSubMenu {
             verifyNavigationToolBarHeader()
         }.goBack {
+            // HTTPS-Only Mode
+            verifyHTTPSOnlyModeButton()
+            verifyHTTPSOnlyModeState("Off")
 
             // ENHANCED TRACKING PROTECTION
             verifyEnhancedTrackingProtectionButton()
-            verifyEnhancedTrackingProtectionValue("On")
+            verifyEnhancedTrackingProtectionState("On")
         }.openEnhancedTrackingProtectionSubMenu {
             verifyNavigationToolBarHeader()
             verifyEnhancedTrackingProtectionProtectionSubMenuItems()
@@ -152,7 +162,7 @@ class SettingsPrivacyTest {
 
             // DELETE BROWSING DATA ON QUIT
             verifyDeleteBrowsingDataOnQuitButton()
-            verifyDeleteBrowsingDataOnQuitValue("Off")
+            verifyDeleteBrowsingDataOnQuitState("Off")
         }.openSettingsSubMenuDeleteBrowsingDataOnQuit {
             verifyNavigationToolBarHeader()
             verifyDeleteBrowsingDataOnQuitSubMenuItems()
@@ -322,6 +332,7 @@ class SettingsPrivacyTest {
         }
     }
 
+    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/24573")
     @Test
     fun openExternalLinksInPrivateTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -361,6 +372,7 @@ class SettingsPrivacyTest {
             addShortcutName(pageShortcutName)
             clickAddShortcutButton()
             clickAddAutomaticallyButton()
+            verifyShortcutAdded(pageShortcutName)
         }
 
         mDevice.waitForIdle()
@@ -378,6 +390,7 @@ class SettingsPrivacyTest {
         }
     }
 
+    @Ignore("Failing with frequent ANR: https://bugzilla.mozilla.org/show_bug.cgi?id=1764605")
     @Test
     fun launchLinksInPrivateToggleOffStateDoesntChangeTest() {
         val settings = activityTestRule.activity.applicationContext.settings()

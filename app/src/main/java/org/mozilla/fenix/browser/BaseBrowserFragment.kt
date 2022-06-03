@@ -100,7 +100,6 @@ import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.StoreProvider
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.toolbar.BrowserFragmentState
 import org.mozilla.fenix.components.toolbar.BrowserFragmentStore
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
@@ -128,10 +127,13 @@ import org.mozilla.fenix.wifi.SitePermissionsWifiIntegration
 import java.lang.ref.WeakReference
 import mozilla.components.feature.session.behavior.EngineViewBrowserToolbarBehavior
 import mozilla.components.feature.webauthn.WebAuthnFeature
+import mozilla.components.service.glean.private.NoExtras
+import mozilla.components.service.sync.autofill.DefaultCreditCardValidationDelegate
 import mozilla.components.support.base.feature.ActivityResultHandler
 import mozilla.components.support.ktx.android.view.enterToImmersiveMode
 import mozilla.components.support.ktx.kotlin.getOrigin
 import org.mozilla.fenix.GleanMetrics.Downloads
+import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.components.toolbar.interactor.DefaultBrowserToolbarInteractor
 import org.mozilla.fenix.crashes.CrashContentIntegration
@@ -321,7 +323,6 @@ abstract class BaseBrowserFragment :
             tabsUseCases = requireComponents.useCases.tabsUseCases,
             activity = activity,
             navController = findNavController(),
-            metrics = requireComponents.analytics.metrics,
             readerModeController = readerMenuController,
             engineView = binding.engineView,
             homeViewModel = homeViewModel,
@@ -359,7 +360,6 @@ abstract class BaseBrowserFragment :
             store = store,
             activity = activity,
             navController = findNavController(),
-            metrics = requireComponents.analytics.metrics,
             settings = context.settings(),
             readerModeController = readerMenuController,
             sessionFeature = sessionFeature,
@@ -585,6 +585,9 @@ abstract class BaseBrowserFragment :
                 store = store,
                 customTabId = customTabSessionId,
                 fragmentManager = parentFragmentManager,
+                creditCardValidationDelegate = DefaultCreditCardValidationDelegate(
+                    context.components.core.lazyAutofillStorage
+                ),
                 loginValidationDelegate = DefaultLoginValidationDelegate(
                     context.components.core.lazyPasswordsStorage
                 ),
@@ -593,6 +596,9 @@ abstract class BaseBrowserFragment :
                 },
                 isCreditCardAutofillEnabled = {
                     context.settings().shouldAutofillCreditCardDetails
+                },
+                isAddressAutofillEnabled = {
+                    context.settings().shouldAutofillAddressDetails && FeatureFlags.addressesFeature
                 },
                 loginExceptionStorage = context.components.core.loginExceptionStorage,
                 shareDelegate = object : ShareDelegate {
@@ -624,7 +630,7 @@ abstract class BaseBrowserFragment :
                 creditCardPickerView = binding.creditCardSelectBar,
                 onManageCreditCards = {
                     val directions =
-                        NavGraphDirections.actionGlobalCreditCardsSettingFragment()
+                        NavGraphDirections.actionGlobalAutofillSettingFragment()
                     findNavController().navigate(directions)
                 },
                 onSelectCreditCard = {
@@ -1273,8 +1279,6 @@ abstract class BaseBrowserFragment :
                 )
 
                 withContext(Main) {
-                    requireComponents.analytics.metrics.track(Event.AddBookmark)
-
                     view?.let {
                         FenixSnackbar.make(
                             view = binding.browserLayout,
@@ -1296,7 +1300,6 @@ abstract class BaseBrowserFragment :
                 }
             } catch (e: PlacesException.UrlParseFailed) {
                 withContext(Main) {
-                    requireComponents.analytics.metrics.track(Event.AddBookmark)
 
                     view?.let {
                         FenixSnackbar.make(
@@ -1318,14 +1321,14 @@ abstract class BaseBrowserFragment :
      * Exit fullscreen mode when exiting PIP mode
      */
     private fun pipModeChanged(session: SessionState) {
-        if (!session.content.pictureInPictureEnabled && session.content.fullScreen) {
+        if (!session.content.pictureInPictureEnabled && session.content.fullScreen && isAdded) {
             onBackPressed()
             fullScreenChanged(false)
         }
     }
 
     final override fun onPictureInPictureModeChanged(enabled: Boolean) {
-        if (enabled) requireComponents.analytics.metrics.track(Event.MediaPictureInPictureState)
+        if (enabled) MediaState.pictureInPicture.record(NoExtras())
         pipFeature?.onPictureInPictureModeChanged(enabled)
     }
 
@@ -1361,7 +1364,7 @@ abstract class BaseBrowserFragment :
             // Without this, fullscreen has a margin at the top.
             binding.engineView.setVerticalClipping(0)
 
-            requireComponents.analytics.metrics.track(Event.MediaFullscreenState)
+            MediaState.fullscreen.record(NoExtras())
         } else {
             activity?.exitImmersiveModeIfNeeded()
             (activity as? HomeActivity)?.let { activity ->

@@ -8,9 +8,9 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import okhttp3.mockwebserver.MockWebServer
-import org.junit.Rule
-import org.junit.Before
 import org.junit.After
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher

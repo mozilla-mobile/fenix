@@ -13,8 +13,11 @@ import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.tabs.TabsUseCases
+import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.ui.tabcounter.TabCounterMenu
+import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator
@@ -22,8 +25,6 @@ import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.readermode.ReaderModeController
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
@@ -53,7 +54,6 @@ class DefaultBrowserToolbarController(
     private val tabsUseCases: TabsUseCases,
     private val activity: HomeActivity,
     private val navController: NavController,
-    private val metrics: MetricController,
     private val readerModeController: ReaderModeController,
     private val engineView: EngineView,
     private val homeViewModel: HomeScreenViewModel,
@@ -92,7 +92,7 @@ class DefaultBrowserToolbarController(
     }
 
     override fun handleToolbarClick() {
-        metrics.track(Event.SearchBarTapped(Event.SearchBarTapped.Source.BROWSER))
+        Events.searchBarTapped.record(Events.SearchBarTappedExtra("BROWSER"))
         // If we're displaying awesomebar search results, Home screen will not be visible (it's
         // covered up with the search results). So, skip the navigation event in that case.
         // If we don't, there's a visual flickr as we navigate to Home and then display search
@@ -126,10 +126,10 @@ class DefaultBrowserToolbarController(
     override fun handleReaderModePressed(enabled: Boolean) {
         if (enabled) {
             readerModeController.showReaderView()
-            metrics.track(Event.ReaderModeOpened)
+            ReaderMode.opened.record(NoExtras())
         } else {
             readerModeController.hideReaderView()
-            metrics.track(Event.ReaderModeClosed)
+            ReaderMode.closed.record(NoExtras())
         }
     }
 
@@ -171,8 +171,7 @@ class DefaultBrowserToolbarController(
     }
 
     override fun handleHomeButtonClick() {
-        metrics.track(Event.BrowserToolbarHomeButtonClicked)
-
+        Events.browserToolbarHomeTapped.record(NoExtras())
         browserAnimator.captureEngineViewAndDrawStatically {
             navController.navigate(
                 BrowserFragmentDirections.actionGlobalHome()

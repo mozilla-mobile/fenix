@@ -2,6 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+@file:Suppress("DEPRECATION")
+
 package org.mozilla.fenix.helpers
 
 import android.view.ViewConfiguration.getLongPressTimeout
@@ -73,8 +75,17 @@ class HomeActivityIntentTestRule(
 
 // changing the device preference for Touch and Hold delay, to avoid long-clicks instead of a single-click
 fun setLongTapTimeout(delay: Int) {
-    val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-    mDevice.executeShellCommand("settings put secure long_press_timeout $delay")
+    // Issue: https://github.com/mozilla-mobile/fenix/issues/25132
+    var attempts = 0
+    while (attempts++ < 3) {
+        try {
+            val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+            mDevice.executeShellCommand("settings put secure long_press_timeout $delay")
+            break
+        } catch (e: RuntimeException) {
+            e.printStackTrace()
+        }
+    }
 }
 
 private fun skipOnboardingBeforeLaunch() {

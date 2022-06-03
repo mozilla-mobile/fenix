@@ -9,6 +9,7 @@ import androidx.test.espresso.IdlingRegistry
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
@@ -17,6 +18,7 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
+import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.addonsMenu
@@ -34,6 +36,10 @@ class SettingsAddonsTest {
 
     @get:Rule
     val activityTestRule = HomeActivityTestRule()
+
+    @Rule
+    @JvmField
+    val retryTestRule = RetryTestRule(3)
 
     @Before
     fun setUp() {
@@ -98,6 +104,7 @@ class SettingsAddonsTest {
     }
 
     // Installs an addon, then uninstalls it
+    @Ignore("Intermittent failures, see: https://github.com/mozilla-mobile/fenix/issues/24843")
     @Test
     fun verifyAddonsCanBeUninstalled() {
         val addonName = "uBlock Origin"
@@ -139,6 +146,7 @@ class SettingsAddonsTest {
         }
     }
 
+    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/23749")
     @SmokeTest
     @Test
     fun useAddonsInPrivateModeTest() {

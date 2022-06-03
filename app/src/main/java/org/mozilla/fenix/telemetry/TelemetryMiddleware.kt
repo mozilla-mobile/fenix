@@ -20,8 +20,8 @@ import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
 import mozilla.components.support.base.android.Clock
 import mozilla.components.support.base.log.logger.Logger
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.GleanMetrics.EngineTab as EngineMetrics
 
@@ -30,11 +30,9 @@ import org.mozilla.fenix.GleanMetrics.EngineTab as EngineMetrics
  *
  * @property settings reference to the application [Settings].
  * @property adsTelemetry reference to [AdsTelemetry] use to record search telemetry.
- * @property metrics reference to the configured [MetricController] to record general page load events.
  */
 class TelemetryMiddleware(
     private val settings: Settings,
-    private val metrics: MetricController
 ) : Middleware<BrowserState, BrowserAction> {
 
     private val logger = Logger("TelemetryMiddleware")
@@ -51,7 +49,7 @@ class TelemetryMiddleware(
                 context.state.findTab(action.sessionId)?.let { tab ->
                     // Record UriOpened event when a non-private page finishes loading
                     if (tab.content.loading && !action.loading) {
-                        metrics.track(Event.NormalAndPrivateUriOpened)
+                        Events.normalAndPrivateUriCount.add()
                     }
                 }
             }
@@ -59,6 +57,9 @@ class TelemetryMiddleware(
             is EngineAction.KillEngineSessionAction -> {
                 val tab = context.state.findTabOrCustomTab(action.tabId)
                 onEngineSessionKilled(context.state, tab)
+            }
+            else -> {
+                // no-op
             }
         }
 
@@ -74,11 +75,14 @@ class TelemetryMiddleware(
             is TabListAction.RestoreAction -> {
                 // Update/Persist tabs count whenever it changes
                 settings.openTabsCount = context.state.normalTabs.count()
-                if (context.state.normalTabs.count() > 0) {
-                    metrics.track(Event.HaveOpenTabs)
+                if (context.state.normalTabs.isNotEmpty()) {
+                    Metrics.hasOpenTabs.set(true)
                 } else {
-                    metrics.track(Event.HaveNoOpenTabs)
+                    Metrics.hasOpenTabs.set(false)
                 }
+            }
+            else -> {
+                // no-op
             }
         }
     }

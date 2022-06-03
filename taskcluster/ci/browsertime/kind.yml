@@ -98,7 +98,7 @@ job-defaults:
             - linux64-ffmpeg-4.1.4
             - linux64-geckodriver
             - linux64-minidump-stackwalk
-            - linux64-node
+            - linux64-node-16
 
 jobs:
     tp6m:

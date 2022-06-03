@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.SystemClock
+import android.util.Log
 import android.widget.EditText
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
@@ -570,22 +571,22 @@ class BrowserRobot {
         tabCrashRestoreButton.click()
     }
 
-    fun fillAndSubmitGoogleSearchQuery(searchString: String) {
-        mDevice.findObject(
-            UiSelector().resourceId("$packageName:id/engineView")
-        ).waitForExists(waitingTime)
-        googleSearchBox.setText(searchString)
-        mDevice.pressEnter()
-        mDevice.waitForIdle(waitingTime)
-    }
-
     fun fillAndSubmitLoginCredentials(userName: String, password: String) {
-        userNameTextBox.setText(userName)
-        passwordTextBox.setText(password)
+        var currentTries = 0
+        while (currentTries++ < 3) {
+            try {
+                mDevice.waitForIdle(waitingTime)
+                userNameTextBox.setText(userName)
+                passwordTextBox.setText(password)
+                submitLoginButton.click()
 
-        submitLoginButton.click()
+                mDevice.waitForObjects(mDevice.findObject(UiSelector().resourceId("$packageName:id/save_confirm")))
 
-        mDevice.waitForObjects(mDevice.findObject(UiSelector().resourceId("$packageName:id/save_confirm")))
+                break
+            } catch (e: UiObjectNotFoundException) {
+                Log.e("BROWSER_ROBOT", "Failed to find locator: ${e.localizedMessage}")
+            }
+        }
     }
 
     fun clearUserNameLoginCredential() {
@@ -631,6 +632,25 @@ class BrowserRobot {
     }
 
     fun verifyPrefilledLoginCredentials(userName: String) {
+        var currentTries = 0
+        // Sometimes the assertion of the pre-filled logins fails so we are re-trying after refreshing the page
+        while (currentTries++ < 3) {
+            try {
+                mDevice.waitForObjects(userNameTextBox)
+                assertTrue(userNameTextBox.text.equals(userName))
+
+                break
+            } catch (e: AssertionError) {
+                browserScreen {
+                }.openThreeDotMenu {
+                }.refreshPage {
+                    clearUserNameLoginCredential()
+                    clickSuggestedLoginsButton()
+                    verifySuggestedUserName(userName)
+                    clickLoginSuggestion(userName)
+                }
+            }
+        }
         mDevice.waitForObjects(userNameTextBox)
         assertTrue(userNameTextBox.text.equals(userName))
     }
@@ -907,15 +927,6 @@ val passwordTextBox =
     mDevice.findObject(
         UiSelector()
             .resourceId("password")
-            .className("android.widget.EditText")
-            .packageName("$packageName")
-    )
-
-val googleSearchBox =
-    mDevice.findObject(
-        UiSelector()
-            .index(0)
-            .resourceId("mib")
             .className("android.widget.EditText")
             .packageName("$packageName")
     )

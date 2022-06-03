@@ -12,9 +12,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.concept.storage.NewCreditCardFields
 import mozilla.components.concept.storage.UpdatableCreditCardFields
+import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStorage
-import org.mozilla.fenix.components.metrics.Event
-import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.settings.creditcards.CreditCardEditorFragment
 import org.mozilla.fenix.settings.creditcards.interactor.CreditCardEditorInteractor
 
@@ -60,7 +60,6 @@ class DefaultCreditCardEditorController(
     private val storage: AutofillCreditCardsAddressesStorage,
     private val lifecycleScope: CoroutineScope,
     private val navController: NavController,
-    private val metrics: MetricController,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val showDeleteDialog: (DialogInterface.OnClickListener) -> Unit
 ) : CreditCardEditorController {
@@ -77,7 +76,7 @@ class DefaultCreditCardEditorController(
                 lifecycleScope.launch(Dispatchers.Main) {
                     navController.popBackStack()
                 }
-                metrics.track(Event.CreditCardDeleted)
+                CreditCards.deleted.add()
             }
             dialog.dismiss()
         }
@@ -90,7 +89,7 @@ class DefaultCreditCardEditorController(
             lifecycleScope.launch(Dispatchers.Main) {
                 navController.popBackStack()
             }
-            metrics.track(Event.CreditCardSaved)
+            CreditCards.saved.add()
         }
     }
 
@@ -101,7 +100,7 @@ class DefaultCreditCardEditorController(
             lifecycleScope.launch(Dispatchers.Main) {
                 navController.popBackStack()
             }
-            metrics.track(Event.CreditCardModified)
+            CreditCards.modified.record(NoExtras())
         }
     }
 }

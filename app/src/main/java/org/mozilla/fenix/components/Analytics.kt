@@ -17,11 +17,11 @@ import mozilla.components.lib.crash.sentry.SentryService
 import mozilla.components.service.nimbus.NimbusApi
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.GleanMetrics.Messaging
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ReleaseChannel
 import org.mozilla.fenix.components.metrics.AdjustMetricsService
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.GleanMetricsService
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.experiments.createNimbus
@@ -124,9 +124,7 @@ class Analytics(
     }
 
     val experiments: NimbusApi by lazyMonitored {
-        createNimbus(context, BuildConfig.NIMBUS_ENDPOINT).also { api ->
-            FxNimbus.api = api
-        }
+        createNimbus(context, BuildConfig.NIMBUS_ENDPOINT)
     }
 
     val messagingStorage by lazyMonitored {
@@ -135,7 +133,7 @@ class Analytics(
             metadataStorage = OnDiskMessageMetadataStorage(context),
             gleanPlumb = experiments,
             reportMalformedMessage = {
-                metrics.track(Event.Messaging.MessageMalformed(it))
+                Messaging.malformed.record(Messaging.MalformedExtra(it))
             },
             messagingFeature = FxNimbus.features.messaging,
             attributeProvider = CustomAttributeProvider,

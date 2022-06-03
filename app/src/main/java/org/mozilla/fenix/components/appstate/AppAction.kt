@@ -8,14 +8,17 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.lib.crash.Crash.NativeCodeCrash
 import mozilla.components.lib.state.Action
-import mozilla.components.service.pocket.PocketRecommendedStory
+import mozilla.components.service.pocket.PocketStory
+import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesSelectedCategory
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
+import org.mozilla.fenix.home.recentsyncedtabs.RecentSyncedTabState
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
+import org.mozilla.fenix.library.history.PendingDeletionHistory
 import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.gleanplumb.MessagingState
 
@@ -52,17 +55,53 @@ sealed class AppAction : Action {
     data class RecentHistoryChange(val recentHistory: List<RecentlyVisitedItem>) : AppAction()
     data class RemoveRecentHistoryHighlight(val highlightUrl: String) : AppAction()
     data class DisbandSearchGroupAction(val searchTerm: String) : AppAction()
+    /**
+     * Indicates the given [categoryName] was selected by the user.
+     */
     data class SelectPocketStoriesCategory(val categoryName: String) : AppAction()
+    /**
+     * Indicates the given [categoryName] was deselected by the user.
+     */
     data class DeselectPocketStoriesCategory(val categoryName: String) : AppAction()
-    data class PocketStoriesShown(val storiesShown: List<PocketRecommendedStory>) : AppAction()
-    data class PocketStoriesChange(val pocketStories: List<PocketRecommendedStory>) : AppAction()
+    /**
+     * Indicates the given [storiesShown] were seen by the user.
+     */
+    data class PocketStoriesShown(val storiesShown: List<PocketStory>) : AppAction()
+    /**
+     * Cleans all in-memory data about Pocket stories and categories.
+     */
+    object PocketStoriesClean : AppAction()
+    /**
+     * Replaces the current list of Pocket sponsored stories.
+     */
+    data class PocketSponsoredStoriesChange(val sponsoredStories: List<PocketSponsoredStory>) : AppAction()
+    /**
+     * Adds a set of items marked for removal to the app state, to be hidden in the UI.
+     */
+    data class AddPendingDeletionSet(val historyItems: Set<PendingDeletionHistory>) : AppAction()
+    /**
+     * Removes a set of items, previously marked for removal, to be displayed again in the UI.
+     */
+    data class UndoPendingDeletionSet(val historyItems: Set<PendingDeletionHistory>) : AppAction()
+    /**
+     * Replaces the list of available Pocket recommended stories categories.
+     */
     data class PocketStoriesCategoriesChange(val storiesCategories: List<PocketRecommendedStoriesCategory>) :
         AppAction()
+    /**
+     * Restores the list of Pocket recommended stories categories selections.
+     */
     data class PocketStoriesCategoriesSelectionsChange(
         val storiesCategories: List<PocketRecommendedStoriesCategory>,
         val categoriesSelected: List<PocketRecommendedStoriesSelectedCategory>
     ) : AppAction()
     object RemoveCollectionsPlaceholder : AppAction()
+
+    /**
+     * Updates the [RecentSyncedTabState] with the given [state].
+     */
+    data class RecentSyncedTabStateChange(val state: RecentSyncedTabState) : AppAction()
+
     /**
      * [Action]s related to interactions with the Messaging Framework.
      */

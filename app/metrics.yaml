@@ -17,6 +17,7 @@ events:
         description: |
           The method used to open Fenix. Possible values are: `app_icon`,
           `custom_tab` or `link`
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/968
       - https://github.com/mozilla-mobile/fenix/issues/10616
@@ -46,6 +47,7 @@ events:
         description: |
           The view the user was on when they initiated the search (For example:
           `Home` or `Browser`)
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/959
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -73,6 +75,7 @@ events:
         description: |
           A boolean that tells us whether the URL was autofilled by an
           Autocomplete suggestion
+        type: boolean
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/959
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -105,6 +108,7 @@ events:
           * default.suggestion
           * shortcut.action
           * shortcut.suggestion
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/959
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -142,6 +146,7 @@ events:
           reader_mode_off, reader_mode_on, reload, remove_from_top_sites,
           save_to_collection, set_default_browser, settings, share, stop,
           sync_account, and sync_tabs.
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/1024
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -190,7 +195,7 @@ events:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 104
+    expires: never
   toolbar_menu_visible:
     type: event
     description: |
@@ -202,6 +207,7 @@ events:
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/21076#issuecomment-909237275
       - https://github.com/mozilla-mobile/fenix/pull/23802#issuecomment-1043255381
+      - https://github.com/mozilla-mobile/fenix/pull/25405#issuecomment-1139058237
     data_sensitivity:
       - interaction
     notification_emails:
@@ -254,8 +260,10 @@ events:
           pref_key_sync_logins, pref_key_sync_bookmarks, pref_key_sync_history,
           pref_key_show_voice_search,
           and pref_key_show_search_suggestions_in_private.
+        type: string
       enabled:
         description: "Whether or not the preference is *now* enabled"
+        type: boolean
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/975
       - https://github.com/mozilla-mobile/fenix/issues/5094
@@ -317,6 +325,7 @@ events:
           The mode the link was opened in. Either 'PRIVATE' or 'NORMAL'. N.B.:
           this probe may be incorrectly implemented: see
           https://github.com/mozilla-mobile/fenix/issues/14133
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/5737
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -425,6 +434,7 @@ events:
         description: |
           A string containing the name of the tab view the user tapped.
           These items include: list or grid.
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/19956
     data_reviews:
@@ -694,6 +704,7 @@ context_menu:
           open_in_new_tab, open_in_private_tab, open_image_in_new_tab,
           save_image, share_link, copy_link, copy_image_location, share_image
           ```
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/957
       - https://github.com/mozilla-mobile/fenix/issues/16076
@@ -2129,11 +2140,12 @@ bookmarks_management:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/18174
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
+      - https://github.com/mozilla-mobile/fenix/pull/25405#issuecomment-1139058237
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 104
+    expires: never
     metadata:
       tags:
         - Bookmarks
@@ -2400,71 +2412,6 @@ bookmarks_management:
     metadata:
       tags:
         - Bookmarks
-custom_tab:
-  closed:
-    type: event
-    description: |
-      A user closed the custom tab
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/977
-      - https://github.com/mozilla-mobile/fenix/issues/19923
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/1697
-      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
-      - https://github.com/mozilla-mobile/fenix/pull/18143
-      - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
-      - https://github.com/mozilla-mobile/fenix/pull/21316#issuecomment-944615938
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: 102
-    metadata:
-      tags:
-        - CustomTabs
-  action_button:
-    type: event
-    description: |
-      A user pressed the action button provided by the launching app
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/977
-      - https://github.com/mozilla-mobile/fenix/issues/19923
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/1697
-      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
-      - https://github.com/mozilla-mobile/fenix/pull/18143
-      - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
-      - https://github.com/mozilla-mobile/fenix/pull/21316#issuecomment-944615938
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: 102
-    metadata:
-      tags:
-        - CustomTabs
-  menu:
-    type: event
-    description: |
-      A user opened the custom tabs menu
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/977
-      - https://github.com/mozilla-mobile/fenix/issues/19923
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/1697
-      - https://github.com/mozilla-mobile/fenix/pull/13958#issuecomment-676857877
-      - https://github.com/mozilla-mobile/fenix/pull/18143
-      - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
-      - https://github.com/mozilla-mobile/fenix/pull/21316#issuecomment-944615938
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: 102
-    metadata:
-      tags:
-        - CustomTabs
-
 activation:
   identifier:
     type: string
@@ -3053,6 +3000,7 @@ history:
       User has tapped on an item in the "Recently visited" section on home.
     extra_keys:
       page_number:
+        type: string
         description: |
           The page number in the homescreen carousel that the recently visited
           item was on.
@@ -3688,11 +3636,12 @@ tabs_tray:
       - https://github.com/mozilla-mobile/fenix/issues/20507
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/20508#issuecomment-901336677
+      - https://github.com/mozilla-mobile/fenix/pull/25405#issuecomment-1139058237
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 104
+    expires: 116
     metadata:
       tags:
         - Tabs
@@ -3705,11 +3654,12 @@ tabs_tray:
       - https://github.com/mozilla-mobile/fenix/issues/20507
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/20508#issuecomment-901336677
+      - https://github.com/mozilla-mobile/fenix/pull/25405#issuecomment-1139058237
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 104
+    expires: 116
     metadata:
       tags:
         - Tabs
@@ -3948,6 +3898,20 @@ tabs_tray:
       tab_count:
         description: The number of selected tabs added to colelction.
         type: quantity
+  access_point:
+    type: labeled_counter
+    description: |
+      The area that the tabs tray was accessed from.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114
+
 
 collections:
   renamed:
@@ -4717,6 +4681,7 @@ logins:
       A user changed their setting for asking to save logins
     extra_keys:
       setting:
+        type: string
         description: |
           The new setting for saving logins the user selected. Either
           `ask_to_save` or `never_save`
@@ -4929,6 +4894,7 @@ top_sites:
       A user swiped to change the page of the top sites carousel
     extra_keys:
       page:
+        type: string
         description: |
           The page number the carousel is now on
     bugs:
@@ -4954,6 +4920,7 @@ top_sites:
       A user long pressed on a top site
     extra_keys:
       type:
+        type: string
         description: |
           The type of top site. Options are: "FRECENCY", "DEFAULT",
           "PINNED", or "PROVIDED"
@@ -5128,7 +5095,7 @@ top_sites:
       A UUID that is unjoinable with other browser metrics. This ID will not be
       shared with AdM, only for internal uses. This ID is shared across all
       contextual services features.
-    lifetime: ping
+    lifetime: application
     send_in_pings:
       - topsites-impression
     bugs:
@@ -5265,6 +5232,7 @@ app_theme:
       A user selected Dark Theme
     extra_keys:
       source:
+        type: string
         description: |
           The source from where dark theme was selected. The source can be
           'SETTINGS' or 'ONBOARDING'
@@ -5350,9 +5318,11 @@ pocket:
       User tapped a Pocket recommended story to be opened.
     extra_keys:
       times_shown:
+        type: string
         description: |
           How many times was this story shown, including current.
       position:
+        type: string
         description: |
           Position of the clicked story in the list shown.
           Uses the [row x column] matrix notation.
@@ -5371,12 +5341,15 @@ pocket:
       User tapped a Pocket stories category to filter stories.
     extra_keys:
       category_name:
+        type: string
         description: |
           Pocket set topic name representing the just clicked category.
       selected_total:
+        type: string
         description: |
           How many categories were selected before this being tapped.
       new_state:
+        type: string
         description: |
           Category's new state after being tapped.
           Possible values: [selected], [deselected].
@@ -5636,11 +5609,12 @@ addons:
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/21316#issuecomment-944615938
+      - https://github.com/mozilla-mobile/fenix/pull/25405#issuecomment-1139058237
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 104
+    expires: 116
     metadata:
       tags:
         - WebExtensions
@@ -5652,6 +5626,7 @@ addons:
       addon_id:
         description: |
           The id of the add-on that was interacted with in the toolbar menu
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/6174
       - https://github.com/mozilla-mobile/fenix/issues/19923
@@ -5661,32 +5636,12 @@ addons:
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/21316#issuecomment-944615938
+      - https://github.com/mozilla-mobile/fenix/pull/25405#issuecomment-1139058237
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 104
-    metadata:
-      tags:
-        - WebExtensions
-  open_addon_setting:
-    type: event
-    description: |
-      A user opened an add-on's setting
-    extra_keys:
-      addon_id:
-        description: |
-          The id of the add-on that was interacted with
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/17644
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/18504
-      - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: 104
+    expires: 116
     metadata:
       tags:
         - WebExtensions
@@ -5777,11 +5732,12 @@ addons:
       - https://github.com/mozilla-mobile/fenix/pull/18143
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/21316#issuecomment-944615938
+      - https://github.com/mozilla-mobile/fenix/pull/25405#issuecomment-1139058237
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 104
+    expires: 116
 
     metadata:
       tags:
@@ -6149,7 +6105,8 @@ autoplay:
       autoplay_setting:
         description: |
           The new setting for autoplay: block_cellular,
-          block_audio, or block_all.
+          block_audio, allow_all or block_all.
+        type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/11579
     data_reviews:
@@ -6437,12 +6394,13 @@ engine_tab:
       - https://github.com/mozilla-mobile/fenix/pull/17864
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/21779#issuecomment-938089467
+      - https://github.com/mozilla-mobile/fenix/pull/25405#issuecomment-1139058237
     data_sensitivity:
       - technical
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: 103
+    expires: 116
     metadata:
       tags:
         - Performance
@@ -6458,12 +6416,13 @@ engine_tab:
       - https://github.com/mozilla-mobile/fenix/pull/17864
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/21779#issuecomment-938089467
+      - https://github.com/mozilla-mobile/fenix/pull/25405#issuecomment-1139058237
     data_sensitivity:
       - technical
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: 103
+    expires: 116
     metadata:
       tags:
         - Performance
@@ -6479,12 +6438,13 @@ engine_tab:
       - https://github.com/mozilla-mobile/fenix/pull/17864
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/21779#issuecomment-938089467
+      - https://github.com/mozilla-mobile/fenix/pull/25405#issuecomment-1139058237
     data_sensitivity:
       - technical
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: 103
+    expires: 116
     metadata:
       tags:
         - Performance
@@ -6499,12 +6459,13 @@ engine_tab:
       - https://github.com/mozilla-mobile/fenix/pull/18747#issuecomment-815731764
       - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
       - https://github.com/mozilla-mobile/fenix/pull/21779#issuecomment-938089467
+      - https://github.com/mozilla-mobile/fenix/pull/25405#issuecomment-1139058237
     data_sensitivity:
       - technical
     notification_emails:
       - android-probes@mozilla.com
       - skaspari@mozilla.com
-    expires: 103
+    expires: 116
     extra_keys:
       background_active_tabs:
         description: |
@@ -6912,11 +6873,12 @@ start_on_home:
       - https://github.com/mozilla-mobile/fenix/issues/19881
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/19885
+      - https://github.com/mozilla-mobile/fenix/pull/24982
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 102
+    expires: 114
     metadata:
       tags:
         - HomeScreen
@@ -6928,11 +6890,12 @@ start_on_home:
       - https://github.com/mozilla-mobile/fenix/issues/19881
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/19885
+      - https://github.com/mozilla-mobile/fenix/pull/24982
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 102
+    expires: 114
     metadata:
       tags:
         - HomeScreen
@@ -6946,11 +6909,12 @@ recent_tabs:
       - https://github.com/mozilla-mobile/fenix/issues/19955
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/20138
+      - https://github.com/mozilla-mobile/fenix/pull/24982
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 102
+    expires: 114
     metadata:
       tags:
         - RecentTabs
@@ -6962,27 +6926,29 @@ recent_tabs:
       - https://github.com/mozilla-mobile/fenix/issues/19955
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/20138
+      - https://github.com/mozilla-mobile/fenix/pull/24982
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 102
+    expires: 114
     metadata:
       tags:
         - RecentTabs
   in_progress_media_tab_opened:
     type: event
     description: |
-      User has opened a recent tab from homescreen.
+      User has opened a recent media tab from homescreen.
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/20393
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/20138
+      - https://github.com/mozilla-mobile/fenix/pull/24982
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 102
+    expires: 114
     metadata:
       tags:
         - RecentTabs
@@ -7252,6 +7218,38 @@ credit_cards:
     metadata:
       tags:
         - Autofill
+  save_prompt_create:
+    type: event
+    description: |
+      User saved a credit card using the autofill save prompt.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/25397
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/25411
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 105
+    metadata:
+      tags:
+        - Autofill
+  save_prompt_update:
+    type: event
+    description: |
+      User updated a credit card using the autofill save prompt.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/25397
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/25411
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 105
+    metadata:
+      tags:
+        - Autofill
 
 search_terms:
   number_of_search_term_group:
@@ -7260,6 +7258,7 @@ search_terms:
       Number of search term group when tabs tray is opened.
     extra_keys:
       count:
+        type: string
         description: |
           The number of tabs per search group
     bugs:
@@ -7277,6 +7276,7 @@ search_terms:
       Number of search term tabs per group when tabs tray is opened.
     extra_keys:
       count:
+        type: string
         description: |
           The average number of tabs per search group
     bugs:
@@ -7560,3 +7560,74 @@ downloads:
     metadata:
       tags:
         - Download
+
+recent_synced_tabs:
+  recent_synced_tab_shown:
+    type: labeled_counter
+    description: |
+      Counts impressions of a recent synced tab on the homepage, labeled by the
+      device type the tab originates from.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114
+  recent_synced_tab_time_to_load:
+    type: timing_distribution
+    time_unit: millisecond
+    description: |
+      Measures the amount of time between the beginning of a sync and the end.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 114
+  recent_synced_tab_opened:
+    type: labeled_counter
+    description: |
+      Counts the number of times a recent synced tab is opened, labeled by the
+      device type the tab originates from.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114
+  show_all_synced_tabs_clicked:
+    type: counter
+    description: |
+      Counts how many times "show all synced tabs" button has been clicked.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114
+  latest_synced_tab_is_stale:
+    type: counter
+    description: |
+      Counts how often the loading placeholder is shown and the resulting tab
+      is the same as it was before the load.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24549
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/24671
+    notification_emails:
+      - android-probes@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: 114

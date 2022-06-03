@@ -43,9 +43,9 @@
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string name="recent_bookmarks_title">最近加入的書籤</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
-    <string name="recently_saved_bookmarks_content_description">最近加入的書籤</string>
+    <string moz:removedIn="100" name="recently_saved_bookmarks_content_description" tools:ignore="UnusedResources">最近加入的書籤</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
-    <string name="recently_saved_show_all">顯示全部</string>
+    <string moz:removedIn="101" name="recently_saved_show_all" tools:ignore="UnusedResources">顯示全部</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description_2">顯示所有儲存書籤</string>
 
@@ -70,8 +70,6 @@
     <string name="cfr_neg_button_text">不要，謝謝</string>
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
-    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
-    <string moz:RemovedIn="99" name="open_in_app_cfr_info_message" tools:ignore="UnusedResources">您可以設定使用 Firefox 自動開啟各應用程式當中的鏈結。</string>
     <!-- Text for the info message. The first parameter is the name of the application.-->
     <string name="open_in_app_cfr_info_message_2">您可以設定使用 %1$s 自動開啟各應用程式當中的鏈結。</string>
     <!-- Text for the positive action button -->
@@ -100,8 +98,6 @@
 
     <!-- Text for title for the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_title">等一個月後再自動關閉？</string>
-    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
-    <string moz:RemovedIn="99" name="tab_tray_inactive_auto_close_body" tools:ignore="UnusedResources">Firefox 可自動關閉您超過一個月未檢視的分頁。</string>
     <!-- Text for the body for the auto-close dialog of the inactive tabs.
         The first parameter is the name of the application.-->
     <string name="tab_tray_inactive_auto_close_body_2">%1$s 可自動關閉您超過一個月未檢視的分頁。</string>
@@ -180,8 +176,6 @@
     <string name="browser_menu_add_to_homescreen">新增至裝置主畫面</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">安裝</string>
-    <!-- Menu option on the toolbar that takes you to synced tabs page-->
-    <string moz:removedIn="98" name="synced_tabs" tools:ignore="UnusedResources">同步的分頁</string>
     <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
     <string name="resync_button_content_description">重新同步</string>
     <!-- Browser menu button that opens the find in page menu -->
@@ -216,8 +210,6 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">編輯</string>
 
-    <!-- Browser menu button that opens the Customize menu -->
-    <string moz:removedIn="98" name="browser_menu_customize_home" tools:ignore="UnusedResources">自訂首頁</string>
     <!-- Button shown on the home page that opens the Customize home settings -->
     <string name="browser_menu_customize_home_1">自訂首頁</string>
     <!-- Browser Toolbar -->
@@ -258,15 +250,14 @@
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">從網址列直接搜尋</string>
 
+    <!-- Menu option in the search selector menu to open the search settings -->
+    <string name="search_settings_menu_item">搜尋設定</string>
+
     <!-- Home onboarding -->
-    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
-    <string moz:removedIn="99" name="onboarding_home_screen_title_2" tools:ignore="UnusedResources">Firefox 有什麼新鮮事</string>
     <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
     <string name="onboarding_home_screen_title_3">%1$s 有什麼新鮮事</string>
     <!-- Onboarding home screen dialog description text. -->
     <string name="onboarding_home_screen_description_2">更簡單就能回到上次中斷的地方繼續上網。</string>
-    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
-    <string moz:RemovedIn="99" name="onboarding_home_screen_section_home_title_2" tools:ignore="UnusedResources">個人化的 Firefox 首頁</string>
     <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
     <string name="onboarding_home_screen_section_home_title_3">個人化的 %1$s 首頁</string>
     <!-- Onboarding home screen dialog description text for the home section. -->
@@ -284,8 +275,6 @@
     <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">現在起，有您的風格的 Firefox 首頁，可讓您更簡單就從上次結束瀏覽的地方繼續上網。快速找到您最近開啟的分頁、書籤、搜尋結果等分頁。</string>
 
     <!-- Search Widget -->
-    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
-    <string moz:RemovedIn="99" name="search_widget_content_description" tools:ignore="UnusedResources">開新 Firefox 分頁</string>
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
     <string name="search_widget_content_description_2">開啟新 %1$s 分頁</string>
     <!-- Text preview for smaller sized widgets -->
@@ -333,6 +322,26 @@
     <string name="preferences_screenshots_in_private_mode_disclaimer">若允許，隱私分頁內容將在切換應用程式時顯示</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">新增隱私瀏覽模式捷徑</string>
+    <!-- Preference for enabling "HTTPS-Only" mode -->
+    <string name="preferences_https_only_title">純 HTTPS 模式</string>
+    <!-- Description of the preference to enable "HTTPS-Only" mode. -->
+    <string name="preferences_https_only_summary">自動嘗試使用加密過的 HTTPS 通訊協定連線到網站，以增加安全性。</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to on -->
+    <string name="preferences_https_only_on">開啟</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to off -->
+    <string name="preferences_https_only_off">關閉</string>
+    <!-- Text displayed that links to website containing documentation about "HTTPS-Only" mode -->
+    <string name="preferences_http_only_learn_more">了解更多</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_all_tabs">對所有分頁都開啟</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_private_tabs">只對隱私瀏覽分頁開啟</string>
+    <!-- Title shown in the error page for when trying to access a http website while https only mode is enabled. -->
+    <string name="errorpage_httpsonly_title">無法使用安全網站</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the first. -->
+    <string name="errorpage_httpsonly_message_title">很有可能只是網站不支援 HTTPS。</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the second. -->
+    <string name="errorpage_httpsonly_message_summary">然而也可能是有攻擊者正嘗試攔截您的網路連線。若您決定繼續開啟網站，就不該輸入任何敏感資訊。若繼續，將暫時針對此網站關閉純 HTTPS 模式。</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">輔助功能</string>
     <!-- Preference to override the Firefox Account server -->
@@ -439,11 +448,7 @@
     <string name="wallpaper_updated_snackbar_action">檢視</string>
 
     <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_label" tools:ignore="UnusedResources">點擊圖示即可更換背景圖</string>
-    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
     <string name="wallpaper_tap_to_change_switch_label_1">點擊 Firefox 首頁的圖示即可更改背景圖</string>
-    <!-- Description for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_description" tools:ignore="UnusedResources">不用離開首頁即可更換背景圖。</string>
 
     <!-- This is the accessibility content description for the wallpapers functionality. Users are
     able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
@@ -660,17 +665,15 @@
 
     <!-- Inactive tabs -->
     <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
-    <string name="preferences_inactive_tabs">將舊分頁移動到閒置分頁</string>
+    <string name="preferences_inactive_tabs">將舊分頁移動到獨立區塊</string>
     <!-- Title of inactive tabs preference -->
-    <string name="preferences_inactive_tabs_title">超過兩週沒有檢視過的分頁，將移動至「閒置分頁」區塊。</string>
+    <string name="preferences_inactive_tabs_title">將超過兩週沒有檢視過的分頁，移動至「閒置分頁」區塊。</string>
 
     <!-- Studies -->
     <!-- Title of the remove studies button -->
     <string name="studies_remove">移除</string>
     <!-- Title of the active section on the studies list -->
     <string name="studies_active">進行中</string>
-    <!-- Description for studies, it indicates why Firefox use studies -->
-    <string moz:RemovedIn="99" name="studies_description" tools:ignore="UnusedResources">Firefox 會不定時安裝並執行使用者研究。</string>
     <!-- Description for studies, it indicates why Firefox use studies. The first parameter is the name of the application. -->
     <string name="studies_description_2">%1$s 會不定時安裝並執行使用者研究。</string>
     <!-- Learn more link for studies, links to an article for more information about studies. -->
@@ -760,8 +763,6 @@
 
     <!-- History -->
     <!-- Text for the button to search all history -->
-    <string moz:removedIn="99" name="history_search" tools:ignore="UnusedResources">輸入搜尋詞彙</string>
-    <!-- Text for the button to search all history -->
     <string name="history_search_1">輸入搜尋詞彙</string>
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">刪除瀏覽紀錄</string>
@@ -773,7 +774,7 @@
     <string name="history_delete_item">刪除</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
-    <string name="history_multi_select_title">已選擇 %1$d 筆書籤</string>
+    <string name="history_multi_select_title">已選擇 %1$d 筆瀏覽紀錄</string>
     <!-- Text for the header that groups the history for today -->
     <string name="history_today">今天</string>
     <!-- Text for the header that groups the history for yesterday -->
@@ -787,6 +788,12 @@
 
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">沒有紀錄</string>
+
+    <!-- Text for the button inside History screen that opens Synced History screen. History that is coming from other devices -->
+    <string name="history_synced_from_other_devices">從其他裝置同步過來</string>
+
+    <!-- The page title for browsing history coming from other devices. -->
+    <string name="history_from_other_devices">來自其他裝置</string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1093,7 +1100,9 @@
     <!-- Text shown in snackbar when user bookmarks a list of tabs -->
     <string name="snackbar_message_bookmarks_saved">已加入書籤！</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
-    <string name="snackbar_added_to_top_sites">已加入熱門網站！</string>
+    <string moz:RemovedIn="101" name="snackbar_added_to_top_sites" tools:ignore="UnusedResources">已加入熱門網站！</string>
+    <!-- Text shown in snackbar when user adds a site to shortcuts -->
+    <string name="snackbar_added_to_shortcuts">已新增至捷徑！</string>
     <!-- Text shown in snackbar when user closes a private tab -->
     <string name="snackbar_private_tab_closed">已關閉隱私分頁</string>
     <!-- Text shown in snackbar when user closes all private tabs -->
@@ -1190,6 +1199,15 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">正在刪除上網資料…</string>
 
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
+    <string name="delete_history_group_prompt_message">將刪除所有項目。</string>
+    <!-- Text for the cancel button for the history group deletion dialog -->
+    <string name="delete_history_group_prompt_cancel">取消</string>
+    <!-- Text for the allow button for the history group dialog -->
+    <string name="delete_history_group_prompt_allow">刪除</string>
+    <!-- Text for the snackbar confirmation that the history group was deleted -->
+    <string name="delete_history_group_snackbar">已刪除群組</string>
+
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
     <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header" tools:ignore="UnusedResources">Firefox Nightly 已接手原 Firefox Preview 功能</string>
@@ -1230,8 +1248,6 @@
     <string name="onboarding_firefox_account_sync_is_on">已開啟 Sync</string>
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">隨時都有隱私保護</string>
-    <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
-    <string moz:RemovedIn="99" name="onboarding_tracking_protection_description_3" tools:ignore="UnusedResources">Firefox 會自動封鎖讓大企業在網路上偷偷跟蹤您的程式。</string>
     <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
     <string name="onboarding_tracking_protection_description_4">%1$s 會自動封鎖讓大企業在網路上偷偷跟蹤您的程式。</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
@@ -1535,7 +1551,11 @@
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">排序登入資訊選單</string>
 
-    <!-- Credit Cards Autofill -->
+    <!-- Autofill -->
+    <!-- Preference and title for managing the autofill settings -->
+    <string name="preferences_autofill">自動填寫</string>
+    <!-- Preference and title for managing the settings for addresses -->
+    <string name="preferences_addresses">地址</string>
     <!-- Preference and title for managing the settings for credit cards -->
     <string name="preferences_credit_cards">信用卡</string>
 
@@ -1552,6 +1572,15 @@
 
     <!-- Preference option for managing saved credit cards -->
     <string name="preferences_credit_cards_manage_saved_cards">管理已儲存的卡片</string>
+    <!-- Preference option for adding an address -->
+    <string name="preferences_addresses_add_address">新增地址</string>
+    <!-- Preference option for managing saved addresses -->
+    <string name="preferences_addresses_manage_addresses">管理已存地址</string>
+    <!-- Preference for saving and autofilling addresses -->
+    <string name="preferences_addresses_save_and_autofill_addresses">儲存並自動填寫地址</string>
+    <!-- Preference summary for saving and autofilling address data -->
+    <string name="preferences_addresses_save_and_autofill_addresses_summary">包含電話號碼、E-Mail、收件地址等資訊</string>
+
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">新增付款卡片</string>
     <!-- Title of the "Edit card" screen -->
@@ -1605,6 +1634,52 @@
     <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
     <string name="credit_cards_biometric_prompt_unlock_message">解鎖後，即可使用儲存的信用卡資訊</string>
 
+    <!-- Title of the "Add address" screen -->
+    <string name="addresses_add_address">新增地址</string>
+    <!-- Title of the "Edit address" screen -->
+    <string name="addresses_edit_address">編輯地址</string>
+    <!-- Title of the "Manage addresses" screen -->
+    <string name="addresses_manage_addresses">管理已存地址</string>
+    <!-- The header for the full name of an address -->
+    <string moz:removedIn="102" name="addresses_full_name" tools:ignore="UnusedResources">全名</string>
+    <!-- The header for the first name of an address -->
+    <string name="addresses_first_name">名字</string>
+    <!-- The header for the middle name of an address -->
+    <string name="addresses_middle_name">中間名</string>
+    <!-- The header for the last name of an address -->
+    <string name="addresses_last_name">姓氏</string>
+    <!-- The header for the street address of an address -->
+    <string name="addresses_street_address">街道地址</string>
+    <!-- The header for the city of an address -->
+    <string name="addresses_city">城市</string>
+    <!-- The header for the state of an address -->
+    <string name="addresses_state">州別</string>
+    <!-- The header for the zip code of an address -->
+    <string name="addresses_zip">郵遞區號</string>
+    <!-- The header for the country or region of an address -->
+    <string name="addresses_country">國家或地區</string>
+    <!-- The header for the phone number of an address -->
+    <string name="addresses_phone">電話</string>
+    <!-- The header for the email of an address -->
+    <string name="addresses_email">電子郵件</string>
+    <!-- The text for the "Save" button for saving an address -->
+    <string name="addresses_save_button">儲存</string>
+    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting an address -->
+    <string name="addresses_cancel_button">取消</string>
+    <!-- The text for the "Delete address" button for deleting an address -->
+    <string name="addressess_delete_address_button">刪除地址</string>
+
+    <!-- The title for the "Delete address" confirmation dialog -->
+    <string name="addressess_confirm_dialog_message">您確定要刪除這筆地址嗎？</string>
+    <!-- The text for the positive button on "Delete address" dialog -->
+    <string name="addressess_confirm_dialog_ok_button">刪除</string>
+    <!-- The text for the negative button on "Delete address" dialog -->
+    <string name="addressess_confirm_dialog_cancel_button">取消</string>
+    <!-- The text for the "Save address" menu item for saving an address -->
+    <string name="address_menu_save_address">儲存地址</string>
+    <!-- The text for the "Delete address" menu item for deleting an address -->
+    <string name="address_menu_delete_address">刪除地址</string>
+
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">新增搜尋引擎</string>
     <!-- Title of the Edit search engine screen -->
@@ -1646,17 +1721,17 @@
     <string name="search_delete_search_engine_success_message">已刪除 %s</string>
 
     <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
-    <string name="migration_title">歡迎使用全新 %s</string>
+    <string moz:removedIn="100" name="migration_title" tools:ignore="UnusedResources">歡迎使用全新 %s</string>
     <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
-    <string name="migration_description">完全重新打造的瀏覽器有改善的效能與新功能，讓您在線上可以做好更多事。\n\n請稍候，我們正在更新 %s 的</string>
+    <string moz:removedIn="100" name="migration_description" tools:ignore="UnusedResources">完全重新打造的瀏覽器有改善的效能與新功能，讓您在線上可以做好更多事。\n\n請稍候，我們正在更新 %s 的</string>
     <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
-    <string name="migration_updating_app_button_text">正在更新 %s…</string>
+    <string moz:removedIn="100" name="migration_updating_app_button_text" tools:ignore="UnusedResources">正在更新 %s…</string>
     <!-- Text on the enabled button. Placeholder replaced with app name-->
-    <string name="migration_update_app_button">啟動 %s</string>
+    <string moz:removedIn="100" name="migration_update_app_button" tools:ignore="UnusedResources">啟動 %s</string>
     <!-- Accessibility description text for a completed migration item -->
-    <string name="migration_icon_description">資料移轉完成</string>
+    <string moz:removedIn="100" name="migration_icon_description" tools:ignore="UnusedResources">資料移轉完成</string>
     <!--Text on list of migrated items (e.g. Settings, History, etc.)-->
-    <string name="migration_text_passwords">密碼</string>
+    <string moz:removedIn="100" name="migration_text_passwords" tools:ignore="UnusedResources">密碼</string>
 
     <!-- Heading for the instructions to allow a permission -->
     <string name="phone_feature_blocked_intro">若要允許:</string>
@@ -1686,9 +1761,13 @@
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">你確定要刪除此書籤嗎？</string>
     <!-- Browser menu button that adds a top site to the home fragment -->
-    <string name="browser_menu_add_to_top_sites">新增到熱門網站</string>
+    <string moz:RemovedIn="101" name="browser_menu_add_to_top_sites" tools:ignore="UnusedResources">新增到熱門網站</string>
     <!-- Browser menu button that removes a top site from the home fragment -->
-    <string name="browser_menu_remove_from_top_sites">從熱門網站移除</string>
+    <string moz:RemovedIn="101" name="browser_menu_remove_from_top_sites" tools:ignore="UnusedResources">從熱門網站移除</string>
+    <!-- Browser menu button that adds a shortcut to the home fragment -->
+    <string name="browser_menu_add_to_shortcuts">新增為捷徑</string>
+    <!-- Browser menu button that removes a shortcut from the home fragment -->
+    <string name="browser_menu_remove_from_shortcuts">已從捷徑刪除</string>
     <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
      the certificate authority that verified the ticket-->
     <string name="certificate_info_verified_by">驗證機構: %1$s</string>
@@ -1763,21 +1842,24 @@
 
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_title">超出熱門網站限制</string>
+    <string moz:RemovedIn="101" name="top_sites_max_limit_title" tools:ignore="UnusedResources">超出熱門網站限制</string>
+    <!-- Title text displayed in the dialog when shortcuts limit is reached. -->
+    <string name="shortcut_max_limit_title">已達捷徑數量限制</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_content_2">請先移除現有的熱門網站才能再新增。請按住網站，然後選擇移除。</string>
+    <string moz:RemovedIn="101" name="top_sites_max_limit_content_2" tools:ignore="UnusedResources">請先移除現有的熱門網站才能再新增。請按住網站，然後選擇移除。</string>
+    <!-- Content description text displayed in the dialog when shortcut limit is reached. -->
+    <string name="shortcut_max_limit_content">請先移除現有的捷徑才能再新增。請按住網站，然後選擇移除。</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">好，知道了！</string>
-
-    <!-- Label for the preference to show the shortcuts for the most visited top sites on the homepage -->
-    <string moz:removedIn="98" name="top_sites_toggle_top_recent_sites_3" tools:ignore="UnusedResources">最常造訪的熱門網站</string>
 
     <!-- Label for the preference to show the shortcuts for the most visited top sites on the homepage -->
     <string name="top_sites_toggle_top_recent_sites_4">捷徑</string>
 	<!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">名稱</string>
 	<!-- Hint for renaming title of a top site -->
-	<string name="top_site_name_hint">熱門網站名稱</string>
+	<string moz:RemovedIn="101" name="top_site_name_hint" tools:ignore="UnusedResources">熱門網站名稱</string>
+    <!-- Hint for renaming title of a shortcut -->
+    <string name="shortcut_name_hint">捷徑名稱</string>
 	<!-- Button caption to confirm the renaming of the top site. -->
 	<string name="top_sites_rename_dialog_ok">確定</string>
 	<!-- Dialog button text for canceling the rename top site prompt. -->
@@ -1807,25 +1889,6 @@
     <!-- Text for the snackbar to confirm auto-close is enabled for inactive tabs -->
     <string name="inactive_tabs_auto_close_message_snackbar">已開啟分頁自動關閉功能</string>
 
-    <!-- Inactive tabs survey -->
-    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_header_1" tools:ignore="UnusedResources">協助改善 Firefox</string>
-
-    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_content" tools:ignore="UnusedResources">您為什麼會想關閉「閒置分頁」功能？</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_not_understand" tools:ignore="UnusedResources">我不了解它的運作原理</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_it_myself" tools:ignore="UnusedResources">我想自己清理太久沒閱讀的分頁</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_long_option_1" tools:ignore="UnusedResources">兩週清理期限太長</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_short_option_1" tools:ignore="UnusedResources">兩週清理期限太短</string>
-    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">傳送</string>
-    <!-- Content description for inactive tabs survey close button -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">關閉</string>
-
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">設定使用 Firefox 自動開啟網站、郵件、簡訊當中的鏈結。</string>
 
@@ -1854,4 +1917,12 @@
     <string name="pocket_stories_feature_caption">Firefox 系列產品。%s</string>
     <!-- Clickable text for opening an external link for more information about Pocket. -->
     <string name="pocket_stories_feature_learn_more">了解更多</string>
+
+    <!-- Text indicating that the Pocket story that also displays this text is a sponsored story by other 3rd party entity. -->
+    <string name="pocket_stories_sponsor_indication">贊助項目</string>
+
+    <!-- Snackbar message for enrolling in a Nimbus experiment from the secret settings when Studies preference is Off.-->
+    <string name="experiments_snackbar">開啟 Telemetry 功能即可傳送資料。</string>
+    <!-- Snackbar button text to navigate to telemetry settings.-->
+    <string name="experiments_snackbar_button">開啟設定</string>
 </resources>

@@ -17,6 +17,19 @@ import org.mozilla.fenix.nimbus.Messaging
 import org.mozilla.fenix.nimbus.StyleData
 
 /**
+ * This ID must match the name given in the `nimbus.fml.yaml` file, which
+ * itself generates the classname for [org.mozilla.fenix.nimbus.Messaging].
+ *
+ * If that ever changes, it should also change here.
+ *
+ * This constant is the id for the messaging feature (the Nimbus feature). We declare it here
+ * so as to afford the best chance of it being changed if a rename operation is needed.
+ *
+ * It is used in the Studies view, to filter out any experiments which only use a messaging surface.
+ */
+const val MESSAGING_FEATURE_ID = "messaging"
+
+/**
  * Provides messages from [messagingFeature] and combine with the metadata store on [metadataStorage].
  */
 class NimbusMessagingStorage(
@@ -27,6 +40,12 @@ class NimbusMessagingStorage(
     private val messagingFeature: FeatureHolder<Messaging>,
     private val attributeProvider: CustomAttributeProvider? = null
 ) {
+    /**
+     * Contains all malformed messages where they key can be the value or a trigger of the message
+     * and the value is the message id.
+     */
+    @VisibleForTesting
+    internal val malFormedMap = mutableMapOf<String, String>()
     private val logger = Logger("MessagingStorage")
     private val nimbusFeature = messagingFeature.value()
     private val customAttributes: JSONObject
@@ -41,11 +60,11 @@ class NimbusMessagingStorage(
         val nimbusActions = nimbusFeature.actions
 
         val nimbusMessages = nimbusFeature.messages
-        val defaultStyle = StyleData(context)
+        val defaultStyle = StyleData()
         val storageMetadata = metadataStorage.getMetadata()
 
         return nimbusMessages.mapNotNull { (key, value) ->
-            val action = sanitizeAction(key, value.action, nimbusActions) ?: return@mapNotNull null
+            val action = sanitizeAction(key, value.action, nimbusActions, value.isControl) ?: return@mapNotNull null
             Message(
                 id = key,
                 data = value,
@@ -118,17 +137,26 @@ class NimbusMessagingStorage(
     internal fun sanitizeAction(
         messageId: String,
         unsafeAction: String,
-        nimbusActions: Map<String, String>
+        nimbusActions: Map<String, String>,
+        isControl: Boolean
     ): String? {
-        return if (unsafeAction.startsWith("http")) {
-            unsafeAction
-        } else {
-            val safeAction = nimbusActions[unsafeAction]
-            if (safeAction.isNullOrBlank() || safeAction.isEmpty()) {
-                reportMalformedMessage(messageId)
-                return null
+
+        return when {
+            unsafeAction.startsWith("http") -> {
+                unsafeAction
             }
-            safeAction
+            isControl -> "CONTROL_ACTION"
+            else -> {
+                val safeAction = nimbusActions[unsafeAction]
+                if (safeAction.isNullOrBlank() || safeAction.isEmpty()) {
+                    if (!malFormedMap.containsKey(unsafeAction)) {
+                        reportMalformedMessage(messageId)
+                    }
+                    malFormedMap[unsafeAction] = messageId
+                    return null
+                }
+                safeAction
+            }
         }
     }
 
@@ -141,7 +169,10 @@ class NimbusMessagingStorage(
         return unsafeTriggers.map {
             val safeTrigger = nimbusTriggers[it]
             if (safeTrigger.isNullOrBlank() || safeTrigger.isEmpty()) {
-                reportMalformedMessage(messageId)
+                if (!malFormedMap.containsKey(it)) {
+                    reportMalformedMessage(messageId)
+                }
+                malFormedMap[it] = messageId
                 return null
             }
             safeTrigger
@@ -172,11 +203,15 @@ class NimbusMessagingStorage(
         return message.triggers.all { condition ->
             jexlCache[condition]
                 ?: try {
+                    if (malFormedMap.containsKey(condition)) {
+                        return false
+                    }
                     helper.evalJexl(condition).also { result ->
                         jexlCache[condition] = result
                     }
                 } catch (e: NimbusException.EvaluationException) {
                     reportMalformedMessage(message.id)
+                    malFormedMap[condition] = message.id
                     logger.info("Unable to evaluate $condition")
                     false
                 }

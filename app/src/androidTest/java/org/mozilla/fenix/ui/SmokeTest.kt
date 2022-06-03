@@ -2,15 +2,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+@file:Suppress("DEPRECATION")
+
 package org.mozilla.fenix.ui
 
 import android.view.View
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.core.net.toUri
 import androidx.test.espresso.IdlingRegistry
+import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
-import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.mediasession.MediaSession
@@ -38,7 +40,6 @@ import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.browserScreen
-import org.mozilla.fenix.ui.robots.collectionRobot
 import org.mozilla.fenix.ui.robots.customTabScreen
 import org.mozilla.fenix.ui.robots.enhancedTrackingProtection
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -46,7 +47,6 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.notificationShade
 import org.mozilla.fenix.ui.robots.openEditURLView
 import org.mozilla.fenix.ui.robots.searchScreen
-import org.mozilla.fenix.ui.robots.tabDrawer
 import org.mozilla.fenix.ui.util.FRENCH_LANGUAGE_HEADER
 import org.mozilla.fenix.ui.util.FRENCH_SYSTEM_LOCALE_OPTION
 import org.mozilla.fenix.ui.util.ROMANIAN_LANGUAGE_HEADER
@@ -83,12 +83,6 @@ class SmokeTest {
     @get: Rule
     val intentReceiverActivityTestRule = ActivityTestRule(
         IntentReceiverActivity::class.java, true, false
-    )
-
-    @get:Rule
-    var mGrantPermissions = GrantPermissionRule.grant(
-        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        android.Manifest.permission.READ_EXTERNAL_STORAGE
     )
 
     @Rule
@@ -142,7 +136,6 @@ class SmokeTest {
         featureSettingsHelper.resetAllFeatureFlags()
     }
 
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/24381")
     // Verifies the first run onboarding screen
     @Test
     fun firstRunScreenTest() {
@@ -325,23 +318,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/24458")
-    @Test
-    // Verifies the Add to top sites option in a tab's 3 dot menu
-    fun openMainMenuAddTopSiteTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openThreeDotMenu {
-            expandMenu()
-        }.addToFirefoxHome {
-            verifySnackBarText("Added to top sites!")
-        }.goToHomescreen {
-            verifyExistingTopSitesTabs(defaultWebPage.title)
-        }
-    }
-
     @Test
     // Verifies the Add to home screen option in a tab's 3 dot menu
     fun mainMenuAddToHomeScreenTest() {
@@ -370,18 +346,18 @@ class SmokeTest {
         }
     }
 
-    @Test
-    // Verifies the Add to collection option in a tab's 3 dot menu
-    fun openMainMenuAddToCollectionTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openThreeDotMenu {
-        }.openSaveToCollection {
-            verifyCollectionNameTextField()
-        }
-    }
+    // @Test
+    // // Verifies the Add to collection option in a tab's 3 dot menu
+    // fun openMainMenuAddToCollectionTest() {
+    //     val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+    //
+    //     navigationToolbar {
+    //     }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+    //     }.openThreeDotMenu {
+    //     }.openSaveToCollection {
+    //         verifyCollectionNameTextField()
+    //     }
+    // }
 
     @Test
     // Verifies the Bookmark button in a tab's 3 dot menu
@@ -397,6 +373,7 @@ class SmokeTest {
     }
 
     @Test
+    // Device or AVD requires a Google Services Android OS installation with Play Store installed
     // Verifies the Open in app button when an app is installed
     fun mainMenuOpenInAppTest() {
         val playStoreUrl = "play.google.com/store/apps/details?id=org.mozilla.fenix"
@@ -554,7 +531,9 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/25034")
     @Test
+    @SdkSuppress(minSdkVersion = 29)
     // Verifies that you can go to System settings and change app's permissions from inside the app
     fun redirectToAppPermissionsSystemSettingsTest() {
         homeScreen {
@@ -571,9 +550,12 @@ class SmokeTest {
             verifyBlockedByAndroid()
             clickGoToSettingsButton()
             openAppSystemPermissionsSettings()
-            switchAppPermissionSystemSetting("Camera")
-            switchAppPermissionSystemSetting("Location")
-            switchAppPermissionSystemSetting("Microphone")
+            switchAppPermissionSystemSetting("Camera", "Allow")
+            mDevice.pressBack()
+            switchAppPermissionSystemSetting("Location", "Allow")
+            mDevice.pressBack()
+            switchAppPermissionSystemSetting("Microphone", "Allow")
+            mDevice.pressBack()
             mDevice.pressBack()
             mDevice.pressBack()
             verifyUnblockedByAndroid()
@@ -634,172 +616,171 @@ class SmokeTest {
         }
     }
 
-    @Test
-    fun createFirstCollectionTest() {
-        // disabling these features to have better visibility of Collections
-        featureSettingsHelper.setRecentTabsFeatureEnabled(false)
-        featureSettingsHelper.setPocketEnabled(false)
+    // @Test
+    // fun createFirstCollectionTest() {
+    //     // disabling these features to have better visibility of Collections
+    //     featureSettingsHelper.setRecentTabsFeatureEnabled(false)
+    //     featureSettingsHelper.setPocketEnabled(false)
+    //
+    //     val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+    //     val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+    //
+    //     navigationToolbar {
+    //     }.enterURLAndEnterToBrowser(firstWebPage.url) {
+    //         mDevice.waitForIdle()
+    //     }.openTabDrawer {
+    //     }.openNewTab {
+    //     }.submitQuery(secondWebPage.url.toString()) {
+    //         mDevice.waitForIdle()
+    //     }.goToHomescreen {
+    //         swipeToBottom()
+    //     }.clickSaveTabsToCollectionButton {
+    //         longClickTab(firstWebPage.title)
+    //         selectTab(secondWebPage.title)
+    //     }.clickSaveCollection {
+    //         typeCollectionNameAndSave(collectionName)
+    //     }
+    //
+    //     tabDrawer {
+    //         verifySnackBarText("Collection saved!")
+    //         snackBarButtonClick("VIEW")
+    //     }
+    //
+    //     homeScreen {
+    //         verifyCollectionIsDisplayed(collectionName)
+    //         verifyCollectionIcon()
+    //     }
+    // }
 
-        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-        val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(firstWebPage.url) {
-            mDevice.waitForIdle()
-        }.openTabDrawer {
-        }.openNewTab {
-        }.submitQuery(secondWebPage.url.toString()) {
-            mDevice.waitForIdle()
-        }.goToHomescreen {
-            swipeToBottom()
-        }.clickSaveTabsToCollectionButton {
-            longClickTab(firstWebPage.title)
-            selectTab(secondWebPage.title)
-        }.clickSaveCollection {
-            typeCollectionNameAndSave(collectionName)
-        }
-
-        tabDrawer {
-            verifySnackBarText("Collection saved!")
-            snackBarButtonClick("VIEW")
-        }
-
-        homeScreen {
-            verifyCollectionIsDisplayed(collectionName)
-            verifyCollectionIcon()
-        }
-    }
-
-    @Test
-    fun verifyExpandedCollectionItemsTest() {
-        // disabling these features to have better visibility of Collections
-        featureSettingsHelper.setRecentTabsFeatureEnabled(false)
-        featureSettingsHelper.setPocketEnabled(false)
-
-        val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(webPage.url) {
-        }.openTabDrawer {
-            createCollection(webPage.title, collectionName)
-            snackBarButtonClick("VIEW")
-        }
-
-        homeScreen {
-            verifyCollectionIsDisplayed(collectionName)
-            verifyCollectionIcon()
-        }.expandCollection(collectionName) {
-            verifyTabSavedInCollection(webPage.title)
-            verifyCollectionTabLogo(true)
-            verifyCollectionTabUrl(true)
-            verifyShareCollectionButtonIsVisible(true)
-            verifyCollectionMenuIsVisible(true)
-            verifyCollectionItemRemoveButtonIsVisible(webPage.title, true)
-        }.collapseCollection(collectionName) {}
-
-        collectionRobot {
-            verifyTabSavedInCollection(webPage.title, false)
-            verifyShareCollectionButtonIsVisible(false)
-            verifyCollectionMenuIsVisible(false)
-            verifyCollectionTabLogo(false)
-            verifyCollectionTabUrl(false)
-            verifyCollectionItemRemoveButtonIsVisible(webPage.title, false)
-        }
-
-        homeScreen {
-        }.expandCollection(collectionName) {
-            verifyTabSavedInCollection(webPage.title)
-            verifyCollectionTabLogo(true)
-            verifyCollectionTabUrl(true)
-            verifyShareCollectionButtonIsVisible(true)
-            verifyCollectionMenuIsVisible(true)
-            verifyCollectionItemRemoveButtonIsVisible(webPage.title, true)
-        }.collapseCollection(collectionName) {}
-
-        collectionRobot {
-            verifyTabSavedInCollection(webPage.title, false)
-            verifyShareCollectionButtonIsVisible(false)
-            verifyCollectionMenuIsVisible(false)
-            verifyCollectionTabLogo(false)
-            verifyCollectionTabUrl(false)
-            verifyCollectionItemRemoveButtonIsVisible(webPage.title, false)
-        }
-    }
-
-    @Test
-    fun openAllTabsInCollectionTest() {
-        val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(webPage.url) {
-        }.openTabDrawer {
-            createCollection(webPage.title, collectionName)
-            verifySnackBarText("Collection saved!")
-            closeTab()
-        }
-
-        homeScreen {
-        }.expandCollection(collectionName) {
-            clickCollectionThreeDotButton()
-            selectOpenTabs()
-        }
-        tabDrawer {
-            verifyExistingOpenTabs(webPage.title)
-        }
-    }
-
-    @Test
-    fun shareCollectionTest() {
-        val firstWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-        val secondWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 2)
-        val sharingApp = "Gmail"
-        val urlString = "${secondWebsite.url}\n\n${firstWebsite.url}"
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(firstWebsite.url) {
-            verifyPageContent(firstWebsite.content)
-        }.openTabDrawer {
-            createCollection(firstWebsite.title, collectionName)
-        }.openNewTab {
-        }.submitQuery(secondWebsite.url.toString()) {
-            verifyPageContent(secondWebsite.content)
-        }.openThreeDotMenu {
-        }.openSaveToCollection {
-        }.selectExistingCollection(collectionName) {
-        }.goToHomescreen {
-        }.expandCollection(collectionName) {
-        }.clickShareCollectionButton {
-            verifyShareTabsOverlay(firstWebsite.title, secondWebsite.title)
-            selectAppToShareWith(sharingApp)
-            verifySharedTabsIntent(urlString, collectionName)
-        }
-    }
-
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/23296")
-    @Test
-    // Test running on beta/release builds in CI:
-    // caution when making changes to it, so they don't block the builds
-    fun deleteCollectionTest() {
-        val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(webPage.url) {
-        }.openTabDrawer {
-            createCollection(webPage.title, collectionName)
-            snackBarButtonClick("VIEW")
-        }
-
-        homeScreen {
-        }.expandCollection(collectionName) {
-            clickCollectionThreeDotButton()
-            selectDeleteCollection()
-        }
-
-        homeScreen {
-            verifySnackBarText("Collection deleted")
-            verifyNoCollectionsText()
-        }
-    }
+    // @Test
+    // fun verifyExpandedCollectionItemsTest() {
+    //     // disabling these features to have better visibility of Collections
+    //     featureSettingsHelper.setRecentTabsFeatureEnabled(false)
+    //     featureSettingsHelper.setPocketEnabled(false)
+    //
+    //     val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+    //
+    //     navigationToolbar {
+    //     }.enterURLAndEnterToBrowser(webPage.url) {
+    //     }.openTabDrawer {
+    //         createCollection(webPage.title, collectionName)
+    //         snackBarButtonClick("VIEW")
+    //     }
+    //
+    //     homeScreen {
+    //         verifyCollectionIsDisplayed(collectionName)
+    //         verifyCollectionIcon()
+    //     }.expandCollection(collectionName) {
+    //         verifyTabSavedInCollection(webPage.title)
+    //         verifyCollectionTabLogo(true)
+    //         verifyCollectionTabUrl(true)
+    //         verifyShareCollectionButtonIsVisible(true)
+    //         verifyCollectionMenuIsVisible(true)
+    //         verifyCollectionItemRemoveButtonIsVisible(webPage.title, true)
+    //     }.collapseCollection(collectionName) {}
+    //
+    //     collectionRobot {
+    //         verifyTabSavedInCollection(webPage.title, false)
+    //         verifyShareCollectionButtonIsVisible(false)
+    //         verifyCollectionMenuIsVisible(false)
+    //         verifyCollectionTabLogo(false)
+    //         verifyCollectionTabUrl(false)
+    //         verifyCollectionItemRemoveButtonIsVisible(webPage.title, false)
+    //     }
+    //
+    //     homeScreen {
+    //     }.expandCollection(collectionName) {
+    //         verifyTabSavedInCollection(webPage.title)
+    //         verifyCollectionTabLogo(true)
+    //         verifyCollectionTabUrl(true)
+    //         verifyShareCollectionButtonIsVisible(true)
+    //         verifyCollectionMenuIsVisible(true)
+    //         verifyCollectionItemRemoveButtonIsVisible(webPage.title, true)
+    //     }.collapseCollection(collectionName) {}
+    //
+    //     collectionRobot {
+    //         verifyTabSavedInCollection(webPage.title, false)
+    //         verifyShareCollectionButtonIsVisible(false)
+    //         verifyCollectionMenuIsVisible(false)
+    //         verifyCollectionTabLogo(false)
+    //         verifyCollectionTabUrl(false)
+    //         verifyCollectionItemRemoveButtonIsVisible(webPage.title, false)
+    //     }
+    // }
+    //
+    // @Test
+    // fun openAllTabsInCollectionTest() {
+    //     val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+    //
+    //     navigationToolbar {
+    //     }.enterURLAndEnterToBrowser(webPage.url) {
+    //     }.openTabDrawer {
+    //         createCollection(webPage.title, collectionName)
+    //         verifySnackBarText("Collection saved!")
+    //         closeTab()
+    //     }
+    //
+    //     homeScreen {
+    //     }.expandCollection(collectionName) {
+    //         clickCollectionThreeDotButton()
+    //         selectOpenTabs()
+    //     }
+    //     tabDrawer {
+    //         verifyExistingOpenTabs(webPage.title)
+    //     }
+    // }
+    //
+    // @Test
+    // fun shareCollectionTest() {
+    //     val firstWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+    //     val secondWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+    //     val sharingApp = "Gmail"
+    //     val urlString = "${secondWebsite.url}\n\n${firstWebsite.url}"
+    //
+    //     navigationToolbar {
+    //     }.enterURLAndEnterToBrowser(firstWebsite.url) {
+    //         verifyPageContent(firstWebsite.content)
+    //     }.openTabDrawer {
+    //         createCollection(firstWebsite.title, collectionName)
+    //     }.openNewTab {
+    //     }.submitQuery(secondWebsite.url.toString()) {
+    //         verifyPageContent(secondWebsite.content)
+    //     }.openThreeDotMenu {
+    //     }.openSaveToCollection {
+    //     }.selectExistingCollection(collectionName) {
+    //     }.goToHomescreen {
+    //     }.expandCollection(collectionName) {
+    //     }.clickShareCollectionButton {
+    //         verifyShareTabsOverlay(firstWebsite.title, secondWebsite.title)
+    //         selectAppToShareWith(sharingApp)
+    //         verifySharedTabsIntent(urlString, collectionName)
+    //     }
+    // }
+    //
+    // @Test
+    // // Test running on beta/release builds in CI:
+    // // caution when making changes to it, so they don't block the builds
+    // fun deleteCollectionTest() {
+    //     val webPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+    //
+    //     navigationToolbar {
+    //     }.enterURLAndEnterToBrowser(webPage.url) {
+    //     }.openTabDrawer {
+    //         createCollection(webPage.title, collectionName)
+    //         snackBarButtonClick("VIEW")
+    //     }
+    //
+    //     homeScreen {
+    //     }.expandCollection(collectionName) {
+    //         clickCollectionThreeDotButton()
+    //         selectDeleteCollection()
+    //     }
+    //
+    //     homeScreen {
+    //         verifySnackBarText("Collection deleted")
+    //         verifyNoCollectionsText()
+    //     }
+    // }
 
     @Test
     // Verifies that deleting a Bookmarks folder also removes the item from inside it.
@@ -810,13 +791,9 @@ class SmokeTest {
             createBookmark(website.url)
         }.openThreeDotMenu {
         }.openBookmarks {
-            bookmarksListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 1)
-            IdlingRegistry.getInstance().register(bookmarksListIdlingResource!!)
             verifyBookmarkTitle("Test_Page_1")
             createFolder("My Folder")
             verifyFolderTitle("My Folder")
-            IdlingRegistry.getInstance().unregister(bookmarksListIdlingResource!!)
         }.openThreeDotMenu("Test_Page_1") {
         }.clickEdit {
             clickParentFolderSelector()
@@ -824,11 +801,7 @@ class SmokeTest {
             navigateUp()
             saveEditBookmark()
             createFolder("My Folder 2")
-            bookmarksListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 1)
-            IdlingRegistry.getInstance().register(bookmarksListIdlingResource!!)
             verifyFolderTitle("My Folder 2")
-            IdlingRegistry.getInstance().unregister(bookmarksListIdlingResource!!)
         }.openThreeDotMenu("My Folder 2") {
         }.clickEdit {
             clickParentFolderSelector()
@@ -949,7 +922,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/24508")
     @Test
     fun addPrivateBrowsingShortcutTest() {
         homeScreen {
@@ -1072,6 +1044,7 @@ class SmokeTest {
         }
     }
 
+    @Ignore("Failing with frequent ANR: https://bugzilla.mozilla.org/show_bug.cgi?id=1764605")
     @Test
     fun audioPlaybackSystemNotificationTest() {
         val audioTestPage = TestAssetHelper.getAudioPageAsset(mockWebServer)
@@ -1083,7 +1056,7 @@ class SmokeTest {
             assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
         }.openNotificationShade {
             verifySystemNotificationExists(audioTestPage.title)
-            clickSystemNotificationControlButton("Pause")
+            clickMediaNotificationControlButton("Pause")
             verifyMediaSystemNotificationButtonState("Play")
         }
 
@@ -1130,10 +1103,12 @@ class SmokeTest {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
-            verifyDefaultBrowserIsDisaled()
+            verifyDefaultBrowserIsDisabled()
             clickDefaultBrowserSwitch()
             verifyAndroidDefaultAppsMenuAppears()
         }
+        // Dismiss the request
+        mDevice.pressBack()
     }
 
     @Test

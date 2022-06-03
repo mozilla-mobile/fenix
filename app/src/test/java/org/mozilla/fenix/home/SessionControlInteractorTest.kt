@@ -9,7 +9,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
-import mozilla.components.service.pocket.PocketRecommendedStory
+import mozilla.components.service.pocket.PocketStory
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -18,6 +18,8 @@ import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketStoriesController
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recentbookmarks.controller.RecentBookmarksController
+import org.mozilla.fenix.home.recentsyncedtabs.RecentSyncedTab
+import org.mozilla.fenix.home.recentsyncedtabs.controller.RecentSyncedTabController
 import org.mozilla.fenix.home.recenttabs.controller.RecentTabController
 import org.mozilla.fenix.home.recentvisits.controller.RecentVisitsController
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
@@ -27,6 +29,7 @@ class SessionControlInteractorTest {
 
     private val controller: DefaultSessionControlController = mockk(relaxed = true)
     private val recentTabController: RecentTabController = mockk(relaxed = true)
+    private val recentSyncedTabController: RecentSyncedTabController = mockk(relaxed = true)
     private val recentBookmarksController: RecentBookmarksController = mockk(relaxed = true)
     private val pocketStoriesController: PocketStoriesController = mockk(relaxed = true)
 
@@ -40,6 +43,7 @@ class SessionControlInteractorTest {
         interactor = SessionControlInteractor(
             controller,
             recentTabController,
+            recentSyncedTabController,
             recentBookmarksController,
             recentVisitsController,
             pocketStoriesController
@@ -172,6 +176,21 @@ class SessionControlInteractorTest {
     }
 
     @Test
+    fun `WHEN recent synced tab is clicked THEN the tab is handled`() {
+        val tab: RecentSyncedTab = mockk()
+        interactor.onRecentSyncedTabClicked(tab)
+
+        verify { recentSyncedTabController.handleRecentSyncedTabClick(tab) }
+    }
+
+    @Test
+    fun `WHEN recent synced tabs show all is clicked THEN show all synced tabs is handled`() {
+        interactor.onSyncedTabShowAllClicked()
+
+        verify { recentSyncedTabController.handleSyncedTabShowAllClicked() }
+    }
+
+    @Test
     fun `WHEN a recently saved bookmark is clicked THEN the selected bookmark is handled`() {
         val bookmark = RecentBookmark()
 
@@ -219,8 +238,17 @@ class SessionControlInteractorTest {
     }
 
     @Test
+    fun `GIVEN a PocketStoriesInteractor WHEN a story is shown THEN handle it in a PocketStoriesController`() {
+        val shownStory: PocketStory = mockk()
+
+        interactor.onStoryShown(shownStory)
+
+        verify { pocketStoriesController.handleStoryShown(shownStory) }
+    }
+
+    @Test
     fun `GIVEN a PocketStoriesInteractor WHEN stories are shown THEN handle it in a PocketStoriesController`() {
-        val shownStories: List<PocketRecommendedStory> = mockk()
+        val shownStories: List<PocketStory> = mockk()
 
         interactor.onStoriesShown(shownStories)
 
@@ -238,7 +266,7 @@ class SessionControlInteractorTest {
 
     @Test
     fun `GIVEN a PocketStoriesInteractor WHEN a story is clicked THEN handle it in a PocketStoriesController`() {
-        val clickedStory: PocketRecommendedStory = mockk()
+        val clickedStory: PocketStory = mockk()
         val storyGridLocation = 1 to 2
 
         interactor.onStoryClicked(clickedStory, storyGridLocation)

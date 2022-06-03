@@ -52,6 +52,7 @@ import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.feature.contextmenu.DefaultSelectionActionDelegate
+import mozilla.components.feature.media.ext.findActiveMediaTab
 import mozilla.components.feature.privatemode.notification.PrivateNotificationFeature
 import mozilla.components.feature.search.BrowserStoreSearchAdapter
 import mozilla.components.service.fxa.sync.SyncReason
@@ -68,20 +69,21 @@ import mozilla.components.support.locale.LocaleAwareAppCompatActivity
 import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
 import mozilla.components.support.webextensions.WebExtensionPopupFeature
+import mozilla.telemetry.glean.private.NoExtras
+import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Metrics
+import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.addons.AddonDetailsFragmentDirections
 import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
-import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.databinding.ActivityHomeBinding
 import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExceptionsFragmentDirections
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.setNavigationIcon
 import org.mozilla.fenix.ext.settings
@@ -158,6 +160,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         WebExtensionPopupFeature(components.core.store, ::openPopup)
     }
 
+    private val serviceWorkerSupport by lazy {
+        ServiceWorkerSupportFeature(this)
+    }
+
     private var inflater: LayoutInflater? = null
 
     private val navHost by lazy {
@@ -167,11 +173,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     private val externalSourceIntentProcessors by lazy {
         listOf(
             HomeDeepLinkIntentProcessor(this),
-            SpeechProcessingIntentProcessor(this, components.core.store, components.analytics.metrics),
-            StartSearchIntentProcessor(components.analytics.metrics),
+            SpeechProcessingIntentProcessor(this, components.core.store),
+            StartSearchIntentProcessor(),
             OpenBrowserIntentProcessor(this, ::getIntentSessionId),
             OpenSpecificTabIntentProcessor(this),
-            DefaultBrowserIntentProcessor(this, components.analytics.metrics)
+            DefaultBrowserIntentProcessor(this)
         )
     }
 
@@ -242,7 +248,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         if (!shouldStartOnHome() && shouldNavigateToBrowserOnColdStart(savedInstanceState)) {
             navigateToBrowserOnColdStart()
         } else {
-            components.analytics.metrics.track(Event.StartOnHomeEnterHomeScreen)
+            StartOnHome.enterHomeScreen.record(NoExtras())
         }
 
         Performance.processIntentIfPerformanceTest(intent, this)
@@ -258,11 +264,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             val safeIntent = intent?.toSafeIntent()
             safeIntent
                 ?.let(::getIntentSource)
-                ?.also { components.analytics.metrics.track(Event.OpenedApp(it)) }
+                ?.also { Events.appOpened.record(Events.AppOpenedExtra(it)) }
         }
         supportActionBar?.hide()
 
-        lifecycle.addObservers(webExtensionPopupFeature)
+        lifecycle.addObservers(webExtensionPopupFeature, serviceWorkerSupport)
 
         if (shouldAddToRecentsScreen(intent)) {
             intent.removeExtra(START_IN_RECENTS_SCREEN)
@@ -283,8 +289,15 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             components.core.contileTopSitesUpdater.startPeriodicWork()
         }
 
-        if (settings().showPocketRecommendationsFeature) {
-            components.core.pocketStoriesService.startPeriodicStoriesRefresh()
+        // To assess whether the Pocket stories are to be downloaded or not multiple SharedPreferences
+        // are read possibly needing to load them on the current thread. Move that to a background thread.
+        lifecycleScope.launch(IO) {
+            if (settings().showPocketRecommendationsFeature) {
+                components.core.pocketStoriesService.startPeriodicStoriesRefresh()
+            }
+            if (settings().showPocketSponsoredStories) {
+                components.core.pocketStoriesService.startPeriodicSponsoredStoriesRefresh()
+            }
         }
 
         components.core.engine.profiler?.addMarker(
@@ -345,7 +358,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
 
             if (settings().checkIfFenixIsDefaultBrowserOnAppResume()) {
-                metrics.track(Event.ChangedToDefaultBrowser)
+                Events.defaultBrowserChanged.record(NoExtras())
             }
 
             DefaultBrowserNotificationWorker.setDefaultBrowserNotificationIfNeeded(applicationContext)
@@ -454,6 +467,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         components.core.contileTopSitesUpdater.stopPeriodicWork()
         components.core.pocketStoriesService.stopPeriodicStoriesRefresh()
+        components.core.pocketStoriesService.stopPeriodicSponsoredStoriesRefresh()
         privateNotificationObserver?.stop()
     }
 
@@ -497,6 +511,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 "intent" to intent.action.toString()
             )
         )
+
+        val tab = components.core.store.state.findActiveMediaTab()
+        if (tab != null) {
+            components.useCases.sessionUseCases.exitFullscreen(tab.id)
+        }
 
         val intentProcessors =
             listOf(
@@ -667,10 +686,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     @VisibleForTesting(otherwise = PROTECTED)
-    internal open fun getIntentSource(intent: SafeIntent): Event.OpenedApp.Source? {
+    internal open fun getIntentSource(intent: SafeIntent): String? {
         return when {
-            intent.isLauncherIntent -> Event.OpenedApp.Source.APP_ICON
-            intent.action == Intent.ACTION_VIEW -> Event.OpenedApp.Source.LINK
+            intent.isLauncherIntent -> "APP_ICON"
+            intent.action == Intent.ACTION_VIEW -> "LINK"
             else -> null
         }
     }

@@ -49,15 +49,40 @@ sealed class Wallpaper {
         abstract val expirationDate: Date?
         abstract val remoteParentDirName: String
         @Suppress("MagicNumber")
+        /**
+         * A promotional partnered wallpaper.
+         */
         data class House(
             override val name: String,
             override val expirationDate: Date? = Calendar.getInstance().run {
                 set(2022, Calendar.APRIL, 30)
                 time
             }
-        ) : Remote() {
+        ) : Remote(), Promotional {
             override val remoteParentDirName: String = "house"
+            override fun isAvailableInLocale(locale: String): Boolean =
+                listOf("en-US", "es-US").contains(locale)
         }
+
+        /**
+         * Wallpapers that are original Firefox creations.
+         */
+        data class Firefox(
+            override val name: String,
+        ) : Remote() {
+            override val expirationDate: Date? = null
+            override val remoteParentDirName: String = "firefox"
+        }
+    }
+
+    /**
+     * Designates whether a wallpaper is part of a promotion that is locale-restricted.
+     */
+    interface Promotional {
+        /**
+         * Returns whether the wallpaper is available in [locale] or not.
+         */
+        fun isAvailableInLocale(locale: String): Boolean
     }
 
     companion object {

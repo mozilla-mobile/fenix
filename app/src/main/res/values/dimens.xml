@@ -14,7 +14,6 @@
     <dimen name="library_item_height">56dp</dimen>
     <dimen name="library_item_icon_margin_horizontal">16dp</dimen>
     <dimen name="history_favicon_width_height">40dp</dimen>
-    <dimen name="tab_border_width">2dp</dimen>
     <dimen name="tab_corner_radius">8dp</dimen>
     <dimen name="preference_icon_drawable_size">24dp</dimen>
     <dimen name="search_bar_search_engine_icon_padding">12dp</dimen>
@@ -77,7 +76,6 @@
 
     <!-- Home Fragment -->
     <dimen name="home_fragment_top_toolbar_header_margin">60dp</dimen>
-    <dimen name="home_item_elevation">5dp</dimen>
     <dimen name="home_item_horizontal_margin">16dp</dimen>
 
     <!-- Browser Fragment -->
@@ -169,7 +167,6 @@
     <dimen name="account_settings_device_name_min_height">48dp</dimen>
 
     <!-- Top sites  -->
-    <dimen name="top_sites_item_margin_top">8dp</dimen>
     <dimen name="top_sites_item_margin_bottom">12dp</dimen>
     <dimen name="top_sites_text_margin_top">6dp</dimen>
     <dimen name="top_sites_favicon_size">36dp</dimen>
@@ -188,5 +185,4 @@
     <!-- a11y -->
     <dimen name="accessibility_min_height">48dp</dimen>
 
-    <dimen name="tap_increase_16">16dp</dimen>
 </resources>

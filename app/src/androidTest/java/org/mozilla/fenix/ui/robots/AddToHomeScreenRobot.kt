@@ -14,15 +14,16 @@ import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.By.textContains
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers.allOf
+import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
+import java.util.regex.Pattern
 
 /**
  * Implementation of Robot Pattern for the Add to homescreen feature.
@@ -50,9 +51,23 @@ class AddToHomeScreenRobot {
 
     fun clickAddAutomaticallyButton() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mDevice.wait(Until.findObject(textContains("add automatically")), waitingTime)
+            mDevice.wait(
+                Until.findObject(
+                    By.text(
+                        Pattern.compile("Add Automatically", Pattern.CASE_INSENSITIVE)
+                    )
+                ),
+                waitingTime
+            )
             addAutomaticallyButton().click()
         }
+    }
+
+    fun verifyShortcutAdded(shortcutTitle: String) {
+        assertTrue(
+            mDevice.findObject(UiSelector().text(shortcutTitle))
+                .waitForExists(waitingTime)
+        )
     }
 
     class Transition {
@@ -71,10 +86,12 @@ class AddToHomeScreenRobot {
             mDevice.pressHome()
 
             fun homeScreenView() = UiScrollable(UiSelector().scrollable(true))
-            homeScreenView().setAsHorizontalList()
+            homeScreenView().waitForExists(waitingTime)
 
             fun shortcut() =
-                homeScreenView().getChildByText(UiSelector().textContains(title), title)
+                homeScreenView()
+                    .setAsHorizontalList()
+                    .getChildByText(UiSelector().textContains(title), title, true)
             shortcut().clickAndWaitForNewWindow()
 
             BrowserRobot().interact()

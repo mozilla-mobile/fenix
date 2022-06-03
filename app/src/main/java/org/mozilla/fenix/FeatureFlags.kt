@@ -5,10 +5,8 @@
 package org.mozilla.fenix
 
 import android.content.Context
-import android.os.StrictMode
 import mozilla.components.support.locale.LocaleManager
 import mozilla.components.support.locale.LocaleManager.getSystemDefault
-import org.mozilla.fenix.ext.components
 
 /**
  * A single source for setting feature flags that are mostly based on build type.
@@ -65,45 +63,31 @@ object FeatureFlags {
     }
 
     /**
+     * Show Pocket sponsored stories in between Pocket recommended stories on home.
+     */
+    fun isPocketSponsoredStoriesFeatureEnabled(context: Context): Boolean {
+        return isPocketRecommendationsFeatureEnabled(context) && Config.channel.isDebug
+    }
+
+    /**
      * Enables showing the homescreen onboarding card.
      */
     const val showHomeOnboarding = false
 
     /**
-     * Enables showing the option to clear site data.
-     */
-    const val showClearSiteData = true
-
-    /**
-     * Enables showing the wallpaper functionality.
-     */
-    const val showWallpapers = true
-
-    /**
-     * Enables the Contile top sites.
-     */
-    const val contileFeature = true
-
-    /**
      * Enables history improvement features.
      */
-    val historyImprovementFeatures = Config.channel.isNightlyOrDebug
+    const val historyImprovementFeatures = true
 
     /**
-     * Enables themed wallpapers feature.
+     * Separates history into local and synced from other sources.
      */
-    fun isThemedWallpapersFeatureEnabled(context: Context): Boolean {
-        return context.components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
-            val langTag = LocaleManager.getCurrentLocale(context)
-                ?.toLanguageTag() ?: getSystemDefault().toLanguageTag()
-            listOf("en-US", "es-US").contains(langTag)
-        }
-    }
+    val showSyncedHistory = Config.channel.isDebug
 
     /**
      * Enables the Task Continuity enhancements.
      */
-    val taskContinuityFeature = Config.channel.isDebug
+    val taskContinuityFeature = Config.channel.isNightlyOrDebug
 
     /**
      * Enables the Unified Search feature.
@@ -113,6 +97,5 @@ object FeatureFlags {
     /**
      * Enables receiving from the messaging framework.
      */
-    @Suppress("MayBeConst")
-    val messagingFeature = false
+    const val messagingFeature = true
 }

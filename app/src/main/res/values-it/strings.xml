@@ -42,9 +42,9 @@
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string name="recent_bookmarks_title">Segnalibri recenti</string>
     <!-- Content description for the recently saved bookmarks section on the home screen. -->
-    <string name="recently_saved_bookmarks_content_description">Segnalibri aggiunti di recente</string>
+    <string moz:removedIn="100" name="recently_saved_bookmarks_content_description" tools:ignore="UnusedResources">Segnalibri aggiunti di recente</string>
     <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
-    <string name="recently_saved_show_all">Visualizza tutti</string>
+    <string moz:removedIn="101" name="recently_saved_show_all" tools:ignore="UnusedResources">Visualizza tutti</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description_2">Visualizza tutti i segnalibri salvati</string>
 
@@ -69,8 +69,6 @@
     <string name="cfr_neg_button_text">No grazie</string>
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
-    <!-- Text for the info message. 'Firefox' intentionally hardcoded here.-->
-    <string moz:RemovedIn="99" name="open_in_app_cfr_info_message" tools:ignore="UnusedResources">È possibile impostare Firefox come browser predefinito per aprire i link nelle app.</string>
     <!-- Text for the info message. The first parameter is the name of the application.-->
     <string name="open_in_app_cfr_info_message_2">È possibile impostare %1$s come browser predefinito per aprire i link nelle app.</string>
     <!-- Text for the positive action button -->
@@ -99,8 +97,6 @@
 
     <!-- Text for title for the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_title">Chiudi automaticamente dopo un mese?</string>
-    <!-- Text for the body for the auto-close dialog of the inactive tabs. -->
-    <string moz:RemovedIn="99" name="tab_tray_inactive_auto_close_body" tools:ignore="UnusedResources">Firefox può chiudere le schede che non hai visualizzato nell’ultimo mese.</string>
     <!-- Text for the body for the auto-close dialog of the inactive tabs.
         The first parameter is the name of the application.-->
     <string name="tab_tray_inactive_auto_close_body_2">%1$s può chiudere le schede che non hai visualizzato nell’ultimo mese.</string>
@@ -179,8 +175,6 @@
     <string name="browser_menu_add_to_homescreen">Agg. a schermata principale</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
     <string name="browser_menu_install_on_homescreen">Installa</string>
-    <!-- Menu option on the toolbar that takes you to synced tabs page-->
-    <string moz:removedIn="98" name="synced_tabs" tools:ignore="UnusedResources">Schede sincronizzate</string>
     <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
     <string name="resync_button_content_description">Risincronizza</string>
     <!-- Browser menu button that opens the find in page menu -->
@@ -215,8 +209,6 @@
     <!-- Browser menu label for editing a bookmark -->
     <string name="browser_menu_edit">Modifica</string>
 
-    <!-- Browser menu button that opens the Customize menu -->
-    <string moz:removedIn="98" name="browser_menu_customize_home" tools:ignore="UnusedResources">Personalizza pagina iniziale</string>
     <!-- Button shown on the home page that opens the Customize home settings -->
     <string name="browser_menu_customize_home_1">Personalizza pagina iniziale</string>
     <!-- Browser Toolbar -->
@@ -257,15 +249,14 @@
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Cerca direttamente dalla barra degli indirizzi</string>
 
+    <!-- Menu option in the search selector menu to open the search settings -->
+    <string name="search_settings_menu_item">Impostazioni ricerca</string>
+
     <!-- Home onboarding -->
-    <!-- Onboarding home screen dialog title text. Firefox is intentionally hardcoded. -->
-    <string moz:removedIn="99" name="onboarding_home_screen_title_2" tools:ignore="UnusedResources">Novità di Firefox</string>
     <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
     <string name="onboarding_home_screen_title_3">Novità in %1$s</string>
     <!-- Onboarding home screen dialog description text. -->
     <string name="onboarding_home_screen_description_2">Ora è più facile riprendere da dove avevi interrotto.</string>
-    <!-- Onboarding home screen dialog title text for the home section. Firefox is intentionally hardcoded. -->
-    <string moz:RemovedIn="99" name="onboarding_home_screen_section_home_title_2" tools:ignore="UnusedResources">Pagina iniziale di Firefox personalizzata</string>
     <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
     <string name="onboarding_home_screen_section_home_title_3">Pagina iniziale di %1$s personalizzata</string>
     <!-- Onboarding home screen dialog description text for the home section. -->
@@ -285,8 +276,6 @@
     <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">La pagina iniziale personalizzata di Firefox rende più semplice riprendere da dove avevi interrotto. Puoi trovare le schede recenti, i segnalibri e i risultati delle ricerche.</string>
 
     <!-- Search Widget -->
-    <!-- Content description for searching with a widget. Firefox is intentionally hardcoded.-->
-    <string moz:RemovedIn="99" name="search_widget_content_description" tools:ignore="UnusedResources">Apri una nuova scheda in Firefox</string>
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
     <string name="search_widget_content_description_2">Apri una nuova scheda in %1$s</string>
     <!-- Text preview for smaller sized widgets -->
@@ -335,6 +324,26 @@
     <string name="preferences_screenshots_in_private_mode_disclaimer">Se consentito, le schede anonime saranno visibili anche quando sono aperte più app</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Aggiungi scorciatoia navigazione anonima</string>
+    <!-- Preference for enabling "HTTPS-Only" mode -->
+    <string name="preferences_https_only_title">Modalità solo HTTPS</string>
+    <!-- Description of the preference to enable "HTTPS-Only" mode. -->
+    <string name="preferences_https_only_summary">Tenta automaticamente la connessione ai siti utilizzando il protocollo di crittografia HTTPS per una maggiore sicurezza.</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to on -->
+    <string name="preferences_https_only_on">Attiva</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to off -->
+    <string name="preferences_https_only_off">Disattivata</string>
+    <!-- Text displayed that links to website containing documentation about "HTTPS-Only" mode -->
+    <string name="preferences_http_only_learn_more">Ulteriori informazioni</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_all_tabs">Attiva in tutte le schede</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_private_tabs">Attiva solo in schede anonime</string>
+    <!-- Title shown in the error page for when trying to access a http website while https only mode is enabled. -->
+    <string name="errorpage_httpsonly_title">Versione sicura del sito non disponibile</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the first. -->
+    <string name="errorpage_httpsonly_message_title">Molto probabilmente il sito non supporta HTTPS.</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the second. -->
+    <string name="errorpage_httpsonly_message_summary">Esiste tuttavia la possibilità che si tratti di un tentativo di attacco. Se decidi di accedere comunque al sito web, dovresti evitare di inserire informazioni sensibili. Proseguendo, la modalità solo HTTPS verrà temporaneamente disattivata per questo sito.</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Accessibilità</string>
     <!-- Preference to override the Firefox Account server -->
@@ -440,13 +449,9 @@
     <string name="wallpaper_updated_snackbar_message">Sfondo aggiornato.</string>
     <!-- Snackbar label for action to view selected wallpaper -->
     <string name="wallpaper_updated_snackbar_action">Visualizza</string>
-    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_label" tools:ignore="UnusedResources">Tocca il logo per cambiare lo sfondo</string>
 
     <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
     <string name="wallpaper_tap_to_change_switch_label_1">Cambia lo sfondo toccando il logo di Firefox nella pagina iniziale</string>
-    <!-- Description for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string moz:removedIn="99" name="wallpaper_tap_to_change_switch_description" tools:ignore="UnusedResources">Passa da un’immagine all’altra senza abbandonare la pagina principale.</string>
 
     <!-- This is the accessibility content description for the wallpapers functionality. Users are
     able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
@@ -567,13 +572,13 @@
 
     <!-- Gestures Preferences-->
     <!-- Preferences for using pull to refresh in a webpage -->
-    <string name="preference_gestures_website_pull_to_refresh">Trascinare per aggiornare</string>
+    <string name="preference_gestures_website_pull_to_refresh">Trascina per aggiornare</string>
     <!-- Preference for using the dynamic toolbar -->
-    <string name="preference_gestures_dynamic_toolbar">Scorrere per nascondere la barra degli strumenti</string>
+    <string name="preference_gestures_dynamic_toolbar">Scorri per nascondere la barra degli strumenti</string>
     <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
-    <string name="preference_gestures_swipe_toolbar_switch_tabs">Scorrere la barra degli strumenti lateralmente per cambiare scheda</string>
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Scorri la barra degli strumenti lateralmente per cambiare scheda</string>
     <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
-    <string name="preference_gestures_swipe_toolbar_show_tabs">Scorrere la barra degli strumenti verso l’alto per aprire le schede</string>
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Scorri la barra degli strumenti verso l’alto per aprire le schede</string>
 
     <!-- Library -->
     <!-- Option in Library to open Downloads page -->
@@ -675,8 +680,6 @@
 
     <!-- Title of the active section on the studies list -->
     <string name="studies_active">Attivi</string>
-    <!-- Description for studies, it indicates why Firefox use studies -->
-    <string moz:RemovedIn="99" name="studies_description" tools:ignore="UnusedResources">Firefox può installare e condurre degli studi di tanto in tanto.</string>
     <!-- Description for studies, it indicates why Firefox use studies. The first parameter is the name of the application. -->
     <string name="studies_description_2">%1$s può installare e condurre degli studi di tanto in tanto.</string>
     <!-- Learn more link for studies, links to an article for more information about studies. -->
@@ -690,7 +693,7 @@
     <string name="studies_restart_dialog_cancel">Annulla</string>
 
     <!-- Toast shown after turning on/off studies preferences -->
-    <string name="studies_toast_quit_application" tools:ignore="UnusedResources">Chiusura in corso per applicare le modifiche...</string>
+    <string name="studies_toast_quit_application" tools:ignore="UnusedResources">Chiusura in corso per applicare le modifiche…</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -766,8 +769,6 @@
 
     <!-- History -->
     <!-- Text for the button to search all history -->
-    <string moz:removedIn="99" name="history_search" tools:ignore="UnusedResources">Immetti termine di ricerca</string>
-    <!-- Text for the button to search all history -->
     <string name="history_search_1">Immetti i termini di ricerca</string>
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Cancella cronologia</string>
@@ -793,6 +794,11 @@
 
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Nessuna cronologia disponibile.</string>
+
+    <!-- Text for the button inside History screen that opens Synced History screen. History that is coming from other devices -->
+    <string name="history_synced_from_other_devices">Sincronizzata da altri dispositivi</string>
+    <!-- The page title for browsing history coming from other devices. -->
+    <string name="history_from_other_devices">Da altri dispositivi</string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1100,7 +1106,9 @@
     <!-- Text shown in snackbar when user bookmarks a list of tabs -->
     <string name="snackbar_message_bookmarks_saved">Segnalibri salvati.</string>
     <!-- Text shown in snackbar when user adds a site to top sites -->
-    <string name="snackbar_added_to_top_sites">Aggiunto ai siti principali</string>
+    <string moz:RemovedIn="101" name="snackbar_added_to_top_sites" tools:ignore="UnusedResources">Aggiunto ai siti principali</string>
+    <!-- Text shown in snackbar when user adds a site to shortcuts -->
+    <string name="snackbar_added_to_shortcuts">Aggiunto alle scorciatoie.</string>
     <!-- Text shown in snackbar when user closes a private tab -->
     <string name="snackbar_private_tab_closed">Scheda anonima chiusa</string>
     <!-- Text shown in snackbar when user closes all private tabs -->
@@ -1195,6 +1203,15 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">Eliminazione dati di navigazione in corso…</string>
 
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
+    <string name="delete_history_group_prompt_message">Questa azione eliminerà tutti gli elementi.</string>
+    <!-- Text for the cancel button for the history group deletion dialog -->
+    <string name="delete_history_group_prompt_cancel">Annulla</string>
+    <!-- Text for the allow button for the history group dialog -->
+    <string name="delete_history_group_prompt_allow">Elimina</string>
+    <!-- Text for the snackbar confirmation that the history group was deleted -->
+    <string name="delete_history_group_snackbar">Gruppo eliminato</string>
+
     <!-- Tips -->
     <!-- text for firefox preview moving tip header "Firefox Preview" and "Firefox Nightly" are intentionally hardcoded -->
     <string moz:RemovedIn="100" name="tip_firefox_preview_moved_header" tools:ignore="UnusedResources">Firefox Preview adesso si chiama Firefox Nightly</string>
@@ -1239,8 +1256,6 @@
 
     <!-- text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header_3">Privacy sempre attiva</string>
-    <!-- text for the tracking protection card description. 'Firefox' intentionally hardcoded here -->
-    <string moz:RemovedIn="99" name="onboarding_tracking_protection_description_3" tools:ignore="UnusedResources">Firefox blocca automaticamente le società che, di nascosto, cercano di seguire le tue attività sul Web.</string>
     <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
     <string name="onboarding_tracking_protection_description_4">%1$s blocca automaticamente le società che, di nascosto, cercano di seguire le tue attività sul Web.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
@@ -1547,7 +1562,11 @@
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Ordina il menu delle credenziali di accesso</string>
 
-    <!-- Credit Cards Autofill -->
+    <!-- Autofill -->
+    <!-- Preference and title for managing the autofill settings -->
+    <string name="preferences_autofill">Compilazione automatica</string>
+    <!-- Preference and title for managing the settings for addresses -->
+    <string name="preferences_addresses">Indirizzi</string>
     <!-- Preference and title for managing the settings for credit cards -->
     <string name="preferences_credit_cards">Carte di credito</string>
     <!-- Preference for saving and autofilling credit cards -->
@@ -1563,6 +1582,15 @@
 
     <!-- Preference option for managing saved credit cards -->
     <string name="preferences_credit_cards_manage_saved_cards">Gestione carte salvate</string>
+    <!-- Preference option for adding an address -->
+    <string name="preferences_addresses_add_address">Aggiungi indirizzo</string>
+    <!-- Preference option for managing saved addresses -->
+    <string name="preferences_addresses_manage_addresses">Gestione indirizzi</string>
+    <!-- Preference for saving and autofilling addresses -->
+    <string name="preferences_addresses_save_and_autofill_addresses">Salvare e compilare automaticamente gli indirizzi</string>
+    <!-- Preference summary for saving and autofilling address data -->
+    <string name="preferences_addresses_save_and_autofill_addresses_summary">Includere informazioni come numeri, email e indirizzi di spedizione</string>
+
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Aggiungi carta</string>
     <!-- Title of the "Edit card" screen -->
@@ -1617,6 +1645,53 @@
     <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
     <string name="credit_cards_biometric_prompt_unlock_message">Sblocca per utilizzare le informazioni delle carte di credito salvate</string>
 
+    <!-- Title of the "Add address" screen -->
+    <string name="addresses_add_address">Aggiungi indirizzo</string>
+    <!-- Title of the "Edit address" screen -->
+    <string name="addresses_edit_address">Modifica indirizzo</string>
+    <!-- Title of the "Manage addresses" screen -->
+    <string name="addresses_manage_addresses">Gestione indirizzi</string>
+    <!-- The header for the full name of an address -->
+    <string moz:removedIn="102" name="addresses_full_name" tools:ignore="UnusedResources">Nome completo</string>
+    <!-- The header for the first name of an address -->
+    <string name="addresses_first_name">Nome</string>
+    <!-- The header for the middle name of an address -->
+    <string name="addresses_middle_name">Secondo nome</string>
+    <!-- The header for the last name of an address -->
+    <string name="addresses_last_name">Cognome</string>
+    <!-- The header for the street address of an address -->
+    <string name="addresses_street_address">Indirizzo</string>
+    <!-- The header for the city of an address -->
+    <string name="addresses_city">Città</string>
+    <!-- The header for the state of an address -->
+    <string name="addresses_state">Stato</string>
+    <!-- The header for the zip code of an address -->
+    <string name="addresses_zip">Codice postale</string>
+    <!-- The header for the country or region of an address -->
+    <string name="addresses_country">Paese o regione</string>
+    <!-- The header for the phone number of an address -->
+    <string name="addresses_phone">Telefono</string>
+    <!-- The header for the email of an address -->
+    <string name="addresses_email">Email</string>
+    <!-- The text for the "Save" button for saving an address -->
+    <string name="addresses_save_button">Salva</string>
+
+    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting an address -->
+    <string name="addresses_cancel_button">Annulla</string>
+    <!-- The text for the "Delete address" button for deleting an address -->
+    <string name="addressess_delete_address_button">Elimina indirizzo</string>
+
+    <!-- The title for the "Delete address" confirmation dialog -->
+    <string name="addressess_confirm_dialog_message">Eliminare questo indirizzo?</string>
+    <!-- The text for the positive button on "Delete address" dialog -->
+    <string name="addressess_confirm_dialog_ok_button">Elimina</string>
+    <!-- The text for the negative button on "Delete address" dialog -->
+    <string name="addressess_confirm_dialog_cancel_button">Annulla</string>
+    <!-- The text for the "Save address" menu item for saving an address -->
+    <string name="address_menu_save_address">Salva indirizzo</string>
+    <!-- The text for the "Delete address" menu item for deleting an address -->
+    <string name="address_menu_delete_address">Elimina indirizzo</string>
+
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Aggiungi motore di ricerca</string>
     <!-- Title of the Edit search engine screen -->
@@ -1658,18 +1733,18 @@
     <string name="search_delete_search_engine_success_message">%s eliminato</string>
 
     <!-- Title text shown for the migration screen to the new browser. Placeholder replaced with app name -->
-    <string name="migration_title">Benvenuto in un %s completamente rinnovato</string>
+    <string moz:removedIn="100" name="migration_title" tools:ignore="UnusedResources">Benvenuto in un %s completamente rinnovato</string>
     <!-- Description text followed by a list of things migrating (e.g. Bookmarks, History). Placeholder replaced with app name-->
-    <string name="migration_description">Ti aspetta un browser completamente ridisegnato, con prestazioni migliori e funzioni che renderanno la tua vita online più facile.\n\nAttendi mentre aggiorniamo %s con</string>
+    <string moz:removedIn="100" name="migration_description" tools:ignore="UnusedResources">Ti aspetta un browser completamente ridisegnato, con prestazioni migliori e funzioni che renderanno la tua vita online più facile.\n\nAttendi mentre aggiorniamo %s con</string>
     <!-- Text on the disabled button while in progress. Placeholder replaced with app name -->
-    <string name="migration_updating_app_button_text">Aggiornamento di %s…</string>
+    <string moz:removedIn="100" name="migration_updating_app_button_text" tools:ignore="UnusedResources">Aggiornamento di %s…</string>
 
     <!-- Text on the enabled button. Placeholder replaced with app name-->
-    <string name="migration_update_app_button">Avvia %s</string>
+    <string moz:removedIn="100" name="migration_update_app_button" tools:ignore="UnusedResources">Avvia %s</string>
     <!-- Accessibility description text for a completed migration item -->
-    <string name="migration_icon_description">Migrazione completata</string>
+    <string moz:removedIn="100" name="migration_icon_description" tools:ignore="UnusedResources">Migrazione completata</string>
     <!--Text on list of migrated items (e.g. Settings, History, etc.)-->
-    <string name="migration_text_passwords">Password</string>
+    <string moz:removedIn="100" name="migration_text_passwords" tools:ignore="UnusedResources">Password</string>
 
     <!-- Heading for the instructions to allow a permission -->
     <string name="phone_feature_blocked_intro">Per consentirlo:</string>
@@ -1699,9 +1774,13 @@
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">Eliminare questo segnalibro?</string>
     <!-- Browser menu button that adds a top site to the home fragment -->
-    <string name="browser_menu_add_to_top_sites">Aggiungi ai siti principali</string>
+    <string moz:RemovedIn="101" name="browser_menu_add_to_top_sites" tools:ignore="UnusedResources">Aggiungi ai siti principali</string>
     <!-- Browser menu button that removes a top site from the home fragment -->
-    <string name="browser_menu_remove_from_top_sites">Elimina dai siti principali</string>
+    <string moz:RemovedIn="101" name="browser_menu_remove_from_top_sites" tools:ignore="UnusedResources">Elimina dai siti principali</string>
+    <!-- Browser menu button that adds a shortcut to the home fragment -->
+    <string name="browser_menu_add_to_shortcuts">Aggiungi alle scorciatoie</string>
+    <!-- Browser menu button that removes a shortcut from the home fragment -->
+    <string name="browser_menu_remove_from_shortcuts">Rimuovi dalle scorciatoie</string>
     <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
      the certificate authority that verified the ticket-->
     <string name="certificate_info_verified_by">Verificato da: %1$s</string>
@@ -1777,21 +1856,24 @@
 
     <!-- Top Sites -->
     <!-- Title text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_title">Raggiunto limite per i siti principali</string>
+    <string moz:RemovedIn="101" name="top_sites_max_limit_title" tools:ignore="UnusedResources">Raggiunto limite per i siti principali</string>
+    <!-- Title text displayed in the dialog when shortcuts limit is reached. -->
+    <string name="shortcut_max_limit_title">Raggiunto limite per le scorciatoie</string>
     <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string name="top_sites_max_limit_content_2">Per aggiungere un nuovo sito principale è necessario rimuoverne uno esistente. Toccare il sito da eliminare tenendo premuto e selezionare “Rimuovi”.</string>
+    <string moz:RemovedIn="101" name="top_sites_max_limit_content_2" tools:ignore="UnusedResources">Per aggiungere un nuovo sito principale è necessario rimuoverne uno esistente. Toccare il sito da eliminare tenendo premuto e selezionare rimuovi.</string>
+    <!-- Content description text displayed in the dialog when shortcut limit is reached. -->
+    <string name="shortcut_max_limit_content">Per aggiungere una nuova scorciatoia è necessario rimuoverne una esistente. Toccare il sito da eliminare tenendo premuto e selezionare rimuovi.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">OK, tutto chiaro</string>
-
-    <!-- Label for the preference to show the shortcuts for the most visited top sites on the homepage -->
-    <string moz:removedIn="98" name="top_sites_toggle_top_recent_sites_3" tools:ignore="UnusedResources">Siti principali più visitati</string>
 
     <!-- Label for the preference to show the shortcuts for the most visited top sites on the homepage -->
     <string name="top_sites_toggle_top_recent_sites_4">Scorciatoie</string>
 	<!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Nome</string>
 	<!-- Hint for renaming title of a top site -->
-	<string name="top_site_name_hint">Nome sito principale</string>
+	<string moz:RemovedIn="101" name="top_site_name_hint" tools:ignore="UnusedResources">Nome sito principale</string>
+    <!-- Hint for renaming title of a shortcut -->
+    <string name="shortcut_name_hint">Nome scorciatoia</string>
 	<!-- Button caption to confirm the renaming of the top site. -->
 	<string name="top_sites_rename_dialog_ok">OK</string>
 	<!-- Dialog button text for canceling the rename top site prompt. -->
@@ -1822,25 +1904,6 @@
     <!-- Text for the snackbar to confirm auto-close is enabled for inactive tabs -->
     <string name="inactive_tabs_auto_close_message_snackbar">Chiusura automatica attiva</string>
 
-    <!-- Inactive tabs survey -->
-    <!-- Header text for the inactive tabs survey asking for feedback to improve the inactive tabs feature. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_header_1" tools:ignore="UnusedResources">Aiutaci a migliorare Firefox</string>
-
-    <!-- Content text for the inactive tabs survey asking the primary survey feedback question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_content" tools:ignore="UnusedResources">Perché hai disattivato le schede inattive?</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_not_understand" tools:ignore="UnusedResources">Non capisco come funziona</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_do_it_myself" tools:ignore="UnusedResources">Preferisco eliminare da solo le schede vecchie</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_long_option_1" tools:ignore="UnusedResources">Il periodo di due settimane è troppo lungo</string>
-    <!-- One of the feedback option that can be selected as a responses to the inactive tabs survey question. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_time_too_short_option_1" tools:ignore="UnusedResources">Il periodo di due settimane è troppo breve</string>
-    <!-- Confirmation button text to submit the feedback for the inactive tabs survey. -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_send_button" tools:ignore="UnusedResources">Invia</string>
-    <!-- Content description for inactive tabs survey close button -->
-    <string moz:RemovedIn="99" name="inactive_tabs_survey_close_button_content_description" tools:ignore="UnusedResources">Chiudi</string>
-
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Apri link da siti web, email e messaggi in Firefox per impostazione predefinita.</string>
 
@@ -1869,4 +1932,12 @@
     <string name="pocket_stories_feature_caption">Parte della famiglia Firefox. %s</string>
     <!-- Clickable text for opening an external link for more information about Pocket. -->
     <string name="pocket_stories_feature_learn_more">Ulteriori informazioni</string>
+
+    <!-- Text indicating that the Pocket story that also displays this text is a sponsored story by other 3rd party entity. -->
+    <string name="pocket_stories_sponsor_indication">Sponsorizzata</string>
+
+    <!-- Snackbar message for enrolling in a Nimbus experiment from the secret settings when Studies preference is Off.-->
+    <string name="experiments_snackbar">Attiva la telemetria per inviare dati.</string>
+    <!-- Snackbar button text to navigate to telemetry settings.-->
+    <string name="experiments_snackbar_button">Vai alle impostazioni</string>
 </resources>

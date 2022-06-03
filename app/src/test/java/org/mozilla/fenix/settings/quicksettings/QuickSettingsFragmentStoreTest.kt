@@ -11,7 +11,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.content.PermissionHighlightsState
 import mozilla.components.browser.state.state.createTab
@@ -20,7 +20,6 @@ import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.AutoplayAction
-import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -235,7 +234,7 @@ class QuickSettingsFragmentStoreTest {
 
     @Test
     fun `TogglePermission should only modify status and visibility of a specific WebsitePermissionsState`() =
-        runBlocking {
+        runTest {
             val initialCameraStatus = "initialCameraStatus"
             val initialMicStatus = "initialMicStatus"
             val initialNotificationStatus = "initialNotificationStatus"
@@ -284,7 +283,7 @@ class QuickSettingsFragmentStoreTest {
             val initialState = QuickSettingsFragmentState(
                 webInfoState = websiteInfoState,
                 websitePermissionsState = initialWebsitePermissionsState,
-                trackingProtectionState = mock()
+                trackingProtectionState = mockk()
             )
             val store = QuickSettingsFragmentStore(initialState)
 

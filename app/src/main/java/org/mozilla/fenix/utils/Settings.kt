@@ -53,6 +53,7 @@ import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_ALL
 import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_AUDIBLE
 import org.mozilla.fenix.wallpapers.WallpaperManager
 import java.security.InvalidParameterException
+import java.util.UUID
 
 private const val AUTOPLAY_USER_SETTING = "AUTOPLAY_USER_SETTING"
 
@@ -434,10 +435,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      * Indicates if the Firefox logo on the home screen should be animated,
      * to show users that they can change the wallpaper by tapping on the Firefox logo.
      */
-    var shouldAnimateFirefoxLogo by featureFlagPreference(
+    var shouldAnimateFirefoxLogo by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_show_logo_animation),
-        default = FeatureFlags.showWallpapers,
-        featureFlag = FeatureFlags.showWallpapers
+        default = true,
     )
 
     /**
@@ -445,7 +445,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var searchTermTabGroupsAreEnabled by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_search_term_tab_groups),
-        default = { FxNimbus.features.searchTermGroups.value(appContext).enabled },
+        default = { FxNimbus.features.searchTermGroups.value().enabled },
         featureFlag = FeatureFlags.tabGroupFeature
     )
 
@@ -1012,11 +1012,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
-    var fxaHasSyncedItems by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_fxa_has_synced_items),
-        default = false
-    )
-
     var lastPlacesStorageMaintenance by longPreference(
         appContext.getPreferenceKey(R.string.pref_key_last_maintenance),
         default = 0
@@ -1209,7 +1204,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     private val homescreenSections: Map<HomeScreenSection, Boolean> by lazy {
-        FxNimbus.features.homescreen.value(appContext).sectionsEnabled
+        FxNimbus.features.homescreen.value().sectionsEnabled
     }
 
     var historyMetadataUIFeature by lazyFeatureFlagPreference(
@@ -1263,10 +1258,39 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
+    /**
+     * Stores the user choice from the "Autofill Addresses" settings for whether
+     * save and autofill addresses should be enabled or not.
+     * If set to `true` when the user focuses on address fields in a webpage an Android prompt is shown,
+     * allowing the selection of an address details to be automatically filled in the webpage fields.
+     */
+    var shouldAutofillAddressDetails by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_addresses_save_and_autofill_addresses),
+        default = true
+    )
+
     var showPocketRecommendationsFeature by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_pocket_homescreen_recommendations),
         featureFlag = FeatureFlags.isPocketRecommendationsFeatureEnabled(appContext),
         default = { homescreenSections[HomeScreenSection.POCKET] == true },
+    )
+
+    /**
+     * Indicates if the Pocket recommendations homescreen section should also show sponsored stories.
+     */
+    val showPocketSponsoredStories by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_pocket_sponsored_stories),
+        default = { FxNimbus.features.pocketSponsoredStories.value(appContext).enabled },
+        featureFlag = FeatureFlags.isPocketSponsoredStoriesFeatureEnabled(appContext)
+    )
+
+    /**
+     * Get the profile id to use in the sponsored stories communications with the Pocket endpoint.
+     */
+    val pocketSponsoredStoriesProfileId by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_pocket_sponsored_stories_profile),
+        default = UUID.randomUUID().toString(),
+        persistDefaultIfNotExists = true
     )
 
     /**
@@ -1275,7 +1299,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var showContileFeature by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_enable_contile),
         default = { homescreenSections[HomeScreenSection.CONTILE_TOP_SITES] == true },
-        featureFlag = FeatureFlags.contileFeature,
+        featureFlag = true,
     )
 
     /**
@@ -1283,16 +1307,16 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var enableTaskContinuityEnhancements by featureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_enable_task_continuity),
-        default = false,
+        default = FeatureFlags.taskContinuityFeature,
         featureFlag = FeatureFlags.taskContinuityFeature,
     )
 
     /**
      * Indicates if the Unified Search feature should be visible.
      */
-    var showUnifiedSearchFeature by featureFlagPreference(
+    var showUnifiedSearchFeature by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_show_unified_search),
-        default = false,
+        default = { FxNimbus.features.unifiedSearch.value(appContext).enabled },
         featureFlag = FeatureFlags.unifiedSearchFeature
     )
 

@@ -18,8 +18,10 @@ import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.theme.Theme
 
@@ -49,10 +51,20 @@ fun ListItemTabLarge(
     onClick: (() -> Unit)? = null
 ) {
     ListItemTabSurface(imageUrl, onClick) {
-        TabTitle(text = title, maxLines = 3)
+        PrimaryText(
+            text = title,
+            fontSize = 14.sp,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 3,
+        )
 
         if (caption != null) {
-            TabSubtitle(text = caption)
+            SecondaryText(
+                text = caption,
+                fontSize = 12.sp,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+            )
         }
     }
 }
@@ -100,7 +112,7 @@ fun ListItemTabLarge(
  * @param tabDetails [Composable] Displayed to the the end of the image. Allows for variation in the item text style.
  */
 @Composable
-private fun ListItemTabSurface(
+fun ListItemTabSurface(
     imageUrl: String,
     onClick: (() -> Unit)? = null,
     tabDetails: @Composable () -> Unit
@@ -145,5 +157,20 @@ private fun ListItemTabLargePreview() {
             title = "This is a very long title for a tab but needs to be so for this preview",
             caption = "And this is a caption"
         ) { }
+    }
+}
+
+@Composable
+@Preview
+private fun ListItemTabSurfacePreview() {
+    FirefoxTheme(theme = Theme.getTheme(isPrivate = false)) {
+        ListItemTabSurface(
+            imageUrl = ""
+        ) {
+            PrimaryText(
+                text = "This can be anything",
+                fontSize = 22.sp
+            )
+        }
     }
 }

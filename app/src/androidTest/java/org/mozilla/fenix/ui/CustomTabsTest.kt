@@ -1,8 +1,9 @@
+@file:Suppress("DEPRECATION")
+
 package org.mozilla.fenix.ui
 
 import androidx.core.net.toUri
 import androidx.test.rule.ActivityTestRule
-import androidx.test.rule.GrantPermissionRule
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
@@ -26,7 +27,10 @@ import org.mozilla.fenix.ui.robots.searchScreen
 class CustomTabsTest {
     private lateinit var mockWebServer: MockWebServer
     private val customMenuItem = "TestMenuItem"
-    private val externalLinksPWAPage = "https://mozilla-mobile.github.io/testapp/externalLinks.html"
+    /* Updated externalLinks.html to v2.0,
+       changed the hypertext reference to mozilla-mobile.github.io/testapp/downloads for "External link"
+     */
+    private val externalLinksPWAPage = "https://mozilla-mobile.github.io/testapp/v2.0/externalLinks.html"
     private val loginPage = "https://mozilla-mobile.github.io/testapp/loginForm"
 
     @get:Rule
@@ -35,11 +39,6 @@ class CustomTabsTest {
     @get: Rule
     val intentReceiverActivityTestRule = ActivityTestRule(
         IntentReceiverActivity::class.java, true, false
-    )
-
-    @get:Rule
-    var mGrantPermissions = GrantPermissionRule.grant(
-        android.Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 
     @Before
@@ -58,6 +57,7 @@ class CustomTabsTest {
     @SmokeTest
     @Test
     fun customTabsOpenExternalLinkTest() {
+        val externalLinkURL = "https://mozilla-mobile.github.io/testapp/downloads"
 
         intentReceiverActivityTestRule.launchActivity(
             createCustomTabIntent(
@@ -70,7 +70,7 @@ class CustomTabsTest {
             waitForPageToLoad()
             clickLinkMatchingText("External link")
             waitForPageToLoad()
-            verifyCustomTabToolbarTitle("Google")
+            verifyCustomTabToolbarTitle(externalLinkURL)
         }
     }
 

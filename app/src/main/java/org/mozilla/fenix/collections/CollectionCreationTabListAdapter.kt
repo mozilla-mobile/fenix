@@ -43,12 +43,7 @@ class CollectionCreationTabListAdapter(
             when (payloads[0]) {
                 is CheckChanged -> {
                     val checkChanged = payloads[0] as CheckChanged
-                    if (checkChanged.shouldBeChecked) {
-                        binding.tabSelectedCheckbox.isChecked = true
-                    } else if (checkChanged.shouldBeUnchecked) {
-                        binding.tabSelectedCheckbox.isChecked = false
-                    }
-                    binding.tabSelectedCheckbox.isGone = checkChanged.shouldHideCheckBox
+                    holder.updateCheckbox(checkChanged)
                 }
             }
         }
@@ -109,6 +104,15 @@ class TabViewHolder(private val binding: CollectionTabListRowBinding) : ViewHold
         }
 
         itemView.context.components.core.icons.loadIntoView(binding.faviconImage, tab.url)
+    }
+
+    /**
+     * Method used to change the tabSelectedCheckbox state
+     * @param checkChanged [CheckChanged] class containing the required checkbox updates
+     */
+    fun updateCheckbox(checkChanged: CheckChanged) {
+        binding.tabSelectedCheckbox.isChecked = checkChanged.shouldBeChecked
+        binding.tabSelectedCheckbox.isGone = checkChanged.shouldHideCheckBox
     }
 
     companion object {

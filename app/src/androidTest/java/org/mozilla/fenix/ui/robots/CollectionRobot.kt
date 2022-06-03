@@ -5,8 +5,6 @@
 package org.mozilla.fenix.ui.robots
 
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.NoMatchingViewException
-import androidx.test.espresso.action.ViewActions.pressImeActionButton
 import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.action.ViewActions.swipeLeft
 import androidx.test.espresso.action.ViewActions.swipeRight
@@ -98,33 +96,33 @@ class CollectionRobot {
             )
     }
 
-    fun verifyShareCollectionButtonIsVisible(visible: Boolean) {
-        shareCollectionButton()
-            .check(
-                if (visible) matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))
-                else matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE))
-            )
-    }
+    // fun verifyShareCollectionButtonIsVisible(visible: Boolean) {
+    //     shareCollectionButton()
+    //         .check(
+    //             if (visible) matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE))
+    //             else matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE))
+    //         )
+    // }
 
-    fun verifyCollectionMenuIsVisible(visible: Boolean) {
-        collectionThreeDotButton()
-            .check(
-                if (visible) matches(
-                    withEffectiveVisibility(
-                        ViewMatchers.Visibility.VISIBLE
-                    )
-                )
-                else matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE))
-            )
-    }
+    // fun verifyCollectionMenuIsVisible(visible: Boolean) {
+    //     collectionThreeDotButton()
+    //         .check(
+    //             if (visible) matches(
+    //                 withEffectiveVisibility(
+    //                     ViewMatchers.Visibility.VISIBLE
+    //                 )
+    //             )
+    //             else matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE))
+    //         )
+    // }
 
-    fun clickCollectionThreeDotButton() {
-        collectionThreeDotButton().click()
-        mDevice.waitNotNull(
-            Until.findObject(By.text("Delete collection")),
-            waitingTime
-        )
-    }
+    // fun clickCollectionThreeDotButton() {
+    //     collectionThreeDotButton().click()
+    //     mDevice.waitNotNull(
+    //         Until.findObject(By.text("Delete collection")),
+    //         waitingTime
+    //     )
+    // }
 
     fun selectOpenTabs() {
         onView(withText("Open tabs")).click()
@@ -205,40 +203,40 @@ class CollectionRobot {
     fun swipeToBottom() = onView(withId(R.id.sessionControlRecyclerView)).perform(swipeUp())
 
     class Transition {
-        fun collapseCollection(
-            title: String,
-            interact: HomeScreenRobot.() -> Unit
-        ): HomeScreenRobot.Transition {
-            try {
-                mDevice.waitNotNull(Until.findObject(By.text(title)), waitingTime)
-                onView(allOf(withId(R.id.chevron), hasSibling(withText(title)))).click()
-            } catch (e: NoMatchingViewException) {
-                scrollToElementByText(title)
-            }
-
-            HomeScreenRobot().interact()
-            return HomeScreenRobot.Transition()
-        }
-
-        // names a collection saved from the 3dot menu
-        fun typeCollectionNameAndSave(
-            name: String,
-            interact: BrowserRobot.() -> Unit
-        ): BrowserRobot.Transition {
-            mDevice.findObject(UiSelector().resourceId("$packageName:id/name_collection_edittext"))
-                .waitForExists(waitingTime)
-
-            mainMenuEditCollectionNameField().perform(
-                replaceText(name),
-                pressImeActionButton()
-            )
-
-            // wait for the collection creation wrapper to be dismissed
-            mDevice.waitNotNull(Until.gone(By.res("$packageName:id/createCollectionWrapper")))
-
-            BrowserRobot().interact()
-            return BrowserRobot.Transition()
-        }
+//        fun collapseCollection(
+//            title: String,
+//            interact: HomeScreenRobot.() -> Unit
+//        ): HomeScreenRobot.Transition {
+//            try {
+//                mDevice.waitNotNull(Until.findObject(By.text(title)), waitingTime)
+//                onView(allOf(withId(R.id.chevron), hasSibling(withText(title)))).click()
+//            } catch (e: NoMatchingViewException) {
+//                scrollToElementByText(title)
+//            }
+//
+//            HomeScreenRobot().interact()
+//            return HomeScreenRobot.Transition()
+//        }
+//
+//        // names a collection saved from the 3dot menu
+//        fun typeCollectionNameAndSave(
+//            name: String,
+//            interact: BrowserRobot.() -> Unit
+//        ): BrowserRobot.Transition {
+//            mDevice.findObject(UiSelector().resourceId("$packageName:id/name_collection_edittext"))
+//                .waitForExists(waitingTime)
+//
+//            mainMenuEditCollectionNameField().perform(
+//                replaceText(name),
+//                pressImeActionButton()
+//            )
+//
+//            // wait for the collection creation wrapper to be dismissed
+//            mDevice.waitNotNull(Until.gone(By.res("$packageName:id/createCollectionWrapper")))
+//
+//            BrowserRobot().interact()
+//            return BrowserRobot.Transition()
+//        }
 
         fun selectExistingCollection(
             title: String,
@@ -251,12 +249,12 @@ class CollectionRobot {
             return BrowserRobot.Transition()
         }
 
-        fun clickShareCollectionButton(interact: ShareOverlayRobot.() -> Unit): ShareOverlayRobot.Transition {
-            shareCollectionButton().click()
-
-            ShareOverlayRobot().interact()
-            return ShareOverlayRobot.Transition()
-        }
+        // fun clickShareCollectionButton(interact: ShareOverlayRobot.() -> Unit): ShareOverlayRobot.Transition {
+        //     shareCollectionButton().click()
+        //
+        //     ShareOverlayRobot().interact()
+        //     return ShareOverlayRobot.Transition()
+        // }
     }
 }
 
@@ -265,13 +263,13 @@ fun collectionRobot(interact: CollectionRobot.() -> Unit): CollectionRobot.Trans
     return CollectionRobot.Transition()
 }
 
-private fun collectionThreeDotButton() =
-    onView(withId(R.id.collection_overflow_button))
+// private fun collectionThreeDotButton() =
+//     onView(withId(R.id.collection_overflow_button))
 
 private fun collectionItem(title: String) =
     onView(allOf(withId(R.id.label), withText(title)))
 
-private fun shareCollectionButton() = onView(withId(R.id.collection_share_button))
+// private fun shareCollectionButton() = onView(withId(R.id.collection_share_button))
 
 private fun removeTabFromCollectionButton(title: String) =
     onView(

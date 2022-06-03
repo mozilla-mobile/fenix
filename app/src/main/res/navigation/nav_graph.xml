@@ -141,8 +141,8 @@
         android:id="@+id/action_global_savedLoginsAuthFragment"
         app:destination="@id/savedLoginsAuthFragment" />
     <action
-        android:id="@+id/action_global_creditCardsSettingFragment"
-        app:destination="@id/credit_cards_graph" />
+        android:id="@+id/action_global_autofillSettingFragment"
+        app:destination="@id/autofill_graph" />
     <action
         android:id="@+id/action_global_tabHistoryDialogFragment"
         app:destination="@id/tabHistoryDialogFragment" />
@@ -165,8 +165,11 @@
         <argument
             android:name="page"
             android:defaultValue="NormalTabs"
-            app:argType="org.mozilla.fenix.tabstray.Page"
-            />
+            app:argType="org.mozilla.fenix.tabstray.Page" />
+        <argument
+            android:name="accessPoint"
+            android:defaultValue="None"
+            app:argType="org.mozilla.fenix.tabstray.TabsTrayAccessPoint" />
     </dialog>
 
     <fragment
@@ -182,10 +185,6 @@
             android:name="focusOnAddressBar"
             android:defaultValue="false"
             app:argType="boolean" />
-        <argument
-            android:name="focusOnCollection"
-            android:defaultValue="-1L"
-            app:argType="long" />
     </fragment>
     <dialog
         android:id="@+id/homeOnboardingDialogFragment"
@@ -208,7 +207,7 @@
         <argument
             android:name="search_access_point"
             android:defaultValue="NONE"
-            app:argType="org.mozilla.fenix.components.metrics.Event$PerformedSearch$SearchAccessPoint" />
+            app:argType="org.mozilla.fenix.components.metrics.MetricsUtils$Source" />
     </dialog>
 
     <fragment
@@ -273,6 +272,10 @@
             app:destination="@id/historySearchDialogFragment"
             app:popUpTo="@id/historySearchDialogFragment"
             app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_historyFragment_to_syncedHistoryFragment"
+            app:destination="@id/syncedHistoryFragment" />
     </fragment>
 
     <dialog
@@ -290,6 +293,18 @@
         <argument
             android:name="historyMetadataItems"
             app:argType="org.mozilla.fenix.library.history.History[]" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/syncedHistoryFragment"
+        android:name="org.mozilla.fenix.library.syncedhistory.SyncedHistoryFragment"
+        android:label="@string/history_from_other_devices"
+        tools:layout="@layout/fragment_synced_history">
+        <action
+            android:id="@+id/action_global_history_search_dialog"
+            app:destination="@id/historySearchDialogFragment"
+            app:popUpTo="@id/historySearchDialogFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -510,8 +525,8 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_settingsFragment_to_creditCardsSettingFragment"
-            app:destination="@id/credit_cards_graph"
+            android:id="@+id/action_settingsFragment_to_autofillSettingFragment"
+            app:destination="@id/autofill_graph"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -1183,22 +1198,36 @@
     </navigation>
 
     <navigation
-        android:id="@+id/credit_cards_graph"
-        app:startDestination="@id/creditCardsSettingFragment">
+        android:id="@+id/autofill_graph"
+        app:startDestination="@id/autofillSettingFragment">
         <fragment
-            android:id="@+id/creditCardsSettingFragment"
-            android:name="org.mozilla.fenix.settings.creditcards.CreditCardsSettingFragment"
+            android:id="@+id/autofillSettingFragment"
+            android:name="org.mozilla.fenix.settings.autofill.AutofillSettingFragment"
             android:label="@string/preferences_credit_cards">
             <action
-                android:id="@+id/action_creditCardsSettingFragment_to_creditCardEditorFragment"
+                android:id="@+id/action_autofillSettingFragment_to_creditCardEditorFragment"
                 app:destination="@id/creditCardEditorFragment"
                 app:enterAnim="@anim/slide_in_right"
                 app:exitAnim="@anim/slide_out_left"
                 app:popEnterAnim="@anim/slide_in_left"
                 app:popExitAnim="@anim/slide_out_right" />
             <action
-                android:id="@+id/action_creditCardsSettingFragment_to_creditCardsManagementFragment"
+                android:id="@+id/action_autofillSettingFragment_to_creditCardsManagementFragment"
                 app:destination="@id/creditCardsManagementFragment"
+                app:enterAnim="@anim/slide_in_right"
+                app:exitAnim="@anim/slide_out_left"
+                app:popEnterAnim="@anim/slide_in_left"
+                app:popExitAnim="@anim/slide_out_right" />
+            <action
+                android:id="@+id/action_autofillSettingFragment_to_addressEditorFragment"
+                app:destination="@id/addressEditorFragment"
+                app:enterAnim="@anim/slide_in_right"
+                app:exitAnim="@anim/slide_out_left"
+                app:popEnterAnim="@anim/slide_in_left"
+                app:popExitAnim="@anim/slide_out_right" />
+            <action
+                android:id="@+id/action_autofillSettingFragment_to_addressManagementFragment"
+                app:destination="@id/addressManagementFragment"
                 app:enterAnim="@anim/slide_in_right"
                 app:exitAnim="@anim/slide_out_left"
                 app:popEnterAnim="@anim/slide_in_left"
@@ -1221,6 +1250,28 @@
             <action
                 android:id="@+id/action_creditCardsManagementFragment_to_creditCardEditorFragment"
                 app:destination="@id/creditCardEditorFragment"
+                app:enterAnim="@anim/slide_in_right"
+                app:exitAnim="@anim/slide_out_left"
+                app:popEnterAnim="@anim/slide_in_left"
+                app:popExitAnim="@anim/slide_out_right" />
+        </fragment>
+        <fragment
+            android:id="@+id/addressEditorFragment"
+            android:name="org.mozilla.fenix.settings.address.AddressEditorFragment"
+            android:label="@string/addresses_add_address">
+            <argument
+                android:name="address"
+                android:defaultValue="@null"
+                app:argType="mozilla.components.concept.storage.Address"
+                app:nullable="true" />
+        </fragment>
+        <fragment
+            android:id="@+id/addressManagementFragment"
+            android:name="org.mozilla.fenix.settings.address.AddressManagementFragment"
+            android:label="@string/addresses_manage_addresses">
+            <action
+                android:id="@+id/action_addressManagementFragment_to_addressEditorFragment"
+                app:destination="@id/addressEditorFragment"
                 app:enterAnim="@anim/slide_in_right"
                 app:exitAnim="@anim/slide_out_left"
                 app:popEnterAnim="@anim/slide_in_left"
