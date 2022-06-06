@@ -41,9 +41,9 @@ import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.Matcher
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
-import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
@@ -77,7 +77,7 @@ class TabDrawerRobot {
         assertPrivateBrowsingButtonIsSelected(isSelected)
     fun verifySyncedTabsButtonIsSelected(isSelected: Boolean) =
         assertSyncedTabsButtonIsSelected(isSelected)
-    fun verifyExistingOpenTabs(title: String) = assertExistingOpenTabs(title)
+    fun verifyExistingOpenTabs(vararg titles: String) = assertExistingOpenTabs(*titles)
     fun verifyCloseTabsButton(title: String) = assertCloseTabsButton(title)
 
     fun verifyExistingTabList() = assertExistingTabList()
@@ -100,27 +100,18 @@ class TabDrawerRobot {
     fun verifyOpenedTabThumbnail() = assertTabThumbnail()
 
     fun closeTab() {
-        mDevice.findObject(
-            UiSelector().resourceId("$packageName:id/mozac_browser_tabstray_close")
-        ).waitForExists(waitingTime)
+        closeTabButton().waitForExists(waitingTime)
 
         var retries = 0 // number of retries before failing, will stop at 2
         do {
             closeTabButton().click()
             retries++
-        } while (mDevice.findObject(
-                UiSelector().resourceId("$packageName:id/mozac_browser_tabstray_close")
-            ).exists() && retries < 3
-        )
+        } while (closeTabButton().exists() && retries < 3)
     }
 
     fun swipeTabRight(title: String) {
         var retries = 0 // number of retries before failing, will stop at 2
-        while (!mDevice.findObject(
-                UiSelector()
-                    .resourceId("$packageName:id/mozac_browser_tabstray_title")
-                    .text(title)
-            ).waitUntilGone(waitingTimeShort) && retries < 2
+        while (!tabItem(title).waitUntilGone(waitingTimeShort) && retries < 3
         ) {
             tab(title).perform(ViewActions.swipeRight())
             retries++
@@ -129,11 +120,7 @@ class TabDrawerRobot {
 
     fun swipeTabLeft(title: String) {
         var retries = 0 // number of retries before failing, will stop at 2
-        while (!mDevice.findObject(
-                UiSelector()
-                    .resourceId("$packageName:id/mozac_browser_tabstray_title")
-                    .text(title)
-            ).waitUntilGone(waitingTimeShort) && retries < 2
+        while (!tabItem(title).waitUntilGone(waitingTimeShort) && retries < 3
         ) {
             tab(title).perform(ViewActions.swipeLeft())
             retries++
@@ -229,28 +216,23 @@ class TabDrawerRobot {
         tabMediaControlButton().click()
     }
 
-    private fun clickSelectTabs() {
+    fun clickSelectTabsOption() {
         threeDotMenu().click()
 
-        mDevice.waitNotNull(
-            findObject(
-                text(getStringResource(R.string.tabs_tray_select_tabs))
-            ),
-            waitingTime
-        )
-
-        val selectTabsButton = mDevice.findObject(text(getStringResource(R.string.tabs_tray_select_tabs)))
+        val selectTabsButton = mDevice.findObject(UiSelector().text("Select tabs"))
+        selectTabsButton.waitForExists(waitingTime)
         selectTabsButton.click()
     }
 
-    fun selectTab(title: String) {
-        mDevice.waitNotNull(
-            findObject(text(title)),
-            waitingTime
-        )
+    fun selectTab(title: String, numOfTabs: Int) {
+        val tabsSelected =
+            mDevice.findObject(UiSelector().text("$numOfTabs selected"))
+        var retries = 0 // number of retries before failing
 
-        val tab = mDevice.findObject(text(title))
-        tab.click()
+        while (!tabsSelected.exists() && retries++ < 3) {
+            tabItem(title).waitForExists(waitingTime)
+            tabItem(title).click()
+        }
     }
 
     fun longClickTab(title: String) {
@@ -259,18 +241,19 @@ class TabDrawerRobot {
             waitingTime
         )
 
-        val tab = onView(withText(title))
-        tab.perform(longClick())
+        tab(title).perform(longClick())
     }
 
     fun createCollection(
-        tabTitle: String,
+        vararg tabTitles: String,
         collectionName: String,
         firstCollection: Boolean = true
     ) {
-        clickSelectTabs()
-        selectTab(tabTitle)
         tabDrawer {
+            clickSelectTabsOption()
+            for (tab in tabTitles) {
+                selectTab(tab, tabTitles.indexOf(tab) + 1)
+            }
         }.clickSaveCollection {
             if (!firstCollection)
                 clickAddNewCollection()
@@ -346,14 +329,9 @@ class TabDrawerRobot {
         }
 
         fun openTab(title: String, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            val tab = mDevice.findObject(
-                UiSelector()
-                    .resourceId("$packageName:id/mozac_browser_tabstray_title")
-                    .textContains(title)
-            )
             scrollToElementByText(title)
-            tab.waitForExists(waitingTime)
-            tab.click()
+            tabItem(title).waitForExists(waitingTime)
+            tabItem(title).click()
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
@@ -489,32 +467,17 @@ private fun syncedTabsButton() = onView(withContentDescription("Synced tabs"))
 private fun newTabButton() = mDevice.findObject(UiSelector().resourceId("$packageName:id/new_tab_button"))
 private fun threeDotMenu() = onView(withId(R.id.tab_tray_overflow))
 
-private fun assertExistingOpenTabs(title: String) {
-    try {
-        mDevice.findObject(
-            UiSelector()
-                .resourceId("$packageName:id/mozac_browser_tabstray_title")
-                .textContains(title)
-        )
-            .waitForExists(waitingTime)
+private fun assertExistingOpenTabs(vararg tabTitles: String) {
+    var retries = 0
 
-        assertTrue(
-            mDevice.findObject(
-                UiSelector()
-                    .resourceId("$packageName:id/mozac_browser_tabstray_title")
-                    .textContains(title)
-            ).waitForExists(waitingTime)
-        )
-    } catch (e: AssertionError) {
-        println("The tab wasn't found")
-        mDevice.findObject(UiSelector().resourceId("$packageName:id/tabsTray")).swipeUp(2)
-        assertTrue(
-            mDevice.findObject(
-                UiSelector()
-                    .resourceId("$packageName:id/mozac_browser_tabstray_title")
-                    .textContains(title)
-            ).waitForExists(waitingTime)
-        )
+    for (title in tabTitles) {
+        while (!tabItem(title).waitForExists(waitingTime) && retries++ < 3) {
+            tabsList
+                .getChildByText(UiSelector().text(title), title, true)
+            assertTrue(
+                tabItem(title).waitForExists(waitingTimeLong)
+            )
+        }
     }
 }
 
@@ -634,13 +597,23 @@ private fun assertTabThumbnail() {
         ).waitForExists(waitingTime)
     )
 }
+private val tabsList = UiScrollable(UiSelector().className("androidx.recyclerview.widget.RecyclerView"))
 
+// This Espresso tab selector is used for actions that UIAutomator doesn't handle very well: swipe and long-tap
 private fun tab(title: String) =
     onView(
         allOf(
             withId(R.id.mozac_browser_tabstray_title),
             withText(title)
         )
+    )
+
+// This tab selector is used for actions that involve waiting and asserting the existence of the view
+private fun tabItem(title: String) =
+    mDevice.findObject(
+        UiSelector()
+            .resourceId("$packageName:id/tab_item")
+            .childSelector(UiSelector().text(title))
     )
 
 private fun tabsCounter() = onView(withId(R.id.tab_button))
