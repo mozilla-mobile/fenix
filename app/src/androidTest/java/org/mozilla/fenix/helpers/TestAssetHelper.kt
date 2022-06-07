@@ -5,9 +5,9 @@
 package org.mozilla.fenix.helpers
 
 import android.net.Uri
-import java.util.concurrent.TimeUnit
 import okhttp3.mockwebserver.MockWebServer
 import org.mozilla.fenix.helpers.ext.toUri
+import java.util.concurrent.TimeUnit
 
 /**
  * Helper for hosting web pages locally for testing purposes.
@@ -15,6 +15,7 @@ import org.mozilla.fenix.helpers.ext.toUri
 object TestAssetHelper {
     @Suppress("MagicNumber")
     val waitingTime: Long = TimeUnit.SECONDS.toMillis(15)
+    val waitingTimeLong = TimeUnit.SECONDS.toMillis(25)
     val waitingTimeShort: Long = TimeUnit.SECONDS.toMillis(3)
 
     data class TestAsset(val url: Uri, val content: String, val title: String)
