@@ -4,12 +4,17 @@
 
 package org.mozilla.fenix.library.history
 
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.MotionEvent.ACTION_UP
 import android.view.ViewGroup
+import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.FeatureFlags
@@ -19,6 +24,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.library.LibraryPageView
 import org.mozilla.fenix.theme.ThemeManager
 
+
 /**
  * View that contains and configures the History List
  */
@@ -26,8 +32,9 @@ class HistoryView(
     container: ViewGroup,
     val interactor: HistoryInteractor,
     val onZeroItemsLoaded: () -> Unit,
-    val onEmptyStateChanged: (Boolean) -> Unit
-) : LibraryPageView(container), UserInteractionHandler {
+    val onEmptyStateChanged: (Boolean) -> Unit,
+    val invalidateHistoryDataSource: () -> Unit
+) : LibraryPageView(container), UserInteractionHandler, RecyclerView.OnItemTouchListener {
 
     val binding = ComponentHistoryBinding.inflate(
         LayoutInflater.from(container.context), container, true
@@ -35,6 +42,9 @@ class HistoryView(
 
     var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
         private set
+
+    private var collapsedHeaders: Set<HistoryItemTimeGroup> = setOf()
+    private lateinit var detector: GestureDetectorCompat
 
     val historyAdapter = HistoryAdapter(interactor) { isEmpty ->
         onEmptyStateChanged(isEmpty)
@@ -56,12 +66,25 @@ class HistoryView(
     }
     private val layoutManager = LinearLayoutManager(container.context)
     private var adapterItemCount: Int? = null
+    private val decorator = StickyHeaderDecoration(historyAdapter)
+
+    private fun getStickyHeaderBottom() : Float {
+        return decorator.getStickyHeaderBottom()
+    }
 
     init {
+        detector = GestureDetectorCompat(activity, StickyHeaderGestureListener(
+            stickyHeaderHeight = ::getStickyHeaderBottom,
+            binding.historyList,
+            ::onStickyHeaderClicked
+        ))
+
         binding.historyList.apply {
             layoutManager = this@HistoryView.layoutManager
             adapter = historyAdapter
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+            addItemDecoration(decorator)
+            addOnItemTouchListener(this@HistoryView)
         }
 
         val primaryTextColor = ThemeManager.resolveAttribute(R.attr.textPrimary, context)
@@ -71,8 +94,18 @@ class HistoryView(
         }
     }
 
+    private fun onStickyHeaderClicked(position: Int) {
+        historyAdapter.onStickyHeaderClicked(position)
+    }
+
     fun update(state: HistoryFragmentState) {
         val oldMode = mode
+        val headerStateChanged = collapsedHeaders != state.collapsedHeaders
+        if (headerStateChanged) {
+//            invalidateHistoryDataSource.invoke()
+            historyAdapter.collapsedHeaders = state.collapsedHeaders
+            collapsedHeaders = state.collapsedHeaders
+        }
 
         binding.progressBar.isVisible = state.isDeletingItems
         binding.swipeRefresh.isRefreshing = state.mode === HistoryFragmentState.Mode.Syncing
@@ -85,11 +118,23 @@ class HistoryView(
         updateEmptyState(userHasHistory = !state.isEmpty)
 
         historyAdapter.updateMode(state.mode)
+
         // We want to update the one item above the upper border of the screen, because
         // RecyclerView won't redraw it on scroll and onBindViewHolder() method won't be called.
         val first = layoutManager.findFirstVisibleItemPosition() - 1
-        val last = layoutManager.findLastVisibleItemPosition() + 1
+        val last = layoutManager.findLastVisibleItemPosition() + 4
+//        Log.d("CollapseDebugging", "first = $first, last = $last")
         historyAdapter.notifyItemRangeChanged(first, last - first)
+
+//        if (headerStateChanged) {
+//            historyAdapter.notifyDataSetChanged()
+//        } else {
+//            // We want to update the one item above the upper border of the screen, because
+//            // RecyclerView won't redraw it on scroll and onBindViewHolder() method won't be called.
+//            val first = layoutManager.findFirstVisibleItemPosition() - 1
+//            val last = layoutManager.findLastVisibleItemPosition() + 1
+//            historyAdapter.notifyItemRangeChanged(first, last - first)
+//        }
 
         if (state.mode::class != oldMode::class) {
             interactor.onModeSwitched()
@@ -149,5 +194,24 @@ class HistoryView(
 
     override fun onBackPressed(): Boolean {
         return interactor.onBackPressed()
+    }
+
+    override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+        val consumed = detector.onTouchEvent(e)
+//        Log.d("HistoryView", "consumed = $consumed, event = $e")
+        return if (e.action == ACTION_UP) {
+            consumed
+        } else {
+            false
+        }
+//        return detector.onTouchEvent(e)
+    }
+
+    override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+//        detector.onTouchEvent(e)
+    }
+
+    override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+//        Log.d("kolobok", "disallowIntercept = $disallowIntercept")
     }
 }

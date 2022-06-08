@@ -52,6 +52,11 @@ interface HistoryInteractor : SelectionInteractor<History> {
      * Called when the user clicks on synced history button.
      */
     fun onSyncedHistoryClicked()
+
+    /**
+     * Called when the user clicks on a time group header.
+     */
+    fun onTimeGroupClicked(timeGroup: HistoryItemTimeGroup, collapsed: Boolean)
 }
 
 /**
@@ -104,5 +109,9 @@ class DefaultHistoryInteractor(
 
     override fun onSyncedHistoryClicked() {
         historyController.handleEnterSyncedHistory()
+    }
+
+    override fun onTimeGroupClicked(timeGroup: HistoryItemTimeGroup, collapsed: Boolean) {
+        historyController.handleCollapsedStateChanged(timeGroup, collapsed)
     }
 }

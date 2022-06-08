@@ -16,6 +16,10 @@ import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
 /**
  * Class representing a history entry.
  */
+// History -> is not needed
+// HistoryDB -> interactors, controllers
+// History, HistoryGroup, Header
+
 sealed class History : Parcelable {
     abstract val position: Int
     abstract val title: String
@@ -34,7 +38,7 @@ sealed class History : Parcelable {
      * @property selected Whether or not the history item is selected.
      */
     @Parcelize
-    data class Regular(
+    data class Regular constructor(
         override val position: Int,
         override val title: String,
         val url: String,
@@ -57,7 +61,7 @@ sealed class History : Parcelable {
      * @property selected Whether or not the history metadata item is selected.
      */
     @Parcelize
-    data class Metadata(
+    data class Metadata constructor(
         override val position: Int,
         override val title: String,
         val url: String,
@@ -128,6 +132,9 @@ sealed class HistoryFragmentAction : Action {
      */
     data class UpdatePendingDeletionItems(val pendingDeletionItems: Set<PendingDeletionHistory>) :
         HistoryFragmentAction()
+
+    data class ChangeCollapsedState(val timeGroup: HistoryItemTimeGroup, val collapsed: Boolean) :
+        HistoryFragmentAction()
     object EnterDeletionMode : HistoryFragmentAction()
     object ExitDeletionMode : HistoryFragmentAction()
     object StartSync : HistoryFragmentAction()
@@ -144,7 +151,8 @@ data class HistoryFragmentState(
     val mode: Mode,
     val pendingDeletionItems: Set<PendingDeletionHistory>,
     val isEmpty: Boolean,
-    val isDeletingItems: Boolean
+    val isDeletingItems: Boolean,
+    val collapsedHeaders: Set<HistoryItemTimeGroup> = setOf()
 ) : State {
     sealed class Mode {
         open val selectedItems = emptySet<History>()
@@ -184,5 +192,14 @@ private fun historyStateReducer(
         is HistoryFragmentAction.UpdatePendingDeletionItems -> state.copy(
             pendingDeletionItems = action.pendingDeletionItems
         )
+        is HistoryFragmentAction.ChangeCollapsedState -> {
+            state.copy(
+                collapsedHeaders = if (!state.collapsedHeaders.contains(action.timeGroup)) {
+                    state.collapsedHeaders + action.timeGroup
+                } else {
+                    state.collapsedHeaders - action.timeGroup
+                }
+            )
+        }
     }
 }

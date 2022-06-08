@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.HistoryMetadataAction
 import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
@@ -37,6 +38,8 @@ interface HistoryController {
      * Navigates to [org.mozilla.fenix.library.syncedhistory.SyncedHistoryFragment]
      */
     fun handleEnterSyncedHistory()
+
+    fun handleCollapsedStateChanged(timeGroup: HistoryItemTimeGroup, collapsed: Boolean)
 }
 
 @Suppress("TooManyFunctions", "LongParameterList")
@@ -100,7 +103,8 @@ class DefaultHistoryController(
     }
 
     override fun handleSearch() {
-        val directions = HistoryFragmentDirections.actionGlobalHistorySearchDialog()
+        val directions = NavGraphDirections.actionGlobalHistorySearchDialog()
+        navController.navigate(directions)
         navController.navigateSafe(R.id.historyFragment, directions)
     }
 
@@ -164,5 +168,9 @@ class DefaultHistoryController(
         navController.navigate(
             HistoryFragmentDirections.actionHistoryFragmentToSyncedHistoryFragment()
         )
+    }
+
+    override fun handleCollapsedStateChanged(timeGroup: HistoryItemTimeGroup, collapsed: Boolean) {
+        store.dispatch(HistoryFragmentAction.ChangeCollapsedState(timeGroup, collapsed))
     }
 }

@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.library.history
 
+import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
@@ -27,14 +28,18 @@ class HistoryDataSource(
         // Get the offset of the last loaded page or default to 0 when it is null on the initial
         // load or a refresh.
         val offset = params.key ?: 0
+
+        Log.d("kalabak", "HistoryDataSource, params.loadSize = ${params.loadSize}")
         val historyItems = historyProvider.getHistory(offset, params.loadSize, isRemote).run {
+            Log.d("kolobok", "historyItems size = ${this.size}")
             positionWithOffset(offset)
         }
         val nextOffset = if (historyItems.isEmpty()) {
             null
         } else {
-            historyItems.last().position + 1
+            offset + params.loadSize
         }
+        Log.d("kolobok", "nextOffset = $nextOffset")
         return LoadResult.Page(
             data = historyItems,
             prevKey = null, // Only paging forward.

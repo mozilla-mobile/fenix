@@ -8,12 +8,15 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.SpannableString
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
@@ -21,12 +24,22 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.filter
+import androidx.paging.flatMap
+import androidx.paging.insertSeparators
+import androidx.paging.map
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.RecentlyClosedAction
@@ -55,6 +68,7 @@ import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
+import java.lang.RuntimeException
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
@@ -62,16 +76,130 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     private lateinit var historyStore: HistoryFragmentStore
     private lateinit var historyInteractor: HistoryInteractor
     private lateinit var historyProvider: DefaultPagedHistoryProvider
+    private lateinit var historyDataSource: HistoryDataSource
+    private var collapsedHeaders: Set<HistoryItemTimeGroup> = setOf()
+    private val isSyncedHistory: Boolean by lazy { arguments?.getBoolean("isSyncedHistory") ?: false }
 
-    private var history: Flow<PagingData<History>> = Pager(
+    private val collapsedFlow = MutableStateFlow(collapsedHeaders)
+    private var history: Flow<PagingData<HistoryViewItem>> = Pager(
         PagingConfig(PAGE_SIZE),
         null
     ) {
-        HistoryDataSource(
+        historyDataSource = HistoryDataSource(
             historyProvider = historyProvider,
-            isRemote = if (FeatureFlags.showSyncedHistory) false else null
+            isRemote = if (FeatureFlags.showSyncedHistory) isSyncedHistory else null
         )
+        historyDataSource
     }.flow
+        .cachedIn(MainScope())
+        .map { pagingData ->
+            pagingData.map { history ->
+//                Log.d("kolobok", "historyTimeGroup = " + history.historyTimeGroup.humanReadable(context = requireContext()))
+                Log.d(
+                    "kolobok",
+                    "historyTimeGroup = " + history.historyTimeGroup.humanReadable(context = requireContext()) + "history = $history"
+                )
+
+                when (history) {
+                    is History.Regular -> HistoryViewItem.HistoryItem(history)
+                    is History.Group -> HistoryViewItem.HistoryGroupItem(history)
+                    is History.Metadata -> throw RuntimeException("Not supported!")
+                }
+            }
+        }
+        .map { pagingData ->
+            pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
+                if (history == null && history2 != null) {
+                    val secondTimeGroup = when (history2) {
+                        is HistoryViewItem.HistoryItem -> history2.data.historyTimeGroup
+                        is HistoryViewItem.HistoryGroupItem -> history2.data.historyTimeGroup
+                        else -> throw RuntimeException()
+                    }
+                    return@insertSeparators HistoryViewItem.TimeGroupHeader(
+                        title = secondTimeGroup.humanReadable(requireContext()),
+                        timeGroup = secondTimeGroup,
+                        collapsed = historyStore.state.collapsedHeaders.contains(secondTimeGroup)//collapsedHeaders.contains(secondTimeGroup)
+                    )
+                }
+
+                if (history == null || history2 == null) {
+                    return@insertSeparators null
+                }
+                val firstTimeGroup = when (history) {
+                    is HistoryViewItem.HistoryItem -> history.data.historyTimeGroup
+                    is HistoryViewItem.HistoryGroupItem -> history.data.historyTimeGroup
+                    else -> throw RuntimeException()
+                }
+
+                val secondTimeGroup = when (history2) {
+                    is HistoryViewItem.HistoryItem -> history2.data.historyTimeGroup
+                    is HistoryViewItem.HistoryGroupItem -> history2.data.historyTimeGroup
+                    else -> throw RuntimeException()
+                }
+
+                if (firstTimeGroup != secondTimeGroup) {
+                    return@insertSeparators HistoryViewItem.TimeGroupHeader(
+                        title = secondTimeGroup.humanReadable(requireContext()),
+                        timeGroup = secondTimeGroup,
+                        collapsed = historyStore.state.collapsedHeaders.contains(secondTimeGroup) //collapsedHeaders.contains(secondTimeGroup)
+                    )
+                }
+
+                return@insertSeparators null
+            }
+        }
+        .combine(collapsedFlow) { a: PagingData<HistoryViewItem>, b: Set<HistoryItemTimeGroup> ->
+            a.filter {
+                var isVisible = true
+//                when (it) {
+//                    is HistoryViewItem.HistoryGroupItem -> it.data.historyTimeGroup
+//                    is HistoryViewItem.HistoryItem -> it.data.historyTimeGroup
+//                    else -> null
+//                }?.let {
+//                    isVisible = !b.contains(it)
+//                    Log.d("CollapseDebugging", "filter, contains = $isVisible")
+//                }
+                isVisible
+            }
+        }
+        .map { pagingData ->
+            if (!isSyncedHistory) {
+                pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
+                    if (history == null && history2 != null) {
+                        return@insertSeparators HistoryViewItem.SyncedHistoryItem(
+                            getString(R.string.history_synced_from_other_devices)
+                        )
+                    }
+                    return@insertSeparators null
+                }
+            } else {
+                pagingData
+            }
+        }.map { pagingData ->
+            if (!isSyncedHistory) {
+                pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
+                    if (history == null && history2 != null) {
+                        val numRecentTabs = requireContext().components.core.store.state.closedTabs.size
+                        return@insertSeparators HistoryViewItem.RecentlyClosedItem(
+                            getString(R.string.history_synced_from_other_devices),
+                            String.format(
+                                requireContext().getString(
+                                    if (numRecentTabs == 1) {
+                                        R.string.recently_closed_tab
+                                    } else {
+                                        R.string.recently_closed_tabs
+                                    }
+                                ),
+                                numRecentTabs
+                            )
+                        )
+                    }
+                    return@insertSeparators null
+                }
+            } else {
+                pagingData
+            }
+        }
 
     private var _historyView: HistoryView? = null
     private val historyView: HistoryView
@@ -93,7 +221,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                     mode = HistoryFragmentState.Mode.Normal,
                     pendingDeletionItems = emptySet(),
                     isEmpty = false,
-                    isDeletingItems = false
+                    isDeletingItems = false,
+                    collapsedHeaders
                 )
             )
         }
@@ -106,7 +235,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             openToBrowser = ::openItem,
             displayDeleteAll = ::displayDeleteAllDialog,
             invalidateOptionsMenu = ::invalidateOptionsMenu,
-            deleteSnackbar = :: deleteSnackbar,
+            deleteSnackbar = ::deleteSnackbar,
             syncHistory = ::syncHistory,
         )
         historyInteractor = DefaultHistoryInteractor(
@@ -124,6 +253,9 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                 historyStore.dispatch(
                     HistoryFragmentAction.ChangeEmptyState(it)
                 )
+            },
+            invalidateHistoryDataSource = {
+                historyDataSource.invalidate()
             }
         )
 
@@ -177,6 +309,11 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 
         consumeFrom(historyStore) {
             historyView.update(it)
+            if (collapsedHeaders != it.collapsedHeaders) {
+//                collapsedFlow.compareAndSet(collapsedHeaders, collapsedHeaders)
+                collapsedFlow.value = it.collapsedHeaders
+            }
+            collapsedHeaders = it.collapsedHeaders
         }
 
         requireContext().components.appStore.flowScoped(viewLifecycleOwner) { flow ->
@@ -188,7 +325,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         }
 
         lifecycleScope.launch {
-            history.collect {
+            history.collectLatest {
                 historyView.historyAdapter.submitData(it)
             }
         }
@@ -330,33 +467,91 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 
     private fun displayDeleteAllDialog() {
         activity?.let { activity ->
-            AlertDialog.Builder(activity).apply {
-                setMessage(R.string.delete_browsing_data_prompt_message)
-                setNegativeButton(R.string.delete_browsing_data_prompt_cancel) { dialog: DialogInterface, _ ->
-                    dialog.cancel()
-                }
-                setPositiveButton(R.string.delete_browsing_data_prompt_allow) { dialog: DialogInterface, _ ->
-                    historyStore.dispatch(HistoryFragmentAction.EnterDeletionMode)
-                    // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
-                    lifecycleScope.launch(IO) {
-                        GleanHistory.removedAll.record(NoExtras())
-                        requireComponents.core.store.dispatch(RecentlyClosedAction.RemoveAllClosedTabAction)
-                        requireComponents.core.historyStorage.deleteEverything()
-                        deleteOpenTabsEngineHistory(requireComponents.core.store)
-                        launch(Main) {
-                            historyView.historyAdapter.refresh()
-                            historyStore.dispatch(HistoryFragmentAction.ExitDeletionMode)
-                            showSnackBar(
-                                requireView(),
-                                getString(R.string.preferences_delete_browsing_data_snackbar)
-                            )
-                        }
+            if (isSyncedHistory) {
+                AlertDialog.Builder(activity).apply {
+                    setMessage(R.string.delete_browsing_data_synced_included_prompt_message)
+                    setNegativeButton(R.string.delete_browsing_data_prompt_cancel) { dialog: DialogInterface, _ ->
+                        dialog.cancel()
                     }
+                    setPositiveButton(R.string.delete_browsing_data_prompt_allow) { dialog: DialogInterface, _ ->
+                        historyStore.dispatch(HistoryFragmentAction.EnterDeletionMode)
+                        // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
+                        lifecycleScope.launch(IO) {
+                            GleanHistory.removedAll.record(NoExtras())
+                            requireComponents.core.store.dispatch(RecentlyClosedAction.RemoveAllClosedTabAction)
+                            requireComponents.core.historyStorage.deleteEverything()
+                            deleteOpenTabsEngineHistory(requireComponents.core.store)
+                            launch(Main) {
+                                historyView.historyAdapter.refresh()
+                                historyStore.dispatch(HistoryFragmentAction.ExitDeletionMode)
+                                showSnackBar(
+                                    requireView(),
+                                    getString(R.string.preferences_delete_browsing_data_snackbar)
+                                )
+                            }
+                        }
 
-                    dialog.dismiss()
-                }
-                create()
-            }.show()
+                        dialog.dismiss()
+                    }
+                    create()
+                }.show()
+            } else {
+                AlertDialog.Builder(activity).apply {
+                    val layout = LayoutInflater.from(context).inflate(R.layout.delete_history_time_range_dialog, null)
+                    val radioGroup = layout.findViewById<RadioGroup>(R.id.radio_group)
+                    radioGroup.check(R.id.last_hour_button)
+                    setView(layout)
+
+                    setNegativeButton(R.string.delete_browsing_data_prompt_cancel) { dialog: DialogInterface, _ ->
+                        dialog.cancel()
+                    }
+                    setPositiveButton(R.string.delete_browsing_data_prompt_allow) { dialog: DialogInterface, _ ->
+                        if (radioGroup.checkedRadioButtonId == R.id.everything_button) {
+                            historyStore.dispatch(HistoryFragmentAction.EnterDeletionMode)
+                            // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
+                            lifecycleScope.launch(IO) {
+                                GleanHistory.removedAll.record(NoExtras())
+                                requireComponents.core.store.dispatch(RecentlyClosedAction.RemoveAllClosedTabAction)
+                                requireComponents.core.historyStorage.deleteEverything()
+                                deleteOpenTabsEngineHistory(requireComponents.core.store)
+                                launch(Main) {
+                                    historyView.historyAdapter.refresh()
+                                    historyStore.dispatch(HistoryFragmentAction.ExitDeletionMode)
+                                    showSnackBar(
+                                        requireView(),
+                                        getString(R.string.preferences_delete_browsing_data_snackbar)
+                                    )
+                                }
+                            }
+                        } else {
+                            val timeFrame = when (radioGroup.checkedRadioButtonId) {
+                                R.id.last_hour_button -> RemoveTimeGroup.OneHour.timeFrameForTimeGroup()
+                                R.id.today_button -> RemoveTimeGroup.Today.timeFrameForTimeGroup()
+                                R.id.last_week_button -> RemoveTimeGroup.LastWeek.timeFrameForTimeGroup()
+                                else -> throw RuntimeException("Unexpected view id")
+                            }
+                            historyStore.dispatch(HistoryFragmentAction.EnterDeletionMode)
+                            // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
+                            lifecycleScope.launch(IO) {
+                                requireComponents.core.historyStorage.deleteVisitsBetween(
+                                    startTime = timeFrame.first,
+                                    endTime = timeFrame.second
+                                )
+                                launch(Main) {
+                                    historyView.historyAdapter.refresh()
+                                    historyStore.dispatch(HistoryFragmentAction.ExitDeletionMode)
+                                    showSnackBar(
+                                        requireView(),
+                                        getString(R.string.preferences_delete_browsing_data_snackbar)
+                                    )
+                                }
+                            }
+                        }
+                        dialog.dismiss()
+                    }
+                    create()
+                }.show()
+            }
         }
     }
 

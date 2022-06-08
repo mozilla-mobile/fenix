@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="Time range to delete"
+        android:textColor="?attr/textPrimary"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/body"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:text="Removes history (including history synced from other devices), cookies  and other browsing data."
+        android:textColor="?attr/textSecondary"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/body">
+
+        <RadioButton
+            android:id="@+id/last_hour_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:button="@null"
+            android:drawablePadding="32dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/delete_browsing_data_button_last_hour"
+            android:textColor="?attr/textPrimary"
+            android:textSize="16dp"
+            app:drawableStartCompat="?android:attr/listChoiceIndicatorSingle" />
+
+        <RadioButton
+            android:id="@+id/today_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:button="@null"
+            android:drawablePadding="32dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/delete_browsing_data_button_today"
+            android:textColor="?attr/textPrimary"
+            android:textSize="16dp"
+            app:drawableStartCompat="?android:attr/listChoiceIndicatorSingle" />
+
+        <RadioButton
+            android:id="@+id/last_week_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:button="@null"
+            android:drawablePadding="32dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/delete_browsing_data_button_last_week"
+            android:textColor="?attr/textPrimary"
+            android:textSize="16dp"
+            app:drawableStartCompat="?android:attr/listChoiceIndicatorSingle" />
+
+        <RadioButton
+            android:id="@+id/everything_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:button="@null"
+            android:drawablePadding="32dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="@string/delete_browsing_data_button_everything"
+            android:textColor="?attr/textPrimary"
+            android:textSize="16dp"
+            app:drawableStartCompat="?android:attr/listChoiceIndicatorSingle" />
+
+    </RadioGroup>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
