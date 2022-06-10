@@ -449,7 +449,8 @@ abstract class BaseBrowserFragment :
         fullScreenMediaSessionFeature.set(
             feature = MediaSessionFullscreenFeature(
                 requireActivity(),
-                context.components.core.store
+                context.components.core.store,
+                customTabSessionId
             ),
             owner = this,
             view = view
@@ -768,7 +769,7 @@ abstract class BaseBrowserFragment :
             view = view
         )
 
-        expandToolbarOnNavigation(store)
+        closeFindInPageBarOnNavigation(store)
 
         store.flowScoped(viewLifecycleOwner) { flow ->
             flow.mapNotNull { state -> state.findTabOrCustomTabOrSelectedTab(customTabSessionId) }
@@ -870,11 +871,9 @@ abstract class BaseBrowserFragment :
         context.settings().incrementSecureWarningCount()
     }
 
-    @VisibleForTesting
-    internal fun expandToolbarOnNavigation(store: BrowserStore) {
+    private fun closeFindInPageBarOnNavigation(store: BrowserStore) {
         consumeFlow(store) { flow ->
-            flow.mapNotNull {
-                state ->
+            flow.mapNotNull { state ->
                 state.findCustomTabOrSelectedTab(customTabSessionId)
             }
                 .ifAnyChanged {
@@ -883,7 +882,6 @@ abstract class BaseBrowserFragment :
                 }
                 .collect {
                     findInPageIntegration.onBackPressed()
-                    browserToolbarView.expand()
                 }
         }
     }

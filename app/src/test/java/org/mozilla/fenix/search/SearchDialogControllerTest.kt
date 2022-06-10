@@ -33,6 +33,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -41,6 +42,7 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
+import org.mozilla.fenix.GleanMetrics.UnifiedSearch
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Core
@@ -92,7 +94,7 @@ class SearchDialogControllerTest {
     @Test
     fun handleUrlCommitted() {
         val url = "https://www.google.com/"
-        assertFalse(Events.enteredUrl.testHasValue())
+        assertNull(Events.enteredUrl.testGetValue())
 
         createController().handleUrlCommitted(url)
 
@@ -105,8 +107,8 @@ class SearchDialogControllerTest {
             )
         }
 
-        assertTrue(Events.enteredUrl.testHasValue())
-        val snapshot = Events.enteredUrl.testGetValue()
+        assertNotNull(Events.enteredUrl.testGetValue())
+        val snapshot = Events.enteredUrl.testGetValue()!!
         assertEquals(1, snapshot.size)
         assertEquals("false", snapshot.single().extra?.getValue("autocomplete"))
     }
@@ -191,7 +193,7 @@ class SearchDialogControllerTest {
     @Test
     fun handleMozillaUrlCommitted() {
         val url = "moz://a"
-        assertFalse(Events.enteredUrl.testHasValue())
+        assertNull(Events.enteredUrl.testGetValue())
 
         createController().handleUrlCommitted(url)
 
@@ -204,8 +206,8 @@ class SearchDialogControllerTest {
             )
         }
 
-        assertTrue(Events.enteredUrl.testHasValue())
-        val snapshot = Events.enteredUrl.testGetValue()
+        assertNotNull(Events.enteredUrl.testGetValue())
+        val snapshot = Events.enteredUrl.testGetValue()!!
         assertEquals(1, snapshot.size)
         assertEquals("false", snapshot.single().extra?.getValue("autocomplete"))
     }
@@ -296,7 +298,7 @@ class SearchDialogControllerTest {
     fun handleUrlTapped() {
         val url = "https://www.google.com/"
         val flags = EngineSession.LoadUrlFlags.all()
-        assertFalse(Events.enteredUrl.testHasValue())
+        assertNull(Events.enteredUrl.testGetValue())
 
         createController().handleUrlTapped(url, flags)
         createController().handleUrlTapped(url)
@@ -310,8 +312,8 @@ class SearchDialogControllerTest {
             )
         }
 
-        assertTrue(Events.enteredUrl.testHasValue())
-        val snapshot = Events.enteredUrl.testGetValue()
+        assertNotNull(Events.enteredUrl.testGetValue())
+        val snapshot = Events.enteredUrl.testGetValue()!!
         assertEquals(2, snapshot.size)
         assertEquals("false", snapshot.first().extra?.getValue("autocomplete"))
         assertEquals("false", snapshot[1].extra?.getValue("autocomplete"))
@@ -348,8 +350,8 @@ class SearchDialogControllerTest {
         assertTrue(focusToolbarInvoked)
         verify { store.dispatch(SearchFragmentAction.SearchShortcutEngineSelected(searchEngine, settings)) }
 
-        assertTrue(SearchShortcuts.selected.testHasValue())
-        val recordedEvents = SearchShortcuts.selected.testGetValue()
+        assertNotNull(SearchShortcuts.selected.testGetValue())
+        val recordedEvents = SearchShortcuts.selected.testGetValue()!!
         assertEquals(1, recordedEvents.size)
         val eventExtra = recordedEvents.single().extra
         assertNotNull(eventExtra)
@@ -362,6 +364,9 @@ class SearchDialogControllerTest {
         val searchEngine: SearchEngine = mockk(relaxed = true)
         every { searchEngine.type } returns SearchEngine.Type.APPLICATION
         every { searchEngine.id } returns Core.HISTORY_SEARCH_ENGINE_ID
+        every { settings.showUnifiedSearchFeature } returns true
+
+        assertNull(UnifiedSearch.engineSelected.testGetValue())
 
         var focusToolbarInvoked = false
         createController(
@@ -373,13 +378,13 @@ class SearchDialogControllerTest {
         assertTrue(focusToolbarInvoked)
         verify { store.dispatch(SearchFragmentAction.SearchHistoryEngineSelected(searchEngine)) }
 
-        assertTrue(SearchShortcuts.selected.testHasValue())
-        val recordedEvents = SearchShortcuts.selected.testGetValue()
+        assertNotNull(UnifiedSearch.engineSelected.testGetValue())
+        val recordedEvents = UnifiedSearch.engineSelected.testGetValue()!!
         assertEquals(1, recordedEvents.size)
         val eventExtra = recordedEvents.single().extra
         assertNotNull(eventExtra)
         assertTrue(eventExtra!!.containsKey("engine"))
-        assertEquals("application", eventExtra["engine"])
+        assertEquals("history", eventExtra["engine"])
     }
 
     @Test
@@ -387,6 +392,9 @@ class SearchDialogControllerTest {
         val searchEngine: SearchEngine = mockk(relaxed = true)
         every { searchEngine.type } returns SearchEngine.Type.APPLICATION
         every { searchEngine.id } returns Core.BOOKMARKS_SEARCH_ENGINE_ID
+        every { settings.showUnifiedSearchFeature } returns true
+
+        assertNull(UnifiedSearch.engineSelected.testGetValue())
 
         var focusToolbarInvoked = false
         createController(
@@ -398,13 +406,13 @@ class SearchDialogControllerTest {
         assertTrue(focusToolbarInvoked)
         verify { store.dispatch(SearchFragmentAction.SearchBookmarksEngineSelected(searchEngine)) }
 
-        assertTrue(SearchShortcuts.selected.testHasValue())
-        val recordedEvents = SearchShortcuts.selected.testGetValue()
+        assertNotNull(UnifiedSearch.engineSelected.testGetValue())
+        val recordedEvents = UnifiedSearch.engineSelected.testGetValue()!!
         assertEquals(1, recordedEvents.size)
         val eventExtra = recordedEvents.single().extra
         assertNotNull(eventExtra)
         assertTrue(eventExtra!!.containsKey("engine"))
-        assertEquals("application", eventExtra["engine"])
+        assertEquals("bookmarks", eventExtra["engine"])
     }
 
     @Test
@@ -412,6 +420,9 @@ class SearchDialogControllerTest {
         val searchEngine: SearchEngine = mockk(relaxed = true)
         every { searchEngine.type } returns SearchEngine.Type.APPLICATION
         every { searchEngine.id } returns Core.TABS_SEARCH_ENGINE_ID
+        every { settings.showUnifiedSearchFeature } returns true
+
+        assertNull(UnifiedSearch.engineSelected.testGetValue())
 
         var focusToolbarInvoked = false
         createController(
@@ -423,13 +434,13 @@ class SearchDialogControllerTest {
         assertTrue(focusToolbarInvoked)
         verify { store.dispatch(SearchFragmentAction.SearchTabsEngineSelected(searchEngine)) }
 
-        assertTrue(SearchShortcuts.selected.testHasValue())
-        val recordedEvents = SearchShortcuts.selected.testGetValue()
+        assertNotNull(UnifiedSearch.engineSelected.testGetValue())
+        val recordedEvents = UnifiedSearch.engineSelected.testGetValue()!!
         assertEquals(1, recordedEvents.size)
         val eventExtra = recordedEvents.single().extra
         assertNotNull(eventExtra)
         assertTrue(eventExtra!!.containsKey("engine"))
-        assertEquals("application", eventExtra["engine"])
+        assertEquals("tabs", eventExtra["engine"])
     }
 
     @Test
