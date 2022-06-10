@@ -151,14 +151,14 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         .combine(collapsedFlow) { a: PagingData<HistoryViewItem>, b: Set<HistoryItemTimeGroup> ->
             a.filter {
                 var isVisible = true
-//                when (it) {
-//                    is HistoryViewItem.HistoryGroupItem -> it.data.historyTimeGroup
-//                    is HistoryViewItem.HistoryItem -> it.data.historyTimeGroup
-//                    else -> null
-//                }?.let {
-//                    isVisible = !b.contains(it)
-//                    Log.d("CollapseDebugging", "filter, contains = $isVisible")
-//                }
+                when (it) {
+                    is HistoryViewItem.HistoryGroupItem -> it.data.historyTimeGroup
+                    is HistoryViewItem.HistoryItem -> it.data.historyTimeGroup
+                    else -> null
+                }?.let {
+                    isVisible = !b.contains(it)
+                    Log.d("CollapseDebugging", "filter, contains = $isVisible")
+                }
                 isVisible
             }
         }
