@@ -217,7 +217,15 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail), Menu
     ) : View.OnClickListener {
         override fun onClick(view: View) {
             val clipboard = view.context.components.clipboardHandler
-            clipboard.text = value
+            when (snackbarText) {
+                R.string.logins_username_copied -> {
+                    clipboard.text = value
+                }
+
+                R.string.logins_password_copied -> {
+                    clipboard.sensitiveText = value
+                }
+            }
             showCopiedSnackbar(view.context.getString(snackbarText))
             Logins.copyLogin.record(NoExtras())
         }
