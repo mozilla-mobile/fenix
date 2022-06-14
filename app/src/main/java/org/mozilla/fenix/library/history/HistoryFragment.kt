@@ -59,6 +59,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.ext.getRootView
+import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
 import java.lang.RuntimeException
@@ -251,7 +252,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             },
             invalidateHistoryDataSource = {
                 historyDataSource.invalidate()
-            }
+            },
+            isSyncedHistory = isSyncedHistory
         )
 
         return view
@@ -328,8 +330,14 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 
     override fun onResume() {
         super.onResume()
+//        (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary().show()
 
-        (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary().show()
+        val title = if (isSyncedHistory) {
+            getString(R.string.history_from_other_devices)
+        } else {
+            getString(R.string.library_history)
+        }
+        showToolbar(title)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

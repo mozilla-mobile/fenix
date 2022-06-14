@@ -33,7 +33,8 @@ class HistoryView(
     val interactor: HistoryInteractor,
     val onZeroItemsLoaded: () -> Unit,
     val onEmptyStateChanged: (Boolean) -> Unit,
-    val invalidateHistoryDataSource: () -> Unit
+    val invalidateHistoryDataSource: () -> Unit,
+    val isSyncedHistory: Boolean
 ) : LibraryPageView(container), UserInteractionHandler, RecyclerView.OnItemTouchListener {
 
     val binding = ComponentHistoryBinding.inflate(
@@ -148,9 +149,16 @@ class HistoryView(
 
         when (val mode = state.mode) {
             is HistoryFragmentState.Mode.Normal -> {
-                setUiForNormalMode(
+                val title = if (isSyncedHistory) {
+                    context.getString(R.string.history_from_other_devices)
+                } else {
                     context.getString(R.string.library_history)
-                )
+                }
+                setUiForNormalMode(title)
+
+//                setUiForNormalMode(
+//                    context.getString(R.string.library_history)
+//                )
             }
             is HistoryFragmentState.Mode.Editing -> {
                 setUiForSelectingMode(

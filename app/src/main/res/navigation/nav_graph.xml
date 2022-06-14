@@ -286,7 +286,7 @@
     <fragment
         android:id="@+id/syncedHistoryFragment2"
         android:name="org.mozilla.fenix.library.history.HistoryFragment"
-        android:label="@string/library_history"
+        android:label="@string/history_from_other_devices"
         tools:layout="@layout/fragment_history">
 
         <action
