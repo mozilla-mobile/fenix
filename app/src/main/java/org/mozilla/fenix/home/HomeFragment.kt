@@ -153,7 +153,7 @@ class HomeFragment : Fragment() {
         RecentSyncedTabFeature(
             store = requireComponents.appStore,
             context = requireContext(),
-            storage = requireComponents.backgroundServices.syncedTabsStorage,
+            storage = requireComponents.backgroundServices.lazySyncedTabsStorage,
             accountManager = requireComponents.backgroundServices.accountManager,
             lifecycleOwner = viewLifecycleOwner,
         )

@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import mozilla.components.browser.storage.sync.RemoteTabsStorage
+import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.DeviceCapability
@@ -54,6 +55,7 @@ import org.mozilla.fenix.utils.Settings
 class BackgroundServices(
     private val context: Context,
     private val push: Push,
+    private val engine: Engine,
     crashReporter: CrashReporter,
     historyStorage: Lazy<PlacesHistoryStorage>,
     bookmarkStorage: Lazy<PlacesBookmarksStorage>,
@@ -135,8 +137,12 @@ class BackgroundServices(
     }
 
     val syncedTabsStorage by lazyMonitored {
-        SyncedTabsStorage(accountManager, context.components.core.store, remoteTabsStorage.value)
+        val start = engine.profiler?.getProfilerTime()
+        SyncedTabsStorage(accountManager, context.components.core.store, remoteTabsStorage.value).also {
+            engine.profiler?.addMarker("SyncedTabsStorageInit", start)
+        }
     }
+    val lazySyncedTabsStorage = lazyMonitored { syncedTabsStorage }
 
     @VisibleForTesting(otherwise = PRIVATE)
     fun makeAccountManager(
@@ -163,6 +169,7 @@ class BackgroundServices(
         ),
         crashReporter
     ).also { accountManager ->
+        val start = engine.profiler?.getProfilerTime()
         // Register a telemetry account observer to keep track of FxA auth metrics.
         accountManager.register(telemetryAccountObserver)
 
@@ -186,6 +193,7 @@ class BackgroundServices(
         MainScope().launch {
             accountManager.start()
         }
+        engine.profiler?.addMarker("FxaAccountInit", start)
     }
 
     /**

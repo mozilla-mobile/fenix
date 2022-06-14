@@ -32,14 +32,14 @@ class RecentSyncedTabFeature(
     private val store: AppStore,
     accountManager: FxaAccountManager,
     context: Context,
-    storage: SyncedTabsStorage,
+    storage: Lazy<SyncedTabsStorage>,
     lifecycleOwner: LifecycleOwner,
 ) : SyncedTabsView, LifecycleAwareFeature {
     private val syncedTabsFeature by lazy {
         SyncedTabsFeature(
             view = this,
             context = context,
-            storage = storage,
+            storage = storage.value,
             accountManager = accountManager,
             lifecycleOwner = lifecycleOwner,
             onTabClicked = {}
