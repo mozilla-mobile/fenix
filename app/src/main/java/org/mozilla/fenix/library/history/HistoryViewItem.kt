@@ -39,4 +39,9 @@ sealed class HistoryViewItem : Parcelable {
         val title: String
     ) : HistoryViewItem()
 
+    @Parcelize
+    data class EmptyHistoryItem(
+        val title: String
+    ) : HistoryViewItem()
+
 }

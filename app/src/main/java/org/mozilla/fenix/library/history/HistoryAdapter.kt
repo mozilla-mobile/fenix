@@ -15,6 +15,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
+import org.mozilla.fenix.library.history.viewholders.EmptyViewHolder
 import org.mozilla.fenix.library.history.viewholders.HistoryGroupViewHolder
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.library.history.viewholders.HistoryViewHolder
@@ -52,6 +53,7 @@ class HistoryAdapter(
         is HistoryViewItem.TimeGroupHeader -> TimeGroupViewHolder.LAYOUT_ID
         is HistoryViewItem.RecentlyClosedItem -> RecentlyClosedViewHolder.LAYOUT_ID
         is HistoryViewItem.SyncedHistoryItem -> SyncedHistoryViewHolder.LAYOUT_ID
+        is HistoryViewItem.EmptyHistoryItem -> EmptyViewHolder.LAYOUT_ID
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -62,6 +64,7 @@ class HistoryAdapter(
             TimeGroupViewHolder.LAYOUT_ID -> TimeGroupViewHolder(view, historyInteractor)
             RecentlyClosedViewHolder.LAYOUT_ID -> RecentlyClosedViewHolder(view, historyInteractor)
             SyncedHistoryViewHolder.LAYOUT_ID -> SyncedHistoryViewHolder(view, historyInteractor)
+            EmptyViewHolder.LAYOUT_ID -> EmptyViewHolder(view)
             else -> throw RuntimeException("Unknown type") // TODO
         }
     }
@@ -86,6 +89,7 @@ class HistoryAdapter(
             }
             is RecentlyClosedViewHolder -> holder.bind(item as HistoryViewItem.RecentlyClosedItem)
             is SyncedHistoryViewHolder -> holder.bind(item as HistoryViewItem.SyncedHistoryItem)
+            is EmptyViewHolder -> holder.bind(item as HistoryViewItem.EmptyHistoryItem)
         }
     }
 

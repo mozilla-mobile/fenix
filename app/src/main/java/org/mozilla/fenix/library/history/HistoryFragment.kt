@@ -75,6 +75,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     private val isSyncedHistory: Boolean by lazy { arguments?.getBoolean("isSyncedHistory") ?: false }
 
     private val collapsedFlow = MutableStateFlow(collapsedHeaders)
+    private val deleteFlow = MutableStateFlow(emptySet<PendingDeletionHistory>())
     private var history: Flow<PagingData<HistoryViewItem>> = Pager(
         PagingConfig(PAGE_SIZE),
         null
@@ -156,6 +157,23 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 //                    Log.d("CollapseDebugging", "filter, contains = $isVisible")
                 }
                 isVisible
+            }
+        }
+        .combine(deleteFlow) { a: PagingData<HistoryViewItem>, b: Set<PendingDeletionHistory> ->
+            a.filter {
+                when (it) {
+                    is HistoryViewItem.HistoryItem -> {
+                        b.find { pendingItem ->
+                            pendingItem.visitedAt == it.data.visitedAt
+                        } == null
+                    }
+                    is HistoryViewItem.HistoryGroupItem -> {
+                        b.find { pendingItem ->
+                            pendingItem.visitedAt == it.data.visitedAt
+                        } == null
+                    }
+                    else -> true
+                }
             }
         }
 //        .map { pagingData ->
@@ -315,9 +333,10 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 
         requireContext().components.appStore.flowScoped(viewLifecycleOwner) { flow ->
             flow.mapNotNull { state -> state.pendingDeletionHistoryItems }.collect { items ->
-                historyStore.dispatch(
-                    HistoryFragmentAction.UpdatePendingDeletionItems(pendingDeletionItems = items)
-                )
+//                historyStore.dispatch(
+//                    HistoryFragmentAction.UpdatePendingDeletionItems(pendingDeletionItems = items)
+//                )
+                deleteFlow.value = items
             }
         }
 

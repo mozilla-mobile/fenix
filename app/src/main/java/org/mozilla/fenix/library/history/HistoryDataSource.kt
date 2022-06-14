@@ -43,11 +43,15 @@ class HistoryDataSource(
             headerPositionsNew = TreeMap()
         }
 
+        var isEmpty = false
         val headerPositions: MutableList<Pair<HistoryViewItem.TimeGroupHeader, Int>> = LinkedList()
 
         Log.d("kalabak", "HistoryDataSource, params.loadSize = ${params.loadSize}")
         val historyItems = historyProvider.getHistory(offset, params.loadSize, isRemote).run {
             Log.d("kolobok", "historyItems size = ${this.size}, loadSize = ${params.loadSize}")
+            if (size == 0 && params.key == null) {
+                isEmpty = true
+            }
             positionWithOffset(offset)
         }.mapIndexed { position, history ->
 
@@ -207,6 +211,15 @@ class HistoryDataSource(
 //                mutableList
 //            }
                 mutableList
+        }.let {
+            if (isEmpty) {
+                it.add(
+                    HistoryViewItem.EmptyHistoryItem(
+                        context.getString(R.string.history_empty_message)
+                    )
+                )
+            }
+            it
         }
 
 //        if (offset == 0 && historyItems.size > 1) {
@@ -228,6 +241,10 @@ class HistoryDataSource(
 //            temp.add(0, header)
 //            historyItems = temp
 //        }
+
+        if (params.key == null && historyItems.isEmpty()) {
+
+        }
 
         val nextOffset = if (historyItems.isEmpty()) {
             null
