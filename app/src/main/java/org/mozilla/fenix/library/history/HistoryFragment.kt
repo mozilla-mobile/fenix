@@ -87,67 +87,69 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     ) {
         historyDataSource = HistoryDataSource(
             historyProvider = historyProvider,
-            isRemote = if (FeatureFlags.showSyncedHistory) isSyncedHistory else null
+            historyStore = historyStore,
+            isRemote = if (FeatureFlags.showSyncedHistory) isSyncedHistory else null,
+            context = requireContext()
         )
         historyDataSource
     }.flow
         .cachedIn(MainScope())
-        .map { pagingData ->
-            pagingData.map { history ->
-//                Log.d("kolobok", "historyTimeGroup = " + history.historyTimeGroup.humanReadable(context = requireContext()))
-                Log.d(
-                    "kolobok",
-                    "historyTimeGroup = " + history.historyTimeGroup.humanReadable(context = requireContext()) + "history = $history"
-                )
-
-                when (history) {
-                    is History.Regular -> HistoryViewItem.HistoryItem(history)
-                    is History.Group -> HistoryViewItem.HistoryGroupItem(history)
-                    is History.Metadata -> throw RuntimeException("Not supported!")
-                }
-            }
-        }
-        .map { pagingData ->
-            pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
-                if (history == null && history2 != null) {
-                    val secondTimeGroup = when (history2) {
-                        is HistoryViewItem.HistoryItem -> history2.data.historyTimeGroup
-                        is HistoryViewItem.HistoryGroupItem -> history2.data.historyTimeGroup
-                        else -> throw RuntimeException()
-                    }
-                    return@insertSeparators HistoryViewItem.TimeGroupHeader(
-                        title = secondTimeGroup.humanReadable(requireContext()),
-                        timeGroup = secondTimeGroup,
-                        collapsed = historyStore.state.collapsedHeaders.contains(secondTimeGroup)//collapsedHeaders.contains(secondTimeGroup)
-                    )
-                }
-
-                if (history == null || history2 == null) {
-                    return@insertSeparators null
-                }
-                val firstTimeGroup = when (history) {
-                    is HistoryViewItem.HistoryItem -> history.data.historyTimeGroup
-                    is HistoryViewItem.HistoryGroupItem -> history.data.historyTimeGroup
-                    else -> throw RuntimeException()
-                }
-
-                val secondTimeGroup = when (history2) {
-                    is HistoryViewItem.HistoryItem -> history2.data.historyTimeGroup
-                    is HistoryViewItem.HistoryGroupItem -> history2.data.historyTimeGroup
-                    else -> throw RuntimeException()
-                }
-
-                if (firstTimeGroup != secondTimeGroup) {
-                    return@insertSeparators HistoryViewItem.TimeGroupHeader(
-                        title = secondTimeGroup.humanReadable(requireContext()),
-                        timeGroup = secondTimeGroup,
-                        collapsed = historyStore.state.collapsedHeaders.contains(secondTimeGroup) //collapsedHeaders.contains(secondTimeGroup)
-                    )
-                }
-
-                return@insertSeparators null
-            }
-        }
+//        .map { pagingData ->
+//            pagingData.map { history ->
+////                Log.d("kolobok", "historyTimeGroup = " + history.historyTimeGroup.humanReadable(context = requireContext()))
+//                Log.d(
+//                    "kolobok",
+//                    "historyTimeGroup = " + history.historyTimeGroup.humanReadable(context = requireContext()) + "history = $history"
+//                )
+//
+//                when (history) {
+//                    is History.Regular -> HistoryViewItem.HistoryItem(history)
+//                    is History.Group -> HistoryViewItem.HistoryGroupItem(history)
+//                    is History.Metadata -> throw RuntimeException("Not supported!")
+//                }
+//            }
+//        }
+//        .map { pagingData ->
+//            pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
+////                if (history == null && history2 != null) {
+////                    val secondTimeGroup = when (history2) {
+////                        is HistoryViewItem.HistoryItem -> history2.data.historyTimeGroup
+////                        is HistoryViewItem.HistoryGroupItem -> history2.data.historyTimeGroup
+////                        else -> throw RuntimeException()
+////                    }
+////                    return@insertSeparators HistoryViewItem.TimeGroupHeader(
+////                        title = secondTimeGroup.humanReadable(requireContext()),
+////                        timeGroup = secondTimeGroup,
+////                        collapsed = historyStore.state.collapsedHeaders.contains(secondTimeGroup)//collapsedHeaders.contains(secondTimeGroup)
+////                    )
+////                }
+//
+//                if (history == null || history2 == null) {
+//                    return@insertSeparators null
+//                }
+//                val firstTimeGroup = when (history) {
+//                    is HistoryViewItem.HistoryItem -> history.data.historyTimeGroup
+//                    is HistoryViewItem.HistoryGroupItem -> history.data.historyTimeGroup
+//                    else -> throw RuntimeException()
+//                }
+//
+//                val secondTimeGroup = when (history2) {
+//                    is HistoryViewItem.HistoryItem -> history2.data.historyTimeGroup
+//                    is HistoryViewItem.HistoryGroupItem -> history2.data.historyTimeGroup
+//                    else -> throw RuntimeException()
+//                }
+//
+//                if (firstTimeGroup != secondTimeGroup) {
+//                    return@insertSeparators HistoryViewItem.TimeGroupHeader(
+//                        title = secondTimeGroup.humanReadable(requireContext()),
+//                        timeGroup = secondTimeGroup,
+//                        collapsed = historyStore.state.collapsedHeaders.contains(secondTimeGroup) //collapsedHeaders.contains(secondTimeGroup)
+//                    )
+//                }
+//
+//                return@insertSeparators null
+//            }
+//        }
         .combine(collapsedFlow) { a: PagingData<HistoryViewItem>, b: Set<HistoryItemTimeGroup> ->
             a.filter {
                 var isVisible = true
@@ -155,51 +157,51 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                     is HistoryViewItem.HistoryGroupItem -> it.data.historyTimeGroup
                     is HistoryViewItem.HistoryItem -> it.data.historyTimeGroup
                     else -> null
-                }?.let {
-                    isVisible = !b.contains(it)
-                    Log.d("CollapseDebugging", "filter, contains = $isVisible")
+                }?.let { timeGroup ->
+                    isVisible = !b.contains(timeGroup)
+//                    Log.d("CollapseDebugging", "filter, contains = $isVisible")
                 }
                 isVisible
             }
         }
-        .map { pagingData ->
-            if (!isSyncedHistory) {
-                pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
-                    if (history == null && history2 != null) {
-                        return@insertSeparators HistoryViewItem.SyncedHistoryItem(
-                            getString(R.string.history_synced_from_other_devices)
-                        )
-                    }
-                    return@insertSeparators null
-                }
-            } else {
-                pagingData
-            }
-        }.map { pagingData ->
-            if (!isSyncedHistory) {
-                pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
-                    if (history == null && history2 != null) {
-                        val numRecentTabs = requireContext().components.core.store.state.closedTabs.size
-                        return@insertSeparators HistoryViewItem.RecentlyClosedItem(
-                            getString(R.string.history_synced_from_other_devices),
-                            String.format(
-                                requireContext().getString(
-                                    if (numRecentTabs == 1) {
-                                        R.string.recently_closed_tab
-                                    } else {
-                                        R.string.recently_closed_tabs
-                                    }
-                                ),
-                                numRecentTabs
-                            )
-                        )
-                    }
-                    return@insertSeparators null
-                }
-            } else {
-                pagingData
-            }
-        }
+//        .map { pagingData ->
+//            if (!isSyncedHistory) {
+//                pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
+//                    if (history == null && history2 != null) {
+//                        return@insertSeparators HistoryViewItem.SyncedHistoryItem(
+//                            getString(R.string.history_synced_from_other_devices)
+//                        )
+//                    }
+//                    return@insertSeparators null
+//                }
+//            } else {
+//                pagingData
+//            }
+//        }.map { pagingData ->
+//            if (!isSyncedHistory) {
+//                pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
+//                    if (history == null && history2 != null) {
+//                        val numRecentTabs = requireContext().components.core.store.state.closedTabs.size
+//                        return@insertSeparators HistoryViewItem.RecentlyClosedItem(
+//                            getString(R.string.history_synced_from_other_devices),
+//                            String.format(
+//                                requireContext().getString(
+//                                    if (numRecentTabs == 1) {
+//                                        R.string.recently_closed_tab
+//                                    } else {
+//                                        R.string.recently_closed_tabs
+//                                    }
+//                                ),
+//                                numRecentTabs
+//                            )
+//                        )
+//                    }
+//                    return@insertSeparators null
+//                }
+//            } else {
+//                pagingData
+//            }
+//        }
 
     private var _historyView: HistoryView? = null
     private val historyView: HistoryView

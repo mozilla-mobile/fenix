@@ -34,7 +34,7 @@ class HistoryAdapter(
 
     private var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
     private var pendingDeletionItems = emptySet<PendingDeletionHistory>()
-    private val headerPositions: MutableMap<HistoryItemTimeGroup, Int> = mutableMapOf()
+    val headerPositions: MutableMap<HistoryItemTimeGroup, Int> = mutableMapOf()
     // A flag to track the empty state of the list. Items are not being deleted immediately,
     // but hidden from the UI until the Undo snackbar will execute the delayed operation.
     // Whether the adapter has actually zero items or all present items are hidden,
@@ -202,10 +202,10 @@ class HistoryAdapter(
     companion object {
         private val historyDiffCallback = object : DiffUtil.ItemCallback<HistoryViewItem>() {
             override fun areItemsTheSame(oldItem: HistoryViewItem, newItem: HistoryViewItem): Boolean {
-                if (oldItem is HistoryViewItem.TimeGroupHeader && newItem is HistoryViewItem.TimeGroupHeader) {
-                    return oldItem.timeGroup == newItem.timeGroup
+                return if (oldItem is HistoryViewItem.TimeGroupHeader && newItem is HistoryViewItem.TimeGroupHeader) {
+                    oldItem.timeGroup == newItem.timeGroup
                 } else {
-                    return oldItem == newItem
+                    oldItem == newItem
                 }
             }
 
@@ -220,23 +220,41 @@ class HistoryAdapter(
     }
 
     override fun getHeaderPositionForItem(itemPosition: Int): Int {
-        Log.d("stickyHeader", "getHeaderPositionForItem, itemPosition = $itemPosition")
-        val item: HistoryViewItem = getItem(itemPosition) ?: return -1
-        val timeGroup = when (item) {
-            is HistoryViewItem.TimeGroupHeader -> item.timeGroup
-            is HistoryViewItem.HistoryGroupItem -> item.data.historyTimeGroup
-            is HistoryViewItem.HistoryItem -> item.data.historyTimeGroup
-            is HistoryViewItem.RecentlyClosedItem -> -1
-            is HistoryViewItem.SyncedHistoryItem -> -1
+        Log.d("CollapseDebugging", "getHeaderPositionForItem, itemPosition = $itemPosition")
+        val item: HistoryViewItem? = getItem(itemPosition)
+
+//        if (item == null) {
+//            Log.d("stickyHeader", "getHeaderPositionForItem, item = null")
+//            return -1
+//        }
+
+        val result = when (item) {
+            is HistoryViewItem.TimeGroupHeader -> headerPositions[item.timeGroup]
+            is HistoryViewItem.HistoryGroupItem -> headerPositions[item.data.historyTimeGroup]
+            is HistoryViewItem.HistoryItem -> headerPositions[item.data.historyTimeGroup]
+            else -> -1
         }
-        return headerPositions[timeGroup] ?: -1
+        Log.d("stickyHeader", "getHeaderPositionForItem, result = $result")
+        return result ?: -1
+
+//
+//        val timeGroup = when (item) {
+//            is HistoryViewItem.TimeGroupHeader -> item.timeGroup
+//            is HistoryViewItem.HistoryGroupItem -> item.data.historyTimeGroup
+//            is HistoryViewItem.HistoryItem -> item.data.historyTimeGroup
+//            is HistoryViewItem.RecentlyClosedItem -> -1
+//            is HistoryViewItem.SyncedHistoryItem -> -1
+//        }
+//        val result = headerPositions[timeGroup] ?: -1
+//        Log.d("stickyHeader", "getHeaderPositionForItem, result = $result")
+//        return result
 //        return getItem(itemPosition)?.let {
 //
 //        } ?: 0
     }
 
     override fun getHeaderLayout(headerPosition: Int): Int {
-        Log.d("kalabak", "getHeaderLayout, headerPosition = $headerPosition")
+        Log.d("stickyHeader", "getHeaderLayout, headerPosition = $headerPosition")
         return R.layout.history_list_header
     }
 
@@ -253,6 +271,7 @@ class HistoryAdapter(
     }
 
     override fun isHeader(itemPosition: Int): Boolean {
+        if (itemPosition == -1) return false // TODO check
         Log.d("stickyHeader", "isHeader, itemPosition = $itemPosition")
         val item = getItem(itemPosition) ?: return false
         return item is HistoryViewItem.TimeGroupHeader
@@ -260,6 +279,7 @@ class HistoryAdapter(
 
     // TODO change to item position
     override fun onStickyHeaderClicked(itemPosition: Int) {
+//        if (itemPosition == -1) return // TODO check
         val item = getItem(itemPosition) ?: return
         val timeGroup = when (item) {
             is HistoryViewItem.HistoryItem -> item.data.historyTimeGroup

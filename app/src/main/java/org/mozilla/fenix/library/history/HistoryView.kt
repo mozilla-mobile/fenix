@@ -95,7 +95,13 @@ class HistoryView(
     }
 
     private fun onStickyHeaderClicked(position: Int) {
-        historyAdapter.onStickyHeaderClicked(position)
+        Log.d("onStickyHeaderClicked", "position = $position")
+//        historyAdapter.onStickyHeaderClicked(position)
+        layoutManager.smoothScrollToPosition(
+            binding.historyList,
+            RecyclerView.State(),
+            historyAdapter.getHeaderPositionForItem(position)
+        )
     }
 
     fun update(state: HistoryFragmentState) {

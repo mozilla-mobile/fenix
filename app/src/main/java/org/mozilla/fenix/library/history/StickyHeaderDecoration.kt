@@ -5,13 +5,17 @@
 package org.mozilla.fenix.library.history
 
 import android.graphics.Canvas
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.MeasureSpec.makeMeasureSpec
 import android.view.ViewGroup
 import android.view.ViewGroup.getChildMeasureSpec
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import org.mozilla.fenix.R
 import java.lang.Math.abs
 
 
@@ -20,19 +24,43 @@ class StickyHeaderDecoration(
 ) : RecyclerView.ItemDecoration() {
 
     private var stickyHeaderHeight = 0
+//    private var previousTopViewPosition = 0
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(c, parent, state)
+        Log.d("ohhaha", "1, onDrawOver.start")
+        val topView = parent.getChildAt(0) ?: run {
+            Log.d("ohhaha", "4, onDrawOver.return")
+            return
+        }
 
-        val topView = parent.getChildAt(0) ?: return
-        val topViewPosition = parent.getChildAdapterPosition(topView).also {
-            if (it == RecyclerView.NO_POSITION) {
-                return
-            }
+        Log.d("ohohohoh", "topView = $topView")
+//        if (topView is ConstraintLayout) {
+//            Log.d("ohhaha", "7, onDrawOver.return")
+//            return
+//        }
+
+//        val test = parent.findViewHolderForAdapterPosition(parent.getChildAdapterPosition(parent.getChildAt(0)))?.isRecyclable
+//        Log.d("ohohohoh", "test = $test")
+//        if (test == true) return
+
+//        var topViewPosition = parent.getChildAdapterPosition(topView)
+//        Log.d("ohohohoh", "topViewPosition = $topViewPosition")
+
+        val topViewPosition = (parent.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+        Log.d("ohohohoh", "topViewPosition = $topViewPosition")
+
+        if (topViewPosition == RecyclerView.NO_POSITION) { // || topViewPosition > 200) { // TODO costul'
+//            topViewPosition = previousTopViewPosition // TODO may be nullable
+//            Log.d("ohhaha", "5, onDrawOver.return")
+            return
+        } else {
+//            previousTopViewPosition = topViewPosition
         }
 
         val currentHeaderPosition: Int = headerManager.getHeaderPositionForItem(topViewPosition).also {
             if (it == -1) {
+                Log.d("ohhaha", "6, onDrawOver.return")
                 return
             }
         }
@@ -47,27 +75,14 @@ class StickyHeaderDecoration(
                 parent.getChildAdapterPosition(viewInContact)
             )
         ) {
-            moveHeader(c, stickyHeaderView, viewInContact)
+            stickyHeaderHeight = viewInContact.top - stickyHeaderView.height
+            moveHeader(c, stickyHeaderView, stickyHeaderHeight.toFloat())
+            Log.d("ohhaha", "2, onDrawOver.return")
             return
         }
 
         drawHeader(c, stickyHeaderView)
-    }
-
-    fun isOnTouched(parent: StickyHeaderRecycler , e: MotionEvent) : Boolean {
-
-//        val w = abs(scaleX * width)
-//        val h = abs(scaleY * height)
-//        val top = topMargin - height / 2F - parent.paddingTop
-//        return if (scaleX > 0) {
-//            val side = parent.measuredWidth - sideMargin
-//            e.y >= top && e.y <= (top + h) && side >= e.x && (side - w) <= e.x
-//        } else {
-//            val side = 0
-////            val side = sideMargin
-//            e.y >= top && e.y <= (top + h) && side <= e.x && e.x <= (side + w)
-//        }
-        return false
+        Log.d("ohhaha", "3, onDrawOver.finish")
     }
 
     fun getStickyHeaderBottom() : Float {
@@ -81,6 +96,7 @@ class StickyHeaderDecoration(
     ): View {
         val layoutRes: Int = headerManager.getHeaderLayout(headerPosition)
         val view = LayoutInflater.from(parent.context).inflate(layoutRes, parent, false)
+//        view.setBackgroundColor(parent.context.resources.getColor(R.color.photonRed80))
         headerManager.bindHeader(view, headerPosition)
         view.isClickable = true
 
@@ -91,15 +107,16 @@ class StickyHeaderDecoration(
     }
 
     private fun drawHeader(c: Canvas, header: View) {
+//        Log.d("ohhaha", "view = $header")
         c.save()
         c.translate(0f, 0f)
         header.draw(c)
         c.restore()
     }
 
-    private fun moveHeader(c: Canvas, stickyHeader: View, nextHeader: View) {
+    private fun moveHeader(c: Canvas, stickyHeader: View, stickyHeaderHeight: Float) {
         c.save()
-        c.translate(0f, (nextHeader.top - stickyHeader.height).toFloat())
+        c.translate(0f, stickyHeaderHeight)
         stickyHeader.draw(c)
         c.restore()
     }
@@ -128,7 +145,7 @@ class StickyHeaderDecoration(
             } else {
                 view.bottom
             }
-            if (childBottomPosition > contactPoint) {
+            if (childBottomPosition > contactPoint - 1) {
                 if (view.top <= contactPoint) {
                     // This child overlaps the contactPoint
                     result = view
