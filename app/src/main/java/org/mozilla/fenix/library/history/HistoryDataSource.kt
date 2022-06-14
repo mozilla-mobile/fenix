@@ -113,7 +113,7 @@ class HistoryDataSource(
                     mutableList.add(
                         0,
                         HistoryViewItem.RecentlyClosedItem(
-                            context.getString(R.string.history_synced_from_other_devices),
+                            context.getString(R.string.library_recently_closed_tabs),
                             String.format(
                                 context.getString(
                                     if (numRecentTabs == 1) {
