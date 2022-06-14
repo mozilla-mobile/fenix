@@ -8,14 +8,12 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.SpannableString
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
@@ -26,20 +24,15 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
-import androidx.paging.flatMap
-import androidx.paging.insertSeparators
-import androidx.paging.map
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.RecentlyClosedAction
@@ -469,13 +462,17 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 
     private fun displayDeleteAllDialog() {
         activity?.let { activity ->
-            if (isSyncedHistory) {
-                AlertDialog.Builder(activity).apply {
-                    setMessage(R.string.delete_browsing_data_synced_included_prompt_message)
-                    setNegativeButton(R.string.delete_browsing_data_prompt_cancel) { dialog: DialogInterface, _ ->
-                        dialog.cancel()
-                    }
-                    setPositiveButton(R.string.delete_browsing_data_prompt_allow) { dialog: DialogInterface, _ ->
+            AlertDialog.Builder(activity).apply {
+                val layout = LayoutInflater.from(context).inflate(R.layout.delete_history_time_range_dialog, null)
+                val radioGroup = layout.findViewById<RadioGroup>(R.id.radio_group)
+                radioGroup.check(R.id.last_hour_button)
+                setView(layout)
+
+                setNegativeButton(R.string.delete_browsing_data_prompt_cancel) { dialog: DialogInterface, _ ->
+                    dialog.cancel()
+                }
+                setPositiveButton(R.string.delete_browsing_data_prompt_allow) { dialog: DialogInterface, _ ->
+                    if (radioGroup.checkedRadioButtonId == R.id.everything_button) {
                         historyStore.dispatch(HistoryFragmentAction.EnterDeletionMode)
                         // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
                         lifecycleScope.launch(IO) {
@@ -492,68 +489,33 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                                 )
                             }
                         }
-
-                        dialog.dismiss()
-                    }
-                    create()
-                }.show()
-            } else {
-                AlertDialog.Builder(activity).apply {
-                    val layout = LayoutInflater.from(context).inflate(R.layout.delete_history_time_range_dialog, null)
-                    val radioGroup = layout.findViewById<RadioGroup>(R.id.radio_group)
-                    radioGroup.check(R.id.last_hour_button)
-                    setView(layout)
-
-                    setNegativeButton(R.string.delete_browsing_data_prompt_cancel) { dialog: DialogInterface, _ ->
-                        dialog.cancel()
-                    }
-                    setPositiveButton(R.string.delete_browsing_data_prompt_allow) { dialog: DialogInterface, _ ->
-                        if (radioGroup.checkedRadioButtonId == R.id.everything_button) {
-                            historyStore.dispatch(HistoryFragmentAction.EnterDeletionMode)
-                            // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
-                            lifecycleScope.launch(IO) {
-                                GleanHistory.removedAll.record(NoExtras())
-                                requireComponents.core.store.dispatch(RecentlyClosedAction.RemoveAllClosedTabAction)
-                                requireComponents.core.historyStorage.deleteEverything()
-                                deleteOpenTabsEngineHistory(requireComponents.core.store)
-                                launch(Main) {
-                                    historyView.historyAdapter.refresh()
-                                    historyStore.dispatch(HistoryFragmentAction.ExitDeletionMode)
-                                    showSnackBar(
-                                        requireView(),
-                                        getString(R.string.preferences_delete_browsing_data_snackbar)
-                                    )
-                                }
-                            }
-                        } else {
-                            val timeFrame = when (radioGroup.checkedRadioButtonId) {
-                                R.id.last_hour_button -> RemoveTimeGroup.OneHour.timeFrameForTimeGroup()
-                                R.id.today_button -> RemoveTimeGroup.Today.timeFrameForTimeGroup()
-                                R.id.last_week_button -> RemoveTimeGroup.LastWeek.timeFrameForTimeGroup()
-                                else -> throw RuntimeException("Unexpected view id")
-                            }
-                            historyStore.dispatch(HistoryFragmentAction.EnterDeletionMode)
-                            // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
-                            lifecycleScope.launch(IO) {
-                                requireComponents.core.historyStorage.deleteVisitsBetween(
-                                    startTime = timeFrame.first,
-                                    endTime = timeFrame.second
+                    } else {
+                        val timeFrame = when (radioGroup.checkedRadioButtonId) {
+                            R.id.last_hour_button -> RemoveTimeGroup.OneHour.timeFrameForTimeGroup()
+                            R.id.today_and_yesterday_button -> RemoveTimeGroup.TodayAndYesterday.timeFrameForTimeGroup()
+                            else -> throw RuntimeException("Unexpected view id")
+                        }
+                        historyStore.dispatch(HistoryFragmentAction.EnterDeletionMode)
+                        // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
+                        lifecycleScope.launch(IO) {
+                            requireComponents.core.historyStorage.deleteVisitsBetween(
+                                startTime = timeFrame.first,
+                                endTime = timeFrame.second
+                            )
+                            launch(Main) {
+                                historyView.historyAdapter.refresh()
+                                historyStore.dispatch(HistoryFragmentAction.ExitDeletionMode)
+                                showSnackBar(
+                                    requireView(),
+                                    getString(R.string.preferences_delete_browsing_data_snackbar)
                                 )
-                                launch(Main) {
-                                    historyView.historyAdapter.refresh()
-                                    historyStore.dispatch(HistoryFragmentAction.ExitDeletionMode)
-                                    showSnackBar(
-                                        requireView(),
-                                        getString(R.string.preferences_delete_browsing_data_snackbar)
-                                    )
-                                }
                             }
                         }
-                        dialog.dismiss()
                     }
-                    create()
-                }.show()
-            }
+                    dialog.dismiss()
+                }
+                create()
+            }.show()
         }
     }
 

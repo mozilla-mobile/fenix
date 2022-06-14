@@ -4,6 +4,7 @@ import java.util.*
 
 enum class RemoveTimeGroup {
     OneHour,
+    TodayAndYesterday,
     Today,
     LastWeek;
 
@@ -19,9 +20,14 @@ enum class RemoveTimeGroup {
                 Pair(oneHourRange.first, oneHourRange.last)
             }
             Today -> {
-                val lastWeekRange = LongRange(getDaysAgo(zeroDays).time, Long.MAX_VALUE)
-                Pair(lastWeekRange.first, lastWeekRange.last)
+                val todayRange = LongRange(getDaysAgo(zeroDays).time, Long.MAX_VALUE)
+                Pair(todayRange.first, todayRange.last)
             }
+            TodayAndYesterday -> {
+                val todayAndYesterdayRange = LongRange(getDaysAgo(oneDay).time, Long.MAX_VALUE)
+                Pair(todayAndYesterdayRange.first, todayAndYesterdayRange.last)
+            }
+
             LastWeek -> {
                 val lastWeekRange = LongRange(getDaysAgo(sevenDays).time, getDaysAgo(oneDay).time)
                 Pair(lastWeekRange.first, lastWeekRange.last)

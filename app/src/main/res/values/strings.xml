@@ -1118,6 +1118,7 @@
     <!-- Radio button of a delete browsing data dialog message, for deleting history items for the last hour  -->
     <string name="delete_browsing_data_button_last_hour">Last hour</string>
     <string name="delete_browsing_data_button_today">Today</string>
+    <string name="delete_browsing_data_button_today_and_yesterday">Today and yesterday</string>
     <string name="delete_browsing_data_button_last_week">Last 7 days</string>
     <string name="delete_browsing_data_button_everything">Everything</string>
 
@@ -1134,6 +1135,10 @@
 
     <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
     <string name="delete_history_group_prompt_message">This will delete all items.</string>
+
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
+    <string name="delete_history_group_prompt_message_new">Delete all sites in \"%s\"</string>
+
     <!-- Text for the cancel button for the history group deletion dialog -->
     <string name="delete_history_group_prompt_cancel">Cancel</string>
     <!-- Text for the allow button for the history group dialog -->

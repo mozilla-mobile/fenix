@@ -98,32 +98,59 @@ class HistoryDataSource(
                 mutableList.add(header.second, header.first)
             }
 
-            if (params.key == null && isRemote == false) {
-                val numRecentTabs = context.components.core.store.state.closedTabs.size
-
-                mutableList.add(0 ,
-                    HistoryViewItem.SyncedHistoryItem(
-                        context.getString(R.string.history_synced_from_other_devices)
+            if (params.key == null) {
+                if (isRemote == false) {
+                    mutableList.add(
+                        0,
+                        HistoryViewItem.SyncedHistoryItem(
+                            context.getString(R.string.history_synced_from_other_devices)
+                        )
                     )
-                )
+                }
 
-                mutableList.add(
-                    0,
-                    HistoryViewItem.RecentlyClosedItem(
-                    context.getString(R.string.history_synced_from_other_devices),
-                    String.format(
-                        context.getString(
-                            if (numRecentTabs == 1) {
-                                R.string.recently_closed_tab
-                            } else {
-                                R.string.recently_closed_tabs
-                            }
-                        ),
-                        numRecentTabs
+                if (isRemote == false || isRemote == null) {
+                    val numRecentTabs = context.components.core.store.state.closedTabs.size
+                    mutableList.add(
+                        0,
+                        HistoryViewItem.RecentlyClosedItem(
+                            context.getString(R.string.history_synced_from_other_devices),
+                            String.format(
+                                context.getString(
+                                    if (numRecentTabs == 1) {
+                                        R.string.recently_closed_tab
+                                    } else {
+                                        R.string.recently_closed_tabs
+                                    }
+                                ),
+                                numRecentTabs
+                            )
+                        )
                     )
-                ))
+                }
+            }
 
-                mutableList
+//            mutableList
+
+//            if (params.key == null && isRemote == false) {
+//
+//                mutableList.add(
+//                    0,
+//                    HistoryViewItem.RecentlyClosedItem(
+//                        context.getString(R.string.history_synced_from_other_devices),
+//                        String.format(
+//                            context.getString(
+//                                if (numRecentTabs == 1) {
+//                                    R.string.recently_closed_tab
+//                                } else {
+//                                    R.string.recently_closed_tabs
+//                                }
+//                            ),
+//                            numRecentTabs
+//                        )
+//                    )
+//                )
+//
+//                mutableList
 
 //                val numRecentTabs = context.components.core.store.state.closedTabs.size
 //                it.toMutableList().apply {
@@ -176,9 +203,10 @@ class HistoryDataSource(
 //                    )
 //                )
 //                mutableList
-            } else {
+//            } else {
+//                mutableList
+//            }
                 mutableList
-            }
         }
 
 //        if (offset == 0 && historyItems.size > 1) {

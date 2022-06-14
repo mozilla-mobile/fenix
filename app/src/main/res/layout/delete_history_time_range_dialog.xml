@@ -60,7 +60,7 @@
             app:drawableStartCompat="?android:attr/listChoiceIndicatorSingle" />
 
         <RadioButton
-            android:id="@+id/today_button"
+            android:id="@+id/today_and_yesterday_button"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:background="?android:attr/selectableItemBackground"
@@ -68,21 +68,7 @@
             android:drawablePadding="32dp"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:text="@string/delete_browsing_data_button_today"
-            android:textColor="?attr/textPrimary"
-            android:textSize="16dp"
-            app:drawableStartCompat="?android:attr/listChoiceIndicatorSingle" />
-
-        <RadioButton
-            android:id="@+id/last_week_button"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:button="@null"
-            android:drawablePadding="32dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:text="@string/delete_browsing_data_button_last_week"
+            android:text="@string/delete_browsing_data_button_today_and_yesterday"
             android:textColor="?attr/textPrimary"
             android:textSize="16dp"
             app:drawableStartCompat="?android:attr/listChoiceIndicatorSingle" />

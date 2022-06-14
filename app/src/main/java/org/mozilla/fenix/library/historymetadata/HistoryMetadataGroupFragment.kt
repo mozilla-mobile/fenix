@@ -218,7 +218,7 @@ class HistoryMetadataGroupFragment :
 
     private fun promptDeleteAll(delete: () -> Unit) {
         AlertDialog.Builder(requireContext()).apply {
-            setMessage(R.string.delete_history_group_prompt_message)
+            setMessage(getString(R.string.delete_history_group_prompt_message_new, args.title))
             setNegativeButton(R.string.delete_history_group_prompt_cancel) { dialog: DialogInterface, _ ->
                 dialog.cancel()
             }
