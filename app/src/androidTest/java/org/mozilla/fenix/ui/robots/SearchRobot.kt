@@ -7,6 +7,7 @@
 package org.mozilla.fenix.ui.robots
 
 import android.os.Build
+import android.util.Log
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.assertHasClickAction
@@ -50,6 +51,7 @@ import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.SPEECH_RECOGNITION
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
 import org.mozilla.fenix.helpers.TestHelper.packageName
@@ -145,28 +147,33 @@ class SearchRobot {
     }
 
     fun typeSearch(searchTerm: String) {
+        Log.i("Andi", "typeSearch: Waiting for edit url view")
         mDevice.findObject(
             UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_edit_url_view")
         ).waitForExists(waitingTime)
-
+        Log.i("Andi", "typeSearch: Waited for edit url view")
         browserToolbarEditView().setText(searchTerm)
-
+        Log.i("Andi", "typeSearch: Edit url view text set to: $searchTerm")
         mDevice.waitForIdle()
+        Log.i("Andi", "typeSearch: Waited for idle")
     }
 
     fun clickSearchEngineButton(rule: ComposeTestRule, searchEngineName: String) {
         rule.waitForIdle()
-
+        Log.i("Andi", "clickSearchEngineButton: Rule waited to be idle")
+        Log.i("Andi", "clickSearchEngineButton: Waiting for search engine name")
         mDevice.waitForObjects(
             mDevice.findObject(
                 UiSelector().textContains(searchEngineName)
             )
         )
+        Log.i("Andi", "clickSearchEngineButton: Waited for search engine name")
 
         rule.onNodeWithText(searchEngineName)
             .assertExists()
             .assertHasClickAction()
             .performClick()
+        Log.i("Andi", "clickSearchEngineButton: Asserted search engine name")
     }
 
     fun clickSearchEngineResult(rule: ComposeTestRule, searchSuggestion: String) {
@@ -314,15 +321,23 @@ private fun assertSearchEngineURL(searchEngineName: String) {
 }
 
 private fun assertSearchEngineResults(rule: ComposeTestRule, searchSuggestion: String, searchEngineName: String) {
-    rule.waitUntil(waitingTime, waitForSearchSuggestions(rule, searchSuggestion, searchEngineName))
+    Log.i("Andi", "assertSearchEngineResults: Waiting until")
+    rule.waitUntil(waitingTimeLong, waitForSearchSuggestions(rule, searchSuggestion, searchEngineName))
+    Log.i("Andi", "assertSearchEngineResults: Rule finished to wait for search suggestions")
     rule.onNodeWithText(searchSuggestion).assertIsDisplayed()
+    Log.i("Andi", "assertSearchEngineResults: Asserted $searchSuggestion")
 }
 
 private fun waitForSearchSuggestions(rule: ComposeTestRule, searchSuggestion: String, searchEngineName: String): () -> Boolean =
     {
         rule.waitForIdle()
+        Log.i("Andi", "waitForSearchSuggestions: Rule waited for idle")
+        Log.i("Andi", "waitForSearchSuggestions: Waiting for object $searchSuggestion")
         mDevice.waitForObjects(mDevice.findObject(UiSelector().textContains(searchSuggestion)))
+        Log.i("Andi", "waitForSearchSuggestions: Waited for object $searchSuggestion")
         rule.onAllNodesWithTag("mozac.awesomebar.suggestion").assertAny(hasText(searchSuggestion) and hasText(searchEngineName))
+        Log.i("Andi", "waitForSearchSuggestions: Asserted suggestion contains: $searchSuggestion with shortcut: $searchEngineName")
+        Log.i("Andi", "waitForSearchSuggestions: Waiting for: $searchSuggestion")
         mDevice.findObject(UiSelector().textContains(searchSuggestion)).waitForExists(waitingTime)
     }
 
