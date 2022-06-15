@@ -24,7 +24,6 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppAction.MessagingAction.MessageClicked
-import org.mozilla.fenix.components.appstate.AppAction.MessagingAction.MessageDisplayed
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.nimbus.MessageData
 
@@ -101,28 +100,6 @@ class DefaultMessageControllerTest {
         assertEquals(1, event.size)
         assertEquals(message.id, event.single().extra!!["message_key"])
         verify { store.dispatch(AppAction.MessagingAction.MessageDismissed(message)) }
-    }
-
-    @Test
-    fun `WHEN calling onMessageDisplayed THEN report to the messageManager`() {
-        val data = MessageData()
-        val message = mockMessage(data)
-        assertFalse(Messaging.messageExpired.testHasValue())
-        assertFalse(Messaging.messageShown.testHasValue())
-
-        controller.onMessageDisplayed(message)
-
-        assertTrue(Messaging.messageExpired.testHasValue())
-        val messageExpiredEvent = Messaging.messageExpired.testGetValue()
-        assertEquals(1, messageExpiredEvent.size)
-        assertEquals(message.id, messageExpiredEvent.single().extra!!["message_key"])
-
-        assertTrue(Messaging.messageShown.testHasValue())
-        val event = Messaging.messageShown.testGetValue()
-        assertEquals(1, event.size)
-        assertEquals(message.id, event.single().extra!!["message_key"])
-
-        verify { store.dispatch(MessageDisplayed(message)) }
     }
 
     private fun mockMessage(data: MessageData = MessageData()) = Message(
