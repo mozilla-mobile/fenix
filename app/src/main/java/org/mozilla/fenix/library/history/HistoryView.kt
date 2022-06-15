@@ -122,7 +122,7 @@ class HistoryView(
 
         historyAdapter.updatePendingDeletionItems(state.pendingDeletionItems)
 
-        updateEmptyState(userHasHistory = !state.isEmpty)
+        updateEmptyState(userHasHistory2 = !state.isEmpty)
 
         historyAdapter.updateMode(state.mode)
 
@@ -171,7 +171,12 @@ class HistoryView(
         }
     }
 
-    private fun updateEmptyState(userHasHistory: Boolean) {
+    private fun updateEmptyState(userHasHistory2: Boolean) {
+//        if (userHasHistory2) {
+//            onEmptyStateChanged.invoke(userHasHistory2)
+//        }
+
+        val userHasHistory = true
         binding.historyList.isInvisible = !userHasHistory
         binding.historyEmptyView.isVisible = !userHasHistory
         binding.topSpacer.isVisible = !userHasHistory

@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.SpannableString
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -34,6 +35,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.EngineAction
@@ -78,6 +80,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 
     private val collapsedFlow = MutableStateFlow(collapsedHeaders)
     private val deleteFlow = MutableStateFlow(Pair(emptySet<PendingDeletionHistory>(), emptySet<HistoryItemTimeGroup>()))
+    private val emptyFlow = MutableStateFlow(false)
+
     private var history: Flow<PagingData<HistoryViewItem>> = Pager(
         PagingConfig(PAGE_SIZE),
         null
@@ -180,6 +184,14 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                         } == null
                     }
                     else -> true
+                }
+            }
+        }.combine(emptyFlow) { a: PagingData<HistoryViewItem>, b: Boolean ->
+            a.filter {
+                if (it is HistoryViewItem.EmptyHistoryItem) {
+                    b
+                } else {
+                    true
                 }
             }
         }
@@ -382,6 +394,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             collapsedHeaders = it.collapsedHeaders
 
             deleteFlow.value = Pair(it.pendingDeletionItems, it.hiddenHeaders)
+            Log.d("MOSCOW", "isEmpty = ${it.isEmpty}")
+            emptyFlow.value = it.isEmpty
         }
 
         requireContext().components.appStore.flowScoped(viewLifecycleOwner) { flow ->

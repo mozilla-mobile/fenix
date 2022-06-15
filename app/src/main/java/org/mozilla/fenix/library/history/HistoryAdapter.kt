@@ -33,6 +33,13 @@ class HistoryAdapter(
 ) : PagingDataAdapter<HistoryViewItem, RecyclerView.ViewHolder>(historyDiffCallback),
     SelectionHolder<History>, HeaderManager {
 
+    init {
+        addOnPagesUpdatedListener {
+            Log.d("CollapseDebugging", "page update!")
+            isEmpty = true
+        }
+    }
+
     private var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
     private var pendingDeletionItems = emptySet<PendingDeletionHistory>()
     val headerPositions: MutableMap<HistoryItemTimeGroup, Int> = mutableMapOf()
@@ -112,6 +119,19 @@ class HistoryAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position) ?: return
         Log.d("CollapseDebugging", "binding, position = $position")
+
+        // If there is a single visible item, it's enough to change the empty state of the view.
+        if (isEmpty && item is HistoryViewItem.HistoryItem || item is HistoryViewItem.HistoryGroupItem) {
+            isEmpty = false
+            onEmptyStateChanged.invoke(isEmpty)
+        } else if (position + 1 == itemCount) {
+            // If we reached the bottom of the list and there still has been zero visible items,
+            // we can can change the History view state to empty.
+            if (isEmpty) {
+                onEmptyStateChanged.invoke(isEmpty)
+            }
+        }
+
         when (holder) {
             is HistoryViewHolder -> bindHistoryItem(holder, position, item)
             is HistoryGroupViewHolder -> bindHistoryItem(holder, position, item)
@@ -184,17 +204,17 @@ class HistoryAdapter(
 //            timeGroup = current.historyTimeGroup
 //        }
 
-        // If there is a single visible item, it's enough to change the empty state of the view.
-        if (isEmpty && !isPendingDeletion) {
-            isEmpty = false
-            onEmptyStateChanged.invoke(isEmpty)
-        } else if (position + 1 == itemCount) {
-            // If we reached the bottom of the list and there still has been zero visible items,
-            // we can can change the History view state to empty.
-            if (isEmpty) {
-                onEmptyStateChanged.invoke(isEmpty)
-            }
-        }
+//        // If there is a single visible item, it's enough to change the empty state of the view.
+//        if (isEmpty && !isPendingDeletion && item is HistoryViewItem.HistoryItem || item is HistoryViewItem.HistoryGroupItem) {
+//            isEmpty = false
+//            onEmptyStateChanged.invoke(isEmpty)
+//        } else if (position + 1 == itemCount) {
+//            // If we reached the bottom of the list and there still has been zero visible items,
+//            // we can can change the History view state to empty.
+//            if (isEmpty) {
+//                onEmptyStateChanged.invoke(isEmpty)
+//            }
+//        }
 
         if (item is HistoryViewItem.HistoryItem) {
             (holder as HistoryViewHolder).setVisible(true)

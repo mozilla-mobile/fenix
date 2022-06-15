@@ -44,13 +44,17 @@ class HistoryDataSource(
         }
 
         var isEmpty = false
+        var finishedLoading = false
         val headerPositions: MutableList<Pair<HistoryViewItem.TimeGroupHeader, Int>> = LinkedList()
 
         Log.d("kalabak", "HistoryDataSource, params.loadSize = ${params.loadSize}")
-        val historyItems = historyProvider.getHistory(offset, params.loadSize, isRemote).run {
+        var historyItems = historyProvider.getHistory(offset, params.loadSize, isRemote).run {
             Log.d("kolobok", "historyItems size = ${this.size}, loadSize = ${params.loadSize}")
             if (size == 0 && params.key == null) {
                 isEmpty = true
+            }
+            if (size == 0) {
+                finishedLoading = true
             }
             positionWithOffset(offset)
         }.mapIndexed { position, history ->
@@ -211,16 +215,27 @@ class HistoryDataSource(
 //                mutableList
 //            }
                 mutableList
-        }.let {
-            if (isEmpty) {
-                it.add(
-                    HistoryViewItem.EmptyHistoryItem(
-                        context.getString(R.string.history_empty_message)
-                    )
-                )
-            }
-            it
         }
+//            .let {
+//            if (it.isEmpty()) {
+//                it.add(
+//                    HistoryViewItem.EmptyHistoryItem(
+//                        context.getString(R.string.history_empty_message)
+//                    )
+//                )
+//            }
+//            it
+//        }
+//            .let {
+//            if (finishedLoading) {
+//                it.add(
+//                    HistoryViewItem.EmptyHistoryItem(
+//                        context.getString(R.string.history_empty_message)
+//                    )
+//                )
+//            }
+//            it
+//        }
 
 //        if (offset == 0 && historyItems.size > 1) {
 //            val firstItem = historyItems[0]
@@ -252,6 +267,32 @@ class HistoryDataSource(
             offset + params.loadSize
         }
         Log.d("kolobok", "nextOffset = $nextOffset")
+
+//        if (nextOffset == null) {
+//            it.add(
+//                HistoryViewItem.EmptyHistoryItem(
+//                    context.getString(R.string.history_empty_message)
+//                )
+//            )
+//        }
+
+        if (nextOffset == null) {
+            historyItems = historyItems.toMutableList().apply {
+                add(HistoryViewItem.EmptyHistoryItem(
+                    context.getString(R.string.history_empty_message)
+                ))
+            }
+//            .let {
+//                if (it.isEmpty()) {
+//                    it.add(
+//                        HistoryViewItem.EmptyHistoryItem(
+//                            context.getString(R.string.history_empty_message)
+//                        )
+//                    )
+//                }
+//                it
+//            }
+        }
 
         return LoadResult.Page(
             data = historyItems,
