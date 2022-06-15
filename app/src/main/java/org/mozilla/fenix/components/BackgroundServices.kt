@@ -55,7 +55,6 @@ import org.mozilla.fenix.utils.Settings
 class BackgroundServices(
     private val context: Context,
     private val push: Push,
-    private val engine: Engine,
     crashReporter: CrashReporter,
     historyStorage: Lazy<PlacesHistoryStorage>,
     bookmarkStorage: Lazy<PlacesBookmarksStorage>,
@@ -137,10 +136,7 @@ class BackgroundServices(
     }
 
     val syncedTabsStorage by lazyMonitored {
-        val start = engine.profiler?.getProfilerTime()
-        SyncedTabsStorage(accountManager, context.components.core.store, remoteTabsStorage.value).also {
-            engine.profiler?.addMarker("SyncedTabsStorageInit", start)
-        }
+        SyncedTabsStorage(accountManager, context.components.core.store, remoteTabsStorage.value)
     }
     val lazySyncedTabsStorage = lazyMonitored { syncedTabsStorage }
 
@@ -169,7 +165,6 @@ class BackgroundServices(
         ),
         crashReporter
     ).also { accountManager ->
-        val start = engine.profiler?.getProfilerTime()
         // Register a telemetry account observer to keep track of FxA auth metrics.
         accountManager.register(telemetryAccountObserver)
 
@@ -193,7 +188,6 @@ class BackgroundServices(
         MainScope().launch {
             accountManager.start()
         }
-        engine.profiler?.addMarker("FxaAccountInit", start)
     }
 
     /**
