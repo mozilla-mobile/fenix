@@ -24,6 +24,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
+import androidx.paging.insertSeparators
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.RecentlyClosedAction
@@ -75,7 +77,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     private val isSyncedHistory: Boolean by lazy { arguments?.getBoolean("isSyncedHistory") ?: false }
 
     private val collapsedFlow = MutableStateFlow(collapsedHeaders)
-    private val deleteFlow = MutableStateFlow(emptySet<PendingDeletionHistory>())
+    private val deleteFlow = MutableStateFlow(Pair(emptySet<PendingDeletionHistory>(), emptySet<HistoryItemTimeGroup>()))
     private var history: Flow<PagingData<HistoryViewItem>> = Pager(
         PagingConfig(PAGE_SIZE),
         null
@@ -159,23 +161,71 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                 isVisible
             }
         }
-        .combine(deleteFlow) { a: PagingData<HistoryViewItem>, b: Set<PendingDeletionHistory> ->
+        .combine(deleteFlow) { a: PagingData<HistoryViewItem>, b: Pair<Set<PendingDeletionHistory>, Set<HistoryItemTimeGroup>> ->
             a.filter {
                 when (it) {
                     is HistoryViewItem.HistoryItem -> {
-                        b.find { pendingItem ->
+                        b.first.find { pendingItem ->
                             pendingItem.visitedAt == it.data.visitedAt
                         } == null
                     }
                     is HistoryViewItem.HistoryGroupItem -> {
-                        b.find { pendingItem ->
+                        b.first.find { pendingItem ->
                             pendingItem.visitedAt == it.data.visitedAt
+                        } == null
+                    }
+                    is HistoryViewItem.TimeGroupHeader -> {
+                        b.second.find { historyItemTimeGroup ->
+                            it.timeGroup == historyItemTimeGroup
                         } == null
                     }
                     else -> true
                 }
             }
         }
+//        .map { pagingData ->
+//            pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
+////                if (history == null && history2 != null) {
+////                    val secondTimeGroup = when (history2) {
+////                        is HistoryViewItem.HistoryItem -> history2.data.historyTimeGroup
+////                        is HistoryViewItem.HistoryGroupItem -> history2.data.historyTimeGroup
+////                        else -> throw RuntimeException()
+////                    }
+////                    return@insertSeparators HistoryViewItem.TimeGroupHeader(
+////                        title = secondTimeGroup.humanReadable(requireContext()),
+////                        timeGroup = secondTimeGroup,
+////                        collapsed = historyStore.state.collapsedHeaders.contains(secondTimeGroup)//collapsedHeaders.contains(secondTimeGroup)
+////                    )
+////                }
+//
+//                if (history == null || history2 == null) {
+//                    return@insertSeparators null
+//                }
+//                val firstTimeGroup = when (history) {
+//                    is HistoryViewItem.HistoryItem -> history.data.historyTimeGroup
+//                    is HistoryViewItem.HistoryGroupItem -> history.data.historyTimeGroup
+//                    else -> throw RuntimeException()
+//                }
+//
+//                val secondTimeGroup = when (history2) {
+//                    is HistoryViewItem.HistoryItem -> history2.data.historyTimeGroup
+//                    is HistoryViewItem.HistoryGroupItem -> history2.data.historyTimeGroup
+//                    else -> throw RuntimeException()
+//                }
+//
+//                if (firstTimeGroup != secondTimeGroup) {
+//                    return@insertSeparators HistoryViewItem.TimeGroupHeader(
+//                        title = secondTimeGroup.humanReadable(requireContext()),
+//                        timeGroup = secondTimeGroup,
+//                        collapsed = historyStore.state.collapsedHeaders.contains(secondTimeGroup) //collapsedHeaders.contains(secondTimeGroup)
+//                    )
+//                }
+//
+//                return@insertSeparators null
+//            }
+//        }
+
+
 //        .map { pagingData ->
 //            if (!isSyncedHistory) {
 //                pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
@@ -328,7 +378,10 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 //                collapsedFlow.compareAndSet(collapsedHeaders, collapsedHeaders)
                 collapsedFlow.value = it.collapsedHeaders
             }
+
             collapsedHeaders = it.collapsedHeaders
+
+            deleteFlow.value = Pair(it.pendingDeletionItems, it.hiddenHeaders)
         }
 
         requireContext().components.appStore.flowScoped(viewLifecycleOwner) { flow ->
@@ -336,7 +389,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 //                historyStore.dispatch(
 //                    HistoryFragmentAction.UpdatePendingDeletionItems(pendingDeletionItems = items)
 //                )
-                deleteFlow.value = items
+//                deleteFlow.value = items // TODO old delete
             }
         }
 

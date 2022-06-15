@@ -38,6 +38,8 @@ interface HistoryInteractor : SelectionInteractor<History> {
      */
     fun onDeleteSome(items: Set<History>)
 
+    fun onDeleteSome(items: Set<History>, headers: Set<HistoryItemTimeGroup>)
+
     /**
      * Called when the user requests a sync of the history
      */
@@ -97,6 +99,10 @@ class DefaultHistoryInteractor(
 
     override fun onDeleteSome(items: Set<History>) {
         historyController.handleDeleteSome(items)
+    }
+
+    override fun onDeleteSome(items: Set<History>, headers: Set<HistoryItemTimeGroup>) {
+        historyController.handleDeleteSome(items, headers)
     }
 
     override fun onRequestSync() {

@@ -5,6 +5,7 @@
 package org.mozilla.fenix.library.history
 
 import android.os.Parcelable
+import android.util.Log
 import kotlinx.parcelize.Parcelize
 import mozilla.components.concept.storage.HistoryMetadata
 import mozilla.components.concept.storage.HistoryMetadataKey
@@ -12,6 +13,7 @@ import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
+import org.mozilla.fenix.components.appstate.AppAction
 
 /**
  * Class representing a history entry.
@@ -133,6 +135,23 @@ sealed class HistoryFragmentAction : Action {
     data class UpdatePendingDeletionItems(val pendingDeletionItems: Set<PendingDeletionHistory>) :
         HistoryFragmentAction()
 
+    /**
+     * Adds a set of items marked for removal to the app state, to be hidden in the UI.
+     */
+    data class AddPendingDeletionSet(
+        val historyItems: Set<PendingDeletionHistory>,
+        val groups: Set<HistoryItemTimeGroup>
+        ) : HistoryFragmentAction()
+    /**
+     * Removes a set of items, previously marked for removal, to be displayed again in the UI.
+     */
+    data class UndoPendingDeletionSet(val historyItems: Set<PendingDeletionHistory>) : HistoryFragmentAction()
+
+    data class UpdatePendingDeletionItemsNew(
+        val pendingDeletionItems: Set<PendingDeletionHistory>,
+        val groups: Set<HistoryItemTimeGroup>
+        ) : HistoryFragmentAction()
+
     data class ChangeCollapsedState(val timeGroup: HistoryItemTimeGroup, val collapsed: Boolean) :
         HistoryFragmentAction()
     object EnterDeletionMode : HistoryFragmentAction()
@@ -152,7 +171,8 @@ data class HistoryFragmentState(
     val pendingDeletionItems: Set<PendingDeletionHistory>,
     val isEmpty: Boolean,
     val isDeletingItems: Boolean,
-    val collapsedHeaders: Set<HistoryItemTimeGroup> = setOf()
+    val collapsedHeaders: Set<HistoryItemTimeGroup> = setOf(),
+    val hiddenHeaders: Set<HistoryItemTimeGroup> = setOf(),
 ) : State {
     sealed class Mode {
         open val selectedItems = emptySet<History>()
@@ -200,6 +220,48 @@ private fun historyStateReducer(
                     state.collapsedHeaders - action.timeGroup
                 }
             )
+        }
+        is HistoryFragmentAction.UpdatePendingDeletionItemsNew -> state.copy(
+            pendingDeletionItems = action.pendingDeletionItems,
+            hiddenHeaders = action.groups
+        )
+        is HistoryFragmentAction.AddPendingDeletionSet -> state.copy(
+            pendingDeletionItems = state.pendingDeletionItems + action.historyItems,
+            hiddenHeaders = state.hiddenHeaders + action.groups
+        )
+        is HistoryFragmentAction.UndoPendingDeletionSet -> {
+            if (state.hiddenHeaders.isNotEmpty()) {
+                val hiddenHeadersToRestore: MutableSet<HistoryItemTimeGroup> = mutableSetOf()
+                action.historyItems.forEach {
+                    if (state.hiddenHeaders.contains(it.timeGroup)) {
+                        hiddenHeadersToRestore.add(it.timeGroup)
+                    }
+                }
+
+//                action.historyItems.find {
+//                    state.hiddenHeaders.contains(it.timeGroup)
+//                }
+//
+//                val newPendingState = state.pendingDeletionItems - action.historyItems
+//                val hiddenHeadersToRemove: MutableSet<HistoryItemTimeGroup> = mutableSetOf()
+//                state.hiddenHeaders.forEach { hiddenTimeGroup ->
+//                    if (newPendingState.find { it.timeGroup == hiddenTimeGroup } != null) {
+//                        hiddenHeadersToRemove.add(hiddenTimeGroup)
+//                    }
+//                }
+                Log.d("MOSCOW", "hiddenHeadersToRestore = $hiddenHeadersToRestore")
+                state.copy(
+                    hiddenHeaders = state.hiddenHeaders - hiddenHeadersToRestore,
+                    pendingDeletionItems = state.pendingDeletionItems - action.historyItems
+                )
+            } else {
+                state.copy(
+                    pendingDeletionItems = state.pendingDeletionItems - action.historyItems
+                )
+            }
+//            state.copy(
+//                pendingDeletionItems = state.pendingDeletionItems - action.historyItems
+//            )
         }
     }
 }

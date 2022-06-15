@@ -59,13 +59,46 @@ class HistoryAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         return when (viewType) {
-            HistoryViewHolder.LAYOUT_ID ->  HistoryViewHolder(view, historyInteractor, this)
-            HistoryGroupViewHolder.LAYOUT_ID -> HistoryGroupViewHolder(view, historyInteractor, this)
+            HistoryViewHolder.LAYOUT_ID ->  HistoryViewHolder(view, historyInteractor, this, ::onDeleteClicked)
+            HistoryGroupViewHolder.LAYOUT_ID -> HistoryGroupViewHolder(view, historyInteractor, this, ::onDeleteClicked)
             TimeGroupViewHolder.LAYOUT_ID -> TimeGroupViewHolder(view, historyInteractor)
             RecentlyClosedViewHolder.LAYOUT_ID -> RecentlyClosedViewHolder(view, historyInteractor)
             SyncedHistoryViewHolder.LAYOUT_ID -> SyncedHistoryViewHolder(view, historyInteractor)
             EmptyViewHolder.LAYOUT_ID -> EmptyViewHolder(view)
             else -> throw RuntimeException("Unknown type") // TODO
+        }
+    }
+
+    private fun onDeleteClicked(adapterPosition: Int) {
+        val item = getItem(adapterPosition)
+        item?.let {
+            if (it is HistoryViewItem.HistoryItem) {
+                val previousItem = getItem(adapterPosition - 1)
+                val nextItem = if (adapterPosition < itemCount - 1) {
+                    getItem(adapterPosition + 1)
+                } else {
+                    null
+                }
+                if (previousItem is HistoryViewItem.TimeGroupHeader
+                    && (nextItem is HistoryViewItem.TimeGroupHeader
+                    || nextItem == null) // TODO change to Empty
+                ) {
+                    historyInteractor.onDeleteSome(setOf(it.data), setOf(it.data.historyTimeGroup))
+                } else {
+                    historyInteractor.onDeleteSome(setOf(it.data), setOf())
+                }
+            } else if (it is HistoryViewItem.HistoryItem) {
+                val previousItem = getItem(adapterPosition - 1)
+                val nextItem = getItem(adapterPosition + 1)
+                if (previousItem is HistoryViewItem.TimeGroupHeader
+                    && (nextItem is HistoryViewItem.TimeGroupHeader
+                    || nextItem == null) // TODO change to Empty
+                ) {
+                    historyInteractor.onDeleteSome(setOf(it.data), setOf(it.data.historyTimeGroup))
+                } else {
+                    historyInteractor.onDeleteSome(setOf(it.data), setOf())
+                }
+            }
         }
     }
 

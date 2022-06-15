@@ -32,6 +32,7 @@ interface HistoryController {
     fun handleSearch()
     fun handleDeleteAll()
     fun handleDeleteSome(items: Set<History>)
+    fun handleDeleteSome(items: Set<History>, groups: Set<HistoryItemTimeGroup>)
     fun handleRequestSync()
     fun handleEnterRecentlyClosed()
     /**
@@ -118,9 +119,16 @@ class DefaultHistoryController(
         deleteSnackbar.invoke(items, ::undo, ::delete)
     }
 
+    override fun handleDeleteSome(items: Set<History>, groups: Set<HistoryItemTimeGroup>) {
+        val pendingDeletionItems = items.map { it.toPendingDeletionHistory() }.toSet()
+        store.dispatch(HistoryFragmentAction.AddPendingDeletionSet(pendingDeletionItems, groups))
+        deleteSnackbar.invoke(items, ::undo, ::delete)
+    }
+
     private fun undo(items: Set<History>) {
         val pendingDeletionItems = items.map { it.toPendingDeletionHistory() }.toSet()
-        appStore.dispatch(AppAction.UndoPendingDeletionSet(pendingDeletionItems))
+        store.dispatch(HistoryFragmentAction.UndoPendingDeletionSet(pendingDeletionItems))
+//        appStore.dispatch(AppAction.UndoPendingDeletionSet(pendingDeletionItems)) // TODO old delete
     }
 
     private fun delete(items: Set<History>): suspend (context: Context) -> Unit {

@@ -14,12 +14,14 @@ import mozilla.components.concept.storage.HistoryMetadataKey
 sealed class PendingDeletionHistory {
 
     abstract val visitedAt: Long
+    abstract val timeGroup: HistoryItemTimeGroup
 
     /**
      * This class represents a single, separate item in the history list.
      */
     data class Item(
         override val visitedAt: Long,
+        override val timeGroup: HistoryItemTimeGroup,
         val url: String
     ) : PendingDeletionHistory()
 
@@ -28,6 +30,7 @@ sealed class PendingDeletionHistory {
      */
     data class Group(
         override val visitedAt: Long,
+        override val timeGroup: HistoryItemTimeGroup,
         val historyMetadata: List<MetaData>
     ) : PendingDeletionHistory()
 
@@ -36,6 +39,7 @@ sealed class PendingDeletionHistory {
      */
     data class MetaData(
         override val visitedAt: Long,
+        override val timeGroup: HistoryItemTimeGroup,
         val key: HistoryMetadataKey
     ) : PendingDeletionHistory()
 }
@@ -45,16 +49,18 @@ sealed class PendingDeletionHistory {
  */
 fun History.toPendingDeletionHistory(): PendingDeletionHistory {
     return when (this) {
-        is History.Regular -> PendingDeletionHistory.Item(visitedAt = visitedAt, url = url)
+        is History.Regular -> PendingDeletionHistory.Item(visitedAt = visitedAt, timeGroup = historyTimeGroup,url = url)
         is History.Group -> PendingDeletionHistory.Group(
             visitedAt = visitedAt,
+            timeGroup = historyTimeGroup,
             historyMetadata = items.map { historyMetadata ->
                 PendingDeletionHistory.MetaData(
                     historyMetadata.visitedAt,
+                    historyMetadata.historyTimeGroup,
                     historyMetadata.historyMetadataKey
                 )
             }
         )
-        is History.Metadata -> PendingDeletionHistory.MetaData(visitedAt, historyMetadataKey)
+        is History.Metadata -> PendingDeletionHistory.MetaData(visitedAt, historyTimeGroup, historyMetadataKey)
     }
 }

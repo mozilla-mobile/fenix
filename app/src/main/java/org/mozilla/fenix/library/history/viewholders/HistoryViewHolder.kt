@@ -24,6 +24,7 @@ class HistoryViewHolder(
     view: View,
     private val historyInteractor: HistoryInteractor,
     private val selectionHolder: SelectionHolder<History>,
+    private val onDeleteClicked: (Int) -> Unit
 ) : RecyclerView.ViewHolder(view) {
 
     private var item: History? = null
@@ -34,8 +35,9 @@ class HistoryViewHolder(
             setImageResource(R.drawable.ic_close)
             contentDescription = view.context.getString(R.string.history_delete_item)
             setOnClickListener {
-                val item = item ?: return@setOnClickListener
-                historyInteractor.onDeleteSome(setOf(item))
+                onDeleteClicked.invoke(bindingAdapterPosition)
+//                val item = item ?: return@setOnClickListener
+//                historyInteractor.onDeleteSome(setOf(item))
             }
         }
     }
