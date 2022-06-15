@@ -76,6 +76,7 @@ import mozilla.components.feature.session.PictureInPictureFeature
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SwipeRefreshFeature
 import mozilla.components.concept.engine.permission.SitePermissions
+import mozilla.components.feature.prompts.address.AddressDelegate
 import mozilla.components.feature.session.ScreenOrientationFeature
 import mozilla.components.feature.sitepermissions.SitePermissionsFeature
 import mozilla.components.lib.state.ext.consumeFlow
@@ -449,7 +450,8 @@ abstract class BaseBrowserFragment :
         fullScreenMediaSessionFeature.set(
             feature = MediaSessionFullscreenFeature(
                 requireActivity(),
-                context.components.core.store
+                context.components.core.store,
+                customTabSessionId
             ),
             owner = this,
             view = view
@@ -635,6 +637,14 @@ abstract class BaseBrowserFragment :
                 },
                 onSelectCreditCard = {
                     showBiometricPrompt(context)
+                },
+                addressDelegate = object : AddressDelegate {
+                    override val addressPickerView
+                        get() = binding.addressSelectBar
+                    override val onManageAddresses = {
+                        val directions = NavGraphDirections.actionGlobalAutofillSettingFragment()
+                        findNavController().navigate(directions)
+                    }
                 }
             ),
             owner = this,
