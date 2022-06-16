@@ -19,6 +19,7 @@ import org.mozilla.fenix.library.history.viewholders.HistoryGroupViewHolder
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.library.history.viewholders.HistoryViewHolder
 import org.mozilla.fenix.library.history.viewholders.RecentlyClosedViewHolder
+import org.mozilla.fenix.library.history.viewholders.SignInViewHolder
 import org.mozilla.fenix.library.history.viewholders.SyncedHistoryViewHolder
 import org.mozilla.fenix.library.history.viewholders.TimeGroupViewHolder
 import kotlin.RuntimeException
@@ -72,6 +73,7 @@ class HistoryAdapter(
         is HistoryViewItem.RecentlyClosedItem -> RecentlyClosedViewHolder.LAYOUT_ID
         is HistoryViewItem.SyncedHistoryItem -> SyncedHistoryViewHolder.LAYOUT_ID
         is HistoryViewItem.EmptyHistoryItem -> EmptyViewHolder.LAYOUT_ID
+        is HistoryViewItem.SignInHistoryItem -> SignInViewHolder.LAYOUT_ID
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -83,6 +85,7 @@ class HistoryAdapter(
             RecentlyClosedViewHolder.LAYOUT_ID -> RecentlyClosedViewHolder(view, historyInteractor)
             SyncedHistoryViewHolder.LAYOUT_ID -> SyncedHistoryViewHolder(view, historyInteractor)
             EmptyViewHolder.LAYOUT_ID -> EmptyViewHolder(view)
+            SignInViewHolder.LAYOUT_ID -> SignInViewHolder(view)
             else -> throw RuntimeException("Unknown type") // TODO
         }
     }
@@ -154,6 +157,7 @@ class HistoryAdapter(
             is RecentlyClosedViewHolder -> holder.bind(item as HistoryViewItem.RecentlyClosedItem)
             is SyncedHistoryViewHolder -> holder.bind(item as HistoryViewItem.SyncedHistoryItem)
             is EmptyViewHolder -> holder.bind(item as HistoryViewItem.EmptyHistoryItem)
+            is SignInViewHolder -> holder.bind(item as HistoryViewItem.SignInHistoryItem)
         }
 
         if (holder is EmptyViewHolder) {

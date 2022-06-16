@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import mozilla.components.service.fxa.manager.FxaAccountManager
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.history.HistoryDB
 import org.mozilla.fenix.components.history.PagedHistoryProvider
@@ -25,7 +26,8 @@ class HistoryDataSource(
     private val historyProvider: PagedHistoryProvider,
     private var historyStore: HistoryFragmentStore,
     private val isRemote: Boolean? = null,
-    private val context: Context
+    private val context: Context,
+    private val accountManager: FxaAccountManager
 ) : PagingSource<Int, HistoryViewItem>() {
 
     private lateinit var headerPositionsNew: SortedMap<HistoryItemTimeGroup, Int>
@@ -41,6 +43,14 @@ class HistoryDataSource(
         var previousHistory: History? = null
         if (offset == 0) {
             headerPositionsNew = TreeMap()
+        }
+
+        if (isRemote == true && accountManager.authenticatedAccount() == null) {
+            return LoadResult.Page(
+                data = listOf(HistoryViewItem.SignInHistoryItem("Sign in PLEASE!!!")),
+                prevKey = null, // Only paging forward.
+                nextKey = null
+            )
         }
 
         var isEmpty = false

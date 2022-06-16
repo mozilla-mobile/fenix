@@ -90,7 +90,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             historyProvider = historyProvider,
             historyStore = historyStore,
             isRemote = if (FeatureFlags.showSyncedHistory) isSyncedHistory else null,
-            context = requireContext()
+            context = requireContext(),
+            accountManager = requireComponents.backgroundServices.accountManager
         )
         historyDataSource
     }.flow
