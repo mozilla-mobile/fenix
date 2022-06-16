@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -32,6 +31,18 @@ class HistoryAdapter(
     private val onEmptyStateChanged: (Boolean) -> Unit,
 ) : PagingDataAdapter<HistoryViewItem, RecyclerView.ViewHolder>(historyDiffCallback),
     SelectionHolder<History>, HeaderManager {
+
+    private var recycler: RecyclerView? = null
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        recycler = recyclerView
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        recycler = null
+    }
 
     init {
         addOnPagesUpdatedListener {
@@ -143,6 +154,19 @@ class HistoryAdapter(
             is RecentlyClosedViewHolder -> holder.bind(item as HistoryViewItem.RecentlyClosedItem)
             is SyncedHistoryViewHolder -> holder.bind(item as HistoryViewItem.SyncedHistoryItem)
             is EmptyViewHolder -> holder.bind(item as HistoryViewItem.EmptyHistoryItem)
+        }
+
+        if (holder is EmptyViewHolder) {
+            val lastItemView = holder.itemView
+            lastItemView.viewTreeObserver.addOnGlobalLayoutListener {
+                val recyclerViewHeight = recycler?.height ?: 0 // TODO check
+                val lastItemBottom = lastItemView.bottom
+                val heightDifference = recyclerViewHeight - lastItemBottom
+                if (heightDifference > 0) {
+                    lastItemView.layoutParams.height = lastItemView.height + heightDifference
+                    lastItemView.requestLayout()
+                }
+            }
         }
     }
 
