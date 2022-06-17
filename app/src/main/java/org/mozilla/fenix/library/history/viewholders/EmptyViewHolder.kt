@@ -8,13 +8,9 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.HistoryListEmptyBinding
-import org.mozilla.fenix.databinding.HistoryListHeaderBinding
-import org.mozilla.fenix.library.history.HistoryInteractor
 import org.mozilla.fenix.library.history.HistoryViewItem
 
-class EmptyViewHolder(
-    view: View
-) : RecyclerView.ViewHolder(view) {
+class EmptyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     private val binding = HistoryListEmptyBinding.bind(view)
     private lateinit var item: HistoryViewItem.EmptyHistoryItem

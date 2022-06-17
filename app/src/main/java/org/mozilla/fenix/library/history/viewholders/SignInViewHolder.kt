@@ -6,9 +6,6 @@ package org.mozilla.fenix.library.history.viewholders
 
 import android.util.Log
 import android.view.View
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
@@ -17,7 +14,6 @@ import org.mozilla.fenix.library.history.HistoryViewItem
 import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsErrorItem
 import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsListItem
 import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.theme.Theme
 
 class SignInViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -34,16 +30,16 @@ class SignInViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     fun bind(item: HistoryViewItem.SignInHistoryItem) {
         binding.composeContainer.setContent {
             FirefoxTheme {
-                    SyncedTabsErrorItem(
-                        errorText = item.instructionText,
-                        errorButton = SyncedTabsListItem.ErrorButton(
-                            buttonText = "Sign in",
-                            onClick = {
-                                Log.d("SignInViewHolder", "Sign in pressed!")
-                            }
-                        )
+                SyncedTabsErrorItem(
+                    errorText = item.instructionText,
+                    errorButton = SyncedTabsListItem.ErrorButton(
+                        buttonText = "Sign in",
+                        onClick = {
+                            Log.d("SignInViewHolder", "Sign in pressed!")
+                        }
                     )
-                }
+                )
+            }
         }
         this.item = item
     }

@@ -26,8 +26,8 @@ class HistoryGroupViewHolder(
     private val onDeleteClicked: (Int) -> Unit
 ) : RecyclerView.ViewHolder(view) {
 
-    private var item: History? = null
     private val binding = HistoryListGroupBinding.bind(view)
+    private var item: History? = null
 
     init {
         binding.historyLayout.overflowView.apply {

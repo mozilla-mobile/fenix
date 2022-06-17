@@ -247,7 +247,7 @@ class HistoryAdapter(
         if (item is HistoryViewItem.HistoryItem) {
             (holder as HistoryViewHolder).setVisible(true)
             (holder as HistoryViewHolder).bind(
-                item, mode, isPendingDeletion, collapsedHeaders.contains(item.data.historyTimeGroup)
+                item, mode, isPendingDeletion
             )
 
 //            if (collapsedHeaders.contains(item.data.historyTimeGroup)) {

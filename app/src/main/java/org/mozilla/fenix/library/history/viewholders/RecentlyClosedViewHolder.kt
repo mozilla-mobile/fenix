@@ -8,7 +8,6 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
-import org.mozilla.fenix.databinding.HistoryListHeaderBinding
 import org.mozilla.fenix.databinding.RecentlyClosedNavItemBinding
 import org.mozilla.fenix.library.history.HistoryInteractor
 import org.mozilla.fenix.library.history.HistoryViewItem

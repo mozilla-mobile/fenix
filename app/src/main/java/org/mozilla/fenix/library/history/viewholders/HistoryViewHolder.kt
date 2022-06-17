@@ -4,20 +4,17 @@
 
 package org.mozilla.fenix.library.history.viewholders
 
-import android.util.Log
 import android.view.View
 import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.HistoryListHistoryBinding
-import org.mozilla.fenix.databinding.HistoryListItemBinding
 import org.mozilla.fenix.ext.hideAndDisable
 import org.mozilla.fenix.ext.showAndEnable
 import org.mozilla.fenix.library.history.History
-import org.mozilla.fenix.library.history.HistoryViewItem
 import org.mozilla.fenix.library.history.HistoryFragmentState
 import org.mozilla.fenix.library.history.HistoryInteractor
+import org.mozilla.fenix.library.history.HistoryViewItem
 import org.mozilla.fenix.selection.SelectionHolder
 
 class HistoryViewHolder(
@@ -27,7 +24,7 @@ class HistoryViewHolder(
     private val onDeleteClicked: (Int) -> Unit
 ) : RecyclerView.ViewHolder(view) {
 
-    private var item: History? = null
+    private lateinit var item: HistoryViewItem.HistoryItem
     private val binding = HistoryListHistoryBinding.bind(view)
 
     init {
@@ -36,25 +33,21 @@ class HistoryViewHolder(
             contentDescription = view.context.getString(R.string.history_delete_item)
             setOnClickListener {
                 onDeleteClicked.invoke(bindingAdapterPosition)
-//                val item = item ?: return@setOnClickListener
-//                historyInteractor.onDeleteSome(setOf(item))
             }
         }
     }
 
-    @Suppress("LongParameterList")
     fun bind(
         item: HistoryViewItem.HistoryItem,
         mode: HistoryFragmentState.Mode,
-        isPendingDeletion: Boolean,
-        isCollapsed: Boolean
+        isPendingDeletion: Boolean
     ) {
-        // TODO uncomment
-        binding.historyLayout.isGone = isPendingDeletion //|| isCollapsed
+        binding.historyLayout.isGone = isPendingDeletion
 
         binding.historyLayout.titleView.text = item.data.title
 
-        binding.historyLayout.urlView.text = item.data.historyTimeGroup.humanReadable(binding.root.context)//item.data.url
+        binding.historyLayout.urlView.text =
+            item.data.historyTimeGroup.humanReadable(binding.root.context)//item.data.url
 
         binding.historyLayout.setSelectionInteractor(item.data, selectionHolder, historyInteractor)
         binding.historyLayout.changeSelected(item.data in selectionHolder.selectedItems)
@@ -69,7 +62,7 @@ class HistoryViewHolder(
             binding.historyLayout.overflowView.showAndEnable()
         }
 
-        this.item = item.data
+        this.item = item
     }
 
     fun setVisible(isVisible: Boolean) {
