@@ -35,8 +35,6 @@ class HistoryGroupViewHolder(
             contentDescription = view.context.getString(R.string.history_delete_item)
             setOnClickListener {
                 onDeleteClicked.invoke(bindingAdapterPosition)
-//                val item = item ?: return@setOnClickListener
-//                historyInteractor.onDeleteSome(setOf(item))
             }
         }
     }
@@ -44,12 +42,8 @@ class HistoryGroupViewHolder(
     fun bind(
         item: HistoryViewItem.HistoryGroupItem,
         mode: HistoryFragmentState.Mode,
-        isPendingDeletion: Boolean,
-        groupPendingDeletionCount: Int,
-        isCollapsed: Boolean
+        groupPendingDeletionCount: Int
     ) {
-        // TODO uncomment
-        binding.historyLayout.isGone = isPendingDeletion //|| isCollapsed
         binding.historyLayout.titleView.text = item.data.title
 
         binding.historyLayout.urlView.text = run {
@@ -74,10 +68,6 @@ class HistoryGroupViewHolder(
         }
 
         this.item = item.data
-    }
-
-    fun setVisible(isVisible: Boolean) {
-        binding.historyLayout.isGone = !isVisible
     }
 
     companion object {

@@ -39,20 +39,17 @@ class HistoryViewHolder(
 
     fun bind(
         item: HistoryViewItem.HistoryItem,
-        mode: HistoryFragmentState.Mode,
-        isPendingDeletion: Boolean
+        mode: HistoryFragmentState.Mode
     ) {
-        binding.historyLayout.isGone = isPendingDeletion
-
         binding.historyLayout.titleView.text = item.data.title
 
         binding.historyLayout.urlView.text =
-            item.data.historyTimeGroup.humanReadable(binding.root.context)//item.data.url
+            item.data.historyTimeGroup.humanReadable(binding.root.context)
 
         binding.historyLayout.setSelectionInteractor(item.data, selectionHolder, historyInteractor)
         binding.historyLayout.changeSelected(item.data in selectionHolder.selectedItems)
 
-        if ((this.item as? History.Regular)?.url != item.data.url) {
+        if (!this::item.isInitialized || this.item.data.url != item.data.url) {
             binding.historyLayout.loadFavicon(item.data.url)
         }
 
@@ -63,10 +60,6 @@ class HistoryViewHolder(
         }
 
         this.item = item
-    }
-
-    fun setVisible(isVisible: Boolean) {
-        binding.historyLayout.isGone = !isVisible
     }
 
     companion object {

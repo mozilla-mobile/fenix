@@ -245,10 +245,7 @@ class HistoryAdapter(
 //        }
 
         if (item is HistoryViewItem.HistoryItem) {
-            (holder as HistoryViewHolder).setVisible(true)
-            (holder as HistoryViewHolder).bind(
-                item, mode, isPendingDeletion
-            )
+            (holder as HistoryViewHolder).bind(item, mode)
 
 //            if (collapsedHeaders.contains(item.data.historyTimeGroup)) {
 //                (holder as HistoryViewHolder).setVisible(false)
@@ -260,11 +257,7 @@ class HistoryAdapter(
 //                )
 //            }
         } else if (item is HistoryViewItem.HistoryGroupItem) {
-            (holder as HistoryGroupViewHolder).setVisible(true)
-            (holder as HistoryGroupViewHolder).bind(
-                item, mode, isPendingDeletion, groupPendingDeletionCount, collapsedHeaders.contains(item.data.historyTimeGroup)
-            )
-
+            (holder as HistoryGroupViewHolder).bind(item, mode, groupPendingDeletionCount)
 //            if (collapsedHeaders.contains(item.data.historyTimeGroup)) {
 //                (holder as HistoryViewHolder).setVisible(false)
 //                return
