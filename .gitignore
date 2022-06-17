@@ -80,12 +80,14 @@ gen-external-apklibs
 .DS_Store
 
 # Secrets files, e.g. tokens
+.local_secrets
 .adjust_token
 .sentry_token
 .mls_token
 .nimbus
 .wallpaper_url
 .pocket_consumer_key
+app/src/*/res/values/firebase.xml
 
 # Python Byte-compiled / optimized / DLL files
 __pycache__/
