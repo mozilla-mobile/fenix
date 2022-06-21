@@ -175,7 +175,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                         } == null
                     }
                     is HistoryViewItem.HistoryGroupItem -> {
-                        b.first.find { pendingItem ->
+                        b.first.find { pendingItem -> pendingItem is PendingDeletionHistory.Group &&
                             pendingItem.visitedAt == it.data.visitedAt
                         } == null
                     }

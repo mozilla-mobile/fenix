@@ -177,7 +177,7 @@ class HistoryAdapter(
                 } else {
                     historyInteractor.onDeleteSome(setOf(it.data), setOf())
                 }
-            } else if (it is HistoryViewItem.HistoryItem) {
+            } else if (it is HistoryViewItem.HistoryGroupItem) {
                 val previousItem = getItem(adapterPosition - 1)
                 val nextItem = getItem(adapterPosition + 1)
                 if (previousItem is HistoryViewItem.TimeGroupHeader

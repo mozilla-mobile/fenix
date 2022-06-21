@@ -70,6 +70,8 @@ class HistoryDataSource(
                 if (isRemote == true) {
                     if (it is HistoryDB.Regular) {
                         it.isRemote
+                    } else if (it is HistoryDB.Group) {
+                        false
                     } else {
                         true
                     }
