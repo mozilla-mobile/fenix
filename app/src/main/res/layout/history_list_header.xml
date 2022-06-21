@@ -4,10 +4,11 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="32dp"
+    android:layout_height="48dp"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="?attr/layer1">
+    android:background="?attr/layer1"
+    android:paddingEnd="2dp">
     <TextView
         android:id="@+id/header_title"
         android:layout_width="wrap_content"
@@ -32,5 +33,5 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="16dp"/>
+        android:layout_marginEnd="14dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
