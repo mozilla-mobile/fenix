@@ -131,6 +131,12 @@ class HistoryView(
         historyAdapter.updatePendingDeletionItems(state.pendingDeletionItems)
         historyAdapter.updateMode(state.mode)
 
+        // We track header positions in the list inside the onBindViewHolder method. Rebinding is
+        // necessary for that to work.
+        val first = layoutManager.findFirstVisibleItemPosition() - 1
+        val last = layoutManager.findLastVisibleItemPosition() + 1
+        historyAdapter.notifyItemRangeChanged(first, last - first)
+
         when (val mode = state.mode) {
             is HistoryFragmentState.Mode.Normal -> {
                 val title = if (isSyncedHistory) {
