@@ -4,23 +4,19 @@
 
 package org.mozilla.fenix.library.history
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_UP
 import android.view.ViewGroup
 import androidx.core.view.GestureDetectorCompat
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import mozilla.components.support.base.feature.UserInteractionHandler
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.ComponentHistoryBinding
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.library.LibraryPageView
 import org.mozilla.fenix.theme.ThemeManager
 
@@ -33,9 +29,8 @@ class HistoryView(
     val interactor: HistoryInteractor,
     val onZeroItemsLoaded: () -> Unit,
     val onEmptyStateChanged: (Boolean) -> Unit,
-    val invalidateHistoryDataSource: () -> Unit,
     val isSyncedHistory: Boolean
-) : LibraryPageView(container), UserInteractionHandler  {
+) : LibraryPageView(container), UserInteractionHandler {
 
     val binding = ComponentHistoryBinding.inflate(
         LayoutInflater.from(container.context), container, true
@@ -68,16 +63,18 @@ class HistoryView(
     private var adapterItemCount: Int? = null
     private val decorator = StickyHeaderDecoration(historyAdapter)
 
-    private fun getStickyHeaderBottom() : Float {
+    private fun getStickyHeaderBottom(): Float {
         return decorator.getStickyHeaderBottom()
     }
 
     init {
-        stickyHeaderClickDetector = GestureDetectorCompat(activity, StickyHeaderGestureListener(
-            recyclerView = binding.historyList,
-            onStickyHeaderClicked = ::onStickyHeaderClicked,
-            stickyHeaderHeight = ::getStickyHeaderBottom,
-        ))
+        stickyHeaderClickDetector = GestureDetectorCompat(
+            activity, StickyHeaderGestureListener(
+                recyclerView = binding.historyList,
+                onStickyHeaderClicked = ::onStickyHeaderClicked,
+                stickyHeaderHeight = ::getStickyHeaderBottom,
+            )
+        )
 
         binding.historyList.apply {
             layoutManager = this@HistoryView.layoutManager
@@ -121,38 +118,18 @@ class HistoryView(
 
     fun update(state: HistoryFragmentState) {
         val oldMode = mode
+        if (state.mode::class != oldMode::class) {
+            interactor.onModeSwitched()
+        }
+        mode = state.mode
 
         binding.progressBar.isVisible = state.isDeletingItems
         binding.swipeRefresh.isRefreshing = state.mode === HistoryFragmentState.Mode.Syncing
         binding.swipeRefresh.isEnabled = state.mode === HistoryFragmentState.Mode.Normal ||
                 state.mode === HistoryFragmentState.Mode.Syncing
 
-        mode = state.mode
-
         historyAdapter.updatePendingDeletionItems(state.pendingDeletionItems)
-
         historyAdapter.updateMode(state.mode)
-
-        // We want to update the one item above the upper border of the screen, because
-        // RecyclerView won't redraw it on scroll and onBindViewHolder() method won't be called.
-        val first = layoutManager.findFirstVisibleItemPosition() - 1
-        val last = layoutManager.findLastVisibleItemPosition() + 4
-//        Log.d("CollapseDebugging", "first = $first, last = $last")
-        historyAdapter.notifyItemRangeChanged(first, last - first)
-
-//        if (headerStateChanged) {
-//            historyAdapter.notifyDataSetChanged()
-//        } else {
-//            // We want to update the one item above the upper border of the screen, because
-//            // RecyclerView won't redraw it on scroll and onBindViewHolder() method won't be called.
-//            val first = layoutManager.findFirstVisibleItemPosition() - 1
-//            val last = layoutManager.findLastVisibleItemPosition() + 1
-//            historyAdapter.notifyItemRangeChanged(first, last - first)
-//        }
-
-        if (state.mode::class != oldMode::class) {
-            interactor.onModeSwitched()
-        }
 
         when (val mode = state.mode) {
             is HistoryFragmentState.Mode.Normal -> {

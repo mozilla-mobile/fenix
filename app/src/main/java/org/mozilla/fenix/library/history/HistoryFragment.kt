@@ -375,9 +375,6 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                     HistoryFragmentAction.ChangeEmptyState(it)
                 )
             },
-            invalidateHistoryDataSource = {
-                historyDataSource.invalidate()
-            },
             isSyncedHistory = isSyncedHistory
         )
 

@@ -207,13 +207,9 @@ class HistoryAdapter(
     }
 
     /**
-     * @param pendingDeletionItems is used to filter out the items that should not be displayed.
+     * @param pendingDeletionItems is used to adjust the number of items inside a group.
      */
     fun updatePendingDeletionItems(pendingDeletionItems: Set<PendingDeletionHistory>) {
-        Log.d(
-            "UndoDebugging",
-            "updatePendingDeletionItems, pendingDeletionItems = $pendingDeletionItems"
-        )
         this.pendingDeletionItems = pendingDeletionItems
     }
 
