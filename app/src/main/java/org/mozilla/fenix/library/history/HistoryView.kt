@@ -98,7 +98,7 @@ class HistoryView(
     private fun onStickyHeaderClicked(position: Int) {
         Log.d("onStickyHeaderClicked", "position = $position")
 //        historyAdapter.onStickyHeaderClicked(position)
-        if (position > 0) {
+        if (historyAdapter.itemCount > position) {
             layoutManager.smoothScrollToPosition(
                 binding.historyList,
                 RecyclerView.State(),
