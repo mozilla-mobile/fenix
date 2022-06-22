@@ -91,8 +91,6 @@ class DefaultPagedHistoryProvider(
     private val historyImprovementFeatures: Boolean = FeatureFlags.historyImprovementFeatures,
 ) : PagedHistoryProvider {
 
-    val urlSet = Array<MutableSet<String>>(HistoryItemTimeGroup.values().size) { mutableSetOf() }
-
     /**
      * Types of visits we currently do not display in the History UI.
      */
@@ -122,10 +120,6 @@ class DefaultPagedHistoryProvider(
         numberOfItems: Int,
         isRemote: Boolean?
     ): List<HistoryDB> {
-        if (offset == 0) {
-            urlSet.map { it.clear() }
-        }
-        Log.d("kalabak", "PagedHistoryProvider, offset = $offset")
         // We need to re-fetch all the history metadata if the offset resets back at 0
         // in the case of a pull to refresh.
         if (historyGroups == null || offset == 0) {
@@ -150,6 +144,7 @@ class DefaultPagedHistoryProvider(
                 }
                 .toList()
         }
+
         return getHistoryAndSearchGroups(offset, numberOfItems, isRemote)
     }
 
@@ -187,6 +182,7 @@ class DefaultPagedHistoryProvider(
                 } ?: true
             }
             .map { transformVisitInfoToHistoryItem(it) }
+
         // We'll use this list to filter out redirects from metadata groups below.
         val redirectsInThePage = if (history.isNotEmpty()) {
             historyStorage.getDetailedVisits(
@@ -224,8 +220,6 @@ class DefaultPagedHistoryProvider(
 
         if (historyImprovementFeatures) {
             history = history.distinctBy { Pair(it.historyTimeGroup, it.url) }
-//                .filter { !urlSet[it.historyTimeGroup.ordinal].contains(it.url) }
-//            history.map { urlSet[it.historyTimeGroup.ordinal].add(it.url) }
         }
 
         // Add all history items that are not in a group filtering out any matches with a history

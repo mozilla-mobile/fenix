@@ -60,7 +60,8 @@ class StickyHeaderDecoration(
 
         val currentHeaderPosition: Int = headerManager.getHeaderPositionForItem(topViewPosition).also {
             if (it == -1) {
-                Log.d("ohhaha", "6, onDrawOver.return")
+                // No sticky header drawn.
+                stickyHeaderHeight = 0
                 return
             }
         }

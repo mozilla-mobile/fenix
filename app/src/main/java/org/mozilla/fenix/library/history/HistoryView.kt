@@ -35,7 +35,7 @@ class HistoryView(
     val onEmptyStateChanged: (Boolean) -> Unit,
     val invalidateHistoryDataSource: () -> Unit,
     val isSyncedHistory: Boolean
-) : LibraryPageView(container), UserInteractionHandler, RecyclerView.OnItemTouchListener {
+) : LibraryPageView(container), UserInteractionHandler  {
 
     val binding = ComponentHistoryBinding.inflate(
         LayoutInflater.from(container.context), container, true
@@ -44,7 +44,7 @@ class HistoryView(
     var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
         private set
 
-    private var detector: GestureDetectorCompat
+    private var stickyHeaderClickDetector: GestureDetectorCompat
 
     val historyAdapter = HistoryAdapter(interactor) { isEmpty ->
         onEmptyStateChanged(isEmpty)
@@ -73,18 +73,31 @@ class HistoryView(
     }
 
     init {
-        detector = GestureDetectorCompat(activity, StickyHeaderGestureListener(
+        stickyHeaderClickDetector = GestureDetectorCompat(activity, StickyHeaderGestureListener(
+            recyclerView = binding.historyList,
+            onStickyHeaderClicked = ::onStickyHeaderClicked,
             stickyHeaderHeight = ::getStickyHeaderBottom,
-            binding.historyList,
-            ::onStickyHeaderClicked
         ))
 
         binding.historyList.apply {
             layoutManager = this@HistoryView.layoutManager
             adapter = historyAdapter
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+
+            // Adding sticky header and listener to intercept clicks on it. Sticky header is drawn
+            // on Canvas over recyclerview, it is not a regular view and regular click listener
+            // can not be used.
             addItemDecoration(decorator)
-            addOnItemTouchListener(this@HistoryView)
+            addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                    val consumed = stickyHeaderClickDetector.onTouchEvent(e)
+                    return if (e.action == ACTION_UP) {
+                        consumed
+                    } else {
+                        false
+                    }
+                }
+            })
         }
 
         val primaryTextColor = ThemeManager.resolveAttribute(R.attr.textPrimary, context)
@@ -208,24 +221,5 @@ class HistoryView(
 
     override fun onBackPressed(): Boolean {
         return interactor.onBackPressed()
-    }
-
-    override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-        val consumed = detector.onTouchEvent(e)
-//        Log.d("HistoryView", "consumed = $consumed, event = $e")
-        return if (e.action == ACTION_UP) {
-            consumed
-        } else {
-            false
-        }
-//        return detector.onTouchEvent(e)
-    }
-
-    override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
-//        detector.onTouchEvent(e)
-    }
-
-    override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-//        Log.d("kolobok", "disallowIntercept = $disallowIntercept")
     }
 }

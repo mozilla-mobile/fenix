@@ -10,25 +10,20 @@ import android.view.MotionEvent
 import androidx.recyclerview.widget.RecyclerView
 
 class StickyHeaderGestureListener(
-    private val stickyHeaderHeight: () -> Float,
     private val recyclerView: RecyclerView,
-    private val onStickyHeaderClicked: (Int) -> Unit
+    private val onStickyHeaderClicked: (Int) -> Unit,
+    private val stickyHeaderHeight: () -> Float,
 ) : GestureDetector.SimpleOnGestureListener() {
     override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
         val height = stickyHeaderHeight.invoke()
         if (e.y < height) {
-            val itemAdapterPosition = recyclerView.findChildViewUnder(0f, height)?.let {
+            recyclerView.findChildViewUnder(0f, height)?.let {
                 recyclerView.layoutManager?.getPosition(it)
             }?.also {
                 onStickyHeaderClicked.invoke(it)
             }
-            val childView = recyclerView.findChildViewUnder(0f, height)
-//            val itemAdapterPosition2 = recyclerView.layoutManager?.getPosition(childView!!)
-            Log.d("kolobok", "StickyHeaderGestureListener.onSingleTapConfirmed, it works! itemAdapterPosition = $itemAdapterPosition")
-            //Do stuff here no you have the position of the item that's been clicked
             return true
         }
-        Log.d("kolobok", "StickyHeaderGestureListener.onSingleTapConfirmed, it doesn't work!")
         return super.onSingleTapConfirmed(e)
     }
 
@@ -36,10 +31,8 @@ class StickyHeaderGestureListener(
         val touchY = e.y
         val height = stickyHeaderHeight.invoke()
         return if (touchY < height) {
-            Log.d("kolobok", "StickyHeaderGestureListener.onDown, it works!")
             true
         } else {
-            Log.d("kolobok", "StickyHeaderGestureListener.onDown, it doesn't work!")
             super.onDown(e)
         }
     }
@@ -48,12 +41,9 @@ class StickyHeaderGestureListener(
         val touchY = e.y
         val height = stickyHeaderHeight.invoke()
         return if (touchY < height) {
-            Log.d("kolobok", "StickyHeaderGestureListener.onSingleTapUp, it works!")
             true
         } else {
-            Log.d("kolobok", "StickyHeaderGestureListener.onSingleTapUp, it doesn't work!")
             super.onSingleTapUp(e)
         }
     }
-
 }
