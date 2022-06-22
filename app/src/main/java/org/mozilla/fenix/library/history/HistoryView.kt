@@ -98,11 +98,13 @@ class HistoryView(
     private fun onStickyHeaderClicked(position: Int) {
         Log.d("onStickyHeaderClicked", "position = $position")
 //        historyAdapter.onStickyHeaderClicked(position)
-        layoutManager.smoothScrollToPosition(
-            binding.historyList,
-            RecyclerView.State(),
-            historyAdapter.getHeaderPositionForItem(position)
-        )
+        if (position > 0) {
+            layoutManager.smoothScrollToPosition(
+                binding.historyList,
+                RecyclerView.State(),
+                historyAdapter.getHeaderPositionForItem(position)
+            )
+        }
     }
 
     fun update(state: HistoryFragmentState) {
@@ -119,6 +121,11 @@ class HistoryView(
         binding.swipeRefresh.isEnabled =
             state.mode === HistoryFragmentState.Mode.Normal || state.mode === HistoryFragmentState.Mode.Syncing
         mode = state.mode
+
+//        if (state.mode === HistoryFragmentState.Mode.Syncing) {
+//            historyAdapter.collapsedHeaders = setOf()
+//            collapsedHeaders = setOf()
+//        }
 
         historyAdapter.updatePendingDeletionItems(state.pendingDeletionItems)
 

@@ -42,9 +42,7 @@ class HistoryViewHolder(
         mode: HistoryFragmentState.Mode
     ) {
         binding.historyLayout.titleView.text = item.data.title
-
-        binding.historyLayout.urlView.text =
-            item.data.historyTimeGroup.humanReadable(binding.root.context)
+        binding.historyLayout.urlView.text = item.data.url
 
         binding.historyLayout.setSelectionInteractor(item.data, selectionHolder, historyInteractor)
         binding.historyLayout.changeSelected(item.data in selectionHolder.selectedItems)

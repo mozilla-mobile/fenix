@@ -206,7 +206,10 @@ private fun historyStateReducer(
         is HistoryFragmentAction.ExitEditMode -> state.copy(mode = HistoryFragmentState.Mode.Normal)
         is HistoryFragmentAction.EnterDeletionMode -> state.copy(isDeletingItems = true)
         is HistoryFragmentAction.ExitDeletionMode -> state.copy(isDeletingItems = false)
-        is HistoryFragmentAction.StartSync -> state.copy(mode = HistoryFragmentState.Mode.Syncing)
+        is HistoryFragmentAction.StartSync -> state.copy(
+            mode = HistoryFragmentState.Mode.Syncing,
+            collapsedHeaders = setOf()
+        )
         is HistoryFragmentAction.FinishSync -> state.copy(mode = HistoryFragmentState.Mode.Normal)
         is HistoryFragmentAction.ChangeEmptyState -> state.copy(isEmpty = action.isEmpty)
         is HistoryFragmentAction.UpdatePendingDeletionItems -> state.copy(
