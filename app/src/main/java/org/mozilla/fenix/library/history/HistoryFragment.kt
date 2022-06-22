@@ -438,15 +438,6 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             emptyFlow.value = it.isEmpty
         }
 
-        requireContext().components.appStore.flowScoped(viewLifecycleOwner) { flow ->
-            flow.mapNotNull { state -> state.pendingDeletionHistoryItems }.collect { items ->
-                historyStore.dispatch(
-                    HistoryFragmentAction.UpdatePendingDeletionItems(pendingDeletionItems = items)
-                )
-//                deleteFlow.value = items // TODO old delete
-            }
-        }
-
         lifecycleScope.launch {
             history.collectLatest {
                 historyView.historyAdapter.submitData(it)
