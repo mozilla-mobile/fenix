@@ -44,8 +44,7 @@ class HistoryView(
     var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
         private set
 
-    private var collapsedHeaders: Set<HistoryItemTimeGroup> = setOf()
-    private lateinit var detector: GestureDetectorCompat
+    private var detector: GestureDetectorCompat
 
     val historyAdapter = HistoryAdapter(interactor) { isEmpty ->
         onEmptyStateChanged(isEmpty)
@@ -109,23 +108,12 @@ class HistoryView(
 
     fun update(state: HistoryFragmentState) {
         val oldMode = mode
-        val headerStateChanged = collapsedHeaders != state.collapsedHeaders
-        if (headerStateChanged) {
-//            invalidateHistoryDataSource.invoke()
-            historyAdapter.collapsedHeaders = state.collapsedHeaders
-            collapsedHeaders = state.collapsedHeaders
-        }
 
         binding.progressBar.isVisible = state.isDeletingItems
         binding.swipeRefresh.isRefreshing = state.mode === HistoryFragmentState.Mode.Syncing
         binding.swipeRefresh.isEnabled =
             state.mode === HistoryFragmentState.Mode.Normal || state.mode === HistoryFragmentState.Mode.Syncing
         mode = state.mode
-
-//        if (state.mode === HistoryFragmentState.Mode.Syncing) {
-//            historyAdapter.collapsedHeaders = setOf()
-//            collapsedHeaders = setOf()
-//        }
 
         historyAdapter.updatePendingDeletionItems(state.pendingDeletionItems)
 

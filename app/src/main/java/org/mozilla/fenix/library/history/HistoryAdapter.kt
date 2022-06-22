@@ -56,8 +56,6 @@ class HistoryAdapter(
     // the screen should be updated into proper empty/not empty state.
     private var isEmpty = true
 
-    var collapsedHeaders: Set<HistoryItemTimeGroup> = setOf()
-
     init {
         // When data flow changes, there is a chance that empty state has changed as well
         addOnPagesUpdatedListener {
@@ -142,7 +140,7 @@ class HistoryAdapter(
             is TimeGroupViewHolder -> {
                 val timeGroup = (item as HistoryViewItem.TimeGroupHeader).timeGroup
                 headerPositions[timeGroup] = position
-                holder.bind(item, collapsedHeaders.contains(timeGroup))
+                holder.bind(item)
             }
             is RecentlyClosedViewHolder -> holder.bind(item as HistoryViewItem.RecentlyClosedItem)
             is SyncedHistoryViewHolder -> holder.bind(item as HistoryViewItem.SyncedHistoryItem)
@@ -298,7 +296,7 @@ class HistoryAdapter(
             textView.text = headerData.title
 
             val imageView = header.findViewById<ImageView>(R.id.chevron)
-            imageView.isActivated = collapsedHeaders.contains(headerData.timeGroup)
+            imageView.isActivated = headerData.collapsed
         }
     }
 
@@ -323,7 +321,7 @@ class HistoryAdapter(
         val headerData = getItem(headerPosition) as HistoryViewItem.TimeGroupHeader
         historyInteractor.onTimeGroupClicked(
             headerData.timeGroup,
-            collapsedHeaders.contains(headerData.timeGroup)
+            headerData.collapsed
         )
     }
 }

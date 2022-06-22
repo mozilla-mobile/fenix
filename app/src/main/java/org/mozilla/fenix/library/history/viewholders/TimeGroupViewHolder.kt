@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.library.history.viewholders
 
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
@@ -25,9 +26,9 @@ class TimeGroupViewHolder(
         }
     }
 
-    fun bind(item: HistoryViewItem.TimeGroupHeader, isCollapsed: Boolean) {
+    fun bind(item: HistoryViewItem.TimeGroupHeader) {
         binding.headerTitle.text = item.title
-        binding.chevron.isActivated = isCollapsed
+        binding.chevron.isActivated = item.collapsed
         this.item = item
     }
 

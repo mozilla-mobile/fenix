@@ -26,6 +26,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
 import androidx.paging.insertSeparators
+import androidx.paging.map
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -75,9 +76,9 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     private lateinit var historyInteractor: HistoryInteractor
     private lateinit var historyProvider: DefaultPagedHistoryProvider
     private lateinit var historyDataSource: HistoryDataSource
-    private var collapsedHeaders: Set<HistoryItemTimeGroup> = setOf()
-    private val isSyncedHistory: Boolean by lazy { arguments?.getBoolean("isSyncedHistory") ?: false }
 
+    private val isSyncedHistory: Boolean by lazy { arguments?.getBoolean("isSyncedHistory") ?: false }
+    private var collapsedHeaders: Set<HistoryItemTimeGroup> = setOf()
     private val collapsedFlow = MutableStateFlow(collapsedHeaders)
     private val deleteFlow = MutableStateFlow(Pair(emptySet<PendingDeletionHistory>(), emptySet<HistoryItemTimeGroup>()))
     private val emptyFlow = MutableStateFlow(false)
@@ -164,6 +165,12 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 //                    Log.d("CollapseDebugging", "filter, contains = $isVisible")
                 }
                 isVisible
+            }.map {
+                if (it is HistoryViewItem.TimeGroupHeader) {
+                    it.copy(collapsed = collapsedHeaders.contains(it.timeGroup))
+                } else {
+                    it
+                }
             }
         }
         .combine(deleteFlow) { a: PagingData<HistoryViewItem>, b: Pair<Set<PendingDeletionHistory>, Set<HistoryItemTimeGroup>> ->
@@ -424,15 +431,10 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 
         consumeFrom(historyStore) {
             historyView.update(it)
-            if (collapsedHeaders != it.collapsedHeaders) {
-//                collapsedFlow.compareAndSet(collapsedHeaders, collapsedHeaders)
-                collapsedFlow.value = it.collapsedHeaders
-            }
 
             collapsedHeaders = it.collapsedHeaders
-
+            collapsedFlow.value = it.collapsedHeaders
             deleteFlow.value = Pair(it.pendingDeletionItems, it.hiddenHeaders)
-            Log.d("MOSCOW", "isEmpty = ${it.isEmpty}")
             emptyFlow.value = it.isEmpty
         }
 
