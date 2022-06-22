@@ -16,13 +16,14 @@ import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
 import org.mozilla.fenix.library.history.viewholders.EmptyViewHolder
 import org.mozilla.fenix.library.history.viewholders.HistoryGroupViewHolder
-import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.library.history.viewholders.HistoryViewHolder
 import org.mozilla.fenix.library.history.viewholders.RecentlyClosedViewHolder
 import org.mozilla.fenix.library.history.viewholders.SignInViewHolder
 import org.mozilla.fenix.library.history.viewholders.SyncedHistoryViewHolder
+import org.mozilla.fenix.library.history.viewholders.TimeGroupSeparatorViewHolder
 import org.mozilla.fenix.library.history.viewholders.TimeGroupViewHolder
-import kotlin.RuntimeException
+import org.mozilla.fenix.library.history.viewholders.TopSeparatorViewHolder
+import org.mozilla.fenix.selection.SelectionHolder
 
 /**
  * Adapter for the list of visited pages, that uses Paging 3 versions of the Paging library.
@@ -75,6 +76,8 @@ class HistoryAdapter(
         is HistoryViewItem.SyncedHistoryItem -> SyncedHistoryViewHolder.LAYOUT_ID
         is HistoryViewItem.EmptyHistoryItem -> EmptyViewHolder.LAYOUT_ID
         is HistoryViewItem.SignInHistoryItem -> SignInViewHolder.LAYOUT_ID
+        is HistoryViewItem.TimeGroupSeparatorHistoryItem -> TimeGroupSeparatorViewHolder.LAYOUT_ID
+        is HistoryViewItem.TopSeparatorHistoryItem -> TopSeparatorViewHolder.LAYOUT_ID
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -97,6 +100,8 @@ class HistoryAdapter(
             SyncedHistoryViewHolder.LAYOUT_ID -> SyncedHistoryViewHolder(view, historyInteractor)
             EmptyViewHolder.LAYOUT_ID -> EmptyViewHolder(view)
             SignInViewHolder.LAYOUT_ID -> SignInViewHolder(view)
+            TimeGroupSeparatorViewHolder.LAYOUT_ID -> TimeGroupSeparatorViewHolder(view)
+            TopSeparatorViewHolder.LAYOUT_ID -> TopSeparatorViewHolder(view)
             else -> throw IllegalStateException("Unknown viewType.")
         }
     }
@@ -124,13 +129,14 @@ class HistoryAdapter(
         when (holder) {
             is HistoryViewHolder -> holder.bind(item as HistoryViewItem.HistoryItem, mode)
             is HistoryGroupViewHolder -> {
-                val groupPendingDeletionCount = (item as HistoryViewItem.HistoryGroupItem).data.items.count { historyMetadata ->
-                    pendingDeletionItems.find {
-                        it is PendingDeletionHistory.MetaData &&
-                                it.key == historyMetadata.historyMetadataKey &&
-                                it.visitedAt == historyMetadata.visitedAt
-                    } != null
-                }
+                val groupPendingDeletionCount =
+                    (item as HistoryViewItem.HistoryGroupItem).data.items.count { historyMetadata ->
+                        pendingDeletionItems.find {
+                            it is PendingDeletionHistory.MetaData &&
+                                    it.key == historyMetadata.historyMetadataKey &&
+                                    it.visitedAt == historyMetadata.visitedAt
+                        } != null
+                    }
                 holder.bind(item, mode, groupPendingDeletionCount)
             }
             is TimeGroupViewHolder -> {
@@ -179,7 +185,11 @@ class HistoryAdapter(
                 }
             } else if (it is HistoryViewItem.HistoryGroupItem) {
                 val previousItem = getItem(adapterPosition - 1)
-                val nextItem = getItem(adapterPosition + 1)
+                val nextItem = if (adapterPosition == itemCount) {
+                    getItem(adapterPosition + 1)
+                } else {
+                    null
+                }
                 if (previousItem is HistoryViewItem.TimeGroupHeader
                     && (nextItem is HistoryViewItem.TimeGroupHeader
                             || nextItem == null) // TODO change to Empty
@@ -202,7 +212,10 @@ class HistoryAdapter(
      * @param pendingDeletionItems is used to filter out the items that should not be displayed.
      */
     fun updatePendingDeletionItems(pendingDeletionItems: Set<PendingDeletionHistory>) {
-        Log.d("UndoDebugging", "updatePendingDeletionItems, pendingDeletionItems = $pendingDeletionItems")
+        Log.d(
+            "UndoDebugging",
+            "updatePendingDeletionItems, pendingDeletionItems = $pendingDeletionItems"
+        )
         this.pendingDeletionItems = pendingDeletionItems
     }
 

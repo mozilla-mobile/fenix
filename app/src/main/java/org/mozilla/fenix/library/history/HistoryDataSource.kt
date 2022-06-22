@@ -163,6 +163,8 @@ class HistoryDataSource(
                         )
                     )
                 }
+
+                mutableList.add(0, HistoryViewItem.TopSeparatorHistoryItem)
             }
 
 //            mutableList
@@ -242,7 +244,7 @@ class HistoryDataSource(
 //            } else {
 //                mutableList
 //            }
-                mutableList
+            mutableList
         }
 //            .let {
 //            if (it.isEmpty()) {
@@ -306,9 +308,11 @@ class HistoryDataSource(
 
         if (nextOffset == null) {
             historyItems = historyItems.toMutableList().apply {
-                add(HistoryViewItem.EmptyHistoryItem(
-                    context.getString(R.string.history_empty_message)
-                ))
+                add(
+                    HistoryViewItem.EmptyHistoryItem(
+                        context.getString(R.string.history_empty_message)
+                    )
+                )
             }
 //            .let {
 //                if (it.isEmpty()) {

@@ -196,6 +196,43 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                 }
             }
         }
+        .map { pagingData ->
+            pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
+                Log.d("insertSeparators", "history is $history, history2 is $history2")
+
+                if (history2 is HistoryViewItem.TimeGroupHeader) {
+                    if (history is HistoryViewItem.TimeGroupHeader || history is HistoryViewItem.TopSeparatorHistoryItem) {
+                        return@insertSeparators null
+                    } else {
+                        return@insertSeparators HistoryViewItem.TimeGroupSeparatorHistoryItem
+                    }
+                } else {
+                    return@insertSeparators null
+                }
+
+//                if (history2 is HistoryViewItem.TimeGroupHeader &&
+//                    (history is HistoryViewItem.RecentlyClosedItem ||
+//                    history is HistoryViewItem.SyncedHistoryItem ||
+//                    history is HistoryViewItem.HistoryItem ||
+//                    history is HistoryViewItem.HistoryGroupItem)
+//                ) {
+//
+////                if (history != null &&
+////                    history !is HistoryViewItem.TimeGroupSeparatorHistoryItem &&
+////                    history !is HistoryViewItem.TopSeparatorHistoryItem &&
+////                    history !is HistoryViewItem.TimeGroupHeader &&
+////                    history2 is HistoryViewItem.TimeGroupHeader
+////                ) {
+//                    Log.d("insertSeparators", "return@insertSeparators HistoryViewItem")
+//                    return@insertSeparators HistoryViewItem.TimeGroupSeparatorHistoryItem
+//                } else {
+//                    Log.d("insertSeparators", "return@insertSeparators Unit")
+//                    return@insertSeparators null
+//                }
+            }
+//            Log.d("insertSeparators", "triggered")
+//            pagingData
+        }
 //        .map { pagingData ->
 //            pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
 ////                if (history == null && history2 != null) {
