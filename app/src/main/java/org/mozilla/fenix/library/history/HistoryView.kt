@@ -108,8 +108,8 @@ class HistoryView(
     }
 
     private fun onStickyHeaderClicked(position: Int) {
-        Log.d("onStickyHeaderClicked", "position = $position")
-//        historyAdapter.onStickyHeaderClicked(position)
+        // A click could happen while adapter is recalculating item positions, like during pull
+        // to refresh, so we have to make sure that there is an item to scroll to.
         if (historyAdapter.itemCount > position) {
             layoutManager.smoothScrollToPosition(
                 binding.historyList,
@@ -124,13 +124,12 @@ class HistoryView(
 
         binding.progressBar.isVisible = state.isDeletingItems
         binding.swipeRefresh.isRefreshing = state.mode === HistoryFragmentState.Mode.Syncing
-        binding.swipeRefresh.isEnabled =
-            state.mode === HistoryFragmentState.Mode.Normal || state.mode === HistoryFragmentState.Mode.Syncing
+        binding.swipeRefresh.isEnabled = state.mode === HistoryFragmentState.Mode.Normal ||
+                state.mode === HistoryFragmentState.Mode.Syncing
+
         mode = state.mode
 
         historyAdapter.updatePendingDeletionItems(state.pendingDeletionItems)
-
-        updateEmptyState(userHasHistory2 = !state.isEmpty)
 
         historyAdapter.updateMode(state.mode)
 
@@ -163,10 +162,6 @@ class HistoryView(
                     context.getString(R.string.library_history)
                 }
                 setUiForNormalMode(title)
-
-//                setUiForNormalMode(
-//                    context.getString(R.string.library_history)
-//                )
             }
             is HistoryFragmentState.Mode.Editing -> {
                 setUiForSelectingMode(
@@ -176,46 +171,6 @@ class HistoryView(
             else -> {
                 // no-op
             }
-        }
-    }
-
-    private fun updateEmptyState(userHasHistory2: Boolean) {
-//        if (userHasHistory2) {
-//            onEmptyStateChanged.invoke(userHasHistory2)
-//        }
-
-        val userHasHistory = true
-        binding.historyList.isInvisible = !userHasHistory
-        binding.historyEmptyView.isVisible = !userHasHistory
-        binding.topSpacer.isVisible = !userHasHistory
-
-        with(binding.recentlyClosedNavEmpty) {
-            recentlyClosedNav.setOnClickListener {
-                interactor.onRecentlyClosedClicked()
-            }
-            val numRecentTabs = recentlyClosedNav.context.components.core.store.state.closedTabs.size
-            recentlyClosedTabsDescription.text = String.format(
-                context.getString(
-                    if (numRecentTabs == 1) {
-                        R.string.recently_closed_tab
-                    } else {
-                        R.string.recently_closed_tabs
-                    }
-                ),
-                numRecentTabs
-            )
-            recentlyClosedNav.isVisible = !userHasHistory
-        }
-
-        with(binding.syncedHistoryNavEmpty) {
-            syncedHistoryNav.setOnClickListener {
-                interactor.onSyncedHistoryClicked()
-            }
-            syncedHistoryNav.isVisible = FeatureFlags.showSyncedHistory && !userHasHistory
-        }
-
-        if (!userHasHistory) {
-            binding.historyEmptyView.announceForAccessibility(context.getString(R.string.history_empty_message))
         }
     }
 
