@@ -107,7 +107,6 @@ class HistoryAdapter(
     @Suppress("ComplexMethod")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position) ?: return
-        Log.d("UndoDebugging", "binding, position = $position")
 
         // If there is a single visible item, it's enough to change the empty state of the view.
         if (isEmpty && item is HistoryViewItem.HistoryItem ||
@@ -127,17 +126,20 @@ class HistoryAdapter(
         when (holder) {
             is HistoryViewHolder -> holder.bind(item as HistoryViewItem.HistoryItem, mode)
             is HistoryGroupViewHolder -> {
-                val groupPendingDeletionCount =
-                    (item as HistoryViewItem.HistoryGroupItem).data.items.count { historyMetadata ->
-                        pendingDeletionItems.find {
-                            it is PendingDeletionHistory.MetaData &&
-                                    it.key == historyMetadata.historyMetadataKey &&
-                                    it.visitedAt == historyMetadata.visitedAt
-                        } != null
-                    }
+                // Items inside a group might be pending to be removed, so we have to adjust the
+                // number of items on a group.
+                val groupMetaData = (item as HistoryViewItem.HistoryGroupItem).data.items
+                val groupPendingDeletionCount = groupMetaData.count { historyMetadata ->
+                    pendingDeletionItems.find {
+                        it is PendingDeletionHistory.MetaData &&
+                                it.key == historyMetadata.historyMetadataKey &&
+                                it.visitedAt == historyMetadata.visitedAt
+                    } != null
+                }
                 holder.bind(item, mode, groupPendingDeletionCount)
             }
             is TimeGroupViewHolder -> {
+                // We want to track positions of Headers in order to draw sticky header correctly.
                 val timeGroup = (item as HistoryViewItem.TimeGroupHeader).timeGroup
                 headerPositions[timeGroup] = position
                 holder.bind(item)
@@ -148,16 +150,17 @@ class HistoryAdapter(
             is SignInViewHolder -> holder.bind(item as HistoryViewItem.SignInHistoryItem)
         }
 
-        // Change emptyViewHolder size to fit the rest of the recyclerview space
+        // Change emptyViewHolder size to fill the rest of the recyclerview space.
         if (holder is EmptyViewHolder) {
             val lastItemView = holder.itemView
             lastItemView.viewTreeObserver.addOnGlobalLayoutListener {
-                val recyclerViewHeight = recycler?.height ?: 0 // TODO check
-                val lastItemBottom = lastItemView.bottom
-                val heightDifference = recyclerViewHeight - lastItemBottom
-                if (heightDifference > 0) {
-                    lastItemView.layoutParams.height = lastItemView.height + heightDifference
-                    lastItemView.requestLayout()
+                recycler?.height?.let { recyclerViewHeight ->
+                    val lastItemBottom = lastItemView.bottom
+                    val heightDifference = recyclerViewHeight - lastItemBottom
+                    if (heightDifference > 0) {
+                        lastItemView.layoutParams.height = lastItemView.height + heightDifference
+                        lastItemView.requestLayout()
+                    }
                 }
             }
         }
@@ -219,6 +222,7 @@ class HistoryAdapter(
                 oldItem: HistoryViewItem,
                 newItem: HistoryViewItem
             ): Boolean {
+                // TimeGroup will change collapsed parameter, but not the position.
                 return if (oldItem is HistoryViewItem.TimeGroupHeader && newItem is HistoryViewItem.TimeGroupHeader) {
                     oldItem.timeGroup == newItem.timeGroup
                 } else {
