@@ -40,9 +40,15 @@ gcloud:
   test-targets:
    - notPackage org.mozilla.fenix.screenshots
    - notPackage org.mozilla.fenix.syncintegration
+   - class org.mozilla.fenix.ui.TabbedBrowsingTest#closeAllTabsTest
+   - class org.mozilla.fenix.ui.HomeScreenTest#dismissOnboardingUsingBookmarksTest
+   - class org.mozilla.fenix.ui.TopSitesTest#verifyRemoveTopSite
+   - class org.mozilla.fenix.ui.BookmarksTest#cantSelectDesktopFoldersTest
+   - class org.mozilla.fenix.ui.SettingsAddonsTest#useAddonsInPrivateModeTest
+   - class org.mozilla.fenix.ui.BrowsingErrorPagesTest#blockPhishingPageTest
 
   device:
-   - model: Pixel2
+   - model: Pixel3
      version: 30
      locale: en_US
 
@@ -53,7 +59,7 @@ flank:
   max-test-shards: -1
   # num-test-runs: the amount of times to run the tests.
   # 1 runs the tests once. 10 runs all the tests 10x
-  num-test-runs: 1
+  num-test-runs: 100
   ### Output Style flag
   ## Output style of execution status. May be one of [verbose, multi, single, compact].
   ## For runs with only one test execution the default value is 'verbose', in other cases
