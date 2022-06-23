@@ -247,60 +247,39 @@ class HistoryAdapter(
     }
 
     override fun getHeaderPositionForItem(itemPosition: Int): Int {
-        Log.d("CollapseDebugging", "getHeaderPositionForItem, itemPosition = $itemPosition")
-        val item: HistoryViewItem? = getItem(itemPosition)
-
-//        if (item == null) {
-//            Log.d("stickyHeader", "getHeaderPositionForItem, item = null")
-//            return -1
-//        }
-
-        val result = when (item) {
-            is HistoryViewItem.TimeGroupHeader -> headerPositions[item.timeGroup]
-            is HistoryViewItem.HistoryGroupItem -> headerPositions[item.data.historyTimeGroup]
-            is HistoryViewItem.HistoryItem -> headerPositions[item.data.historyTimeGroup]
-            else -> -1
-        }
-        Log.d("stickyHeader", "getHeaderPositionForItem, result = $result")
-        return result ?: -1
-
-//
-//        val timeGroup = when (item) {
-//            is HistoryViewItem.TimeGroupHeader -> item.timeGroup
-//            is HistoryViewItem.HistoryGroupItem -> item.data.historyTimeGroup
-//            is HistoryViewItem.HistoryItem -> item.data.historyTimeGroup
-//            is HistoryViewItem.RecentlyClosedItem -> -1
-//            is HistoryViewItem.SyncedHistoryItem -> -1
-//        }
-//        val result = headerPositions[timeGroup] ?: -1
-//        Log.d("stickyHeader", "getHeaderPositionForItem, result = $result")
-//        return result
-//        return getItem(itemPosition)?.let {
-//
-//        } ?: 0
+        val position = getItem(itemPosition)?.let { item ->
+            val timeGroup = when (item) {
+                is HistoryViewItem.TimeGroupHeader -> item.timeGroup
+                is HistoryViewItem.HistoryGroupItem -> item.data.historyTimeGroup
+                is HistoryViewItem.HistoryItem -> item.data.historyTimeGroup
+                else -> null
+            }
+            timeGroup?.let {
+                headerPositions[timeGroup]?.let {
+                    it
+                }
+            }
+        } ?: -1
+        return position
     }
 
-    override fun getHeaderLayout(headerPosition: Int): Int {
-        Log.d("stickyHeader", "getHeaderLayout, headerPosition = $headerPosition")
-        return R.layout.history_list_header
-    }
+    override fun getHeaderLayout(headerPosition: Int) = R.layout.history_list_header
 
     override fun bindHeader(header: View, headerPosition: Int) {
-        Log.d(
-            "stickyHeader",
-            "bindHeaderData, header = ${header}, headerPosition = $headerPosition"
-        )
+        // Populate sticky header with the correct data.
         val headerData = getItem(headerPosition)
         if (headerData is HistoryViewItem.TimeGroupHeader) {
-            val textView = header.findViewById<TextView>(R.id.header_title)
-            textView.text = headerData.title
-
-            val imageView = header.findViewById<ImageView>(R.id.chevron)
-            imageView.isActivated = headerData.collapsed
+            header.findViewById<TextView>(R.id.header_title).apply {
+                text = headerData.title
+            }
+            header.findViewById<ImageView>(R.id.chevron).apply {
+                isActivated = headerData.collapsed
+            }
         }
     }
 
     override fun isHeader(itemPosition: Int): Boolean {
+        Log.d("stickyHeaderCheck", "isHeader, itemPosition = $itemPosition")
         if (itemPosition == -1) return false // TODO check
         Log.d("stickyHeader", "isHeader, itemPosition = $itemPosition")
         val item = getItem(itemPosition) ?: return false
