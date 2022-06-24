@@ -5,18 +5,13 @@
 package org.mozilla.fenix.library.history
 
 import android.graphics.Canvas
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.View.MeasureSpec.makeMeasureSpec
 import android.view.ViewGroup
 import android.view.ViewGroup.getChildMeasureSpec
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.mozilla.fenix.R
-import java.lang.Math.abs
 
 
 class StickyHeaderDecoration(
@@ -28,10 +23,11 @@ class StickyHeaderDecoration(
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(c, parent, state)
-        val topView = parent.getChildAt(0) ?: run {
-            return
-        }
 
+        // parent.getChildAt(0) won't work with collapsing correctly, because of how animation works.
+        // When were are opening up a timegroup, the elements that have to be animated away from the
+        // screen would be drawn over the recyclerview real items, and then animated away. To access
+        // items that belong to the adapter, we have to get a view from the layoutManager.
         val topViewPosition = (parent.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
         if (topViewPosition == RecyclerView.NO_POSITION) {
             return
@@ -39,27 +35,24 @@ class StickyHeaderDecoration(
 
         val currentHeaderPosition: Int = headerManager.getHeaderPositionForItem(topViewPosition).also {
             if (it == -1) {
-//                // No sticky header drawn.
-//                stickyHeaderHeight = 0
+                // No sticky header drawn, click should be passed down to the recyclerview items.
                 stickyHeaderBottom = 0
                 return
             }
         }
-        val stickyHeaderView = getHeaderView(currentHeaderPosition, parent, headerManager)
 
+        val stickyHeaderView = getHeaderView(currentHeaderPosition, parent, headerManager)
         fixLayoutSize(parent, stickyHeaderView)
 
-        val viewInContact =
-            getViewInContact(parent, stickyHeaderView.bottom, currentHeaderPosition, headerManager)
-
-        if (viewInContact != null && headerManager.isHeader(
-                parent.getChildAdapterPosition(viewInContact)
-            )
-        ) {
-            val headerTopPosition = viewInContact.top - stickyHeaderView.height
-            stickyHeaderBottom = headerTopPosition + stickyHeaderHeight
-            moveHeader(c, stickyHeaderView, headerTopPosition.toFloat())
-            return
+        // It there is a view that collides with a sticky header, we should adjust the sticky header
+        // position.
+        getViewInContact(parent, stickyHeaderView.bottom, currentHeaderPosition, headerManager)?.let {
+            if (headerManager.isHeader(parent.getChildAdapterPosition(it))) {
+                val headerTopPosition = it.top - stickyHeaderView.height
+                stickyHeaderBottom = headerTopPosition + stickyHeaderHeight
+                moveHeader(c, stickyHeaderView, headerTopPosition.toFloat())
+                return
+            }
         }
 
         stickyHeaderBottom = stickyHeaderHeight
@@ -67,7 +60,7 @@ class StickyHeaderDecoration(
     }
 
     fun getStickyHeaderBottom() : Float {
-        return stickyHeaderHeight.toFloat()
+        return stickyHeaderBottom.toFloat()
     }
 
     private fun getHeaderView(
@@ -77,18 +70,12 @@ class StickyHeaderDecoration(
     ): View {
         val layoutRes: Int = headerManager.getHeaderLayout(headerPosition)
         val view = LayoutInflater.from(parent.context).inflate(layoutRes, parent, false)
-//        view.setBackgroundColor(parent.context.resources.getColor(R.color.photonRed80))
         headerManager.bindHeader(view, headerPosition)
         view.isClickable = true
-
-//        view.setOnClickListener {
-//            headerManager.onStickyHeaderClicked(headerPosition)
-//        }
         return view
     }
 
     private fun drawHeader(c: Canvas, header: View) {
-//        Log.d("ohhaha", "view = $header")
         c.save()
         c.translate(0f, 0f)
         header.draw(c)
