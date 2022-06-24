@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.library.history
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -66,7 +65,7 @@ class HistoryAdapter(
     override val selectedItems
         get() = mode.selectedItems
 
-    override fun getItemViewType(position: Int): Int = when (getItem(position)!!) {
+    override fun getItemViewType(position: Int): Int = when (getItem(position)) {
         is HistoryViewItem.HistoryItem -> HistoryViewHolder.LAYOUT_ID
         is HistoryViewItem.HistoryGroupItem -> HistoryGroupViewHolder.LAYOUT_ID
         is HistoryViewItem.TimeGroupHeader -> TimeGroupViewHolder.LAYOUT_ID
@@ -76,6 +75,7 @@ class HistoryAdapter(
         is HistoryViewItem.SignInHistoryItem -> SignInViewHolder.LAYOUT_ID
         is HistoryViewItem.TimeGroupSeparatorHistoryItem -> TimeGroupSeparatorViewHolder.LAYOUT_ID
         is HistoryViewItem.TopSeparatorHistoryItem -> TopSeparatorViewHolder.LAYOUT_ID
+        else -> throw IllegalStateException("Unknown dataType.")
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -167,38 +167,11 @@ class HistoryAdapter(
     }
 
     private fun onDeleteClicked(adapterPosition: Int) {
-        val item = getItem(adapterPosition)
-        item?.let {
-            if (it is HistoryViewItem.HistoryItem) {
-                val previousItem = getItem(adapterPosition - 1)
-                val nextItem = if (adapterPosition < itemCount - 1) {
-                    getItem(adapterPosition + 1)
-                } else {
-                    null
-                }
-                if (previousItem is HistoryViewItem.TimeGroupHeader
-                    && (nextItem is HistoryViewItem.TimeGroupHeader
-                            || nextItem == null) // TODO change to Empty
-                ) {
-                    historyInteractor.onDeleteSome(setOf(it.data), setOf(it.data.historyTimeGroup))
-                } else {
-                    historyInteractor.onDeleteSome(setOf(it.data), setOf())
-                }
-            } else if (it is HistoryViewItem.HistoryGroupItem) {
-                val previousItem = getItem(adapterPosition - 1)
-                val nextItem = if (adapterPosition == itemCount) {
-                    getItem(adapterPosition + 1)
-                } else {
-                    null
-                }
-                if (previousItem is HistoryViewItem.TimeGroupHeader
-                    && (nextItem is HistoryViewItem.TimeGroupHeader
-                            || nextItem == null) // TODO change to Empty
-                ) {
-                    historyInteractor.onDeleteSome(setOf(it.data), setOf(it.data.historyTimeGroup))
-                } else {
-                    historyInteractor.onDeleteSome(setOf(it.data), setOf())
-                }
+        // TODO deleting items should also delete the timegroup if it has no items left.
+        getItem(adapterPosition)?.let {
+            when (it) {
+                is HistoryViewItem.HistoryItem -> historyInteractor.onDeleteSome(setOf(it.data), setOf())
+                is HistoryViewItem.HistoryGroupItem -> historyInteractor.onDeleteSome(setOf(it.data), setOf())
             }
         }
     }
@@ -268,28 +241,26 @@ class HistoryAdapter(
 
     override fun bindHeader(header: View, headerPosition: Int) {
         // Populate sticky header with the correct data.
-        val headerData = getItem(headerPosition)
-        if (headerData is HistoryViewItem.TimeGroupHeader) {
-            header.findViewById<TextView>(R.id.header_title).apply {
-                text = headerData.title
-            }
-            header.findViewById<ImageView>(R.id.chevron).apply {
-                isActivated = headerData.collapsed
+        getItem(headerPosition)?.let {
+            if (it is HistoryViewItem.TimeGroupHeader) {
+                header.findViewById<TextView>(R.id.header_title).apply {
+                    text = it.title
+                }
+                header.findViewById<ImageView>(R.id.chevron).apply {
+                    isActivated = it.collapsed
+                }
             }
         }
     }
 
     override fun isHeader(itemPosition: Int): Boolean {
-        Log.d("stickyHeaderCheck", "isHeader, itemPosition = $itemPosition")
-        if (itemPosition == -1) return false // TODO check
-        Log.d("stickyHeader", "isHeader, itemPosition = $itemPosition")
-        val item = getItem(itemPosition) ?: return false
-        return item is HistoryViewItem.TimeGroupHeader
+        return getItem(itemPosition)?.let {
+            it is HistoryViewItem.TimeGroupHeader
+        } ?: false
     }
 
     // TODO change to item position
     override fun onStickyHeaderClicked(itemPosition: Int) {
-//        if (itemPosition == -1) return // TODO check
         val item = getItem(itemPosition) ?: return
         val timeGroup = when (item) {
             is HistoryViewItem.HistoryItem -> item.data.historyTimeGroup
@@ -297,11 +268,14 @@ class HistoryAdapter(
             is HistoryViewItem.TimeGroupHeader -> item.timeGroup
             else -> return
         }
-        val headerPosition = headerPositions[timeGroup]!!
-        val headerData = getItem(headerPosition) as HistoryViewItem.TimeGroupHeader
-        historyInteractor.onTimeGroupClicked(
-            headerData.timeGroup,
-            headerData.collapsed
-        )
+        val headerPosition = headerPositions[timeGroup] ?: return
+        getItem(headerPosition)?.let { headerItem ->
+            if (headerItem is HistoryViewItem.TimeGroupHeader) {
+                historyInteractor.onTimeGroupClicked(
+                    headerItem.timeGroup,
+                    headerItem.collapsed
+                )
+            }
+        }
     }
 }

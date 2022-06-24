@@ -28,26 +28,36 @@ class StickyHeaderDecoration(
         // When were are opening up a timegroup, the elements that have to be animated away from the
         // screen would be drawn over the recyclerview real items, and then animated away. To access
         // items that belong to the adapter, we have to get a view from the layoutManager.
-        val topViewPosition = (parent.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+        val topViewPosition =
+            (parent.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
         if (topViewPosition == RecyclerView.NO_POSITION) {
             return
         }
 
-        val currentHeaderPosition: Int = headerManager.getHeaderPositionForItem(topViewPosition).also {
-            if (it == -1) {
-                // No sticky header drawn, click should be passed down to the recyclerview items.
-                stickyHeaderBottom = 0
-                return
+        val currentHeaderPosition: Int =
+            headerManager.getHeaderPositionForItem(topViewPosition).also {
+                if (it == -1) {
+                    // No sticky header drawn, click should be passed down to the recyclerview items.
+                    stickyHeaderBottom = 0
+                    return
+                }
             }
-        }
 
         val stickyHeaderView = getHeaderView(currentHeaderPosition, parent, headerManager)
         fixLayoutSize(parent, stickyHeaderView)
 
         // It there is a view that collides with a sticky header, we should adjust the sticky header
         // position.
-        getViewInContact(parent, stickyHeaderView.bottom, currentHeaderPosition, headerManager)?.let {
-            if (headerManager.isHeader(parent.getChildAdapterPosition(it))) {
+        getViewInContact(
+            parent,
+            stickyHeaderView.bottom,
+            currentHeaderPosition,
+            headerManager
+        )?.let {
+            val childPosition = parent.getChildAdapterPosition(it)
+            if (childPosition != RecyclerView.NO_POSITION &&
+                headerManager.isHeader(childPosition)
+            ) {
                 val headerTopPosition = it.top - stickyHeaderView.height
                 stickyHeaderBottom = headerTopPosition + stickyHeaderHeight
                 moveHeader(c, stickyHeaderView, headerTopPosition.toFloat())
@@ -59,7 +69,7 @@ class StickyHeaderDecoration(
         drawHeader(c, stickyHeaderView)
     }
 
-    fun getStickyHeaderBottom() : Float {
+    fun getStickyHeaderBottom(): Float {
         return stickyHeaderBottom.toFloat()
     }
 
@@ -102,7 +112,10 @@ class StickyHeaderDecoration(
 
             // measure height tolerance with child if child is another header
             if (stickyHeaderPosition != i) {
-                if (headerManager.isHeader(parent.getChildAdapterPosition(view))) {
+                val childPosition = parent.getChildAdapterPosition(view)
+                if (childPosition != RecyclerView.NO_POSITION &&
+                    headerManager.isHeader(childPosition)
+                ) {
                     heightTolerance = stickyHeaderHeight - view.height
                 }
             }
