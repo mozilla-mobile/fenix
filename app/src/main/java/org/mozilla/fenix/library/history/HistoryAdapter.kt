@@ -252,6 +252,7 @@ class HistoryAdapter(
                 is HistoryViewItem.TimeGroupHeader -> item.timeGroup
                 is HistoryViewItem.HistoryGroupItem -> item.data.historyTimeGroup
                 is HistoryViewItem.HistoryItem -> item.data.historyTimeGroup
+                is HistoryViewItem.TimeGroupSeparatorHistoryItem -> item.timeGroup
                 else -> null
             }
             timeGroup?.let {

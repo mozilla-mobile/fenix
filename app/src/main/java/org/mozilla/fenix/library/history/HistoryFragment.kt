@@ -211,7 +211,12 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                     if (history is HistoryViewItem.TimeGroupHeader || history is HistoryViewItem.TopSeparatorHistoryItem) {
                         return@insertSeparators null
                     } else {
-                        return@insertSeparators HistoryViewItem.TimeGroupSeparatorHistoryItem
+                        val separatorTimeGroup = when (history) {
+                            is HistoryViewItem.HistoryItem -> history.data.historyTimeGroup
+                            is HistoryViewItem.HistoryGroupItem -> history.data.historyTimeGroup
+                            else -> null
+                        }
+                        return@insertSeparators HistoryViewItem.TimeGroupSeparatorHistoryItem(separatorTimeGroup)
                     }
                 } else {
                     return@insertSeparators null

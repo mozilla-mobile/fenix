@@ -50,7 +50,9 @@ sealed class HistoryViewItem : Parcelable {
     ) : HistoryViewItem()
 
     @Parcelize
-    object TimeGroupSeparatorHistoryItem : HistoryViewItem()
+    data class TimeGroupSeparatorHistoryItem(
+        val timeGroup: HistoryItemTimeGroup?
+    ) : HistoryViewItem()
 
     @Parcelize
     object TopSeparatorHistoryItem : HistoryViewItem()

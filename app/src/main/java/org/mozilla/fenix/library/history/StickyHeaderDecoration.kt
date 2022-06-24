@@ -24,44 +24,24 @@ class StickyHeaderDecoration(
 ) : RecyclerView.ItemDecoration() {
 
     private var stickyHeaderHeight = 0
-//    private var previousTopViewPosition = 0
+    private var stickyHeaderBottom = 0
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(c, parent, state)
-        Log.d("ohhaha", "1, onDrawOver.start")
         val topView = parent.getChildAt(0) ?: run {
-            Log.d("ohhaha", "4, onDrawOver.return")
             return
         }
 
-        Log.d("ohohohoh", "topView = $topView")
-//        if (topView is ConstraintLayout) {
-//            Log.d("ohhaha", "7, onDrawOver.return")
-//            return
-//        }
-
-//        val test = parent.findViewHolderForAdapterPosition(parent.getChildAdapterPosition(parent.getChildAt(0)))?.isRecyclable
-//        Log.d("ohohohoh", "test = $test")
-//        if (test == true) return
-
-//        var topViewPosition = parent.getChildAdapterPosition(topView)
-//        Log.d("ohohohoh", "topViewPosition = $topViewPosition")
-
         val topViewPosition = (parent.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-        Log.d("ohohohoh", "topViewPosition = $topViewPosition")
-
-        if (topViewPosition == RecyclerView.NO_POSITION) { // || topViewPosition > 200) { // TODO costul'
-//            topViewPosition = previousTopViewPosition // TODO may be nullable
-//            Log.d("ohhaha", "5, onDrawOver.return")
+        if (topViewPosition == RecyclerView.NO_POSITION) {
             return
-        } else {
-//            previousTopViewPosition = topViewPosition
         }
 
         val currentHeaderPosition: Int = headerManager.getHeaderPositionForItem(topViewPosition).also {
             if (it == -1) {
-                // No sticky header drawn.
-                stickyHeaderHeight = 0
+//                // No sticky header drawn.
+//                stickyHeaderHeight = 0
+                stickyHeaderBottom = 0
                 return
             }
         }
@@ -76,14 +56,14 @@ class StickyHeaderDecoration(
                 parent.getChildAdapterPosition(viewInContact)
             )
         ) {
-            stickyHeaderHeight = viewInContact.top - stickyHeaderView.height
-            moveHeader(c, stickyHeaderView, stickyHeaderHeight.toFloat())
-            Log.d("ohhaha", "2, onDrawOver.return")
+            val headerTopPosition = viewInContact.top - stickyHeaderView.height
+            stickyHeaderBottom = headerTopPosition + stickyHeaderHeight
+            moveHeader(c, stickyHeaderView, headerTopPosition.toFloat())
             return
         }
 
+        stickyHeaderBottom = stickyHeaderHeight
         drawHeader(c, stickyHeaderView)
-        Log.d("ohhaha", "3, onDrawOver.finish")
     }
 
     fun getStickyHeaderBottom() : Float {

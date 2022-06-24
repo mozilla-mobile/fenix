@@ -17,7 +17,7 @@ class StickyHeaderGestureListener(
     override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
         val height = stickyHeaderHeight.invoke()
         if (e.y < height) {
-            recyclerView.findChildViewUnder(0f, height)?.let {
+            recyclerView.findChildViewUnder(0f, e.y)?.let {
                 recyclerView.layoutManager?.getPosition(it)
             }?.also {
                 onStickyHeaderClicked.invoke(it)
