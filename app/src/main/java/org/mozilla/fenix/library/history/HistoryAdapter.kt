@@ -212,7 +212,9 @@ class HistoryAdapter(
                 newItem: HistoryViewItem
             ): Boolean {
                 // TimeGroup will change collapsed parameter, but not the position.
-                return if (oldItem is HistoryViewItem.TimeGroupHeader && newItem is HistoryViewItem.TimeGroupHeader) {
+                return if (oldItem is HistoryViewItem.TimeGroupHeader &&
+                    newItem is HistoryViewItem.TimeGroupHeader
+                ) {
                     oldItem.timeGroup == newItem.timeGroup
                 } else {
                     oldItem == newItem

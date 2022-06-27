@@ -121,7 +121,7 @@ class DefaultHistoryController(
     private fun undo(items: Set<History>) {
         val pendingDeletionItems = items.map { it.toPendingDeletionHistory() }.toSet()
         store.dispatch(HistoryFragmentAction.UndoPendingDeletionSet(pendingDeletionItems))
-//        appStore.dispatch(AppAction.UndoPendingDeletionSet(pendingDeletionItems)) // TODO old delete
+        appStore.dispatch(AppAction.UndoPendingDeletionSet(pendingDeletionItems))
     }
 
     private fun delete(items: Set<History>): suspend (context: Context) -> Unit {
