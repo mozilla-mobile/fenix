@@ -175,9 +175,7 @@ class DefaultHistoryController(
     }
 
     override fun handleEnterSyncedHistory() {
-        navController.navigate(
-            HistoryFragmentDirections.actionHistoryFragmentToSyncedHistoryFragment()
-        )
+        navController.navigate(HistoryFragmentDirections.actionGlobalSyncedHistoryFragment())
     }
 
     override fun handleCollapsedStateChanged(timeGroup: HistoryItemTimeGroup, collapsed: Boolean) {

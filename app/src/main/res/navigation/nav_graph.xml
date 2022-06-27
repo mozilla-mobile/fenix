@@ -85,6 +85,9 @@
     <action
         android:id="@+id/action_global_historyFragment"
         app:destination="@id/historyFragment" />
+    <action
+        android:id="@+id/action_global_synced_historyFragment"
+        app:destination="@id/syncedHistoryFragment" />
 
     <action
         android:id="@+id/action_global_history_search_dialog"
@@ -273,10 +276,6 @@
         android:label="@string/library_history"
         tools:layout="@layout/fragment_history">
 
-        <action
-            android:id="@+id/action_historyFragment_to_syncedHistoryFragment"
-            app:destination="@id/syncedHistoryFragment2" />
-
         <argument
             android:name="isSyncedHistory"
             android:defaultValue="false"
@@ -284,14 +283,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/syncedHistoryFragment2"
+        android:id="@+id/syncedHistoryFragment"
         android:name="org.mozilla.fenix.library.history.HistoryFragment"
         android:label="@string/history_from_other_devices"
         tools:layout="@layout/fragment_history">
-
-        <action
-            android:id="@+id/action_historyFragment_to_syncedHistoryFragment"
-            app:destination="@id/syncedHistoryFragment" />
 
         <argument
             android:name="isSyncedHistory"
@@ -316,17 +311,6 @@
             app:argType="org.mozilla.fenix.library.history.History[]" />
     </fragment>
 
-    <fragment
-        android:id="@+id/syncedHistoryFragment"
-        android:name="org.mozilla.fenix.library.syncedhistory.SyncedHistoryFragment"
-        android:label="@string/history_from_other_devices"
-        tools:layout="@layout/fragment_synced_history">
-        <action
-            android:id="@+id/action_global_history_search_dialog"
-            app:destination="@id/historySearchDialogFragment"
-            app:popUpTo="@id/historySearchDialogFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
 
     <fragment
         android:id="@+id/downloadsFragment"

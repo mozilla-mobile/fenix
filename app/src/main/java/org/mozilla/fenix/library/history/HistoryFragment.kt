@@ -19,6 +19,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -57,11 +58,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     private lateinit var historyStore: HistoryFragmentStore
     private lateinit var historyInteractor: HistoryInteractor
     private lateinit var historyProvider: DefaultPagedHistoryProvider
-
-    private val isSyncedHistory: Boolean by lazy {
-        arguments?.getBoolean("isSyncedHistory") ?: false
-    }
-
+    private val args: HistoryFragmentArgs by navArgs()
 
     private var _historyView: HistoryView? = null
     private val historyView: HistoryView
@@ -93,7 +90,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         val historyViewItemDataSource = HistoryViewItemDataSource(
             historyProvider = historyProvider,
             historyStore = historyStore,
-            isRemote = if (FeatureFlags.showSyncedHistory) isSyncedHistory else null,
+            isRemote = if (FeatureFlags.showSyncedHistory) args.isSyncedHistory else null,
             context = requireContext(),
             accountManager = requireComponents.backgroundServices.accountManager
         )
@@ -129,7 +126,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                     HistoryFragmentAction.ChangeEmptyState(it)
                 )
             },
-            isSyncedHistory = isSyncedHistory
+            isSyncedHistory = args.isSyncedHistory
         )
 
         return view
@@ -195,7 +192,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         super.onResume()
 //        (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary().show()
 
-        val title = if (isSyncedHistory) {
+        val title = if (args.isSyncedHistory) {
             getString(R.string.history_from_other_devices)
         } else {
             getString(R.string.library_history)
