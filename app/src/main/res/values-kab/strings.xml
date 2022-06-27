@@ -432,6 +432,8 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Title for the customize home screen section with Pocket. -->
     <string name="customize_toggle_pocket">Pocket</string>
 
+    <!-- Title for the customize home screen section with sponsored Pocket stories. -->
+    <string name="customize_toggle_pocket_sponsored">Tiqṣidin yettwarefden</string>
     <!-- Title for the opening wallpaper settings screen -->
     <string name="customize_wallpapers">Tugniwin n ugilal</string>
     <!-- Title for the customize home screen section with sponsored shortcuts. -->
@@ -1823,6 +1825,8 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Content description for closing all inactive tabs -->
     <string name="inactive_tabs_delete_all">Mdel akk accaren irurmiden</string>
 
+    <!-- Content description for expanding the inactive tabs section. -->
+    <string name="inactive_tabs_expand_content_description">Snefli accaren irarmuden</string>
     <!-- Content description for collapsing the inactive tabs section. -->
     <string name="inactive_tabs_collapse_content_description">Fneẓ accaren irurmiden</string>
 

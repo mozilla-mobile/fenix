@@ -41,8 +41,10 @@ import org.junit.Assert.fail
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
+import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.waitForObjects
 import org.mozilla.fenix.helpers.click
@@ -313,7 +315,7 @@ class BrowserRobot {
     fun clickLinkMatchingText(expectedText: String) {
         mDevice.findObject(UiSelector().resourceId("$packageName:id/engineView"))
             .waitForExists(waitingTime)
-        mDevice.findObject(UiSelector().textContains(expectedText)).waitForExists(waitingTime)
+        mDevice.findObject(UiSelector().textContains(expectedText)).waitForExists(waitingTimeLong)
 
         val element = mDevice.findObject(UiSelector().textContains(expectedText))
         element.click()
@@ -679,6 +681,31 @@ class BrowserRobot {
                     .resourceId("$packageName:id/feature_prompt_login_fragment")
             ).waitForExists(waitingTime)
         )
+    }
+
+    fun verifyTrackingProtectionWebContent(state: String) {
+        for (i in 1..RETRY_COUNT) {
+            try {
+                assertTrue(
+                    mDevice.findObject(
+                        UiSelector().textContains(state)
+                    ).waitForExists(waitingTimeLong)
+                )
+
+                break
+            } catch (e: AssertionError) {
+                if (i == RETRY_COUNT) {
+                    throw e
+                } else {
+                    Log.e("TestLog", "On try $i, trackers are not: $state")
+
+                    navigationToolbar {
+                    }.openThreeDotMenu {
+                    }.refreshPage {
+                    }
+                }
+            }
+        }
     }
 
     class Transition {

@@ -12,6 +12,7 @@ function parseQuery(queryString) {
     const query = Object.fromEntries(new URLSearchParams(queryString).entries());
     injectValues(query);
     updateShowSSL(query);
+    updateShowHSTS(query);
 };
 
 /**
@@ -55,7 +56,7 @@ function injectValues(queryMap) {
 let advancedVisible = false;
 
 /**
- * Used to show or hide the "advanced" button based on the validity of the SSL certificate
+ * Used to show or hide the "accept" button based on the validity of the SSL certificate
  */
 function updateShowSSL(queryMap) {
     /** @type {'true' | 'false'} */
@@ -68,6 +69,17 @@ function updateShowSSL(queryMap) {
         } else {
             document.getElementById('advancedButton').style.display='none';
         }
+    }
+};
+
+/**
+ * Used to show or hide the "accept" button based for the HSTS error page
+ */
+function updateShowHSTS(queryMap) {
+    const showHSTS = queryMap.showHSTS;
+    if (showHSTS === 'true') {
+        document.getElementById('advancedButton').style.display='block';
+        document.getElementById('advancedPanelAcceptButton').style.display='none';
     }
 };
 
