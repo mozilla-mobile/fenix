@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- This Source Code Form is subject to the terms of the Mozilla Public
+<?xml version="1.0" encoding="utf-8"?><!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -14,7 +13,8 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
-        android:text="Time range to delete"
+        android:ellipsize="end"
+        android:text="@string/delete_history_prompt_title"
         android:textColor="?attr/textPrimary"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -29,7 +29,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
-        android:text="Removes history (including history synced from other devices), cookies  and other browsing data."
+        android:text="@string/delete_history_prompt_body"
         android:textColor="?attr/textSecondary"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -52,11 +52,12 @@
             android:background="?android:attr/selectableItemBackground"
             android:button="@null"
             android:drawablePadding="32dp"
+            android:ellipsize="end"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:text="@string/delete_browsing_data_button_last_hour"
+            android:text="@string/delete_history_prompt_button_last_hour"
             android:textColor="?attr/textPrimary"
-            android:textSize="16dp"
+            android:textSize="16sp"
             app:drawableStartCompat="?android:attr/listChoiceIndicatorSingle" />
 
         <RadioButton
@@ -66,11 +67,12 @@
             android:background="?android:attr/selectableItemBackground"
             android:button="@null"
             android:drawablePadding="32dp"
+            android:ellipsize="end"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:text="@string/delete_browsing_data_button_today_and_yesterday"
+            android:text="@string/delete_history_prompt_button_today_and_yesterday"
             android:textColor="?attr/textPrimary"
-            android:textSize="16dp"
+            android:textSize="16sp"
             app:drawableStartCompat="?android:attr/listChoiceIndicatorSingle" />
 
         <RadioButton
@@ -80,13 +82,12 @@
             android:background="?android:attr/selectableItemBackground"
             android:button="@null"
             android:drawablePadding="32dp"
+            android:ellipsize="end"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:text="@string/delete_browsing_data_button_everything"
+            android:text="@string/delete_history_prompt_button_everything"
             android:textColor="?attr/textPrimary"
-            android:textSize="16dp"
+            android:textSize="16sp"
             app:drawableStartCompat="?android:attr/listChoiceIndicatorSingle" />
-
     </RadioGroup>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

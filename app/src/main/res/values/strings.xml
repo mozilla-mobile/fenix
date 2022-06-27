@@ -1111,14 +1111,16 @@
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Quit</string>
 
-    <!-- Dialog message to the user asking to delete browsing data. -->
-    <string name="delete_browsing_data_prompt_message">This will delete all of your browsing data.</string>
-    <!-- Radio button of a delete browsing data dialog message to delete history items for the last hour.  -->
-    <string name="delete_browsing_data_button_last_hour">Last hour</string>
-    <!-- Radio button of a delete browsing data dialog message to delete history items for today and yesterday.  -->
-    <string name="delete_browsing_data_button_today_and_yesterday">Today and yesterday</string>
-    <!-- Radio button of a delete browsing data dialog message to delete all history. -->
-    <string name="delete_browsing_data_button_everything">Everything</string>
+    <!-- Title text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_title">Time range to delete</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body">Removes history (including history synced from other devices), cookies  and other browsing data.</string>
+    <!-- Radio button of a delete browsing data dialog, to delete history items for the last hour.  -->
+    <string name="delete_history_prompt_button_last_hour">Last hour</string>
+    <!-- Radio button of a delete browsing data dialog, to delete history items for today and yesterday.  -->
+    <string name="delete_history_prompt_button_today_and_yesterday">Today and yesterday</string>
+    <!-- Radio button of a delete browsing data dialog, to delete all history. -->
+    <string name="delete_history_prompt_button_everything">Everything</string>
 
     <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
     <string name="delete_browsing_data_prompt_message_3">%s will delete the selected browsing data.</string>
