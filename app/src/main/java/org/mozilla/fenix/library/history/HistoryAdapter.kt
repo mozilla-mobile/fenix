@@ -167,11 +167,27 @@ class HistoryAdapter(
     }
 
     private fun onDeleteClicked(adapterPosition: Int) {
-        // TODO deleting items should also delete the timegroup if it has no items left.
         getItem(adapterPosition)?.let {
             when (it) {
-                is HistoryViewItem.HistoryItem -> historyInteractor.onDeleteSome(setOf(it.data), setOf())
-                is HistoryViewItem.HistoryGroupItem -> historyInteractor.onDeleteSome(setOf(it.data), setOf())
+                is HistoryViewItem.HistoryItem -> it.data
+                is HistoryViewItem.HistoryGroupItem -> it.data
+                else -> null
+            }?.let { data ->
+                val previousItem = getItem(adapterPosition - 1)
+                val nextItem = if (adapterPosition < itemCount - 1) {
+                    getItem(adapterPosition + 1)
+                } else {
+                    null
+                }
+                // If the item above is a header and there are no items below or there is another
+                // header, we remove the header as well
+                if (previousItem is HistoryViewItem.TimeGroupHeader &&
+                    (nextItem is HistoryViewItem.TimeGroupSeparatorHistoryItem || nextItem == null)
+                ) {
+                    historyInteractor.onDeleteSome(setOf(data), setOf(data.historyTimeGroup))
+                } else {
+                    historyInteractor.onDeleteSome(setOf(data))
+                }
             }
         }
     }

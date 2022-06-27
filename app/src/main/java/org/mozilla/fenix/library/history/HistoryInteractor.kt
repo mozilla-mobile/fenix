@@ -33,12 +33,11 @@ interface HistoryInteractor : SelectionInteractor<History> {
     fun onDeleteAll()
 
     /**
-     * Called when multiple history items are deleted
+     * Called when single or multiple history items are set to be deleted.
      * @param items the history items to delete
+     * @param headers the time group headers to hide.
      */
-    fun onDeleteSome(items: Set<History>)
-
-    fun onDeleteSome(items: Set<History>, headers: Set<HistoryItemTimeGroup>)
+    fun onDeleteSome(items: Set<History>, headers: Set<HistoryItemTimeGroup> = setOf())
 
     /**
      * Called when the user requests a sync of the history
@@ -95,10 +94,6 @@ class DefaultHistoryInteractor(
 
     override fun onDeleteAll() {
         historyController.handleDeleteAll()
-    }
-
-    override fun onDeleteSome(items: Set<History>) {
-        historyController.handleDeleteSome(items)
     }
 
     override fun onDeleteSome(items: Set<History>, headers: Set<HistoryItemTimeGroup>) {
