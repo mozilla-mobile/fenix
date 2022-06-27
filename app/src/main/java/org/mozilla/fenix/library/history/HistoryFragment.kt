@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.SpannableString
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -20,38 +19,22 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.filter
-import androidx.paging.insertSeparators
-import androidx.paging.map
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.RecentlyClosedAction
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.lib.state.ext.consumeFrom
-import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -59,15 +42,14 @@ import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.history.DefaultPagedHistoryProvider
 import org.mozilla.fenix.databinding.FragmentHistoryBinding
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
-import org.mozilla.fenix.ext.toShortUrl
-import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
-import java.lang.RuntimeException
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
@@ -75,257 +57,11 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     private lateinit var historyStore: HistoryFragmentStore
     private lateinit var historyInteractor: HistoryInteractor
     private lateinit var historyProvider: DefaultPagedHistoryProvider
-    private lateinit var historyDataSource: HistoryDataSource
 
-    private val isSyncedHistory: Boolean by lazy { arguments?.getBoolean("isSyncedHistory") ?: false }
-    private var collapsedHeaders: Set<HistoryItemTimeGroup> = setOf()
-    private val collapsedFlow = MutableStateFlow(collapsedHeaders)
-    private val deleteFlow = MutableStateFlow(Pair(emptySet<PendingDeletionHistory>(), emptySet<HistoryItemTimeGroup>()))
-    private val emptyFlow = MutableStateFlow(false)
+    private val isSyncedHistory: Boolean by lazy {
+        arguments?.getBoolean("isSyncedHistory") ?: false
+    }
 
-    private var history: Flow<PagingData<HistoryViewItem>> = Pager(
-        PagingConfig(PAGE_SIZE),
-        null
-    ) {
-        historyDataSource = HistoryDataSource(
-            historyProvider = historyProvider,
-            historyStore = historyStore,
-            isRemote = if (FeatureFlags.showSyncedHistory) isSyncedHistory else null,
-            context = requireContext(),
-            accountManager = requireComponents.backgroundServices.accountManager
-        )
-        historyDataSource
-    }.flow
-        .cachedIn(MainScope())
-//        .map { pagingData ->
-//            pagingData.map { history ->
-////                Log.d("kolobok", "historyTimeGroup = " + history.historyTimeGroup.humanReadable(context = requireContext()))
-//                Log.d(
-//                    "kolobok",
-//                    "historyTimeGroup = " + history.historyTimeGroup.humanReadable(context = requireContext()) + "history = $history"
-//                )
-//
-//                when (history) {
-//                    is History.Regular -> HistoryViewItem.HistoryItem(history)
-//                    is History.Group -> HistoryViewItem.HistoryGroupItem(history)
-//                    is History.Metadata -> throw RuntimeException("Not supported!")
-//                }
-//            }
-//        }
-//        .map { pagingData ->
-//            pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
-////                if (history == null && history2 != null) {
-////                    val secondTimeGroup = when (history2) {
-////                        is HistoryViewItem.HistoryItem -> history2.data.historyTimeGroup
-////                        is HistoryViewItem.HistoryGroupItem -> history2.data.historyTimeGroup
-////                        else -> throw RuntimeException()
-////                    }
-////                    return@insertSeparators HistoryViewItem.TimeGroupHeader(
-////                        title = secondTimeGroup.humanReadable(requireContext()),
-////                        timeGroup = secondTimeGroup,
-////                        collapsed = historyStore.state.collapsedHeaders.contains(secondTimeGroup)//collapsedHeaders.contains(secondTimeGroup)
-////                    )
-////                }
-//
-//                if (history == null || history2 == null) {
-//                    return@insertSeparators null
-//                }
-//                val firstTimeGroup = when (history) {
-//                    is HistoryViewItem.HistoryItem -> history.data.historyTimeGroup
-//                    is HistoryViewItem.HistoryGroupItem -> history.data.historyTimeGroup
-//                    else -> throw RuntimeException()
-//                }
-//
-//                val secondTimeGroup = when (history2) {
-//                    is HistoryViewItem.HistoryItem -> history2.data.historyTimeGroup
-//                    is HistoryViewItem.HistoryGroupItem -> history2.data.historyTimeGroup
-//                    else -> throw RuntimeException()
-//                }
-//
-//                if (firstTimeGroup != secondTimeGroup) {
-//                    return@insertSeparators HistoryViewItem.TimeGroupHeader(
-//                        title = secondTimeGroup.humanReadable(requireContext()),
-//                        timeGroup = secondTimeGroup,
-//                        collapsed = historyStore.state.collapsedHeaders.contains(secondTimeGroup) //collapsedHeaders.contains(secondTimeGroup)
-//                    )
-//                }
-//
-//                return@insertSeparators null
-//            }
-//        }
-        .combine(collapsedFlow) { a: PagingData<HistoryViewItem>, b: Set<HistoryItemTimeGroup> ->
-            a.filter {
-                var isVisible = true
-                when (it) {
-                    is HistoryViewItem.HistoryGroupItem -> it.data.historyTimeGroup
-                    is HistoryViewItem.HistoryItem -> it.data.historyTimeGroup
-                    else -> null
-                }?.let { timeGroup ->
-                    isVisible = !b.contains(timeGroup)
-//                    Log.d("CollapseDebugging", "filter, contains = $isVisible")
-                }
-                isVisible
-            }.map {
-                if (it is HistoryViewItem.TimeGroupHeader) {
-                    it.copy(collapsed = collapsedHeaders.contains(it.timeGroup))
-                } else {
-                    it
-                }
-            }
-        }
-        .combine(deleteFlow) { a: PagingData<HistoryViewItem>, b: Pair<Set<PendingDeletionHistory>, Set<HistoryItemTimeGroup>> ->
-            a.filter {
-                when (it) {
-                    is HistoryViewItem.HistoryItem -> {
-                        b.first.find { pendingItem ->
-                            pendingItem.visitedAt == it.data.visitedAt
-                        } == null
-                    }
-                    is HistoryViewItem.HistoryGroupItem -> {
-                        b.first.find { pendingItem -> pendingItem is PendingDeletionHistory.Group &&
-                            pendingItem.visitedAt == it.data.visitedAt
-                        } == null
-                    }
-                    is HistoryViewItem.TimeGroupHeader -> {
-                        b.second.find { historyItemTimeGroup ->
-                            it.timeGroup == historyItemTimeGroup
-                        } == null
-                    }
-                    else -> true
-                }
-            }
-        }.combine(emptyFlow) { a: PagingData<HistoryViewItem>, b: Boolean ->
-            a.filter {
-                if (it is HistoryViewItem.EmptyHistoryItem) {
-                    b
-                } else {
-                    true
-                }
-            }
-        }
-        .map { pagingData ->
-            pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
-                Log.d("insertSeparators", "history is $history, history2 is $history2")
-
-                if (history2 is HistoryViewItem.TimeGroupHeader) {
-                    if (history is HistoryViewItem.TimeGroupHeader || history is HistoryViewItem.TopSeparatorHistoryItem) {
-                        return@insertSeparators null
-                    } else {
-                        val separatorTimeGroup = when (history) {
-                            is HistoryViewItem.HistoryItem -> history.data.historyTimeGroup
-                            is HistoryViewItem.HistoryGroupItem -> history.data.historyTimeGroup
-                            else -> null
-                        }
-                        return@insertSeparators HistoryViewItem.TimeGroupSeparatorHistoryItem(separatorTimeGroup)
-                    }
-                } else {
-                    return@insertSeparators null
-                }
-
-//                if (history2 is HistoryViewItem.TimeGroupHeader &&
-//                    (history is HistoryViewItem.RecentlyClosedItem ||
-//                    history is HistoryViewItem.SyncedHistoryItem ||
-//                    history is HistoryViewItem.HistoryItem ||
-//                    history is HistoryViewItem.HistoryGroupItem)
-//                ) {
-//
-////                if (history != null &&
-////                    history !is HistoryViewItem.TimeGroupSeparatorHistoryItem &&
-////                    history !is HistoryViewItem.TopSeparatorHistoryItem &&
-////                    history !is HistoryViewItem.TimeGroupHeader &&
-////                    history2 is HistoryViewItem.TimeGroupHeader
-////                ) {
-//                    Log.d("insertSeparators", "return@insertSeparators HistoryViewItem")
-//                    return@insertSeparators HistoryViewItem.TimeGroupSeparatorHistoryItem
-//                } else {
-//                    Log.d("insertSeparators", "return@insertSeparators Unit")
-//                    return@insertSeparators null
-//                }
-            }
-//            Log.d("insertSeparators", "triggered")
-//            pagingData
-        }
-//        .map { pagingData ->
-//            pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
-////                if (history == null && history2 != null) {
-////                    val secondTimeGroup = when (history2) {
-////                        is HistoryViewItem.HistoryItem -> history2.data.historyTimeGroup
-////                        is HistoryViewItem.HistoryGroupItem -> history2.data.historyTimeGroup
-////                        else -> throw RuntimeException()
-////                    }
-////                    return@insertSeparators HistoryViewItem.TimeGroupHeader(
-////                        title = secondTimeGroup.humanReadable(requireContext()),
-////                        timeGroup = secondTimeGroup,
-////                        collapsed = historyStore.state.collapsedHeaders.contains(secondTimeGroup)//collapsedHeaders.contains(secondTimeGroup)
-////                    )
-////                }
-//
-//                if (history == null || history2 == null) {
-//                    return@insertSeparators null
-//                }
-//                val firstTimeGroup = when (history) {
-//                    is HistoryViewItem.HistoryItem -> history.data.historyTimeGroup
-//                    is HistoryViewItem.HistoryGroupItem -> history.data.historyTimeGroup
-//                    else -> throw RuntimeException()
-//                }
-//
-//                val secondTimeGroup = when (history2) {
-//                    is HistoryViewItem.HistoryItem -> history2.data.historyTimeGroup
-//                    is HistoryViewItem.HistoryGroupItem -> history2.data.historyTimeGroup
-//                    else -> throw RuntimeException()
-//                }
-//
-//                if (firstTimeGroup != secondTimeGroup) {
-//                    return@insertSeparators HistoryViewItem.TimeGroupHeader(
-//                        title = secondTimeGroup.humanReadable(requireContext()),
-//                        timeGroup = secondTimeGroup,
-//                        collapsed = historyStore.state.collapsedHeaders.contains(secondTimeGroup) //collapsedHeaders.contains(secondTimeGroup)
-//                    )
-//                }
-//
-//                return@insertSeparators null
-//            }
-//        }
-
-
-//        .map { pagingData ->
-//            if (!isSyncedHistory) {
-//                pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
-//                    if (history == null && history2 != null) {
-//                        return@insertSeparators HistoryViewItem.SyncedHistoryItem(
-//                            getString(R.string.history_synced_from_other_devices)
-//                        )
-//                    }
-//                    return@insertSeparators null
-//                }
-//            } else {
-//                pagingData
-//            }
-//        }.map { pagingData ->
-//            if (!isSyncedHistory) {
-//                pagingData.insertSeparators { history: HistoryViewItem?, history2: HistoryViewItem? ->
-//                    if (history == null && history2 != null) {
-//                        val numRecentTabs = requireContext().components.core.store.state.closedTabs.size
-//                        return@insertSeparators HistoryViewItem.RecentlyClosedItem(
-//                            getString(R.string.history_synced_from_other_devices),
-//                            String.format(
-//                                requireContext().getString(
-//                                    if (numRecentTabs == 1) {
-//                                        R.string.recently_closed_tab
-//                                    } else {
-//                                        R.string.recently_closed_tabs
-//                                    }
-//                                ),
-//                                numRecentTabs
-//                            )
-//                        )
-//                    }
-//                    return@insertSeparators null
-//                }
-//            } else {
-//                pagingData
-//            }
-//        }
 
     private var _historyView: HistoryView? = null
     private val historyView: HistoryView
@@ -340,6 +76,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     ): View {
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
         val view = binding.root
+
         historyStore = StoreProvider.get(this) {
             HistoryFragmentStore(
                 HistoryFragmentState(
@@ -348,10 +85,19 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                     pendingDeletionItems = emptySet(),
                     isEmpty = false,
                     isDeletingItems = false,
-                    collapsedHeaders
+                    setOf()
                 )
             )
         }
+
+        val historyViewItemDataSource = HistoryViewItemDataSource(
+            historyProvider = historyProvider,
+            historyStore = historyStore,
+            isRemote = if (FeatureFlags.showSyncedHistory) isSyncedHistory else null,
+            context = requireContext(),
+            accountManager = requireComponents.backgroundServices.accountManager
+        )
+
         val historyController: HistoryController = DefaultHistoryController(
             store = historyStore,
             appStore = requireContext().components.appStore,
@@ -364,12 +110,15 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             deleteSnackbar = ::deleteSnackbar,
             syncHistory = ::syncHistory,
         )
+
         historyInteractor = DefaultHistoryInteractor(
             historyController
         )
+
         _historyView = HistoryView(
             binding.historyLayout,
             historyInteractor,
+            historyViewItemDataSource = historyViewItemDataSource,
             onZeroItemsLoaded = {
                 historyStore.dispatch(
                     HistoryFragmentAction.ChangeEmptyState(isEmpty = true)
@@ -433,15 +182,10 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 
         consumeFrom(historyStore) {
             historyView.update(it)
-
-            collapsedHeaders = it.collapsedHeaders
-            collapsedFlow.value = it.collapsedHeaders
-            deleteFlow.value = Pair(it.pendingDeletionItems, it.hiddenHeaders)
-            emptyFlow.value = it.isEmpty
         }
 
         lifecycleScope.launch {
-            history.collectLatest {
+            historyView.historyViewItemDataSource.historyFlow.collectLatest {
                 historyView.historyAdapter.submitData(it)
             }
         }
@@ -590,7 +334,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     private fun displayDeleteAllDialog() {
         activity?.let { activity ->
             AlertDialog.Builder(activity).apply {
-                val layout = LayoutInflater.from(context).inflate(R.layout.delete_history_time_range_dialog, null)
+                val layout = LayoutInflater.from(context)
+                    .inflate(R.layout.delete_history_time_range_dialog, null)
                 val radioGroup = layout.findViewById<RadioGroup>(R.id.radio_group)
                 radioGroup.check(R.id.last_hour_button)
                 setView(layout)

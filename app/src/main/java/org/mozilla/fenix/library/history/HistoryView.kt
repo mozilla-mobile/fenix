@@ -27,6 +27,7 @@ import org.mozilla.fenix.theme.ThemeManager
 class HistoryView(
     container: ViewGroup,
     val interactor: HistoryInteractor,
+    val historyViewItemDataSource: HistoryViewItemDataSource,
     val onZeroItemsLoaded: () -> Unit,
     val onEmptyStateChanged: (Boolean) -> Unit,
     val isSyncedHistory: Boolean
@@ -136,6 +137,10 @@ class HistoryView(
         val first = layoutManager.findFirstVisibleItemPosition() - 1
         val last = layoutManager.findLastVisibleItemPosition() + 1
         historyAdapter.notifyItemRangeChanged(first, last - first)
+
+        historyViewItemDataSource.setCollapsedHeaders(state.collapsedHeaders)
+        historyViewItemDataSource.setDeleteItems(state.pendingDeletionItems, state.hiddenHeaders)
+        historyViewItemDataSource.setEmptyState(state.isEmpty)
 
         when (val mode = state.mode) {
             is HistoryFragmentState.Mode.Normal -> {
