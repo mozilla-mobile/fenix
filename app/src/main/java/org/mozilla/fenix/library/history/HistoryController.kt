@@ -36,7 +36,7 @@ interface HistoryController {
     fun handleRequestSync()
     fun handleEnterRecentlyClosed()
     /**
-     * Navigates to [org.mozilla.fenix.library.syncedhistory.SyncedHistoryFragment]
+     * Navigates to [org.mozilla.fenix.library.history.HistoryFragment] with isSyncedHistory == true
      */
     fun handleEnterSyncedHistory()
 
@@ -106,7 +106,6 @@ class DefaultHistoryController(
     override fun handleSearch() {
         val directions = NavGraphDirections.actionGlobalHistorySearchDialog()
         navController.navigate(directions)
-        navController.navigateSafe(R.id.historyFragment, directions)
     }
 
     override fun handleDeleteAll() {
