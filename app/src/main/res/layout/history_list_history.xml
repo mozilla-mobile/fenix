@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/layer1">
+
     <org.mozilla.fenix.library.LibrarySiteItemView
         android:id="@+id/history_layout"
         android:layout_width="match_parent"
