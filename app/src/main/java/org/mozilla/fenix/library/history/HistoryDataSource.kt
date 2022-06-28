@@ -5,7 +5,6 @@
 package org.mozilla.fenix.library.history
 
 import android.content.Context
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
@@ -15,8 +14,6 @@ import org.mozilla.fenix.components.history.HistoryDB
 import org.mozilla.fenix.components.history.PagedHistoryProvider
 import org.mozilla.fenix.ext.components
 import java.util.*
-import kotlin.RuntimeException
-import kotlin.collections.HashMap
 
 /**
  * PagingSource of History items, used in History Screen. It is the data source for the
@@ -30,7 +27,7 @@ class HistoryDataSource(
     private val accountManager: FxaAccountManager
 ) : PagingSource<Int, HistoryViewItem>() {
 
-    private lateinit var headerPositionsNew: SortedMap<HistoryItemTimeGroup, Int>
+    private lateinit var headerPositions: SortedMap<HistoryItemTimeGroup, Int>
 
     // The refresh key is set to null so that it will always reload the entire list for any data
     // updates such as pull to refresh, and return the user to the start of the list.
@@ -40,11 +37,11 @@ class HistoryDataSource(
         // Get the offset of the last loaded page or default to 0 when it is null on the initial
         // load or a refresh.
         val offset = params.key ?: 0
-        var previousHistory: History? = null
         if (offset == 0) {
-            headerPositionsNew = TreeMap()
+            headerPositions = TreeMap()
         }
 
+        // If the user isn't authenticated, we display SignIn view.
         if (isRemote == true && accountManager.authenticatedAccount() == null) {
             return LoadResult.Page(
                 data = listOf(HistoryViewItem.SignInHistoryItem("Sign in PLEASE!!!")),
@@ -53,27 +50,22 @@ class HistoryDataSource(
             )
         }
 
-        var isEmpty = false
         var finishedLoading = false
+        var previousHistory: History? = null
         val headerPositions: MutableList<Pair<HistoryViewItem.TimeGroupHeader, Int>> = LinkedList()
 
-        Log.d("kalabak", "HistoryDataSource, params.loadSize = ${params.loadSize}")
         var historyItems = historyProvider.getHistory(offset, params.loadSize, null).run {
-            Log.d("kolobok", "historyItems size = ${this.size}, loadSize = ${params.loadSize}")
-            if (size == 0 && params.key == null) {
-                isEmpty = true
-            }
             if (size == 0) {
                 finishedLoading = true
             }
+            // We want to get all of the items of local/remote type. A single payload might contain
+            // items only of the wrong type, which stops the pagination. Hence, filtering is done here.
             filter {
                 if (isRemote == true) {
-                    if (it is HistoryDB.Regular) {
-                        it.isRemote
-                    } else if (it is HistoryDB.Group) {
-                        false
-                    } else {
-                        true
+                    when (it) {
+                        is HistoryDB.Regular -> it.isRemote
+                        is HistoryDB.Group -> false // Groups are always local.
+                        else -> true
                     }
                 } else if (isRemote == false) {
                     if (it is HistoryDB.Regular) {
@@ -86,54 +78,48 @@ class HistoryDataSource(
                 }
             }.positionWithOffset(offset)
         }.mapIndexed { position, history ->
-
+            // Calculating header positions.
             previousHistory?.let {
+                // Adding headers between items.
                 if (it.historyTimeGroup != history.historyTimeGroup) {
-                    if (!headerPositionsNew.contains(history.historyTimeGroup)) {
+                    if (!this.headerPositions.contains(history.historyTimeGroup)) {
                         val header = HistoryViewItem.TimeGroupHeader(
                             title = history.historyTimeGroup.humanReadable(context),
                             timeGroup = history.historyTimeGroup,
                             collapsed = historyStore.state.collapsedHeaders.contains(history.historyTimeGroup)//collapsedHeaders.contains(secondTimeGroup)
                         )
-                        headerPositionsNew[history.historyTimeGroup] = position
+                        this.headerPositions[history.historyTimeGroup] = position
                         headerPositions.add(Pair(header, position))
                     }
                 }
             } ?: run {
-                if (!headerPositionsNew.contains(history.historyTimeGroup)) {
+                // Adding a header before the first item.
+                if (!this.headerPositions.contains(history.historyTimeGroup)) {
                     val header = HistoryViewItem.TimeGroupHeader(
                         title = history.historyTimeGroup.humanReadable(context),
                         timeGroup = history.historyTimeGroup,
                         collapsed = historyStore.state.collapsedHeaders.contains(history.historyTimeGroup)//collapsedHeaders.contains(secondTimeGroup)
                     )
-                    headerPositionsNew[history.historyTimeGroup] = position
+                    this.headerPositions[history.historyTimeGroup] = position
                     headerPositions.add(Pair(header, position))
                 }
             }
 
-//            if (position == 0) {
-//                val header = HistoryViewItem.TimeGroupHeader(
-//                    title = history.historyTimeGroup.humanReadable(context),
-//                    timeGroup = history.historyTimeGroup,
-//                    collapsed = historyStore.state.collapsedHeaders.contains(history.historyTimeGroup)//collapsedHeaders.contains(secondTimeGroup)
-//                )
-//                headerPositions.add(Pair(header, position))
-//            }
-
             when (history) {
                 is History.Regular -> HistoryViewItem.HistoryItem(history)
                 is History.Group -> HistoryViewItem.HistoryGroupItem(history)
-                is History.Metadata -> throw RuntimeException("Not supported!")
+                is History.Metadata -> throw IllegalStateException("Unknown dataType.")
             }.apply {
                 previousHistory = history
             }
         }.let {
+            // Adding headers.
             val mutableList = it.toMutableList()
-
             for (header in headerPositions.reversed()) {
                 mutableList.add(header.second, header.first)
             }
 
+            // Adding synced and recently closed buttons.
             if (params.key == null) {
                 if (isRemote == false) {
                     mutableList.add(
@@ -163,149 +149,19 @@ class HistoryDataSource(
                         )
                     )
                 }
-
                 mutableList.add(0, HistoryViewItem.TopSeparatorHistoryItem)
             }
 
-//            mutableList
-
-//            if (params.key == null && isRemote == false) {
-//
-//                mutableList.add(
-//                    0,
-//                    HistoryViewItem.RecentlyClosedItem(
-//                        context.getString(R.string.history_synced_from_other_devices),
-//                        String.format(
-//                            context.getString(
-//                                if (numRecentTabs == 1) {
-//                                    R.string.recently_closed_tab
-//                                } else {
-//                                    R.string.recently_closed_tabs
-//                                }
-//                            ),
-//                            numRecentTabs
-//                        )
-//                    )
-//                )
-//
-//                mutableList
-
-//                val numRecentTabs = context.components.core.store.state.closedTabs.size
-//                it.toMutableList().apply {
-//                    add(
-//                        0,
-//                        HistoryViewItem.RecentlyClosedItem(
-//                            context.getString(R.string.history_synced_from_other_devices),
-//                            String.format(
-//                                context.getString(
-//                                    if (numRecentTabs == 1) {
-//                                        R.string.recently_closed_tab
-//                                    } else {
-//                                        R.string.recently_closed_tabs
-//                                    }
-//                                ),
-//                                numRecentTabs
-//                            )
-//                        )
-//                    )
-//                    add(
-//                        0,
-//                        HistoryViewItem.SyncedHistoryItem(
-//                            context.getString(R.string.history_synced_from_other_devices)
-//                        )
-//                    )
-//                }
-
-//                val mutableList = it.toMutableList()
-//
-//                val numRecentTabs = context.components.core.store.state.closedTabs.size
-//                mutableList.add(
-//                    HistoryViewItem.RecentlyClosedItem(
-//                        context.getString(R.string.history_synced_from_other_devices),
-//                        String.format(
-//                            context.getString(
-//                                if (numRecentTabs == 1) {
-//                                    R.string.recently_closed_tab
-//                                } else {
-//                                    R.string.recently_closed_tabs
-//                                }
-//                            ),
-//                            numRecentTabs
-//                        )
-//                    )
-//                )
-//
-//                mutableList.add(
-//                    HistoryViewItem.SyncedHistoryItem(
-//                        context.getString(R.string.history_synced_from_other_devices)
-//                    )
-//                )
-//                mutableList
-//            } else {
-//                mutableList
-//            }
             mutableList
         }
-//            .let {
-//            if (it.isEmpty()) {
-//                it.add(
-//                    HistoryViewItem.EmptyHistoryItem(
-//                        context.getString(R.string.history_empty_message)
-//                    )
-//                )
-//            }
-//            it
-//        }
-//            .let {
-//            if (finishedLoading) {
-//                it.add(
-//                    HistoryViewItem.EmptyHistoryItem(
-//                        context.getString(R.string.history_empty_message)
-//                    )
-//                )
-//            }
-//            it
-//        }
 
-//        if (offset == 0 && historyItems.size > 1) {
-//            val firstItem = historyItems[0]
-//            val firstItemTimeGroup = if (firstItem is HistoryViewItem.HistoryItem) {
-//                firstItem.data.historyTimeGroup
-//            } else if (firstItem is HistoryViewItem.HistoryGroupItem) {
-//                firstItem.data.historyTimeGroup
-//            } else {
-//                throw RuntimeException()
-//            }
-//
-//            val header = HistoryViewItem.TimeGroupHeader(
-//                title = firstItemTimeGroup.humanReadable(context),
-//                timeGroup = firstItemTimeGroup,
-//                collapsed = historyStore.state.collapsedHeaders.contains(firstItemTimeGroup)//collapsedHeaders.contains(secondTimeGroup)
-//            )
-//            val temp = historyItems.toMutableList()
-//            temp.add(0, header)
-//            historyItems = temp
-//        }
-
-        if (params.key == null && historyItems.isEmpty()) {
-
-        }
-//        finishedLoading = false
         val nextOffset = if (finishedLoading) {
             null
         } else {
             offset + params.loadSize
         }
-        Log.d("kolobok", "nextOffset = $nextOffset")
 
-//        if (nextOffset == null) {
-//            it.add(
-//                HistoryViewItem.EmptyHistoryItem(
-//                    context.getString(R.string.history_empty_message)
-//                )
-//            )
-//        }
-
+        // Adding an empty view.
         if (nextOffset == null) {
             historyItems = historyItems.toMutableList().apply {
                 add(
@@ -314,16 +170,6 @@ class HistoryDataSource(
                     )
                 )
             }
-//            .let {
-//                if (it.isEmpty()) {
-//                    it.add(
-//                        HistoryViewItem.EmptyHistoryItem(
-//                            context.getString(R.string.history_empty_message)
-//                        )
-//                    )
-//                }
-//                it
-//            }
         }
 
         return LoadResult.Page(
