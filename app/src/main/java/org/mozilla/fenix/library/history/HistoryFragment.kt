@@ -116,11 +116,6 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             binding.historyLayout,
             historyInteractor,
             historyViewItemDataSource = historyViewItemDataSource,
-            onZeroItemsLoaded = {
-                historyStore.dispatch(
-                    HistoryFragmentAction.ChangeEmptyState(isEmpty = true)
-                )
-            },
             onEmptyStateChanged = {
                 historyStore.dispatch(
                     HistoryFragmentAction.ChangeEmptyState(it)
