@@ -175,7 +175,9 @@ class StrictEnhancedTrackingProtectionTest {
         }
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(trackingProtectionTest.url) {}
+        }.enterURLAndEnterToBrowser(trackingProtectionTest.url) {
+            verifyTrackingProtectionWebContent("blocked")
+        }
         enhancedTrackingProtection {
         }.openEnhancedTrackingProtectionSheet {
             verifyEnhancedTrackingProtectionSheetStatus("ON", true)
