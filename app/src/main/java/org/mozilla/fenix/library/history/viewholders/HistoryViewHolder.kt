@@ -5,7 +5,6 @@
 package org.mozilla.fenix.library.history.viewholders
 
 import android.view.View
-import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.HistoryListHistoryBinding
@@ -37,24 +36,25 @@ class HistoryViewHolder(
         }
     }
 
-    fun bind(
-        item: HistoryViewItem.HistoryItem,
-        mode: HistoryFragmentState.Mode
-    ) {
-        binding.historyLayout.titleView.text = item.data.title
-        binding.historyLayout.urlView.text = item.data.url
+    fun bind(item: HistoryViewItem.HistoryItem, mode: HistoryFragmentState.Mode) {
+        with(binding.historyLayout) {
+            titleView.text = item.data.title
+            urlView.text = item.data.url
 
-        binding.historyLayout.setSelectionInteractor(item.data, selectionHolder, historyInteractor)
-        binding.historyLayout.changeSelected(item.data in selectionHolder.selectedItems)
+            setSelectionInteractor(item.data, selectionHolder, historyInteractor)
+            changeSelected(item.data in selectionHolder.selectedItems)
 
-        if (!this::item.isInitialized || this.item.data.url != item.data.url) {
-            binding.historyLayout.loadFavicon(item.data.url)
-        }
+            if (!this@HistoryViewHolder::item.isInitialized ||
+                this@HistoryViewHolder.item.data.url != item.data.url
+            ) {
+                loadFavicon(item.data.url)
+            }
 
-        if (mode is HistoryFragmentState.Mode.Editing) {
-            binding.historyLayout.overflowView.hideAndDisable()
-        } else {
-            binding.historyLayout.overflowView.showAndEnable()
+            if (mode is HistoryFragmentState.Mode.Editing) {
+                overflowView.hideAndDisable()
+            } else {
+                overflowView.showAndEnable()
+            }
         }
 
         this.item = item
