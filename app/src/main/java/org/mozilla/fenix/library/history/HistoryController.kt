@@ -19,7 +19,6 @@ import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.history.DefaultPagedHistoryProvider
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
 @Suppress("TooManyFunctions")
@@ -30,8 +29,8 @@ interface HistoryController {
     fun handleBackPressed(): Boolean
     fun handleModeSwitched()
     fun handleSearch()
-    fun handleDeleteAll()
-    fun handleDeleteSome(items: Set<History>, groups: Set<HistoryItemTimeGroup>)
+    fun handleDeleteTimeRange()
+    fun handleDeleteSome(items: Set<History>, groups: Set<HistoryItemTimeGroup> = setOf())
     fun handleRequestSync()
     fun handleEnterRecentlyClosed()
     /**
@@ -50,7 +49,7 @@ class DefaultHistoryController(
     private val navController: NavController,
     private val scope: CoroutineScope,
     private val openToBrowser: (item: History.Regular) -> Unit,
-    private val displayDeleteAll: () -> Unit,
+    private val displayDeleteTimeRange: () -> Unit,
     private val invalidateOptionsMenu: () -> Unit,
     private val deleteSnackbar: (
         items: Set<History>,
@@ -107,8 +106,8 @@ class DefaultHistoryController(
         navController.navigate(directions)
     }
 
-    override fun handleDeleteAll() {
-        displayDeleteAll.invoke()
+    override fun handleDeleteTimeRange() {
+        displayDeleteTimeRange.invoke()
     }
 
     override fun handleDeleteSome(items: Set<History>, groups: Set<HistoryItemTimeGroup>) {

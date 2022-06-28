@@ -19,7 +19,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.lib.state.ext.flowScoped
@@ -192,7 +191,7 @@ class HistoryMetadataGroupFragment :
                 showTabTray()
                 true
             }
-            R.id.history_delete_all -> {
+            R.id.history_delete_time_range -> {
                 interactor.onDeleteAllMenuItem()
                 true
             }
@@ -218,7 +217,7 @@ class HistoryMetadataGroupFragment :
 
     private fun promptDeleteAll(delete: () -> Unit) {
         AlertDialog.Builder(requireContext()).apply {
-            setMessage(getString(R.string.delete_history_group_prompt_message_new, args.title))
+            setMessage(getString(R.string.delete_all_history_group_prompt_message, args.title))
             setNegativeButton(R.string.delete_history_group_prompt_cancel) { dialog: DialogInterface, _ ->
                 dialog.cancel()
             }

@@ -36,6 +36,7 @@ import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -47,7 +48,6 @@ import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
-import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
@@ -58,8 +58,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     private lateinit var historyStore: HistoryFragmentStore
     private lateinit var historyInteractor: HistoryInteractor
     private lateinit var historyProvider: DefaultPagedHistoryProvider
-    private val args: HistoryFragmentArgs by navArgs()
 
+    private val args: HistoryFragmentArgs by navArgs()
     private var _historyView: HistoryView? = null
     private val historyView: HistoryView
         get() = _historyView!!
@@ -102,7 +102,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             navController = findNavController(),
             scope = lifecycleScope,
             openToBrowser = ::openItem,
-            displayDeleteAll = ::displayDeleteAllDialog,
+            displayDeleteTimeRange = ::displayDeleteTimeRange,
             invalidateOptionsMenu = ::invalidateOptionsMenu,
             deleteSnackbar = ::deleteSnackbar,
             syncHistory = ::syncHistory,
@@ -190,14 +190,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 
     override fun onResume() {
         super.onResume()
-//        (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary().show()
-
-        val title = if (args.isSyncedHistory) {
-            getString(R.string.history_from_other_devices)
-        } else {
-            getString(R.string.library_history)
-        }
-        showToolbar(title)
+        (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary().show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -277,8 +270,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             historyInteractor.onSearch()
             true
         }
-        R.id.history_delete_all -> {
-            historyInteractor.onDeleteAll()
+        R.id.history_delete_time_range -> {
+            historyInteractor.onDeleteTimeRange()
             true
         }
         else -> super.onOptionsItemSelected(item)
@@ -328,7 +321,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         )
     }
 
-    private fun displayDeleteAllDialog() {
+    private fun displayDeleteTimeRange() {
         activity?.let { activity ->
             AlertDialog.Builder(activity).apply {
                 val layout = LayoutInflater.from(context)
@@ -412,10 +405,5 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         val accountManager = requireComponents.backgroundServices.accountManager
         accountManager.syncNow(SyncReason.User)
         historyView.historyAdapter.refresh()
-    }
-
-    @Suppress("UnusedPrivateMember")
-    companion object {
-        private const val PAGE_SIZE = 25
     }
 }

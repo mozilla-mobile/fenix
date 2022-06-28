@@ -145,7 +145,7 @@ class HistoryControllerTest {
             }
         )
 
-        controller.handleDeleteAll()
+        controller.handleDeleteTimeRange()
         assertTrue(displayDeleteAllInvoked)
     }
 

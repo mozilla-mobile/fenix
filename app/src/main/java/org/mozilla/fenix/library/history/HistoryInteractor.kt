@@ -28,9 +28,9 @@ interface HistoryInteractor : SelectionInteractor<History> {
     fun onSearch()
 
     /**
-     * Called when delete all is tapped
+     * Called when bin icon is tapped.
      */
-    fun onDeleteAll()
+    fun onDeleteTimeRange()
 
     /**
      * Called when single or multiple history items are set to be deleted.
@@ -92,8 +92,8 @@ class DefaultHistoryInteractor(
         historyController.handleSearch()
     }
 
-    override fun onDeleteAll() {
-        historyController.handleDeleteAll()
+    override fun onDeleteTimeRange() {
+        historyController.handleDeleteTimeRange()
     }
 
     override fun onDeleteSome(items: Set<History>, headers: Set<HistoryItemTimeGroup>) {

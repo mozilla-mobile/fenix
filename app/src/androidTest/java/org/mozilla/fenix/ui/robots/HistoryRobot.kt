@@ -103,7 +103,7 @@ private fun pageUrl() = onView(withId(R.id.url))
 private fun deleteButton(title: String) =
     onView(allOf(withId(R.id.overflow_menu), hasSibling(withText(title))))
 
-private fun deleteAllButton() = onView(withId(R.id.history_delete_all))
+private fun deleteAllButton() = onView(withId(R.id.history_delete_time_range))
 
 private fun snackBarText() = onView(withId(R.id.snackbar_text))
 

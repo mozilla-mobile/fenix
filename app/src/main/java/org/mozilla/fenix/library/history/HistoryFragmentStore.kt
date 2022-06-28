@@ -5,7 +5,6 @@
 package org.mozilla.fenix.library.history
 
 import android.os.Parcelable
-import android.util.Log
 import kotlinx.parcelize.Parcelize
 import mozilla.components.concept.storage.HistoryMetadata
 import mozilla.components.concept.storage.HistoryMetadataKey
@@ -13,15 +12,10 @@ import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
-import org.mozilla.fenix.components.appstate.AppAction
 
 /**
  * Class representing a history entry.
  */
-// History -> is not needed
-// HistoryDB -> interactors, controllers
-// History, HistoryGroup, Header
-
 sealed class History : Parcelable {
     abstract val position: Int
     abstract val title: String
@@ -40,7 +34,7 @@ sealed class History : Parcelable {
      * @property selected Whether or not the history item is selected.
      */
     @Parcelize
-    data class Regular constructor(
+    data class Regular(
         override val position: Int,
         override val title: String,
         val url: String,
@@ -63,7 +57,7 @@ sealed class History : Parcelable {
      * @property selected Whether or not the history metadata item is selected.
      */
     @Parcelize
-    data class Metadata constructor(
+    data class Metadata(
         override val position: Int,
         override val title: String,
         val url: String,
@@ -150,7 +144,7 @@ sealed class HistoryFragmentAction : Action {
     data class UpdatePendingDeletionItemsNew(
         val pendingDeletionItems: Set<PendingDeletionHistory>,
         val groups: Set<HistoryItemTimeGroup>
-        ) : HistoryFragmentAction()
+    ) : HistoryFragmentAction()
 
     data class ChangeCollapsedState(val timeGroup: HistoryItemTimeGroup, val collapsed: Boolean) :
         HistoryFragmentAction()
@@ -240,19 +234,6 @@ private fun historyStateReducer(
                         hiddenHeadersToRestore.add(it.timeGroup)
                     }
                 }
-
-//                action.historyItems.find {
-//                    state.hiddenHeaders.contains(it.timeGroup)
-//                }
-//
-//                val newPendingState = state.pendingDeletionItems - action.historyItems
-//                val hiddenHeadersToRemove: MutableSet<HistoryItemTimeGroup> = mutableSetOf()
-//                state.hiddenHeaders.forEach { hiddenTimeGroup ->
-//                    if (newPendingState.find { it.timeGroup == hiddenTimeGroup } != null) {
-//                        hiddenHeadersToRemove.add(hiddenTimeGroup)
-//                    }
-//                }
-                Log.d("MOSCOW", "hiddenHeadersToRestore = $hiddenHeadersToRestore")
                 state.copy(
                     hiddenHeaders = state.hiddenHeaders - hiddenHeadersToRestore,
                     pendingDeletionItems = state.pendingDeletionItems - action.historyItems
@@ -262,9 +243,6 @@ private fun historyStateReducer(
                     pendingDeletionItems = state.pendingDeletionItems - action.historyItems
                 )
             }
-//            state.copy(
-//                pendingDeletionItems = state.pendingDeletionItems - action.historyItems
-//            )
         }
     }
 }

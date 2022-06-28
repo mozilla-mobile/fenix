@@ -76,10 +76,10 @@ class HistoryInteractorTest {
 
     @Test
     fun onDeleteAll() {
-        interactor.onDeleteAll()
+        interactor.onDeleteTimeRange()
 
         verifyAll {
-            controller.handleDeleteAll()
+            controller.handleDeleteTimeRange()
         }
     }
 
