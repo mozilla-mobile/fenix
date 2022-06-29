@@ -17,10 +17,12 @@ import mozilla.components.feature.awesomebar.provider.SessionSuggestionProvider
 import mozilla.components.feature.contextmenu.facts.ContextMenuFacts
 import mozilla.components.feature.media.facts.MediaFacts
 import mozilla.components.feature.prompts.dialog.LoginDialogFacts
+import mozilla.components.feature.prompts.facts.AddressAutofillDialogFacts
 import mozilla.components.feature.prompts.facts.CreditCardAutofillDialogFacts
 import mozilla.components.feature.pwa.ProgressiveWebAppFacts
 import mozilla.components.feature.search.telemetry.ads.AdsTelemetry
 import mozilla.components.feature.search.telemetry.incontent.InContentTelemetry
+import mozilla.components.feature.sitepermissions.SitePermissionsFacts
 import mozilla.components.feature.syncedtabs.facts.SyncedTabsFacts
 import mozilla.components.feature.top.sites.facts.TopSitesFacts
 import mozilla.components.support.base.Component
@@ -33,6 +35,7 @@ import mozilla.components.support.webextensions.facts.WebExtensionFacts
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.Addresses
 import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.AndroidAutofill
 import org.mozilla.fenix.GleanMetrics.Awesomebar
@@ -44,6 +47,7 @@ import org.mozilla.fenix.GleanMetrics.MediaNotification
 import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.PerfAwesomebar
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
+import org.mozilla.fenix.GleanMetrics.SitePermissions
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
 import org.mozilla.fenix.search.awesomebar.ShortcutsSuggestionProvider
 import org.mozilla.fenix.utils.Settings
@@ -168,6 +172,18 @@ internal class ReleaseMetricController(
             CreditCards.savePromptCreate.record(NoExtras())
         Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_UPDATED ->
             CreditCards.savePromptUpdate.record(NoExtras())
+
+        Component.FEATURE_PROMPTS to AddressAutofillDialogFacts.Items.AUTOFILL_ADDRESS_FORM_DETECTED ->
+            Addresses.formDetected.record(NoExtras())
+        Component.FEATURE_PROMPTS to AddressAutofillDialogFacts.Items.AUTOFILL_ADDRESS_SUCCESS ->
+            Addresses.autofilled.record(NoExtras())
+        Component.FEATURE_PROMPTS to AddressAutofillDialogFacts.Items.AUTOFILL_ADDRESS_PROMPT_SHOWN ->
+            Addresses.autofillPromptShown.record(NoExtras())
+        Component.FEATURE_PROMPTS to AddressAutofillDialogFacts.Items.AUTOFILL_ADDRESS_PROMPT_EXPANDED ->
+            Addresses.autofillPromptExpanded.record(NoExtras())
+        Component.FEATURE_PROMPTS to AddressAutofillDialogFacts.Items.AUTOFILL_ADDRESS_PROMPT_DISMISSED ->
+            Addresses.autofillPromptDismissed.record(NoExtras())
+
         Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_REQUEST -> {
             val hasMatchingLogins = metadata?.get(AutofillFacts.Metadata.HAS_MATCHING_LOGINS) as Boolean?
             if (hasMatchingLogins == true) {
@@ -292,6 +308,18 @@ internal class ReleaseMetricController(
                 settings.topSitesSize = count
             }
             Unit
+        }
+        Component.FEATURE_SITEPERMISSIONS to SitePermissionsFacts.Items.PERMISSIONS -> {
+            when (action) {
+                Action.DISPLAY -> SitePermissions.promptShown.record(SitePermissions.PromptShownExtra(value))
+                Action.CONFIRM ->
+                    SitePermissions.permissionsAllowed.record(SitePermissions.PermissionsAllowedExtra(value))
+                Action.CANCEL ->
+                    SitePermissions.permissionsDenied.record(SitePermissions.PermissionsDeniedExtra(value))
+                else -> {
+                    // no-op
+                }
+            }
         }
 
         else -> {
