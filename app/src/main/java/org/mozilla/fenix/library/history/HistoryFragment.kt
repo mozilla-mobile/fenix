@@ -349,8 +349,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                         }
                     } else {
                         val timeFrame = when (radioGroup.checkedRadioButtonId) {
-                            R.id.last_hour_button -> RemoveTimeGroup.OneHour.timeFrameForTimeGroup()
-                            R.id.today_and_yesterday_button -> RemoveTimeGroup.TodayAndYesterday.timeFrameForTimeGroup()
+                            R.id.last_hour_button -> RemoveTimeFrame.OneHour.timeFrameForTimeGroup()
+                            R.id.today_and_yesterday_button -> RemoveTimeFrame.TodayAndYesterday.timeFrameForTimeGroup()
                             else -> throw RuntimeException("Unexpected view id")
                         }
                         historyStore.dispatch(HistoryFragmentAction.EnterDeletionMode)
