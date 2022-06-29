@@ -31,7 +31,10 @@ class HistoryViewHolder(
             setImageResource(R.drawable.ic_close)
             contentDescription = view.context.getString(R.string.history_delete_item)
             setOnClickListener {
-                onDeleteClicked.invoke(bindingAdapterPosition)
+                // The click might happen during the removing animation.
+                if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                    onDeleteClicked.invoke(bindingAdapterPosition)
+                }
             }
         }
     }
