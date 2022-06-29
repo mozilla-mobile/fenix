@@ -24,30 +24,30 @@ class StickyHeaderDecoration(
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(c, parent, state)
 
-        // parent.getChildAt(0) won't work with collapsing correctly, because of how animation works.
-        // When were are opening up a timegroup, the elements that have to be animated away from the
-        // screen would be drawn over the recyclerview real items, and then animated away. To access
-        // items that belong to the adapter, we have to get a view from the layoutManager.
+        // Getting the top element in the adapter or returning if there is a recalculation happening.
         val topViewPosition =
             (parent.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
         if (topViewPosition == RecyclerView.NO_POSITION) {
             return
         }
 
+        // Position of a header for a top viewHolder inside the adapter.
         val currentHeaderPosition: Int =
             headerManager.getHeaderPositionForItem(topViewPosition).also {
                 if (it == -1) {
-                    // No sticky header drawn, click should be passed down to the recyclerview items.
+                    // No sticky header drawn, reset the sticky header bottom position, so that
+                    // a click could be passed down to the recyclerview items.
                     stickyHeaderBottom = 0
                     return
                 }
             }
 
+        // Get the stickyHeader view.
         val stickyHeaderView = getHeaderView(currentHeaderPosition, parent, headerManager)
         fixLayoutSize(parent, stickyHeaderView)
 
         // It there is a view that collides with a sticky header, we should adjust the sticky header
-        // position.
+        // position in relation to that view.
         getViewInContact(
             parent,
             stickyHeaderView.bottom,
@@ -65,6 +65,7 @@ class StickyHeaderDecoration(
             }
         }
 
+        // If there is no need to adjust its position, just draw the sticky header.
         stickyHeaderBottom = stickyHeaderHeight
         drawHeader(c, stickyHeaderView)
     }
@@ -173,31 +174,31 @@ class StickyHeaderDecoration(
 interface HeaderManager {
 
     /**
-     * This method gets called by [StickHeaderItemDecoration] to fetch the position of the header item in the adapter
-     * that is used for (represents) item at specified position.
-     * @param itemPosition int. Adapter's position of the item for which to do the search of the position of the header item.
-     * @return int. Position of the header item in the adapter.
+     * This method gets called by [StickyHeaderDecoration] to fetch the position of the header item
+     * in the adapter that is used for the item at the specified position.
+     * @param itemPosition Adapter's position of the item for which to do the search of the position of the header item.
+     * @return Position of the header item in the adapter.
      */
     fun getHeaderPositionForItem(itemPosition: Int): Int
 
     /**
-     * This method gets called by [StickHeaderItemDecoration] to get layout resource id for the header item at specified adapter's position.
-     * @param headerPosition int. Position of the header item in the adapter.
-     * @return int. Layout resource id.
+     * This method gets called by [StickyHeaderDecoration] to get layout resource id for the header item at specified adapter's position.
+     * @param headerPosition Position of the header item in the adapter.
+     * @return Layout resource id.
      */
     fun getHeaderLayout(headerPosition: Int): Int
 
     /**
-     * This method gets called by [StickHeaderItemDecoration] to setup the header View.
-     * @param header View. Header to set the data on.
-     * @param headerPosition int. Position of the header item in the adapter.
+     * This method gets called by [StickyHeaderDecoration] to setup the header View.
+     * @param header View to set the data on.
+     * @param headerPosition Position of the header item in the adapter.
      */
     fun bindHeader(header: View, headerPosition: Int)
 
     /**
-     * This method gets called by [StickHeaderItemDecoration] to verify whether the item represents a header.
-     * @param itemPosition int.
-     * @return true, if item at the specified adapter's position represents a header.
+     * This method gets called by [StickyHeaderDecoration] to verify whether the item represents a header.
+     * @param itemPosition
+     * @return Does the item at the specified adapter's position represent a header or not.
      */
     fun isHeader(itemPosition: Int): Boolean
 
