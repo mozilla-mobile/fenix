@@ -7,15 +7,8 @@ package org.mozilla.fenix.library.history.viewholders
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
-import org.mozilla.fenix.library.history.HistoryViewItem
 
 class TopSeparatorViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-    private lateinit var item: HistoryViewItem.TopSeparatorHistoryItem
-
-    fun bind(item: HistoryViewItem.TopSeparatorHistoryItem) {
-        this.item = item
-    }
 
     companion object {
         const val LAYOUT_ID = R.layout.history_list_top_separator

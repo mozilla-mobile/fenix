@@ -18,7 +18,6 @@ import org.mozilla.fenix.theme.FirefoxTheme
 class SignInViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     private val binding = HistoryListSignInBinding.bind(view)
-    private lateinit var item: HistoryViewItem.SignInHistoryItem
 
     init {
         binding.composeContainer.setViewCompositionStrategy(
@@ -41,7 +40,6 @@ class SignInViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 )
             }
         }
-        this.item = item
     }
 
     companion object {

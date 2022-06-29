@@ -7,15 +7,8 @@ package org.mozilla.fenix.library.history.viewholders
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
-import org.mozilla.fenix.library.history.HistoryViewItem
 
 class TimeGroupSeparatorViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-    private lateinit var item: HistoryViewItem.TimeGroupSeparatorHistoryItem
-
-    fun bind(item: HistoryViewItem.TimeGroupSeparatorHistoryItem) {
-        this.item = item
-    }
 
     companion object {
         const val LAYOUT_ID = R.layout.history_list_time_group_separator

@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.components.history
 
-import android.util.Log
 import androidx.annotation.VisibleForTesting
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import mozilla.components.concept.storage.HistoryMetadata

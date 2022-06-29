@@ -18,7 +18,6 @@ class RecentlyClosedViewHolder(
 ) : RecyclerView.ViewHolder(view) {
 
     private val binding = RecentlyClosedNavItemBinding.bind(view)
-    private lateinit var item: HistoryViewItem.RecentlyClosedItem
 
     init {
         binding.root.setOnClickListener {
@@ -30,7 +29,6 @@ class RecentlyClosedViewHolder(
     fun bind(item: HistoryViewItem.RecentlyClosedItem) {
         binding.recentlyClosedTabsHeader.text = item.title
         binding.recentlyClosedTabsDescription.text = item.body
-        this.item = item
     }
 
     companion object {

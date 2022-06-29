@@ -13,11 +13,9 @@ import org.mozilla.fenix.library.history.HistoryViewItem
 class EmptyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     private val binding = HistoryListEmptyBinding.bind(view)
-    private lateinit var item: HistoryViewItem.EmptyHistoryItem
 
     fun bind(item: HistoryViewItem.EmptyHistoryItem) {
         binding.emptyMessage.text = item.title
-        this.item = item
     }
 
     companion object {

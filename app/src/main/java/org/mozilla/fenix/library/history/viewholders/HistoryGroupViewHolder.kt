@@ -5,12 +5,9 @@
 package org.mozilla.fenix.library.history.viewholders
 
 import android.view.View
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.HistoryListGroupBinding
-import org.mozilla.fenix.databinding.HistoryListItemBinding
 import org.mozilla.fenix.ext.hideAndDisable
 import org.mozilla.fenix.ext.showAndEnable
 import org.mozilla.fenix.library.history.History
@@ -27,7 +24,6 @@ class HistoryGroupViewHolder(
 ) : RecyclerView.ViewHolder(view) {
 
     private val binding = HistoryListGroupBinding.bind(view)
-    private var item: History? = null
 
     init {
         binding.historyLayout.overflowView.apply {
@@ -69,8 +65,6 @@ class HistoryGroupViewHolder(
         } else {
             binding.historyLayout.overflowView.showAndEnable()
         }
-
-        this.item = item.data
     }
 
     companion object {

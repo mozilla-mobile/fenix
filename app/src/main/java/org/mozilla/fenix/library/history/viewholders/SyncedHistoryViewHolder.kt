@@ -18,7 +18,6 @@ class SyncedHistoryViewHolder(
 ) : RecyclerView.ViewHolder(view) {
 
     private val binding = SyncedHistoryNavItemBinding.bind(view)
-    private lateinit var item: HistoryViewItem.SyncedHistoryItem
 
     init {
         binding.root.setOnClickListener {
@@ -29,7 +28,6 @@ class SyncedHistoryViewHolder(
 
     fun bind(item: HistoryViewItem.SyncedHistoryItem) {
         binding.syncedHistoryHeader.text = item.title
-        this.item = item
     }
 
     companion object {
