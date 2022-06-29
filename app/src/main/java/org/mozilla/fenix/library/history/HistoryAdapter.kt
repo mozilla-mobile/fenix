@@ -49,16 +49,31 @@ class HistoryAdapter(
     private var pendingDeletionItems = emptySet<PendingDeletionHistory>()
     private val headerPositions: MutableMap<HistoryItemTimeGroup, Int> = mutableMapOf()
 
-    // A flag to track the empty state of the list. Items are not being deleted immediately,
-    // but hidden from the UI until the Undo snackbar will execute the delayed operation.
-    // Whether the adapter has actually zero items or all present items are hidden,
-    // the screen should be updated into proper empty/not empty state.
-    private var isEmpty = true
-
     init {
-        // When data flow changes, there is a chance that empty state has changed as well
+        // Tracking updates of data flow. Delete data flow might have filtered out the last history
+        // item or group item, so the empty view should be shown. 6 is the itemCount for local
+        // history screen with one item. Listener is triggered on every change including loading new
+        // items. Checking only a small amount of items that might signal the empty state prevents from
+        // slowing down the scrolling.
         addOnPagesUpdatedListener {
-            isEmpty = true
+            if (itemCount <= 6) {
+                for (i in 0 until itemCount) {
+                    val item = getItem(i)
+                    // If there is a single visible item, it's enough to change the empty state of the view.
+                    if (item is HistoryViewItem.HistoryItem ||
+                        item is HistoryViewItem.HistoryGroupItem ||
+                        item is HistoryViewItem.TimeGroupHeader ||
+                        item is HistoryViewItem.SignInHistoryItem
+                    ) {
+                        onEmptyStateChanged.invoke(false)
+                        break
+                    } else if (i + 1 == itemCount) {
+                        // If we reached the bottom of the list and there still has been zero visible items,
+                        // we can can change the History view state to empty.
+                        onEmptyStateChanged.invoke(true)
+                    }
+                }
+            }
         }
     }
 
@@ -107,21 +122,6 @@ class HistoryAdapter(
     @Suppress("ComplexMethod")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position) ?: return
-
-        // If there is a single visible item, it's enough to change the empty state of the view.
-        if (isEmpty && item is HistoryViewItem.HistoryItem ||
-            item is HistoryViewItem.HistoryGroupItem ||
-            item is HistoryViewItem.TimeGroupHeader
-        ) {
-            isEmpty = false
-            onEmptyStateChanged.invoke(isEmpty)
-        } else if (position + 1 == itemCount) {
-            // If we reached the bottom of the list and there still has been zero visible items,
-            // we can can change the History view state to empty.
-            if (isEmpty) {
-                onEmptyStateChanged.invoke(isEmpty)
-            }
-        }
 
         when (holder) {
             is HistoryViewHolder -> holder.bind(item as HistoryViewItem.HistoryItem, mode)
@@ -247,9 +247,7 @@ class HistoryAdapter(
                 else -> null
             }
             timeGroup?.let {
-                headerPositions[timeGroup]?.let {
-                    it
-                }
+                headerPositions[timeGroup]
             }
         } ?: -1
         return position
@@ -277,7 +275,6 @@ class HistoryAdapter(
         } ?: false
     }
 
-    // TODO change to item position
     override fun onStickyHeaderClicked(itemPosition: Int) {
         val item = getItem(itemPosition) ?: return
         val timeGroup = when (item) {

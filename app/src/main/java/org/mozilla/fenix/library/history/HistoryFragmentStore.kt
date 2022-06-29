@@ -236,7 +236,8 @@ private fun historyStateReducer(
                 }
                 state.copy(
                     hiddenHeaders = state.hiddenHeaders - hiddenHeadersToRestore,
-                    pendingDeletionItems = state.pendingDeletionItems - action.historyItems
+                    pendingDeletionItems = state.pendingDeletionItems - action.historyItems,
+                    isEmpty = false
                 )
             } else {
                 state.copy(

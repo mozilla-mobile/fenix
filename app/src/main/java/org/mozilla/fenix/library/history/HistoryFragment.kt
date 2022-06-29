@@ -92,7 +92,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             historyStore = historyStore,
             isRemote = if (FeatureFlags.showSyncedHistory) args.isSyncedHistory else null,
             context = requireContext(),
-            accountManager = requireComponents.backgroundServices.accountManager
+            accountManager = requireComponents.backgroundServices.accountManager,
+            scope = lifecycleScope
         )
 
         val historyController: HistoryController = DefaultHistoryController(

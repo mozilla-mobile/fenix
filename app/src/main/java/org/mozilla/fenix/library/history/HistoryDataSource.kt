@@ -54,7 +54,7 @@ class HistoryDataSource(
         var previousHistory: History? = null
         val headerPositions: MutableList<Pair<HistoryViewItem.TimeGroupHeader, Int>> = LinkedList()
 
-        var historyItems = historyProvider.getHistory(offset, params.loadSize, null).run {
+        val historyItems = historyProvider.getHistory(offset, params.loadSize, null).run {
             if (size == 0) {
                 finishedLoading = true
             }
@@ -159,17 +159,6 @@ class HistoryDataSource(
             null
         } else {
             offset + params.loadSize
-        }
-
-        // Adding an empty view.
-        if (nextOffset == null) {
-            historyItems = historyItems.toMutableList().apply {
-                add(
-                    HistoryViewItem.EmptyHistoryItem(
-                        context.getString(R.string.history_empty_message)
-                    )
-                )
-            }
         }
 
         return LoadResult.Page(
