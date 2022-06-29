@@ -10,7 +10,6 @@ import android.view.MotionEvent.ACTION_UP
 import android.view.ViewGroup
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.isVisible
-import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -19,7 +18,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.ComponentHistoryBinding
 import org.mozilla.fenix.library.LibraryPageView
 import org.mozilla.fenix.theme.ThemeManager
-
 
 /**
  * View that contains and configures the History List

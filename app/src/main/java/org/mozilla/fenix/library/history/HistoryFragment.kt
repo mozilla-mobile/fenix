@@ -24,12 +24,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.RecentlyClosedAction
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.lib.state.ext.consumeFrom
+import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.telemetry.glean.private.NoExtras
@@ -175,6 +177,18 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 
         consumeFrom(historyStore) {
             historyView.update(it)
+        }
+
+        // Listening for pending deletions from other views. For example, if user has deleted an
+        // item from historyGroup screen, we have to adjust the item counter inside history list or
+        // hide item completely. In case the Undo action was triggered, we have to adjust the sate
+        // as well.
+        requireContext().components.appStore.flowScoped(viewLifecycleOwner) { flow ->
+            flow.mapNotNull { state -> state.pendingDeletionHistoryItems }.collect { items ->
+                historyStore.dispatch(
+                    HistoryFragmentAction.UpdatePendingDeletionItems(pendingDeletionItems = items)
+                )
+            }
         }
 
         lifecycleScope.launch {

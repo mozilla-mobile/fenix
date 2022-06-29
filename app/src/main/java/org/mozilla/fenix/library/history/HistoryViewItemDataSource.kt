@@ -22,6 +22,9 @@ import mozilla.components.service.fxa.manager.FxaAccountManager
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.history.PagedHistoryProvider
 
+/**
+ * Flow of [HistoryViewItem] used in History Screen to populate the [HistoryAdapter].
+ */
 class HistoryViewItemDataSource(
     historyProvider: PagedHistoryProvider,
     historyStore: HistoryFragmentStore,

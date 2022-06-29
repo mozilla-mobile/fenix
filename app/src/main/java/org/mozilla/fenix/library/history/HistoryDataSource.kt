@@ -16,8 +16,9 @@ import org.mozilla.fenix.ext.components
 import java.util.*
 
 /**
- * PagingSource of History items, used in History Screen. It is the data source for the
- * Flow<PagingData>, that provides HistoryAdapter with items to display.
+ * PagingSource of [HistoryViewItem], used in [HistoryViewItemDataSource] as a base of the list.
+ * It provides it with history and historyGroup items, synced history and recently closed tabs
+ * buttons, and the top separator.
  */
 class HistoryDataSource(
     private val historyProvider: PagedHistoryProvider,

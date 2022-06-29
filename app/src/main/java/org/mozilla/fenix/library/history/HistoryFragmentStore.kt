@@ -126,25 +126,24 @@ sealed class HistoryFragmentAction : Action {
      * Updates the set of items marked for removal from the [org.mozilla.fenix.components.AppStore]
      * to the [HistoryFragmentStore], to be hidden from the UI.
      */
-    data class UpdatePendingDeletionItems(val pendingDeletionItems: Set<PendingDeletionHistory>) :
-        HistoryFragmentAction()
+    data class UpdatePendingDeletionItems(
+        val pendingDeletionItems: Set<PendingDeletionHistory>,
+        val groups: Set<HistoryItemTimeGroup> = setOf()
+    ) : HistoryFragmentAction()
 
     /**
      * Adds a set of items marked for removal to the app state, to be hidden in the UI.
      */
     data class AddPendingDeletionSet(
         val historyItems: Set<PendingDeletionHistory>,
-        val groups: Set<HistoryItemTimeGroup>
-        ) : HistoryFragmentAction()
+        val groups: Set<HistoryItemTimeGroup> = setOf()
+    ) : HistoryFragmentAction()
+
     /**
      * Removes a set of items, previously marked for removal, to be displayed again in the UI.
      */
-    data class UndoPendingDeletionSet(val historyItems: Set<PendingDeletionHistory>) : HistoryFragmentAction()
-
-    data class UpdatePendingDeletionItemsNew(
-        val pendingDeletionItems: Set<PendingDeletionHistory>,
-        val groups: Set<HistoryItemTimeGroup>
-    ) : HistoryFragmentAction()
+    data class UndoPendingDeletionSet(val historyItems: Set<PendingDeletionHistory>) :
+        HistoryFragmentAction()
 
     data class ChangeCollapsedState(val timeGroup: HistoryItemTimeGroup, val collapsed: Boolean) :
         HistoryFragmentAction()
@@ -207,7 +206,8 @@ private fun historyStateReducer(
         is HistoryFragmentAction.FinishSync -> state.copy(mode = HistoryFragmentState.Mode.Normal)
         is HistoryFragmentAction.ChangeEmptyState -> state.copy(isEmpty = action.isEmpty)
         is HistoryFragmentAction.UpdatePendingDeletionItems -> state.copy(
-            pendingDeletionItems = action.pendingDeletionItems
+            pendingDeletionItems = action.pendingDeletionItems,
+            hiddenHeaders = action.groups
         )
         is HistoryFragmentAction.ChangeCollapsedState -> {
             state.copy(
@@ -218,10 +218,6 @@ private fun historyStateReducer(
                 }
             )
         }
-        is HistoryFragmentAction.UpdatePendingDeletionItemsNew -> state.copy(
-            pendingDeletionItems = action.pendingDeletionItems,
-            hiddenHeaders = action.groups
-        )
         is HistoryFragmentAction.AddPendingDeletionSet -> state.copy(
             pendingDeletionItems = state.pendingDeletionItems + action.historyItems,
             hiddenHeaders = state.hiddenHeaders + action.groups

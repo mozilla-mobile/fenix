@@ -7,6 +7,9 @@ package org.mozilla.fenix.library.history
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
+/**
+ * Class that represents the data for viewHolders that populate the history list in [HistoryAdapter]
+ */
 sealed class HistoryViewItem : Parcelable {
 
     @Parcelize
