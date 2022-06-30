@@ -49,6 +49,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
@@ -213,6 +214,7 @@ fun PocketSponsoredStory(
  * @param stories The list of [PocketStory]ies to be displayed. Expect a list with 8 items.
  * @param contentPadding Dimension for padding the content after it has been clipped.
  * This space will be used for shadows and also content rendering when the list is scrolled.
+ * @param onStoryShown Callback for when a certain story is visible to the user.
  * @param onStoryClicked Callback for when the user taps on a recommended story.
  * @param onDiscoverMoreClicked Callback for when the user taps an element which contains an
  */
@@ -220,7 +222,7 @@ fun PocketSponsoredStory(
 fun PocketStories(
     @PreviewParameter(PocketStoryProvider::class) stories: List<PocketStory>,
     contentPadding: Dp,
-    onStoryShown: (PocketStory) -> Unit,
+    onStoryShown: (PocketStory, Pair<Int, Int>) -> Unit,
     onStoryClicked: (PocketStory, Pair<Int, Int>) -> Unit,
     onDiscoverMoreClicked: (String) -> Unit
 ) {
@@ -255,7 +257,7 @@ fun PocketStories(
                     } else if (story is PocketSponsoredStory) {
                         Box(
                             modifier = Modifier.onShown(0.5f) {
-                                onStoryShown(story)
+                                onStoryShown(story, rowIndex to columnIndex)
                             }
                         ) {
                             PocketSponsoredStory(story) {
@@ -333,15 +335,20 @@ private fun LayoutCoordinates.isVisible(
 ): Boolean {
     if (!isAttached) return false
 
-    return boundsInWindow().toAndroidRect().getIntersectPercentage(visibleRect) >= threshold
+    return boundsInWindow().toAndroidRect().getIntersectPercentage(size, visibleRect) >= threshold
 }
 
 /**
  * Returns the ratio of how much this intersects with [other].
+ *
+ * @param realSize [IntSize] containing the true height and width of the composable.
+ * @param other Other [Rect] for whcih to check the intersection area.
+ *
+ * @return A `0..1` float range for how much this [Rect] intersects with other.
  */
 @FloatRange(from = 0.0, to = 1.0)
-private fun Rect.getIntersectPercentage(other: Rect): Float {
-    val composableArea = height() * width()
+private fun Rect.getIntersectPercentage(realSize: IntSize, other: Rect): Float {
+    val composableArea = realSize.height * realSize.width
     val heightOverlap = max(0, min(bottom, other.bottom) - max(top, other.top))
     val widthOverlap = max(0, min(right, other.right) - max(left, other.left))
     val intersectionArea = heightOverlap * widthOverlap
@@ -445,7 +452,7 @@ private fun PocketStoriesComposablesPreview() {
                 PocketStories(
                     stories = getFakePocketStories(8),
                     contentPadding = 0.dp,
-                    onStoryShown = {},
+                    onStoryShown = { _, _ -> },
                     onStoryClicked = { _, _ -> },
                     onDiscoverMoreClicked = {}
                 )
