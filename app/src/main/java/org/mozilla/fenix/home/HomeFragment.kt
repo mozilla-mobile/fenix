@@ -28,6 +28,7 @@ import androidx.constraintlayout.widget.ConstraintSet.TOP
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -56,6 +57,7 @@ import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSitesConfig
 import mozilla.components.feature.top.sites.TopSitesFeature
+import mozilla.components.feature.top.sites.TopSitesFrecencyConfig
 import mozilla.components.feature.top.sites.TopSitesProviderConfig
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.consumeFrom
@@ -81,6 +83,7 @@ import org.mozilla.fenix.components.toolbar.FenixTabCounterMenu
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentHomeBinding
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.containsQueryParameters
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
@@ -385,11 +388,13 @@ class HomeFragment : Fragment() {
 
         displayWallpaperIfEnabled()
 
+        binding.root.doOnPreDraw {
+            requireComponents.appStore.dispatch(AppAction.UpdateFirstFrameDrawn(drawn = true))
+        }
         // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL!
         requireComponents.core.engine.profiler?.addMarker(
             MarkersFragmentLifecycleCallbacks.MARKER_NAME, profilerStartTime, "HomeFragment.onCreateView",
         )
-
         return binding.root
     }
 
@@ -409,7 +414,9 @@ class HomeFragment : Fragment() {
         val settings = requireContext().settings()
         return TopSitesConfig(
             totalSites = settings.topSitesMaxLimit,
-            frecencyConfig = FrecencyThresholdOption.SKIP_ONE_TIME_PAGES,
+            frecencyConfig = TopSitesFrecencyConfig(
+                FrecencyThresholdOption.SKIP_ONE_TIME_PAGES
+            ) { !it.containsQueryParameters(settings.frecencyFilterQuery) },
             providerConfig = TopSitesProviderConfig(
                 showProviderTopSites = settings.showContileFeature,
                 maxThreshold = TOP_SITES_PROVIDER_MAX_THRESHOLD,
