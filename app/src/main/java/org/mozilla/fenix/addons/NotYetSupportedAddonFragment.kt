@@ -9,15 +9,19 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.ui.UnsupportedAddonsAdapter
 import mozilla.components.feature.addons.ui.UnsupportedAddonsAdapterDelegate
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentNotYetSupportedAddonsBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 
 private const val LEARN_MORE_URL =
     "https://support.mozilla.org/kb/add-compatibility-firefox-preview"
@@ -72,5 +76,15 @@ class NotYetSupportedAddonFragment :
         this@NotYetSupportedAddonFragment.view?.let { view ->
             showSnackBar(view, getString(R.string.mozac_feature_addons_successfully_removed, ""))
         }
+    }
+
+    companion object {
+        const val ARG_ADD_ONS = "addOns"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "not_yet_supported_addon",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_ADD_ONS, NavType.ParcelableArrayType(type = Addon::class.java))
+            )
+        )
     }
 }

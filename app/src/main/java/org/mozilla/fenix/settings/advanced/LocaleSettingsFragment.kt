@@ -21,6 +21,7 @@ import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentLocaleSettingsBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 class LocaleSettingsFragment : Fragment() {
 
@@ -105,5 +106,9 @@ class LocaleSettingsFragment : Fragment() {
         super.onDestroyView()
 
         _binding = null
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "locale")
     }
 }

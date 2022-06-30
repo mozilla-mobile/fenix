@@ -46,6 +46,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.settings.requirePreference
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
@@ -472,5 +473,9 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
 
     companion object {
         private const val DEVICE_NAME_MAX_LENGTH = 128
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "account_settings",
+            destinationLabelId = R.string.preferences_account_settings
+        )
     }
 }

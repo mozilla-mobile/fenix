@@ -15,11 +15,13 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.concept.engine.prompt.PromptRequest
+import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.accounts.push.SendTabUseCases
 import mozilla.components.feature.share.RecentAppsStorage
 import org.mozilla.fenix.R
@@ -27,6 +29,8 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.databinding.FragmentShareBinding
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 
 class ShareFragment : AppCompatDialogFragment() {
 
@@ -157,5 +161,20 @@ class ShareFragment : AppCompatDialogFragment() {
     companion object {
         const val SHOW_PAGE_ALPHA = 0.6f
         const val RESULT_KEY = "shareFragmentResultKey"
+
+        const val ARG_SHARE_DATA = "data"
+        const val ARG_SHOW_PAGE = "showPage"
+        const val ARG_SESSION_ID = "sessionId"
+        const val ARG_SHARE_SUBJECT = "shareSubject"
+
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "share",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_SHARE_DATA, NavType.ParcelableArrayType(type = ShareData::class.java)),
+                ScreenArgsInfo(ARG_SHOW_PAGE, NavType.BoolType, false),
+                ScreenArgsInfo(ARG_SESSION_ID, NavType.StringType),
+                ScreenArgsInfo(ARG_SHARE_SUBJECT, NavType.StringType)
+            )
+        )
     }
 }

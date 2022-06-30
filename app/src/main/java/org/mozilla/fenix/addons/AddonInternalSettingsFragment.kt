@@ -8,12 +8,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.ui.translateName
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentAddOnInternalSettingsBinding
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 
 /**
  * A fragment to show the internal settings of an add-on.
@@ -48,4 +52,15 @@ class AddonInternalSettingsFragment : AddonPopupBaseFragment() {
             showToolbar(title = args.addon.translateName(it))
         }
     }
+
+    companion object {
+        const val ARG_ADD_ON = "addOn"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "add_on_internal_settings",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_ADD_ON, NavType.ParcelableType(type = Addon::class.java))
+            )
+        )
+    }
+
 }

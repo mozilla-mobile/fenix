@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import mozilla.components.browser.state.action.WebExtensionAction
@@ -18,6 +19,8 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentAddOnInternalSettingsBinding
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 
 /**
  * A fragment to show the web extension action popup with [EngineView].
@@ -87,5 +90,18 @@ class WebExtensionActionPopupFragment : AddonPopupBaseFragment(), EngineSession.
             WebExtensionAction.UpdatePopupSessionAction(args.webExtensionId, popupSession = null)
         )
         sessionConsumed = true
+    }
+
+    companion object {
+        const val ARG_WEB_EXTENSION_ID = "webExtensionId"
+        const val ARG_WEB_EXTENSION_TITLE = "webExtensionTitle"
+
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "web_extension_action_popup",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_WEB_EXTENSION_ID, NavType.StringType),
+                ScreenArgsInfo(ARG_WEB_EXTENSION_TITLE, NavType.StringType)
+            )
+        )
     }
 }

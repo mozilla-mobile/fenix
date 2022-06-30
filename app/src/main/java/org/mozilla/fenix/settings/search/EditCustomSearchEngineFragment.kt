@@ -27,6 +27,7 @@ import org.mozilla.fenix.databinding.CustomSearchEngineBinding
 import org.mozilla.fenix.databinding.FragmentAddSearchEngineBinding
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.settings.SupportUtils
 
 /**
@@ -173,6 +174,10 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
             }
             else -> false
         }
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "edit_custom_search_engine")
     }
 }
 

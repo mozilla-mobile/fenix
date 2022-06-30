@@ -24,6 +24,7 @@ import org.mozilla.fenix.crashes.CrashListActivity
 import org.mozilla.fenix.databinding.FragmentAboutBinding
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.about.AboutItemType.LICENSING_INFO
 import org.mozilla.fenix.settings.about.AboutItemType.PRIVACY_NOTICE
@@ -216,5 +217,6 @@ class AboutFragment : Fragment(), AboutPageListener {
 
     companion object {
         private const val ABOUT_LICENSE_URL = "about:license"
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "about")
     }
 }

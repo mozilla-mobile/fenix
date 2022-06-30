@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -28,6 +29,8 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import org.mozilla.fenix.library.bookmarks.DesktopFolders
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 
 class SelectBookmarkFolderFragment : Fragment() {
     private var _binding: FragmentSelectBookmarkFolderBinding? = null
@@ -93,5 +96,18 @@ class SelectBookmarkFolderFragment : Fragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    companion object {
+        private const val ARG_ALLOW_CREATING_NEW_FOLDER = "allowCreatingNewFolder"
+        private const val ARG_HIDE_FOLDER_GUID = "hideFolderGuid"
+
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "bookmark_select_folder",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_ALLOW_CREATING_NEW_FOLDER, NavType.BoolType, false),
+                ScreenArgsInfo(ARG_HIDE_FOLDER_GUID, NavType.StringType)
+            )
+        )
     }
 }

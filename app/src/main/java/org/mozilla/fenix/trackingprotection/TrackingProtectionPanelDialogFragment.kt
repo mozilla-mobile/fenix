@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.whenStarted
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -28,7 +29,9 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.state.SessionState
+import mozilla.components.browser.state.state.content.PermissionHighlightsState
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.session.TrackingProtectionUseCases
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.observe
@@ -45,6 +48,8 @@ import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentTrackingProtectionBinding
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.settings.SupportUtils
 
 @Suppress("TooManyFunctions")
@@ -241,5 +246,26 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
 
     private fun getCurrentTab(): SessionState? {
         return requireComponents.core.store.state.findTabOrCustomTab(args.sessionId)
+    }
+
+    companion object {
+        const val ARG_SESSION_ID = "sessionId"
+        const val ARG_TITLE = "title"
+        const val ARG_URL = "url"
+        const val ARG_SITE_PERMISSIONS = "sitePermissions"
+        const val ARG_GRAVITY = "gravity"
+        const val ARG_TRACKING_PROTECTION_ENABLED = "trackingProtectionEnabled"
+
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "tracking_protection_panel_dialog",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_SESSION_ID, NavType.StringType),
+                ScreenArgsInfo(ARG_TITLE, NavType.StringType),
+                ScreenArgsInfo(ARG_URL, NavType.StringType),
+                ScreenArgsInfo(ARG_SITE_PERMISSIONS, NavType.ParcelableType(type = SitePermissions::class.java)),
+                ScreenArgsInfo(ARG_GRAVITY, NavType.IntType, 80),
+                ScreenArgsInfo(ARG_TRACKING_PROTECTION_ENABLED, NavType.BoolType)
+            )
+        )
     }
 }

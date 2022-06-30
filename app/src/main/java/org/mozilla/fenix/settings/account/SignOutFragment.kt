@@ -21,6 +21,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentSignOutBinding
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 class SignOutFragment : AppCompatDialogFragment() {
     private lateinit var accountManager: FxaAccountManager
@@ -86,5 +87,9 @@ class SignOutFragment : AppCompatDialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "sign_out")
     }
 }

@@ -11,9 +11,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.SettingsStudiesBinding
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 /**
  * Lets the users control studies settings.
@@ -51,4 +53,11 @@ class StudiesFragment : Fragment() {
     }
 
     private fun isAttached(): Boolean = context != null
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "studies",
+            destinationLabelId = R.string.preference_experiments_2
+        )
+    }
 }

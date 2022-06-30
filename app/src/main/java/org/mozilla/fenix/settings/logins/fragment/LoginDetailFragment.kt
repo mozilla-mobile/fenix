@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
@@ -35,6 +36,8 @@ import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.simplifiedUrl
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.settings.logins.LoginsFragmentStore
 import org.mozilla.fenix.settings.logins.SavedLogin
 import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
@@ -240,7 +243,14 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail) {
         _binding = null
     }
 
-    private companion object {
+    companion object {
         private const val BUTTON_INCREASE_DPS = 24
+        private const val ARG_SAVED_LOGIN_ID = "savedLoginId"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "login_detail",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_SAVED_LOGIN_ID, NavType.StringType)
+            )
+        )
     }
 }

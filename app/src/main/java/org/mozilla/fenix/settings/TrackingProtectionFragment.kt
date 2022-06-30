@@ -20,6 +20,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.trackingprotection.TrackingProtectionMode
 import org.mozilla.fenix.utils.view.addToRadioGroup
 
@@ -228,5 +229,9 @@ class TrackingProtectionFragment : PreferenceFragmentCompat() {
         customCryptominers.isVisible = isCustomSelected
         customFingerprinters.isVisible = isCustomSelected
         customRedirectTrackers.isVisible = isCustomSelected
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "tracking_protection")
     }
 }

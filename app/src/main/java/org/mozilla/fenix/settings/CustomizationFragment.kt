@@ -19,6 +19,7 @@ import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.utils.view.addToRadioGroup
 
 /**
@@ -157,5 +158,10 @@ class CustomizationFragment : PreferenceFragmentCompat() {
     companion object {
         // Used to send telemetry data about toolbar position changes
         enum class Position { TOP, BOTTOM }
+
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "customization",
+            destinationLabelId = R.string.preferences_customize
+        )
     }
 }

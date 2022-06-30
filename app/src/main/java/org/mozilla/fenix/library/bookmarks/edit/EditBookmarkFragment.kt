@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -49,6 +50,8 @@ import org.mozilla.fenix.ext.setToolbarColors
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import org.mozilla.fenix.library.bookmarks.friendlyRootTitle
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 
 /**
  * Menu to edit the name, URL, and location of a bookmark item.
@@ -294,5 +297,17 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
         super.onDestroyView()
 
         _binding = null
+    }
+
+    companion object {
+        private const val ARG_GUID_TO_EDIT = "guidToEdit"
+        private const val ARG_REQUIRES_SNACKBAR_PADDING_FOR_TOOLBAR = "requiresSnackbarPaddingFOrToolbar"
+        val NAV_ROUTE_INFO  = NavRouteInfo(
+            navRoute = "bookmark_edit",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_GUID_TO_EDIT, NavType.StringType),
+                ScreenArgsInfo(ARG_REQUIRES_SNACKBAR_PADDING_FOR_TOOLBAR, NavType.BoolType, false)
+            )
+        )
     }
 }

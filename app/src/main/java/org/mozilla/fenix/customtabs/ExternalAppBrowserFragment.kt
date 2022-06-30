@@ -9,6 +9,7 @@ import android.content.Intent
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
+import androidx.navigation.NavType
 import androidx.navigation.fragment.navArgs
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.toolbar.BrowserToolbar
@@ -34,6 +35,8 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 
 /**
  * Fragment used for browsing the web within external apps.
@@ -191,5 +194,15 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
     companion object {
         // We only care about millisecond precision for telemetry events
         internal const val MS_PRECISION = 1_000_000L
+        private const val ARG_ACTIVE_SESSION_ID = "activeSessionId"
+        private const val ARG_WEB_APP_MANIFEST = "webAppManifest"
+
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "external_app_browser",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_ACTIVE_SESSION_ID, NavType.StringType),
+                ScreenArgsInfo(ARG_WEB_APP_MANIFEST, NavType.StringType)
+            )
+        )
     }
 }

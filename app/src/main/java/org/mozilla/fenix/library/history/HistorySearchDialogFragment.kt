@@ -47,6 +47,8 @@ import org.mozilla.fenix.databinding.SearchSuggestionsHintBinding
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.library.history.awesomebar.AwesomeBarView
 import org.mozilla.fenix.library.history.toolbar.ToolbarView
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.settings.SupportUtils
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -311,4 +313,8 @@ class HistorySearchDialogFragment : AppCompatDialogFragment(), UserInteractionHa
     }
 
     private fun isSpeechAvailable(): Boolean = speechIntent.resolveActivity(requireContext().packageManager) != null
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "history_search_dialog")
+    }
 }

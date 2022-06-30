@@ -13,6 +13,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 class SecretSettingsFragment : PreferenceFragmentCompat() {
 
@@ -53,5 +54,12 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
             isChecked = context.settings().showUnifiedSearchFeature
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "secret_settings",
+            destinationLabelId = R.string.preferences_debug_settings
+        )
     }
 }

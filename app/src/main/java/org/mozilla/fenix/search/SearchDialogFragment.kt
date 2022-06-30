@@ -35,6 +35,7 @@ import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.flow.collect
@@ -74,6 +75,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Core.Companion.BOOKMARKS_SEARCH_ENGINE_ID
 import org.mozilla.fenix.components.Core.Companion.HISTORY_SEARCH_ENGINE_ID
+import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentSearchDialogBinding
 import org.mozilla.fenix.databinding.SearchSuggestionsHintBinding
@@ -81,6 +83,8 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.search.awesomebar.AwesomeBarView
 import org.mozilla.fenix.search.awesomebar.toSearchProviderState
 import org.mozilla.fenix.search.toolbar.IncreasedTapAreaActionDecorator
@@ -906,5 +910,17 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         private const val TAP_INCREASE_DPS = 8
         private const val QR_FRAGMENT_TAG = "MOZAC_QR_FRAGMENT"
         private const val REQUEST_CODE_CAMERA_PERMISSIONS = 1
+        const val ARG_SESSION_ID = "session_id"
+        const val ARG_PASTED_TEXT = "pastedText"
+        const val ARG_SEARCH_ACCESS_POINT = "search_access_point"
+
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "search_dialog",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_SESSION_ID, NavType.StringType),
+                ScreenArgsInfo(ARG_PASTED_TEXT, NavType.StringType),
+                ScreenArgsInfo(ARG_SEARCH_ACCESS_POINT, NavType.EnumType(type = MetricsUtils.Source::class.java), MetricsUtils.Source.NONE)
+            )
+        )
     }
 }

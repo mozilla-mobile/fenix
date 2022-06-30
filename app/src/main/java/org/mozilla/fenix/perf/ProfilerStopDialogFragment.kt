@@ -35,6 +35,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.perf.ProfilerUtils.handleProfileSave
 
 /**
@@ -172,5 +173,9 @@ class ProfilerStopDialogFragment : DialogFragment() {
     enum class CardState {
         UrlWarningState,
         WaitForProfilerState;
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "profiler_stop_dialog")
     }
 }

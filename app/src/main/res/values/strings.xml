@@ -777,6 +777,8 @@
     <!-- Text for the button to remove a single download item -->
     <string name="download_delete_item_1">Remove</string>
 
+    <string name="downloads">Downloads</string>
+
 
     <!-- Crashes -->
     <!-- Title text displayed on the tab crash page. This first parameter is the name of the application (For example: Fenix) -->

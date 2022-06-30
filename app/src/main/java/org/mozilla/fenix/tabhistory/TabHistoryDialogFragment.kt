@@ -8,11 +8,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
 import mozilla.components.lib.state.ext.flowScoped
@@ -21,6 +21,8 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentTabHistoryDialogBinding
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 
 class TabHistoryDialogFragment : BottomSheetDialogFragment() {
 
@@ -39,7 +41,7 @@ class TabHistoryDialogFragment : BottomSheetDialogFragment() {
 
         view.setBackgroundColor(view.context.getColorFromAttr(R.attr.layer1))
 
-        customTabSessionId = requireArguments().getString(EXTRA_SESSION_ID)
+        customTabSessionId = requireArguments().getString(ARG_SESSION_ID)
 
         val controller = DefaultTabHistoryController(
             navController = findNavController(),
@@ -66,6 +68,12 @@ class TabHistoryDialogFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
-        const val EXTRA_SESSION_ID = "activeSessionId"
+        const val ARG_SESSION_ID = "activeSessionId"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "tab_history_dialog",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_SESSION_ID, NavType.StringType)
+            )
+        )
     }
 }

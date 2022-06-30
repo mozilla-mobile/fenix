@@ -34,6 +34,7 @@ import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
 import org.mozilla.fenix.settings.SyncPreferenceView
 import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
@@ -245,5 +246,9 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
     companion object {
         const val SHORT_DELAY_MS = 100L
         const val PIN_REQUEST = 303
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "saved_logins_auth",
+            destinationLabelId = R.string.preferences_passwords_logins_and_passwords
+        )
     }
 }

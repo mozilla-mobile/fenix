@@ -22,6 +22,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.SettingsHttpsOnlyBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 /**
  * Lets the user customize HTTPS-only mode.
@@ -113,5 +114,12 @@ class HttpsOnlyFragment : Fragment() {
         }
         spannableStringBuilder.setSpan(linkClickListener, linkStart, linkEnd, linkFlags)
         spannableStringBuilder.removeSpan(link)
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "https_only",
+            destinationLabelId = R.string.preferences_https_only_title
+        )
     }
 }

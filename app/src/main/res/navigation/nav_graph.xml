@@ -314,7 +314,7 @@
     <fragment
         android:id="@+id/downloadsFragment"
         android:name="org.mozilla.fenix.library.downloads.DownloadFragment"
-        android:label="Downloads"
+        android:label="@string/downloads"
         tools:layout="@layout/fragment_downloads" />
 
     <fragment

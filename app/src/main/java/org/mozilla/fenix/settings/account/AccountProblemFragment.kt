@@ -21,6 +21,7 @@ import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 class AccountProblemFragment : PreferenceFragmentCompat(), AccountObserver {
 
@@ -79,5 +80,9 @@ class AccountProblemFragment : PreferenceFragmentCompat(), AccountObserver {
             findNavController()
                 .popBackStack(R.id.accountProblemFragment, true)
         }
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "account_problem")
     }
 }

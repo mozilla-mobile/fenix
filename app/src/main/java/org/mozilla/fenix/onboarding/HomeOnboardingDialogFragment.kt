@@ -12,6 +12,7 @@ import androidx.fragment.app.DialogFragment
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentOnboardingHomeDialogBinding
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 /**
  * Dialog displayed once when one or multiples of these sections are shown in the home screen
@@ -47,5 +48,9 @@ class HomeOnboardingDialogFragment : DialogFragment() {
             }
             dismiss()
         }
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "home_on_boarding_dialog")
     }
 }

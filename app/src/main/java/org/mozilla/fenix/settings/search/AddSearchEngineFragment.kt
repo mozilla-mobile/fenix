@@ -40,6 +40,7 @@ import org.mozilla.fenix.databinding.SearchEngineRadioButtonBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.settings.SupportUtils
 
 @SuppressWarnings("LargeClass", "TooManyFunctions")
@@ -282,6 +283,8 @@ class AddSearchEngineFragment :
         private const val DISABLED_ALPHA = 0.2f
         private const val CUSTOM_INDEX = -1
         private const val FIRST_INDEX = 0
+
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "add_search_engine")
     }
 }
 

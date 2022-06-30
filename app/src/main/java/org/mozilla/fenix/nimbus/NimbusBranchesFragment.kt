@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +21,8 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.nimbus.controller.NimbusBranchesController
 import org.mozilla.fenix.nimbus.view.NimbusBranchesView
 
@@ -91,5 +94,18 @@ class NimbusBranchesFragment : Fragment() {
                 Logger.error("Failed to getActiveExperiments()", e)
             }
         }
+    }
+
+    companion object {
+        const val ARG_EXPERIMENT_ID = "experimentId"
+        const val ARG_EXPERIMENT_NAME = "experimentName"
+
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "nimbus_branches",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_EXPERIMENT_ID, NavType.StringType),
+                ScreenArgsInfo(ARG_EXPERIMENT_NAME, NavType.StringType)
+            )
+        )
     }
 }

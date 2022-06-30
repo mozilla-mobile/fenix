@@ -34,6 +34,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -114,6 +115,8 @@ import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.home.sessioncontrol.SessionControlView
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHolder
 import org.mozilla.fenix.home.topsites.DefaultTopSitesView
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
@@ -1019,5 +1022,14 @@ class HomeFragment : Fragment() {
 
         // Elevation for undo toasts
         internal const val TOAST_ELEVATION = 80f
+
+        const val ARG_FOCUS_ON_ADDRESS_BAR = "focusOnAddressBar"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "home",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_FOCUS_ON_ADDRESS_BAR, NavType.BoolType, false)
+            )
+        )
+
     }
 }

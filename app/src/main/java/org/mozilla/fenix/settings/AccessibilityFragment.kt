@@ -11,6 +11,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 /**
  * Displays font size controls for accessibility.
@@ -91,5 +92,10 @@ class AccessibilityFragment : PreferenceFragmentCompat() {
         const val MIN_SCALE_VALUE = 50
         const val STEP_SIZE = 5
         const val PERCENT_TO_DECIMAL = 100f
+
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "accessibility",
+            destinationLabelId = R.string.preferences_accessibility
+        )
     }
 }

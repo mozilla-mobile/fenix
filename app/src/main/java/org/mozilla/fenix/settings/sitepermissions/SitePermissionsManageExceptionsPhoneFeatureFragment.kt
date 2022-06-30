@@ -20,6 +20,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
@@ -30,6 +31,8 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.quicksettings.AutoplayValue
 import org.mozilla.fenix.settings.setStartCheckedIndicator
@@ -235,5 +238,18 @@ class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
             requireComponents.core.permissionStorage.updateSitePermissions(updatedSitePermissions)
             requireComponents.tryReloadTabBy(updatedSitePermissions.origin)
         }
+    }
+
+    companion object {
+        const val ARG_PHONE_FEATURE = "phoneFeature"
+        const val ARG_SITE_PERMISSIONS = "sitePermissions"
+
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "site_permissions_manage_phone_feature",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_PHONE_FEATURE, NavType.ParcelableType(type = PhoneFeature::class.java)),
+                ScreenArgsInfo(ARG_SITE_PERMISSIONS, NavType.ParcelableType(type = SitePermissions::class.java))
+            )
+        )
     }
 }

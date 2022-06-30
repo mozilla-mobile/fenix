@@ -14,6 +14,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 /**
  * Lets the user customize Private browsing options.
@@ -56,5 +57,12 @@ class PrivateBrowsingFragment : PreferenceFragmentCompat() {
                 }
             }
         }
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "private_browsing",
+            destinationLabelId = R.string.preferences_private_browsing_options
+        )
     }
 }

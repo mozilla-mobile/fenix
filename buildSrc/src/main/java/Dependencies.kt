@@ -8,6 +8,7 @@
 object Versions {
     const val kotlin = "1.6.10"
     const val coroutines = "1.6.1"
+    const val serialization = "1.3.3"
 
     // These versions are linked: lint should be X+23.Y.Z of gradle_plugin version, according to:
     // https://github.com/alexjlockwood/android-lint-checks-demo/blob/0245fc027463137b1b4afb97c5295d60dce998b6/dependencies.gradle#L3
@@ -31,7 +32,7 @@ object Versions {
     const val androidx_annotation = "1.1.0"
     const val androidx_lifecycle = "2.4.0"
     const val androidx_fragment = "1.3.4"
-    const val androidx_navigation = "2.3.3"
+    const val androidx_navigation = "2.5.0"
     const val androidx_recyclerview = "1.2.1"
     const val androidx_core = "1.3.2"
     const val androidx_paging = "3.1.1"
@@ -71,6 +72,7 @@ object Deps {
     const val kotlin_coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
     const val kotlin_coroutines_test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
     const val kotlin_coroutines_android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
+    const val kotlin_serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.serialization}"
 
     const val osslicenses_plugin = "com.google.android.gms:oss-licenses-plugin:${Versions.osslicenses_plugin}"
 

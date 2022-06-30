@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -26,6 +27,8 @@ import org.mozilla.fenix.databinding.FragmentInstalledAddOnDetailsBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 
 /**
  * An activity to show the details of a installed add-on.
@@ -337,4 +340,14 @@ class InstalledAddonDetailsFragment : Fragment() {
     }
 
     private fun shouldSettingsBeVisible() = !addon.installedState?.optionsPageUrl.isNullOrEmpty()
+
+    companion object {
+        const val ARG_ADD_ON = "addOn"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "installed_add_on_details",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_ADD_ON, NavType.ParcelableType(type = Addon::class.java))
+            )
+        )
+    }
 }

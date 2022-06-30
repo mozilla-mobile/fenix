@@ -8,11 +8,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavType
 import androidx.navigation.fragment.navArgs
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentTrackingProtectionBlockingBinding
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 
 class TrackingProtectionBlockingFragment :
     Fragment(R.layout.fragment_tracking_protection_blocking) {
@@ -49,5 +52,15 @@ class TrackingProtectionBlockingFragment :
     override fun onResume() {
         super.onResume()
         showToolbar(getString(args.protectionMode.titleRes))
+    }
+
+    companion object {
+        const val ARG_PROTECTION_MODE = "protectionMode"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "tracking_protection_blocking",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_PROTECTION_MODE, NavType.ParcelableType(type = TrackingProtectionMode::class.java))
+            )
+        )
     }
 }

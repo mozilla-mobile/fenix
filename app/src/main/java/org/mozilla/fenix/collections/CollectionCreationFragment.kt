@@ -11,12 +11,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.fragment.navArgs
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentCreateCollectionBinding
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 
 class CollectionCreationFragment : DialogFragment() {
     private lateinit var collectionCreationView: CollectionCreationView
@@ -94,5 +97,22 @@ class CollectionCreationFragment : DialogFragment() {
             collectionCreationView.onKey(keyCode, event)
         }
         return dialog
+    }
+
+    companion object {
+        const val ARG_TAB_IDS = "tabIds"
+        const val ARG_SELECTED_TAB_IDS = "selectedTabIds"
+        const val ARG_SELECTED_TAB_COLLECTION_ID = "selectedTabCollectionId"
+        const val ARG_SAVE_COLLECTION_STEP = "saveCollectionStep"
+
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "collection_creation",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_TAB_IDS, NavType.StringArrayType),
+                ScreenArgsInfo(ARG_SELECTED_TAB_IDS, NavType.StringArrayType),
+                ScreenArgsInfo(ARG_SELECTED_TAB_COLLECTION_ID, NavType.LongType, -1),
+                ScreenArgsInfo(ARG_SAVE_COLLECTION_STEP, NavType.EnumType(type = SaveCollectionStep::class.java))
+            )
+        )
     }
 }

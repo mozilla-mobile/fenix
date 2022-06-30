@@ -13,6 +13,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentAddNewDeviceBinding
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.settings.SupportUtils
 
 /**
@@ -47,5 +48,9 @@ class AddNewDeviceFragment : Fragment(R.layout.fragment_add_new_device) {
                 create()
             }.show()
         }
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "add_new_device")
     }
 }

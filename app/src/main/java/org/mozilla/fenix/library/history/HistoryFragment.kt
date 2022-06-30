@@ -54,6 +54,7 @@ import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.LibraryPageFragment
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
@@ -407,5 +408,6 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     @Suppress("UnusedPrivateMember")
     companion object {
         private const val PAGE_SIZE = 25
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "history")
     }
 }

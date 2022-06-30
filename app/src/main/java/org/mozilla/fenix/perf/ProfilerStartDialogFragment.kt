@@ -41,6 +41,7 @@ import kotlinx.coroutines.launch
 import mozilla.components.concept.base.profiler.Profiler
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 /**
  * Dialogue to start the Gecko profiler in Fenix without the use of ADB.
@@ -201,5 +202,9 @@ class ProfilerStartDialogFragment : AppCompatDialogFragment() {
     enum class CardState {
         ChooseSettings,
         WaitForProfilerToStart
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "profiler_start_dialog")
     }
 }

@@ -17,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.CoroutineScope
@@ -44,6 +45,8 @@ import org.mozilla.fenix.library.historymetadata.controller.DefaultHistoryMetada
 import org.mozilla.fenix.library.historymetadata.interactor.DefaultHistoryMetadataGroupInteractor
 import org.mozilla.fenix.library.historymetadata.interactor.HistoryMetadataGroupInteractor
 import org.mozilla.fenix.library.historymetadata.view.HistoryMetadataGroupView
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.utils.allowUndo
 
 /**
@@ -78,7 +81,6 @@ class HistoryMetadataGroupFragment :
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentHistoryMetadataGroupBinding.inflate(inflater, container, false)
-
         val historyItems = args.historyMetadataItems.filterIsInstance<History.Metadata>()
         historyMetadataGroupStore = StoreProvider.get(this) {
             HistoryMetadataGroupFragmentStore(
@@ -279,5 +281,17 @@ class HistoryMetadataGroupFragment :
         companion object {
             const val TAG = "DELETE_CONFIRMATION_DIALOG_FRAGMENT"
         }
+    }
+
+    companion object {
+        private const val ARG_TITLE = "title"
+        private const val ARG_HISTORY_META_DATA_ITEMS = "historyMetaDataItems"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "history_metadata_group",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_TITLE, NavType.StringType),
+                ScreenArgsInfo(ARG_HISTORY_META_DATA_ITEMS, NavType.ParcelableArrayType(type = History::class.java))
+            )
+        )
     }
 }

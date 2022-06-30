@@ -35,6 +35,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 private const val MAX_ITEMS_PER_PAGE = 50
 
@@ -138,6 +139,10 @@ class SitePermissionsExceptionsFragment :
         val directions = SitePermissionsExceptionsFragmentDirections
             .actionSitePermissionsToExceptionsToSitePermissionsDetails(sitePermissions)
         nav(R.id.sitePermissionsExceptionsFragment, directions)
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "site_permissions_exceptions")
     }
 }
 

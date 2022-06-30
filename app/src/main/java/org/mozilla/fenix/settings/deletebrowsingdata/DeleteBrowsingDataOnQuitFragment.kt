@@ -12,6 +12,7 @@ import androidx.preference.SwitchPreference
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
 import org.mozilla.fenix.settings.requirePreference
 
@@ -75,5 +76,9 @@ class DeleteBrowsingDataOnQuitFragment : PreferenceFragmentCompat() {
             pref.isChecked = newValue
             pref.context.settings().setDeleteDataOnQuit(type, newValue)
         }
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "delete_browsing_data_on_quit")
     }
 }

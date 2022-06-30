@@ -35,6 +35,7 @@ import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.library.LibraryPageFragment
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.utils.allowUndo
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
@@ -251,5 +252,12 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
     private fun undoPendingDeletion(items: Set<DownloadItem>) {
         val ids = items.map { item -> item.id }.toSet()
         downloadStore.dispatch(DownloadFragmentAction.UndoPendingDeletionSet(ids))
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "downloads",
+            destinationLabelId = R.string.downloads
+        )
     }
 }

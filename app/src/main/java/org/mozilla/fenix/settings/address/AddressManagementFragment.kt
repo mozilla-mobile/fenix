@@ -18,8 +18,10 @@ import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.GleanMetrics.Addresses
+import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.settings.address.controller.DefaultAddressManagementController
 import org.mozilla.fenix.settings.address.interactor.AddressManagementInteractor
 import org.mozilla.fenix.settings.address.interactor.DefaultAddressManagementInteractor
@@ -96,5 +98,12 @@ class AddressManagementFragment : Fragment() {
                 store.dispatch(AutofillAction.UpdateAddresses(addresses))
             }
         }
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "address_management",
+            destinationLabelId = R.string.addresses_manage_addresses
+        )
     }
 }

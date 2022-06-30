@@ -34,6 +34,7 @@ import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
 import org.mozilla.fenix.settings.SyncPreferenceView
 import org.mozilla.fenix.settings.biometric.BiometricPromptPreferenceFragment
@@ -317,5 +318,9 @@ class AutofillSettingFragment : BiometricPromptPreferenceFragment() {
 
     companion object {
         const val SHORT_DELAY_MS = 100L
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "autofill_settings",
+            destinationLabelId = R.string.preferences_credit_cards
+        )
     }
 }

@@ -20,6 +20,7 @@ import org.mozilla.fenix.databinding.ComponentCreditCardsBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.settings.autofill.AutofillAction
 import org.mozilla.fenix.settings.autofill.AutofillFragmentState
 import org.mozilla.fenix.settings.autofill.AutofillFragmentStore
@@ -104,5 +105,12 @@ class CreditCardsManagementFragment : SecureFragment() {
                 store.dispatch(AutofillAction.UpdateCreditCards(creditCards))
             }
         }
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "credit_cards_management",
+            destinationLabelId = R.string.credit_cards_saved_cards
+        )
     }
 }

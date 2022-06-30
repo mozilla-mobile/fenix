@@ -17,6 +17,7 @@ import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.utils.view.addToRadioGroup
 
 /**
@@ -177,6 +178,13 @@ class HomeSettingsFragment : PreferenceFragmentCompat() {
             openingScreenRadioHomepage,
             openingScreenLastTab,
             openingScreenAfterFourHours
+        )
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "home_settings",
+            destinationLabelId = R.string.preferences_home_2
         )
     }
 }

@@ -11,6 +11,7 @@ import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.settings.RadioButtonPreference
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
 import org.mozilla.fenix.settings.requirePreference
@@ -70,5 +71,7 @@ class SavedLoginsSettingFragment : PreferenceFragmentCompat() {
     companion object {
         // Setting describing the approach of saving logins, used for telemetry
         enum class Setting { NEVER_SAVE, ASK_TO_SAVE }
+
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "save_login_setting")
     }
 }

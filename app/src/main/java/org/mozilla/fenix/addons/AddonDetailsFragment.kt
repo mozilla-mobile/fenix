@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -23,6 +24,8 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentAddOnDetailsBinding
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 
 /**
  * A fragment to show the details of an add-on.
@@ -60,5 +63,15 @@ class AddonDetailsFragment : Fragment(R.layout.fragment_add_on_details), AddonDe
             }
             updateAttempt?.showInformationDialog(requireContext())
         }
+    }
+
+    companion object {
+        const val ARG_ADD_ON = "addOn"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "add_on_details",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_ADD_ON, NavType.ParcelableType(type = Addon::class.java))
+            )
+        )
     }
 }

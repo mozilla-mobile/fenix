@@ -19,6 +19,7 @@ import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentExceptionsBinding
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 /**
  * Displays a list of sites that are exempted from saving logins,
@@ -72,5 +73,12 @@ class LoginExceptionsFragment : Fragment() {
         consumeFrom(exceptionsStore) {
             exceptionsView.update(it.items)
         }
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "login_exceptions",
+            destinationLabelId = R.string.preferences_passwords_exceptions
+        )
     }
 }

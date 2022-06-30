@@ -20,6 +20,7 @@ import android.widget.Button
 import android.widget.RadioButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavType
 import androidx.navigation.fragment.navArgs
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.Action.ALLOWED
@@ -30,6 +31,8 @@ import org.mozilla.fenix.databinding.FragmentManageSitePermissionsFeaturePhoneBi
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY_AUDIBLE
 import org.mozilla.fenix.settings.PhoneFeature.AUTOPLAY_INAUDIBLE
@@ -285,5 +288,15 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
             AUTOPLAY_ALLOW_ALL -> AutoplaySettingMetricsExtraKey.ALLOW_ALL.name.lowercase()
             else -> null
         }
+    }
+
+    companion object {
+        const val ARG_PHONE_FEATURE = "phoneFeature"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "site_permissions_manage_phone_feature",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_PHONE_FEATURE, NavType.ParcelableType(type = PhoneFeature::class.java))
+            )
+        )
     }
 }

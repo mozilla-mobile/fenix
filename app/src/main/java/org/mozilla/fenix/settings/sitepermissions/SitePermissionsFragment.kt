@@ -15,6 +15,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.requirePreference
 
@@ -77,5 +78,12 @@ class SitePermissionsFragment : PreferenceFragmentCompat() {
         }
 
         Navigation.findNavController(requireView()).navigate(directions)
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "site_permissions",
+            destinationLabelId = R.string.preferences_site_permissions
+        )
     }
 }

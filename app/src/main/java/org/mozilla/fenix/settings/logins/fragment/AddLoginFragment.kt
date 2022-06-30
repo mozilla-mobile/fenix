@@ -30,6 +30,7 @@ import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.ext.toEditable
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.settings.logins.LoginsFragmentStore
 import org.mozilla.fenix.settings.logins.SavedLogin
 import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
@@ -345,5 +346,12 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "add_login",
+            destinationLabelId = R.string.add_login
+        )
     }
 }

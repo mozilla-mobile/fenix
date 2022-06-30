@@ -16,6 +16,7 @@ import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 /**
  * Lets the user toggle telemetry on/off.
@@ -86,5 +87,12 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
             view?.findNavController()?.nav(R.id.dataChoicesFragment, action)
             true
         }
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "data_choices",
+            destinationLabelId = R.string.preferences_data_choices
+        )
     }
 }

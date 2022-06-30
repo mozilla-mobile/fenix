@@ -16,6 +16,7 @@ import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentExceptionsBinding
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 /**
  * Displays a list of sites that are exempted from Tracking Protection,
@@ -64,5 +65,12 @@ class TrackingProtectionExceptionsFragment : Fragment() {
         consumeFrom(exceptionsStore) {
             exceptionsView.update(it.items)
         }
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "tracking_protection_exceptions",
+            destinationLabelId = R.string.preference_exceptions
+        )
     }
 }

@@ -19,6 +19,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -48,6 +49,8 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeScreenViewModel
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.share.ShareFragment
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
 import org.mozilla.fenix.tabstray.browser.DefaultBrowserTrayInteractor
@@ -632,5 +635,19 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         // Elevation for undo toasts
         @VisibleForTesting
         internal const val ELEVATION = 80f
+
+        const val ARG_ENTER_MULTI_SELECT = "enterMultiSelect"
+        const val ARG_FOCUS_GROUP_TAB_ID = "focusGroupTabId"
+        const val ARG_PAGE = "page"
+        const val ARG_ACCESS_POINT = "accessPoint"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "tabs_tray_dialog",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_ENTER_MULTI_SELECT, NavType.BoolType, false),
+                ScreenArgsInfo(ARG_FOCUS_GROUP_TAB_ID, NavType.StringType, null),
+                ScreenArgsInfo(ARG_PAGE, NavType.EnumType(type = Page::class.java), Page.NormalTabs),
+                ScreenArgsInfo(ARG_ACCESS_POINT, NavType.EnumType(type = TabsTrayAccessPoint::class.java), TabsTrayAccessPoint.None)
+            )
+        )
     }
 }

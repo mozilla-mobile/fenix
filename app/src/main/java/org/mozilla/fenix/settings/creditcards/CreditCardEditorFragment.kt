@@ -12,11 +12,13 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import mozilla.components.concept.storage.CreditCard
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.android.view.showKeyboard
 import org.mozilla.fenix.R
@@ -26,6 +28,8 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.placeCursorAtEnd
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.settings.creditcards.controller.DefaultCreditCardEditorController
 import org.mozilla.fenix.settings.creditcards.interactor.CreditCardEditorInteractor
 import org.mozilla.fenix.settings.creditcards.interactor.DefaultCreditCardEditorInteractor
@@ -146,5 +150,13 @@ class CreditCardEditorFragment : SecureFragment(R.layout.fragment_credit_card_ed
     companion object {
         // Number of years to show in the expiry year dropdown.
         const val NUMBER_OF_YEARS_TO_SHOW = 10
+        const val ARG_CREDIT_CARD = "creditCard"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "credit_card_editor",
+            destinationLabelId = R.string.credit_cards_add_card,
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_CREDIT_CARD, NavType.ParcelableType(type = CreditCard::class.java))
+            )
+        )
     }
 }

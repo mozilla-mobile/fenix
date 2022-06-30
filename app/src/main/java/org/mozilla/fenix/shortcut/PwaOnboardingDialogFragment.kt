@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentPwaOnboardingBinding
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 /**
  * Dialog displayed the third time the user navigates to an installable web app.
@@ -43,5 +44,9 @@ class PwaOnboardingDialogFragment : DialogFragment() {
                 dismiss()
             }
         }
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "pwa_on_boarding")
     }
 }

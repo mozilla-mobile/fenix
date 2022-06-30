@@ -9,14 +9,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.state.SessionState
+import mozilla.components.browser.state.state.content.PermissionHighlightsState
+import mozilla.components.concept.engine.permission.SitePermissions
 import org.mozilla.fenix.R
 import org.mozilla.fenix.android.FenixDialogFragment
 import org.mozilla.fenix.databinding.FragmentConnectionDetailsDialogBinding
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 
 class ConnectionPanelDialogFragment : FenixDialogFragment() {
     @VisibleForTesting
@@ -77,5 +82,28 @@ class ConnectionPanelDialogFragment : FenixDialogFragment() {
 
     private fun getCurrentTab(): SessionState? {
         return requireComponents.core.store.state.findTabOrCustomTab(args.sessionId)
+    }
+
+    companion object {
+        const val ARG_SESSION_ID = "sessionId"
+        const val ARG_TITLE = "title"
+        const val ARG_URL = "url"
+        const val ARG_IS_SECURED = "isSecured"
+        const val ARG_SITE_PERMISSIONS = "sitePermissions"
+        const val ARG_GRAVITY = "gravity"
+        const val ARG_CERTIFICATE_NAME = "certificateName"
+
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "connection_panel_dialog",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_SESSION_ID, NavType.StringType),
+                ScreenArgsInfo(ARG_TITLE, NavType.StringType),
+                ScreenArgsInfo(ARG_URL, NavType.StringType),
+                ScreenArgsInfo(ARG_IS_SECURED, NavType.BoolType),
+                ScreenArgsInfo(ARG_SITE_PERMISSIONS, NavType.ParcelableType(type = SitePermissions::class.java)),
+                ScreenArgsInfo(ARG_GRAVITY, NavType.IntType, 80),
+                ScreenArgsInfo(ARG_CERTIFICATE_NAME, NavType.StringType)
+            )
+        )
     }
 }

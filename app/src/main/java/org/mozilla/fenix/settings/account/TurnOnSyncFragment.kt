@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavType
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -30,6 +31,8 @@ import org.mozilla.fenix.databinding.FragmentTurnOnSyncBinding
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 
 class TurnOnSyncFragment : Fragment(), AccountObserver {
 
@@ -175,5 +178,16 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
         // session history stack.
         // We could auto-close this tab once we get to the end of the authentication process?
         // Via an interceptor, perhaps.
+    }
+
+    companion object {
+        const val ARG_PAD_SNACKBAR = "padSnackbar"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "turn_on_sync",
+            destinationLabelId = R.string.preferences_sync,
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_PAD_SNACKBAR, NavType.BoolType, false)
+            )
+        )
     }
 }

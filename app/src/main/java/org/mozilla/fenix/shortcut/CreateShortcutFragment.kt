@@ -17,6 +17,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentCreateShortcutBinding
 import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 class CreateShortcutFragment : DialogFragment() {
     private var _binding: FragmentCreateShortcutBinding? = null
@@ -79,5 +80,7 @@ class CreateShortcutFragment : DialogFragment() {
     companion object {
         private const val ENABLED_ALPHA = 1.0f
         private const val DISABLED_ALPHA = 0.4f
+
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "create_shortcut")
     }
 }

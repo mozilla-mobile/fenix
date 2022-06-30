@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +23,9 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.plus
 import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.state.SessionState
+import mozilla.components.browser.state.state.content.PermissionHighlightsState
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.log.logger.Logger
@@ -34,6 +37,8 @@ import org.mozilla.fenix.databinding.FragmentQuickSettingsDialogSheetBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.settings.PhoneFeature
 
 /**
@@ -220,7 +225,31 @@ class QuickSettingsSheetDialogFragment : FenixDialogFragment() {
     @VisibleForTesting
     internal fun provideTrackingProtectionUseCases() = requireComponents.useCases.trackingProtectionUseCases
 
-    private companion object {
+    companion object {
         const val REQUEST_CODE_QUICK_SETTINGS_PERMISSIONS = 4
+        const val ARG_SESSION_ID = "sessionId"
+        const val ARG_TITLE = "title"
+        const val ARG_URL = "url"
+        const val ARG_IS_SECURED = "isSecured"
+        const val ARG_SITE_PERMISSIONS = "sitePermissions"
+        const val ARG_GRAVITY = "gravity"
+        const val ARG_CERTIFICATE_NAME = "certificateName"
+        const val ARG_PERMISSION_HIGHLIGHTS = "permissionHighlights"
+        const val ARG_IS_TRACKING_PROTECTION_ENABLED = "isTrackingProtectionEnabled"
+
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "quick_settings_sheet_dialog",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_SESSION_ID, NavType.StringType),
+                ScreenArgsInfo(ARG_TITLE, NavType.StringType),
+                ScreenArgsInfo(ARG_URL, NavType.StringType),
+                ScreenArgsInfo(ARG_IS_SECURED, NavType.BoolType),
+                ScreenArgsInfo(ARG_SITE_PERMISSIONS, NavType.ParcelableType(type = SitePermissions::class.java)),
+                ScreenArgsInfo(ARG_GRAVITY, NavType.IntType, 80),
+                ScreenArgsInfo(ARG_CERTIFICATE_NAME, NavType.StringType),
+                ScreenArgsInfo(ARG_PERMISSION_HIGHLIGHTS, NavType.ParcelableType(type = PermissionHighlightsState::class.java)),
+                ScreenArgsInfo(ARG_IS_TRACKING_PROTECTION_ENABLED, NavType.BoolType)
+            )
+        )
     }
 }

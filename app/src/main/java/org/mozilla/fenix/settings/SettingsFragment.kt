@@ -21,6 +21,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
+import androidx.navigation.NavType
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.preference.Preference
@@ -52,6 +53,8 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.perf.ProfilerViewModel
 import org.mozilla.fenix.settings.account.AccountUiView
@@ -642,5 +645,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
         private const val SCROLL_INDICATOR_DELAY = 10L
         private const val FXA_SYNC_OVERRIDE_EXIT_DELAY = 2000L
         private const val AMO_COLLECTION_OVERRIDE_EXIT_DELAY = 3000L
+
+        const val ARG_PREF_TO_SCROLL_TO = "preference_to_scroll_to"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "settings",
+            destinationLabelId = R.string.settings_title,
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_PREF_TO_SCROLL_TO, NavType.StringType)
+            )
+        )
     }
 }

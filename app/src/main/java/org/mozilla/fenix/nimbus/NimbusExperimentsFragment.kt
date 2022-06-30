@@ -22,6 +22,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.nimbus.view.NimbusExperimentsView
 
 /**
@@ -82,5 +83,12 @@ class NimbusExperimentsFragment : Fragment(R.layout.mozac_service_nimbus_experim
                 view.findViewById<TextView>(R.id.nimbus_experiments_empty_message).isVisible = true
             }
         }
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "nimbus_experiments",
+            destinationLabelId = R.string.preferences_nimbus_experiments
+        )
     }
 }

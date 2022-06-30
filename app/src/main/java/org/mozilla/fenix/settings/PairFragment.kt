@@ -21,6 +21,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
 
@@ -98,11 +99,6 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
         return true
     }
 
-    companion object {
-        private const val REQUEST_CODE_CAMERA_PERMISSIONS = 1
-        private const val VIBRATE_LENGTH = 200L
-    }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -123,5 +119,15 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
                 }
             }
         }
+    }
+
+    companion object {
+        private const val REQUEST_CODE_CAMERA_PERMISSIONS = 1
+        private const val VIBRATE_LENGTH = 200L
+
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "pair",
+            destinationLabelId = R.string.preferences_sync
+        )
     }
 }

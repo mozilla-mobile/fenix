@@ -30,6 +30,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import org.mozilla.fenix.library.bookmarks.friendlyRootTitle
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 /**
  * Menu to create a new bookmark folder.
@@ -124,5 +125,12 @@ class AddBookmarkFolderFragment : Fragment(R.layout.fragment_edit_bookmark) {
         super.onDestroyView()
 
         _binding = null
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "bookmark_add_folder",
+            destinationLabelId = R.string.bookmark_add_folder_fragment_label
+        )
     }
 }

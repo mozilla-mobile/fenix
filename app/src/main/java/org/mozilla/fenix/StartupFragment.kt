@@ -6,6 +6,7 @@ package org.mozilla.fenix
 
 import androidx.fragment.app.Fragment
 import org.mozilla.fenix.home.HomeFragment
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 /**
  * This empty fragment serves as a start destination in our navigation
@@ -16,4 +17,8 @@ import org.mozilla.fenix.home.HomeFragment
  * to navigate to, which makes sure we only render the [HomeFragment]
  * as needed.
  */
-class StartupFragment : Fragment()
+class StartupFragment : Fragment() {
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "startup")
+    }
+}

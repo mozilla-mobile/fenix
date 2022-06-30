@@ -20,6 +20,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.CoroutineScope
@@ -55,6 +56,8 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.LibraryPageFragment
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.utils.allowUndo
 
 /**
@@ -426,5 +429,15 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             }
             refreshBookmarks()
         }
+    }
+
+    companion object {
+        private const val ARG_CURRENT_ROOT = "currentRoot"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "bookmarks",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_CURRENT_ROOT, NavType.StringType)
+            )
+        )
     }
 }

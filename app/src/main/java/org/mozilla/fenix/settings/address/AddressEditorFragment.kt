@@ -10,8 +10,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import mozilla.components.concept.storage.Address
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.SecureFragment
@@ -19,6 +21,8 @@ import org.mozilla.fenix.databinding.FragmentAddressEditorBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.settings.address.controller.DefaultAddressEditorController
 import org.mozilla.fenix.settings.address.interactor.AddressEditorInteractor
 import org.mozilla.fenix.settings.address.interactor.DefaultAddressEditorInteractor
@@ -101,5 +105,16 @@ class AddressEditorFragment : SecureFragment(R.layout.fragment_address_editor) {
             true
         }
         else -> false
+    }
+
+    companion object {
+        const val ARG_ADDRESS = "address"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "address_editor",
+            destinationLabelId = R.string.addresses_add_address,
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_ADDRESS, NavType.ParcelableType(type = Address::class.java))
+            )
+        )
     }
 }

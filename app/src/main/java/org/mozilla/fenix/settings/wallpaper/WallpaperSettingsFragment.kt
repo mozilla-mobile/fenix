@@ -22,6 +22,7 @@ import org.mozilla.fenix.GleanMetrics.Wallpapers
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.wallpapers.Wallpaper
 
@@ -81,5 +82,12 @@ class WallpaperSettingsFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         showToolbar(getString(R.string.customize_wallpapers))
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "wallpaper_settings",
+            destinationLabelId = R.string.customize_wallpapers
+        )
     }
 }

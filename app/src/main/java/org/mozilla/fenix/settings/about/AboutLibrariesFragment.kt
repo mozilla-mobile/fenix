@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentAboutLibrariesBinding
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import java.nio.charset.Charset
 import java.util.Locale
 
@@ -109,6 +110,7 @@ class AboutLibrariesFragment : Fragment(R.layout.fragment_about_libraries) {
 
     companion object {
         private const val LICENSE_TEXT_SIZE = 10F
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "about_libraries")
     }
 }
 

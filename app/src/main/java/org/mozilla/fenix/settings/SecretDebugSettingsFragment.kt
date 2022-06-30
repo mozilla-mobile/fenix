@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.theme.FirefoxTheme
 
 class SecretDebugSettingsFragment : Fragment() {
@@ -43,6 +44,13 @@ class SecretDebugSettingsFragment : Fragment() {
                 }
             }
         }
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "secret_debug_settings",
+            destinationLabelId = R.string.preferences_debug_info
+        )
     }
 }
 

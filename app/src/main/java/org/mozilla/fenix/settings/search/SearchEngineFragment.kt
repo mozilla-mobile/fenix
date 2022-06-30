@@ -16,6 +16,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
 import org.mozilla.fenix.settings.requirePreference
 import org.mozilla.gecko.search.SearchWidgetProvider
@@ -115,5 +116,12 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
         }
 
         return super.onPreferenceTreeClick(preference)
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "search_engine",
+            destinationLabelId = R.string.preferences_search
+        )
     }
 }

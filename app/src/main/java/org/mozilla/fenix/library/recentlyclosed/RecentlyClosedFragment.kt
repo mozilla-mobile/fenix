@@ -33,6 +33,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.library.LibraryPageFragment
+import org.mozilla.fenix.navigation.NavRouteInfo
 
 @Suppress("TooManyFunctions")
 class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserInteractionHandler {
@@ -165,4 +166,9 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
     override fun onBackPressed(): Boolean {
         return recentlyClosedController.handleBackPressed()
     }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "recently_closed")
+    }
+
 }

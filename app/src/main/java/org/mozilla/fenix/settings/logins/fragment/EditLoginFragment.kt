@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import mozilla.components.lib.state.ext.consumeFrom
@@ -30,6 +31,8 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.toEditable
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.settings.logins.LoginsAction
 import org.mozilla.fenix.settings.logins.LoginsFragmentStore
 import org.mozilla.fenix.settings.logins.SavedLogin
@@ -297,5 +300,16 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        const val ARG_SAVED_LOGIN_ITEM = "savedLoginItem"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "edit_login",
+            destinationLabelId = R.string.edit,
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_SAVED_LOGIN_ITEM, NavType.ParcelableType(type = SavedLogin::class.java))
+            )
+        )
     }
 }

@@ -8,13 +8,17 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavType
 import androidx.navigation.fragment.navArgs
+import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.ui.translateName
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentAddOnPermissionsBinding
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 
 /**
  * A fragment to show the permissions of an add-on.
@@ -43,6 +47,16 @@ class AddonPermissionsDetailsFragment :
             searchTermOrURL = addonSiteUrl.toString(),
             newTab = true,
             from = BrowserDirection.FromAddonPermissionsDetailsFragment
+        )
+    }
+
+    companion object {
+        const val ARG_ADD_ON = "addOn"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "add_on_permissions_details",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_ADD_ON, NavType.ParcelableType(type = Addon::class.java))
+            )
         )
     }
 }

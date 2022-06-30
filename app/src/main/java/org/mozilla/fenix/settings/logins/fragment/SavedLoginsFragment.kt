@@ -31,6 +31,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.settings.logins.LoginsAction
 import org.mozilla.fenix.settings.logins.LoginsFragmentStore
 import org.mozilla.fenix.settings.logins.SavedLoginsSortingStrategyMenu
@@ -215,5 +216,9 @@ class SavedLoginsFragment : SecureFragment() {
         sortingStrategyMenu.updateMenu(itemToHighlight)
 
         attachMenu()
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "saved_logins")
     }
 }

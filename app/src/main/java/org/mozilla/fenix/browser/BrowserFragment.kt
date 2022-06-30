@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.Observer
+import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import mozilla.components.browser.state.selector.findTab
@@ -37,6 +38,8 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.shortcut.PwaOnboardingObserver
 import org.mozilla.fenix.theme.ThemeManager
 
@@ -394,5 +397,15 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     @VisibleForTesting
     internal fun updateLastBrowseActivity() {
         requireContext().settings().lastBrowseActivity = System.currentTimeMillis()
+    }
+
+    companion object {
+        private const val ARG_ACTIVE_SESSION_ID = "activeSessionId"
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "browser",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_ACTIVE_SESSION_ID, NavType.StringType)
+            )
+        )
     }
 }

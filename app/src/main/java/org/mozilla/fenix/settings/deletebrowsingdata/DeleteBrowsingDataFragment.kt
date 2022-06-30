@@ -27,6 +27,7 @@ import org.mozilla.fenix.databinding.FragmentDeleteBrowsingDataBinding
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.utils.Settings
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
@@ -284,5 +285,10 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
         private const val CACHED_INDEX = 3
         private const val PERMS_INDEX = 4
         private const val DOWNLOADS_INDEX = 5
+
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "delete_browsing_data",
+            destinationLabelId = R.string.preferences_delete_browsing_data
+        )
     }
 }

@@ -16,6 +16,7 @@ import org.mozilla.fenix.GleanMetrics.Tabs
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
 import org.mozilla.fenix.utils.view.addToRadioGroup
 
 /**
@@ -116,5 +117,12 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
             inactiveTabs.isChecked = false
             context.settings().inactiveTabsAreEnabled = false
         }
+    }
+
+    companion object {
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "tab_settings",
+            destinationLabelId = R.string.preferences_tabs
+        )
     }
 }

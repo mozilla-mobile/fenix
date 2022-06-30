@@ -10,6 +10,7 @@ import android.os.Bundle
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -24,6 +25,8 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.navigation.NavRouteInfo
+import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.PhoneFeature.CAMERA
 import org.mozilla.fenix.settings.PhoneFeature.LOCATION
@@ -165,5 +168,16 @@ class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat() {
                 sitePermissions = sitePermissions
             )
         requireView().findNavController().navigate(directions)
+    }
+
+    companion object {
+        const val ARG_SITE_PERMISSIONS = "sitePermissions"
+
+        val NAV_ROUTE_INFO = NavRouteInfo(
+            navRoute = "site_permissions_details_exceptions",
+            screenArgs = listOf(
+                ScreenArgsInfo(ARG_SITE_PERMISSIONS, NavType.ParcelableType(type = SitePermissions::class.java))
+            )
+        )
     }
 }
