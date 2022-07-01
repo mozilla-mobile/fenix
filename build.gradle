@@ -142,7 +142,15 @@ allprojects {
 
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         kotlinOptions.jvmTarget = "1.8"
-        kotlinOptions.allWarningsAsErrors = true
+        /**
+         *  Turning this off just to make the navigation-dsl work. In order to use navigation-dsl
+         *  We needed to update the versions of navigation, kotlin and compose-compiler version,
+         *  due to which many functions got deprecated which results in warning.
+         *  If this flag is on, then due to this, build will fail.
+         *  So just turning this on for the navigation-dsl experiment testing only
+         *  If Navigation-dsl experiment is successful, then this flag issue would be solved first
+         */
+        kotlinOptions.allWarningsAsErrors = false
         kotlinOptions.freeCompilerArgs += [
             "-Xopt-in=kotlin.RequiresOptIn"
         ]

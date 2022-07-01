@@ -633,11 +633,11 @@
 
     <style name="BottomSheet" parent="@style/BottomSheetBase" />
 
-    <style name="BottomSheetBasePrivate" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+    <style name="BottomSheetBasePrivate" parent="Theme.MaterialComponents.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
     </style>
 
-    <style name="BottomSheetBase" parent="ThemeOverlay.MaterialComponents.Light.BottomSheetDialog">
+    <style name="BottomSheetBase" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
     </style>
 

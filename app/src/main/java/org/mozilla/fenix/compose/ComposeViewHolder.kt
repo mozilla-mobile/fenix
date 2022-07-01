@@ -11,7 +11,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.savedstate.SavedStateRegistryOwner
-import androidx.savedstate.ViewTreeSavedStateRegistryOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.theme.Theme
 
@@ -48,9 +48,6 @@ abstract class ComposeViewHolder(
         }
 
         ViewTreeLifecycleOwner.set(composeView, viewLifecycleOwner)
-        ViewTreeSavedStateRegistryOwner.set(
-            composeView,
-            viewLifecycleOwner as SavedStateRegistryOwner
-        )
+        composeView.setViewTreeSavedStateRegistryOwner(viewLifecycleOwner as SavedStateRegistryOwner)
     }
 }
