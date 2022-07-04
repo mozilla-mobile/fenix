@@ -14,7 +14,10 @@ import mozilla.components.concept.sync.DeviceType
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.fxa.manager.FxaAccountManager
-import mozilla.components.service.pocket.PocketRecommendedStory
+import mozilla.components.service.pocket.PocketStory
+import mozilla.components.service.pocket.PocketStory.PocketRecommendedStory
+import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
+import mozilla.components.service.pocket.PocketStory.PocketSponsoredStoryCaps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -33,7 +36,6 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getFilteredStories
 import org.mozilla.fenix.home.CurrentMode
 import org.mozilla.fenix.home.Mode
-import org.mozilla.fenix.home.pocket.POCKET_STORIES_TO_SHOW_COUNT
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesSelectedCategory
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
@@ -289,7 +291,7 @@ class AppStoreTest {
     fun `Test selecting a Pocket recommendations category`() = runTest {
         val otherStoriesCategory = PocketRecommendedStoriesCategory("other")
         val anotherStoriesCategory = PocketRecommendedStoriesCategory("another")
-        val filteredStories = listOf(mockk<PocketRecommendedStory>())
+        val filteredStories = listOf(mockk<PocketStory>())
         appStore = AppStore(
             AppState(
                 pocketStoriesCategories = listOf(otherStoriesCategory, anotherStoriesCategory),
@@ -300,11 +302,11 @@ class AppStoreTest {
         )
 
         mockkStatic("org.mozilla.fenix.ext.AppStateKt") {
-            every { any<AppState>().getFilteredStories(any()) } returns filteredStories
+            every { any<AppState>().getFilteredStories() } returns filteredStories
 
             appStore.dispatch(AppAction.SelectPocketStoriesCategory("another")).join()
 
-            verify { any<AppState>().getFilteredStories(POCKET_STORIES_TO_SHOW_COUNT) }
+            verify { any<AppState>().getFilteredStories() }
         }
 
         val selectedCategories = appStore.state.pocketStoriesCategoriesSelections
@@ -317,7 +319,7 @@ class AppStoreTest {
     fun `Test deselecting a Pocket recommendations category`() = runTest {
         val otherStoriesCategory = PocketRecommendedStoriesCategory("other")
         val anotherStoriesCategory = PocketRecommendedStoriesCategory("another")
-        val filteredStories = listOf(mockk<PocketRecommendedStory>())
+        val filteredStories = listOf(mockk<PocketStory>())
         appStore = AppStore(
             AppState(
                 pocketStoriesCategories = listOf(otherStoriesCategory, anotherStoriesCategory),
@@ -329,11 +331,11 @@ class AppStoreTest {
         )
 
         mockkStatic("org.mozilla.fenix.ext.AppStateKt") {
-            every { any<AppState>().getFilteredStories(any()) } returns filteredStories
+            every { any<AppState>().getFilteredStories() } returns filteredStories
 
             appStore.dispatch(AppAction.DeselectPocketStoriesCategory("other")).join()
 
-            verify { any<AppState>().getFilteredStories(POCKET_STORIES_TO_SHOW_COUNT) }
+            verify { any<AppState>().getFilteredStories() }
         }
 
         val selectedCategories = appStore.state.pocketStoriesCategoriesSelections
@@ -343,18 +345,90 @@ class AppStoreTest {
     }
 
     @Test
-    fun `Test updating the list of Pocket recommended stories`() = runTest {
-        val story1 = PocketRecommendedStory("title1", "url", "imageUrl", "publisher", "category", 1, 1)
-        val story2 = story1.copy("title2")
+    fun `Test cleaning the list of Pocket stories`() = runTest {
+        appStore = AppStore(
+            AppState(
+                pocketStoriesCategories = listOf(mockk()),
+                pocketStoriesCategoriesSelections = listOf(mockk()),
+                pocketStories = listOf(mockk()),
+                pocketSponsoredStories = listOf(mockk())
+            )
+        )
+
+        appStore.dispatch(AppAction.PocketStoriesClean)
+            .join()
+
+        assertTrue(appStore.state.pocketStoriesCategories.isEmpty())
+        assertTrue(appStore.state.pocketStoriesCategoriesSelections.isEmpty())
+        assertTrue(appStore.state.pocketStories.isEmpty())
+        assertTrue(appStore.state.pocketSponsoredStories.isEmpty())
+    }
+
+    @Test
+    fun `Test updating the list of Pocket sponsored stories also updates the list of stories to show`() = runTest {
+        val story1 = PocketSponsoredStory(
+            id = 3,
+            title = "title",
+            url = "url",
+            imageUrl = "imageUrl",
+            sponsor = "sponsor",
+            shim = mockk(),
+            priority = 33,
+            caps = mockk(),
+        )
+        val story2 = story1.copy(imageUrl = "imageUrl2")
+
         appStore = AppStore(AppState())
 
-        appStore.dispatch(AppAction.PocketStoriesChange(listOf(story1, story2)))
-            .join()
-        assertTrue(appStore.state.pocketStories.containsAll(listOf(story1, story2)))
+        mockkStatic("org.mozilla.fenix.ext.AppStateKt") {
+            val firstFilteredStories = listOf(mockk<PocketSponsoredStory>())
+            every { any<AppState>().getFilteredStories() } returns firstFilteredStories
+            appStore.dispatch(AppAction.PocketSponsoredStoriesChange(listOf(story1, story2))).join()
+            assertTrue(appStore.state.pocketSponsoredStories.containsAll(listOf(story1, story2)))
+            assertEquals(firstFilteredStories, appStore.state.pocketStories)
 
-        val updatedStories = listOf(story2.copy("title3"))
-        appStore.dispatch(AppAction.PocketStoriesChange(updatedStories)).join()
-        assertTrue(updatedStories.containsAll(appStore.state.pocketStories))
+            val secondFilteredStories = firstFilteredStories + mockk<PocketRecommendedStory>()
+            every { any<AppState>().getFilteredStories() } returns secondFilteredStories
+            val updatedStories = listOf(story2.copy(title = "title3"))
+            appStore.dispatch(AppAction.PocketSponsoredStoriesChange(updatedStories)).join()
+            assertTrue(updatedStories.containsAll(appStore.state.pocketSponsoredStories))
+            assertEquals(secondFilteredStories, appStore.state.pocketStories)
+        }
+    }
+
+    @Test
+    fun `Test updating sponsored Pocket stories after being shown to the user`() = runTest {
+        val story1 = PocketSponsoredStory(
+            id = 3,
+            title = "title",
+            url = "url",
+            imageUrl = "imageUrl",
+            sponsor = "sponsor",
+            shim = mockk(),
+            priority = 33,
+            caps = PocketSponsoredStoryCaps(
+                currentImpressions = listOf(1, 2),
+                lifetimeCount = 11,
+                flightCount = 2,
+                flightPeriod = 11
+            ),
+        )
+        val story2 = story1.copy(id = 22)
+        val story3 = story1.copy(id = 33)
+        val story4 = story1.copy(id = 44)
+        appStore = AppStore(
+            AppState(
+                pocketSponsoredStories = listOf(story1, story2, story3, story4)
+            )
+        )
+
+        appStore.dispatch(AppAction.PocketStoriesShown(listOf(story1, story3))).join()
+
+        assertEquals(4, appStore.state.pocketSponsoredStories.size)
+        assertEquals(3, appStore.state.pocketSponsoredStories[0].caps.currentImpressions.size)
+        assertEquals(2, appStore.state.pocketSponsoredStories[1].caps.currentImpressions.size)
+        assertEquals(3, appStore.state.pocketSponsoredStories[2].caps.currentImpressions.size)
+        assertEquals(2, appStore.state.pocketSponsoredStories[3].caps.currentImpressions.size)
     }
 
     @Test
@@ -364,13 +438,13 @@ class AppStoreTest {
         appStore = AppStore(AppState())
 
         mockkStatic("org.mozilla.fenix.ext.AppStateKt") {
-            val firstFilteredStories = listOf(mockk<PocketRecommendedStory>())
-            every { any<AppState>().getFilteredStories(any()) } returns firstFilteredStories
+            val firstFilteredStories = listOf(mockk<PocketStory>())
+            every { any<AppState>().getFilteredStories() } returns firstFilteredStories
 
             appStore.dispatch(
                 AppAction.PocketStoriesCategoriesChange(listOf(otherStoriesCategory, anotherStoriesCategory))
             ).join()
-            verify { any<AppState>().getFilteredStories(POCKET_STORIES_TO_SHOW_COUNT) }
+            verify { any<AppState>().getFilteredStories() }
             assertTrue(
                 appStore.state.pocketStoriesCategories.containsAll(
                     listOf(otherStoriesCategory, anotherStoriesCategory)
@@ -379,14 +453,14 @@ class AppStoreTest {
             assertSame(firstFilteredStories, appStore.state.pocketStories)
 
             val updatedCategories = listOf(PocketRecommendedStoriesCategory("yetAnother"))
-            val secondFilteredStories = listOf(mockk<PocketRecommendedStory>())
-            every { any<AppState>().getFilteredStories(any()) } returns secondFilteredStories
+            val secondFilteredStories = listOf(mockk<PocketStory>())
+            every { any<AppState>().getFilteredStories() } returns secondFilteredStories
             appStore.dispatch(
                 AppAction.PocketStoriesCategoriesChange(
                     updatedCategories
                 )
             ).join()
-            verify(exactly = 2) { any<AppState>().getFilteredStories(POCKET_STORIES_TO_SHOW_COUNT) }
+            verify(exactly = 2) { any<AppState>().getFilteredStories() }
             assertTrue(updatedCategories.containsAll(appStore.state.pocketStoriesCategories))
             assertSame(secondFilteredStories, appStore.state.pocketStories)
         }
@@ -400,8 +474,8 @@ class AppStoreTest {
         appStore = AppStore(AppState())
 
         mockkStatic("org.mozilla.fenix.ext.AppStateKt") {
-            val firstFilteredStories = listOf(mockk<PocketRecommendedStory>())
-            every { any<AppState>().getFilteredStories(any()) } returns firstFilteredStories
+            val firstFilteredStories = listOf(mockk<PocketStory>())
+            every { any<AppState>().getFilteredStories() } returns firstFilteredStories
 
             appStore.dispatch(
                 AppAction.PocketStoriesCategoriesSelectionsChange(
@@ -409,7 +483,7 @@ class AppStoreTest {
                     categoriesSelected = listOf(selectedCategory)
                 )
             ).join()
-            verify { any<AppState>().getFilteredStories(POCKET_STORIES_TO_SHOW_COUNT) }
+            verify { any<AppState>().getFilteredStories() }
             assertTrue(
                 appStore.state.pocketStoriesCategories.containsAll(
                     listOf(otherStoriesCategory, anotherStoriesCategory)

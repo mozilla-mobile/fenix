@@ -8,14 +8,19 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import android.os.StrictMode
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
 import mozilla.components.browser.engine.gecko.permission.GeckoSitePermissionsStorage
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.session.storage.SessionStorage
 import mozilla.components.browser.state.engine.EngineMiddleware
+import mozilla.components.browser.state.engine.middleware.SessionPrioritizationMiddleware
+import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.browser.state.state.SearchState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
@@ -39,6 +44,7 @@ import mozilla.components.feature.pwa.WebAppShortcutManager
 import mozilla.components.feature.readerview.ReaderViewMiddleware
 import mozilla.components.feature.recentlyclosed.RecentlyClosedMiddleware
 import mozilla.components.feature.recentlyclosed.RecentlyClosedTabsStorage
+import mozilla.components.feature.search.ext.createApplicationSearchEngine
 import mozilla.components.feature.search.middleware.AdsTelemetryMiddleware
 import mozilla.components.feature.search.middleware.SearchMiddleware
 import mozilla.components.feature.search.region.RegionMiddleware
@@ -63,6 +69,7 @@ import mozilla.components.service.location.LocationService
 import mozilla.components.service.location.MozillaLocationService
 import mozilla.components.service.pocket.PocketStoriesConfig
 import mozilla.components.service.pocket.PocketStoriesService
+import mozilla.components.service.pocket.Profile
 import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStorage
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
 import mozilla.components.support.base.worker.Frequency
@@ -81,6 +88,7 @@ import org.mozilla.fenix.historymetadata.DefaultHistoryMetadataService
 import org.mozilla.fenix.historymetadata.HistoryMetadataMiddleware
 import org.mozilla.fenix.historymetadata.HistoryMetadataService
 import org.mozilla.fenix.media.MediaSessionService
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.settings.SupportUtils
@@ -89,6 +97,7 @@ import org.mozilla.fenix.tabstray.SearchTermTabGroupMiddleware
 import org.mozilla.fenix.telemetry.TelemetryMiddleware
 import org.mozilla.fenix.utils.getUndoDelay
 import org.mozilla.geckoview.GeckoRuntime
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 /**
@@ -189,10 +198,35 @@ class Core(
         }
     }
 
+    val applicationSearchEngines: List<SearchEngine> by lazyMonitored {
+        listOf(
+            createApplicationSearchEngine(
+                id = BOOKMARKS_SEARCH_ENGINE_ID,
+                name = context.getString(R.string.library_bookmarks),
+                url = "",
+                icon = getDrawable(context, R.drawable.ic_bookmarks_search)?.toBitmap()!!,
+            ),
+            createApplicationSearchEngine(
+                id = TABS_SEARCH_ENGINE_ID,
+                name = context.getString(R.string.preferences_tabs),
+                url = "",
+                icon = getDrawable(context, R.drawable.ic_tabs_search)?.toBitmap()!!,
+            ),
+            createApplicationSearchEngine(
+                id = HISTORY_SEARCH_ENGINE_ID,
+                name = context.getString(R.string.library_history),
+                url = "",
+                icon = getDrawable(context, R.drawable.ic_history_search)?.toBitmap()!!,
+            ),
+        )
+    }
+
     /**
      * The [BrowserStore] holds the global [BrowserState].
      */
     val store by lazyMonitored {
+        val tabsPrioritizationEnable =
+            FxNimbus.features.engineSettings.value().tabsPrioritizationEnabled
         val middlewareList =
             mutableListOf(
                 LastAccessMiddleware(),
@@ -214,9 +248,22 @@ class Core(
                 LastMediaAccessMiddleware(),
                 HistoryMetadataMiddleware(historyMetadataService),
                 SearchTermTabGroupMiddleware()
-            )
+            ) + if (tabsPrioritizationEnable) {
+                listOf(SessionPrioritizationMiddleware())
+            } else {
+                emptyList()
+            }
 
         BrowserStore(
+            initialState = BrowserState(
+                search = SearchState(
+                    applicationSearchEngines = if (context.settings().showUnifiedSearchFeature) {
+                        applicationSearchEngines
+                    } else {
+                        emptyList()
+                    },
+                )
+            ),
             middleware = middlewareList + EngineMiddleware.create(
                 engine,
                 // We are disabling automatic suspending of engine sessions under memory pressure.
@@ -335,7 +382,14 @@ class Core(
 
     @Suppress("MagicNumber")
     val pocketStoriesConfig by lazyMonitored {
-        PocketStoriesConfig(client, Frequency(4, TimeUnit.HOURS))
+        PocketStoriesConfig(
+            client,
+            Frequency(4, TimeUnit.HOURS),
+            Profile(
+                profileId = UUID.fromString(context.settings().pocketSponsoredStoriesProfileId),
+                appId = BuildConfig.POCKET_CONSUMER_KEY
+            )
+        )
     }
     val pocketStoriesService by lazyMonitored { PocketStoriesService(context, pocketStoriesConfig) }
 
@@ -477,5 +531,13 @@ class Core(
         private const val RECENTLY_CLOSED_MAX = 10
         const val HISTORY_METADATA_MAX_AGE_IN_MS = 14 * 24 * 60 * 60 * 1000 // 14 days
         private const val CONTILE_MAX_CACHE_AGE = 60L // 60 minutes
+        const val HISTORY_SEARCH_ENGINE_ID = "history_search_engine_id"
+        const val BOOKMARKS_SEARCH_ENGINE_ID = "bookmarks_search_engine_id"
+        const val TABS_SEARCH_ENGINE_ID = "tabs_search_engine_id"
+
+        // Maximum number of suggestions returned from the history search engine source.
+        const val METADATA_HISTORY_SUGGESTION_LIMIT = 100
+        // Maximum number of suggestions returned from shortcut search engine.
+        const val METADATA_SHORTCUT_SUGGESTION_LIMIT = 20
     }
 }

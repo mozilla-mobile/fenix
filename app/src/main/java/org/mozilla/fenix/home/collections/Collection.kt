@@ -83,7 +83,7 @@ fun Collection(
             .height(48.dp),
         shape = if (isExpanded) expandedCollectionShape else collapsedCollectionShape,
         backgroundColor = FirefoxTheme.colors.layer2,
-        elevation = 5.dp, // This needs to match the elevation of TabInCollection for matching shadows.
+        elevation = 5.dp,
     ) {
         Row(
             modifier = Modifier
@@ -105,6 +105,7 @@ fun Collection(
 
             ExpandableListHeader(
                 headerText = collection.title,
+                headerTextStyle = FirefoxTheme.typography.headline7,
                 expanded = isExpanded,
             ) {
                 if (isExpanded) {

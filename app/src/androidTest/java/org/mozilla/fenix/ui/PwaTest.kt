@@ -16,7 +16,10 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
 
 class PwaTest {
     private val featureSettingsHelper = FeatureSettingsHelper()
-    private val externalLinksPWAPage = "https://mozilla-mobile.github.io/testapp/externalLinks.html"
+    /* Updated externalLinks.html to v2.0,
+       changed the hypertext reference to mozilla-mobile.github.io/testapp/downloads for "External link"
+     */
+    private val externalLinksPWAPage = "https://mozilla-mobile.github.io/testapp/v2.0/externalLinks.html"
     private val emailLink = "mailto://example@example.com"
     private val phoneLink = "tel://1234567890"
     private val shortcutTitle = "TEST_APP"
@@ -37,7 +40,7 @@ class PwaTest {
     @SmokeTest
     @Test
     fun externalLinkPWATest() {
-        val customTabTitle = "Google"
+        val externalLinkURL = "https://mozilla-mobile.github.io/testapp/downloads"
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(externalLinksPWAPage.toUri()) {
@@ -46,11 +49,10 @@ class PwaTest {
             clickAddAutomaticallyButton()
         }.openHomeScreenShortcut(shortcutTitle) {
             clickLinkMatchingText("External link")
-            fillAndSubmitGoogleSearchQuery("Mozilla")
         }
 
         customTabScreen {
-            verifyCustomTabToolbarTitle(customTabTitle)
+            verifyCustomTabToolbarTitle(externalLinkURL)
         }
     }
 
@@ -60,6 +62,7 @@ class PwaTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(externalLinksPWAPage.toUri()) {
+            waitForPageToLoad()
         }.openThreeDotMenu {
         }.clickInstall {
             clickAddAutomaticallyButton()
@@ -75,6 +78,7 @@ class PwaTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(externalLinksPWAPage.toUri()) {
+            waitForPageToLoad()
         }.openThreeDotMenu {
         }.clickInstall {
             clickAddAutomaticallyButton()

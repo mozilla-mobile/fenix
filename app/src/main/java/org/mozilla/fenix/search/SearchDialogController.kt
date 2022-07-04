@@ -21,8 +21,13 @@ import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
+import org.mozilla.fenix.GleanMetrics.UnifiedSearch
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.Core
+import org.mozilla.fenix.components.Core.Companion.BOOKMARKS_SEARCH_ENGINE_ID
+import org.mozilla.fenix.components.Core.Companion.HISTORY_SEARCH_ENGINE_ID
+import org.mozilla.fenix.components.Core.Companion.TABS_SEARCH_ENGINE_ID
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.crashes.CrashListActivity
 import org.mozilla.fenix.ext.navigateSafe
@@ -69,6 +74,11 @@ class SearchDialogController(
 ) : SearchController {
 
     override fun handleUrlCommitted(url: String, fromHomeScreen: Boolean) {
+        // Do not load URL if application search engine is selected.
+        if (fragmentStore.state.searchEngineSource.searchEngine?.type == SearchEngine.Type.APPLICATION) {
+            return
+        }
+
         when (url) {
             "about:crashes" -> {
                 // The list of past crashes can be accessed via "settings > about", but desktop and
@@ -190,12 +200,43 @@ class SearchDialogController(
 
     override fun handleSearchShortcutEngineSelected(searchEngine: SearchEngine) {
         focusToolbar()
-        fragmentStore.dispatch(SearchFragmentAction.SearchShortcutEngineSelected(searchEngine))
+
+        when {
+            searchEngine.type == SearchEngine.Type.APPLICATION && searchEngine.id == Core.HISTORY_SEARCH_ENGINE_ID -> {
+                fragmentStore.dispatch(SearchFragmentAction.SearchHistoryEngineSelected(searchEngine))
+            }
+            searchEngine.type == SearchEngine.Type.APPLICATION
+                && searchEngine.id == Core.BOOKMARKS_SEARCH_ENGINE_ID -> {
+                fragmentStore.dispatch(SearchFragmentAction.SearchBookmarksEngineSelected(searchEngine))
+            }
+            searchEngine.type == SearchEngine.Type.APPLICATION && searchEngine.id == Core.TABS_SEARCH_ENGINE_ID -> {
+                fragmentStore.dispatch(SearchFragmentAction.SearchTabsEngineSelected(searchEngine))
+            }
+            searchEngine == store.state.search.selectedOrDefaultSearchEngine -> {
+                fragmentStore.dispatch(SearchFragmentAction.SearchDefaultEngineSelected(searchEngine, settings))
+            }
+            else -> {
+                fragmentStore.dispatch(SearchFragmentAction.SearchShortcutEngineSelected(searchEngine, settings))
+            }
+        }
+
         val engine = when (searchEngine.type) {
             SearchEngine.Type.CUSTOM -> "custom"
+            SearchEngine.Type.APPLICATION ->
+                when (searchEngine.id) {
+                    HISTORY_SEARCH_ENGINE_ID -> "history"
+                    BOOKMARKS_SEARCH_ENGINE_ID -> "bookmarks"
+                    TABS_SEARCH_ENGINE_ID -> "tabs"
+                    else -> "application"
+                }
             else -> searchEngine.name
         }
-        SearchShortcuts.selected.record(SearchShortcuts.SelectedExtra(engine))
+
+        if (settings.showUnifiedSearchFeature) {
+            UnifiedSearch.engineSelected.record(UnifiedSearch.EngineSelectedExtra(engine))
+        } else {
+            SearchShortcuts.selected.record(SearchShortcuts.SelectedExtra(engine))
+        }
     }
 
     override fun handleSearchShortcutsButtonClicked() {

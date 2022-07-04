@@ -7,6 +7,7 @@
 package org.mozilla.fenix.ui.robots
 
 import android.content.Intent
+import android.util.Log
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
@@ -26,6 +27,7 @@ import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_APPS_PHOTOS
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.assertExternalAppOpens
 import org.mozilla.fenix.helpers.TestHelper.packageName
@@ -133,16 +135,29 @@ fun downloadRobot(interact: DownloadRobot.() -> Unit): DownloadRobot.Transition 
 }
 
 private fun assertDownloadPrompt(fileName: String) {
-    assertTrue(
-        "Download prompt button not visible",
-        mDevice.findObject(UiSelector().resourceId("$packageName:id/download_button"))
-            .waitForExists(waitingTime)
-    )
-    assertTrue(
-        "$fileName title doesn't match",
-        mDevice.findObject(UiSelector().text(fileName))
-            .waitForExists(waitingTime)
-    )
+    var currentTries = 0
+    while (currentTries++ < 3) {
+        try {
+            assertTrue(
+                "Download prompt button not visible",
+                mDevice.findObject(UiSelector().resourceId("$packageName:id/download_button"))
+                    .waitForExists(waitingTimeLong)
+            )
+            assertTrue(
+                "$fileName title doesn't match",
+                mDevice.findObject(UiSelector().text(fileName))
+                    .waitForExists(waitingTimeLong)
+            )
+
+            break
+        } catch (e: AssertionError) {
+            Log.e("DOWNLOAD_ROBOT", "Failed to find locator: ${e.localizedMessage}")
+
+            browserScreen {
+            }.clickDownloadLink(fileName) {
+            }
+        }
+    }
 }
 
 private fun assertDownloadNotificationPopup() {

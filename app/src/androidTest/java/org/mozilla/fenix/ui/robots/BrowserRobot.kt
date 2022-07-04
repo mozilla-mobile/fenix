@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.SystemClock
+import android.util.Log
 import android.widget.EditText
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
@@ -40,8 +41,10 @@ import org.junit.Assert.fail
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
+import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.waitForObjects
 import org.mozilla.fenix.helpers.click
@@ -312,7 +315,7 @@ class BrowserRobot {
     fun clickLinkMatchingText(expectedText: String) {
         mDevice.findObject(UiSelector().resourceId("$packageName:id/engineView"))
             .waitForExists(waitingTime)
-        mDevice.findObject(UiSelector().textContains(expectedText)).waitForExists(waitingTime)
+        mDevice.findObject(UiSelector().textContains(expectedText)).waitForExists(waitingTimeLong)
 
         val element = mDevice.findObject(UiSelector().textContains(expectedText))
         element.click()
@@ -570,22 +573,22 @@ class BrowserRobot {
         tabCrashRestoreButton.click()
     }
 
-    fun fillAndSubmitGoogleSearchQuery(searchString: String) {
-        mDevice.findObject(
-            UiSelector().resourceId("$packageName:id/engineView")
-        ).waitForExists(waitingTime)
-        googleSearchBox.setText(searchString)
-        mDevice.pressEnter()
-        mDevice.waitForIdle(waitingTime)
-    }
-
     fun fillAndSubmitLoginCredentials(userName: String, password: String) {
-        userNameTextBox.setText(userName)
-        passwordTextBox.setText(password)
+        var currentTries = 0
+        while (currentTries++ < 3) {
+            try {
+                mDevice.waitForIdle(waitingTime)
+                userNameTextBox.setText(userName)
+                passwordTextBox.setText(password)
+                submitLoginButton.click()
 
-        submitLoginButton.click()
+                mDevice.waitForObjects(mDevice.findObject(UiSelector().resourceId("$packageName:id/save_confirm")))
 
-        mDevice.waitForObjects(mDevice.findObject(UiSelector().resourceId("$packageName:id/save_confirm")))
+                break
+            } catch (e: UiObjectNotFoundException) {
+                Log.e("BROWSER_ROBOT", "Failed to find locator: ${e.localizedMessage}")
+            }
+        }
     }
 
     fun clearUserNameLoginCredential() {
@@ -678,6 +681,31 @@ class BrowserRobot {
                     .resourceId("$packageName:id/feature_prompt_login_fragment")
             ).waitForExists(waitingTime)
         )
+    }
+
+    fun verifyTrackingProtectionWebContent(state: String) {
+        for (i in 1..RETRY_COUNT) {
+            try {
+                assertTrue(
+                    mDevice.findObject(
+                        UiSelector().textContains(state)
+                    ).waitForExists(waitingTimeLong)
+                )
+
+                break
+            } catch (e: AssertionError) {
+                if (i == RETRY_COUNT) {
+                    throw e
+                } else {
+                    Log.e("TestLog", "On try $i, trackers are not: $state")
+
+                    navigationToolbar {
+                    }.openThreeDotMenu {
+                    }.refreshPage {
+                    }
+                }
+            }
+        }
     }
 
     class Transition {
@@ -926,15 +954,6 @@ val passwordTextBox =
     mDevice.findObject(
         UiSelector()
             .resourceId("password")
-            .className("android.widget.EditText")
-            .packageName("$packageName")
-    )
-
-val googleSearchBox =
-    mDevice.findObject(
-        UiSelector()
-            .index(0)
-            .resourceId("mib")
             .className("android.widget.EditText")
             .packageName("$packageName")
     )

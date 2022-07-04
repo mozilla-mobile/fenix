@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,16 +52,18 @@ fun ListItemTabLarge(
     onClick: (() -> Unit)? = null
 ) {
     ListItemTabSurface(imageUrl, onClick) {
-        PrimaryText(
+        Text(
             text = title,
+            color = FirefoxTheme.colors.textPrimary,
             fontSize = 14.sp,
             overflow = TextOverflow.Ellipsis,
             maxLines = 3,
         )
 
         if (caption != null) {
-            SecondaryText(
+            Text(
                 text = caption,
+                color = FirefoxTheme.colors.textSecondary,
                 fontSize = 12.sp,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
@@ -112,7 +115,7 @@ fun ListItemTabLarge(
  * @param tabDetails [Composable] Displayed to the the end of the image. Allows for variation in the item text style.
  */
 @Composable
-private fun ListItemTabSurface(
+fun ListItemTabSurface(
     imageUrl: String,
     onClick: (() -> Unit)? = null,
     tabDetails: @Composable () -> Unit
@@ -151,11 +154,27 @@ private fun ListItemTabSurface(
 @Composable
 @Preview
 private fun ListItemTabLargePreview() {
-    FirefoxTheme(theme = Theme.getTheme(isPrivate = false)) {
+    FirefoxTheme(theme = Theme.getTheme()) {
         ListItemTabLarge(
             imageUrl = "",
             title = "This is a very long title for a tab but needs to be so for this preview",
             caption = "And this is a caption"
         ) { }
+    }
+}
+
+@Composable
+@Preview
+private fun ListItemTabSurfacePreview() {
+    FirefoxTheme(theme = Theme.getTheme()) {
+        ListItemTabSurface(
+            imageUrl = ""
+        ) {
+            Text(
+                text = "This can be anything",
+                color = FirefoxTheme.colors.textPrimary,
+                fontSize = 22.sp
+            )
+        }
     }
 }

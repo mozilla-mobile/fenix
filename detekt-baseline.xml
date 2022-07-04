@@ -55,13 +55,8 @@
     <ID>UndocumentedPublicClass:AppAction.kt$AppAction$Change : AppAction</ID>
     <ID>UndocumentedPublicClass:AppAction.kt$AppAction$CollectionExpanded : AppAction</ID>
     <ID>UndocumentedPublicClass:AppAction.kt$AppAction$CollectionsChange : AppAction</ID>
-    <ID>UndocumentedPublicClass:AppAction.kt$AppAction$DeselectPocketStoriesCategory : AppAction</ID>
     <ID>UndocumentedPublicClass:AppAction.kt$AppAction$DisbandSearchGroupAction : AppAction</ID>
     <ID>UndocumentedPublicClass:AppAction.kt$AppAction$ModeChange : AppAction</ID>
-    <ID>UndocumentedPublicClass:AppAction.kt$AppAction$PocketStoriesCategoriesChange : AppAction</ID>
-    <ID>UndocumentedPublicClass:AppAction.kt$AppAction$PocketStoriesCategoriesSelectionsChange : AppAction</ID>
-    <ID>UndocumentedPublicClass:AppAction.kt$AppAction$PocketStoriesChange : AppAction</ID>
-    <ID>UndocumentedPublicClass:AppAction.kt$AppAction$PocketStoriesShown : AppAction</ID>
     <ID>UndocumentedPublicClass:AppAction.kt$AppAction$RecentBookmarksChange : AppAction</ID>
     <ID>UndocumentedPublicClass:AppAction.kt$AppAction$RecentHistoryChange : AppAction</ID>
     <ID>UndocumentedPublicClass:AppAction.kt$AppAction$RecentTabsChange : AppAction</ID>
@@ -71,7 +66,6 @@
     <ID>UndocumentedPublicClass:AppAction.kt$AppAction$RemoveRecentBookmark : AppAction</ID>
     <ID>UndocumentedPublicClass:AppAction.kt$AppAction$RemoveRecentHistoryHighlight : AppAction</ID>
     <ID>UndocumentedPublicClass:AppAction.kt$AppAction$RemoveRecentTab : AppAction</ID>
-    <ID>UndocumentedPublicClass:AppAction.kt$AppAction$SelectPocketStoriesCategory : AppAction</ID>
     <ID>UndocumentedPublicClass:AppAction.kt$AppAction$TopSitesChange : AppAction</ID>
     <ID>UndocumentedPublicClass:AppAction.kt$AppAction$UpdateInactiveExpanded : AppAction</ID>
     <ID>UndocumentedPublicClass:AppRequestInterceptor.kt$AppRequestInterceptor : RequestInterceptor</ID>
@@ -361,15 +355,6 @@
     <ID>UndocumentedPublicClass:SearchEngineMenu.kt$SearchEngineMenu$Item</ID>
     <ID>UndocumentedPublicClass:SearchEngineMenu.kt$SearchEngineMenu.Item$Delete : Item</ID>
     <ID>UndocumentedPublicClass:SearchEngineMenu.kt$SearchEngineMenu.Item$Edit : Item</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchEngineSource$Default : SearchEngineSource</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchEngineSource$None : SearchEngineSource</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchEngineSource$Shortcut : SearchEngineSource</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchFragmentAction$AllowSearchSuggestionsInPrivateModePrompt : SearchFragmentAction</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchFragmentAction$SearchShortcutEngineSelected : SearchFragmentAction</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchFragmentAction$SetShowSearchSuggestions : SearchFragmentAction</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchFragmentAction$ShowSearchShortcutEnginePicker : SearchFragmentAction</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchFragmentAction$UpdateClipboardHasUrl : SearchFragmentAction</ID>
-    <ID>UndocumentedPublicClass:SearchFragmentStore.kt$SearchFragmentAction$UpdateQuery : SearchFragmentAction</ID>
     <ID>UndocumentedPublicClass:SearchStringValidator.kt$SearchStringValidator</ID>
     <ID>UndocumentedPublicClass:SearchStringValidator.kt$SearchStringValidator$Result</ID>
     <ID>UndocumentedPublicClass:SearchWidgetProvider.kt$SearchWidgetProvider : AppWidgetProvider</ID>
@@ -458,7 +443,6 @@
     <ID>UndocumentedPublicClass:SupportUtils.kt$SupportUtils</ID>
     <ID>UndocumentedPublicClass:SupportUtils.kt$SupportUtils$MozillaPage</ID>
     <ID>UndocumentedPublicClass:SupportUtils.kt$SupportUtils$SumoTopic</ID>
-    <ID>UndocumentedPublicClass:SwipeToDeleteCallback.kt$SwipeToDeleteCallback : SimpleCallback</ID>
     <ID>UndocumentedPublicClass:SwitchWithDescription.kt$SwitchWithDescription : ConstraintLayout</ID>
     <ID>UndocumentedPublicClass:Tab.kt$Tab</ID>
     <ID>UndocumentedPublicClass:TabCollectionStorage.kt$TabCollectionStorage : Observable</ID>

@@ -76,6 +76,9 @@ import mozilla.components.feature.session.PictureInPictureFeature
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SwipeRefreshFeature
 import mozilla.components.concept.engine.permission.SitePermissions
+import mozilla.components.feature.prompts.address.AddressDelegate
+import mozilla.components.feature.prompts.creditcard.CreditCardDelegate
+import mozilla.components.feature.prompts.login.LoginDelegate
 import mozilla.components.feature.session.ScreenOrientationFeature
 import mozilla.components.feature.sitepermissions.SitePermissionsFeature
 import mozilla.components.lib.state.ext.consumeFlow
@@ -449,7 +452,8 @@ abstract class BaseBrowserFragment :
         fullScreenMediaSessionFeature.set(
             feature = MediaSessionFullscreenFeature(
                 requireActivity(),
-                context.components.core.store
+                context.components.core.store,
+                customTabSessionId
             ),
             owner = this,
             view = view
@@ -597,6 +601,9 @@ abstract class BaseBrowserFragment :
                 isCreditCardAutofillEnabled = {
                     context.settings().shouldAutofillCreditCardDetails
                 },
+                isAddressAutofillEnabled = {
+                    context.settings().addressFeature && context.settings().shouldAutofillAddressDetails
+                },
                 loginExceptionStorage = context.components.core.loginExceptionStorage,
                 shareDelegate = object : ShareDelegate {
                     override fun showShareSheet(
@@ -616,22 +623,36 @@ abstract class BaseBrowserFragment :
                 onNeedToRequestPermissions = { permissions ->
                     requestPermissions(permissions, REQUEST_CODE_PROMPT_PERMISSIONS)
                 },
-                loginPickerView = binding.loginSelectBar,
-                onManageLogins = {
-                    browserAnimator.captureEngineViewAndDrawStatically {
-                        val directions =
-                            NavGraphDirections.actionGlobalSavedLoginsAuthFragment()
-                        findNavController().navigate(directions)
+                loginDelegate = object : LoginDelegate {
+                    override val loginPickerView
+                        get() = binding.loginSelectBar
+                    override val onManageLogins = {
+                        browserAnimator.captureEngineViewAndDrawStatically {
+                            val directions =
+                                NavGraphDirections.actionGlobalSavedLoginsAuthFragment()
+                            findNavController().navigate(directions)
+                        }
                     }
                 },
-                creditCardPickerView = binding.creditCardSelectBar,
-                onManageCreditCards = {
-                    val directions =
-                        NavGraphDirections.actionGlobalAutofillSettingFragment()
-                    findNavController().navigate(directions)
+                creditCardDelegate = object : CreditCardDelegate {
+                    override val creditCardPickerView
+                        get() = binding.creditCardSelectBar
+                    override val onManageCreditCards = {
+                        val directions =
+                            NavGraphDirections.actionGlobalAutofillSettingFragment()
+                        findNavController().navigate(directions)
+                    }
+                    override val onSelectCreditCard = {
+                        showBiometricPrompt(context)
+                    }
                 },
-                onSelectCreditCard = {
-                    showBiometricPrompt(context)
+                addressDelegate = object : AddressDelegate {
+                    override val addressPickerView
+                        get() = binding.addressSelectBar
+                    override val onManageAddresses = {
+                        val directions = NavGraphDirections.actionGlobalAutofillSettingFragment()
+                        findNavController().navigate(directions)
+                    }
                 }
             ),
             owner = this,
@@ -765,7 +786,7 @@ abstract class BaseBrowserFragment :
             view = view
         )
 
-        expandToolbarOnNavigation(store)
+        closeFindInPageBarOnNavigation(store)
 
         store.flowScoped(viewLifecycleOwner) { flow ->
             flow.mapNotNull { state -> state.findTabOrCustomTabOrSelectedTab(customTabSessionId) }
@@ -867,11 +888,9 @@ abstract class BaseBrowserFragment :
         context.settings().incrementSecureWarningCount()
     }
 
-    @VisibleForTesting
-    internal fun expandToolbarOnNavigation(store: BrowserStore) {
+    private fun closeFindInPageBarOnNavigation(store: BrowserStore) {
         consumeFlow(store) { flow ->
-            flow.mapNotNull {
-                state ->
+            flow.mapNotNull { state ->
                 state.findCustomTabOrSelectedTab(customTabSessionId)
             }
                 .ifAnyChanged {
@@ -880,7 +899,6 @@ abstract class BaseBrowserFragment :
                 }
                 .collect {
                     findInPageIntegration.onBackPressed()
-                    browserToolbarView.expand()
                 }
         }
     }
@@ -1318,7 +1336,7 @@ abstract class BaseBrowserFragment :
      * Exit fullscreen mode when exiting PIP mode
      */
     private fun pipModeChanged(session: SessionState) {
-        if (!session.content.pictureInPictureEnabled && session.content.fullScreen) {
+        if (!session.content.pictureInPictureEnabled && session.content.fullScreen && isAdded) {
             onBackPressed()
             fullScreenChanged(false)
         }

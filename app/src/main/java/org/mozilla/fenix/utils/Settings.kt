@@ -27,6 +27,7 @@ import mozilla.components.support.ktx.android.content.intPreference
 import mozilla.components.support.ktx.android.content.longPreference
 import mozilla.components.support.ktx.android.content.stringPreference
 import mozilla.components.support.ktx.android.content.stringSetPreference
+import mozilla.components.support.locale.LocaleManager
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -53,6 +54,7 @@ import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_ALL
 import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_AUDIBLE
 import org.mozilla.fenix.wallpapers.WallpaperManager
 import java.security.InvalidParameterException
+import java.util.UUID
 
 private const val AUTOPLAY_USER_SETTING = "AUTOPLAY_USER_SETTING"
 
@@ -1135,6 +1137,18 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_installed_addons_list),
         default = ""
     )
+    /**
+     *  URLs from the user's history that contain this search param will be hidden
+     * from the top sites. The value is a string with one of the following forms:
+     * - "" (empty) - Disable this feature
+     * - "key" - Search param named "key" with any or no value
+     * - "key=" - Search param named "key" with no value
+     * - "key=value" - Search param named "key" with value "value"
+     */
+    val frecencyFilterQuery by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_frecency_filter_query),
+        default = "mfadid=adm"
+    )
 
     /**
      * Storing number of enabled add-ons for telemetry purposes
@@ -1193,9 +1207,22 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var addressFeature by featureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_show_address_feature),
-        default = false,
-        featureFlag = FeatureFlags.addressesFeature
+        default = true,
+        featureFlag = isAddressFeatureEnabled(appContext)
     )
+
+    /**
+     * Show the Addresses autofill feature.
+     */
+    private fun isAddressFeatureEnabled(context: Context): Boolean {
+        val langTag = LocaleManager.getCurrentLocale(context)
+            ?.toLanguageTag() ?: LocaleManager.getSystemDefault().toLanguageTag()
+        return listOf(
+            "en-US",
+            "en-CA",
+            "fr-CA"
+        ).contains(langTag) && Config.channel.isNightlyOrDebug
+    }
 
     private var isHistoryMetadataEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_history_metadata_feature),
@@ -1257,10 +1284,42 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
+    /**
+     * Stores the user choice from the "Autofill Addresses" settings for whether
+     * save and autofill addresses should be enabled or not.
+     * If set to `true` when the user focuses on address fields in a webpage an Android prompt is shown,
+     * allowing the selection of an address details to be automatically filled in the webpage fields.
+     */
+    var shouldAutofillAddressDetails by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_addresses_save_and_autofill_addresses),
+        default = true
+    )
+
+    /**
+     * Indicates if the Pocket recommended stories homescreen section should be shown.
+     */
     var showPocketRecommendationsFeature by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_pocket_homescreen_recommendations),
         featureFlag = FeatureFlags.isPocketRecommendationsFeatureEnabled(appContext),
         default = { homescreenSections[HomeScreenSection.POCKET] == true },
+    )
+
+    /**
+     * Indicates if the Pocket recommendations homescreen section should also show sponsored stories.
+     */
+    val showPocketSponsoredStories by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_pocket_sponsored_stories),
+        default = { FxNimbus.features.pocketSponsoredStories.value(appContext).enabled },
+        featureFlag = FeatureFlags.isPocketSponsoredStoriesFeatureEnabled(appContext)
+    )
+
+    /**
+     * Get the profile id to use in the sponsored stories communications with the Pocket endpoint.
+     */
+    val pocketSponsoredStoriesProfileId by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_pocket_sponsored_stories_profile),
+        default = UUID.randomUUID().toString(),
+        persistDefaultIfNotExists = true
     )
 
     /**
@@ -1277,7 +1336,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var enableTaskContinuityEnhancements by featureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_enable_task_continuity),
-        default = false,
+        default = FeatureFlags.taskContinuityFeature,
         featureFlag = FeatureFlags.taskContinuityFeature,
     )
 

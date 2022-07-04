@@ -237,7 +237,6 @@ android.applicationVariants.all { variant ->
 
     def isDebug = variant.buildType.resValues['IS_DEBUG']?.value ?: false
     def useReleaseVersioning = variant.buildType.buildConfigFields['USE_RELEASE_VERSIONING']?.value ?: false
-    def versionName = variant.buildType.name == 'nightly' ? Config.nightlyVersionName() : Config.releaseVersionName(project)
 
     println("----------------------------------------------")
     println("Variant name:      " + variant.name)
@@ -251,6 +250,7 @@ android.applicationVariants.all { variant ->
         // same version code. Therefore we need to have different version codes for our ARM and x86
         // builds.
 
+        def versionName = variant.buildType.name == 'nightly' ? Config.nightlyVersionName() : Config.releaseVersionName(project)
         println("versionName override: $versionName")
 
         variant.outputs.each { output ->
@@ -266,6 +266,12 @@ android.applicationVariants.all { variant ->
 
             output.versionNameOverride = versionName
             output.versionCodeOverride = versionCodeOverride
+        }
+    } else if (gradle.hasProperty("localProperties.branchBuild.fenix.version")) {
+        def versionName = gradle.getProperty("localProperties.branchBuild.fenix.version")
+        println("versionName override: $versionName")
+        variant.outputs.each { output ->
+            output.versionNameOverride = versionName
         }
     }
 
@@ -383,6 +389,21 @@ android.applicationVariants.all { variant ->
         buildConfigField 'String', 'WALLPAPER_URL', '""'
         println("--")
     }
+
+// -------------------------------------------------------------------------------------------------
+// BuildConfig: Set the Pocket consumer key from a local file if it exists
+// -------------------------------------------------------------------------------------------------
+
+    print("Pocket consumer key: ")
+
+    try {
+        def token = new File("${rootDir}/.pocket_consumer_key").text.trim()
+        buildConfigField 'String', 'POCKET_CONSUMER_KEY', '"' + token + '"'
+        println "(Added from .pocket_consumer_key file)"
+    } catch (FileNotFoundException ignored) {
+        buildConfigField 'String', 'POCKET_CONSUMER_KEY', '""'
+        println("--")
+    }
 }
 
 // Generate Kotlin code for the Fenix Glean metrics.
@@ -445,6 +466,7 @@ dependencies {
     implementation Deps.androidx_appcompat
     implementation Deps.androidx_constraintlayout
     implementation Deps.androidx_coordinatorlayout
+    implementation Deps.google_accompanist_drawablepainter
 
     implementation Deps.sentry
 
@@ -517,6 +539,7 @@ dependencies {
 
     implementation Deps.mozilla_support_extensions
     implementation Deps.mozilla_support_base
+    implementation Deps.mozilla_support_rusterrors
     implementation Deps.mozilla_support_images
     implementation Deps.mozilla_support_ktx
     implementation Deps.mozilla_support_rustlog
@@ -794,14 +817,32 @@ if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcd
     apply from: "${topsrcdir}/substitute-local-geckoview.gradle"
 }
 
+def acSrcDir = null
 if (gradle.hasProperty('localProperties.autoPublish.android-components.dir')) {
-    ext.acSrcDir = gradle."localProperties.autoPublish.android-components.dir"
-    apply from: "../${acSrcDir}/substitute-local-ac.gradle"
+  acSrcDir = gradle.getProperty('localProperties.autoPublish.android-components.dir')
+} else if (gradle.hasProperty('localProperties.branchBuild.android-components.dir')) {
+  acSrcDir = gradle.getProperty('localProperties.branchBuild.android-components.dir')
+}
+if (acSrcDir) {
+    if (acSrcDir.startsWith("/")) {
+        apply from: "${acSrcDir}/substitute-local-ac.gradle"
+    } else {
+        apply from: "../${acSrcDir}/substitute-local-ac.gradle"
+    }
 }
 
+def appServicesSrcDir = null
 if (gradle.hasProperty('localProperties.autoPublish.application-services.dir')) {
-    ext.appServicesSrcDir = gradle."localProperties.autoPublish.application-services.dir"
-    apply from: "../${appServicesSrcDir}/build-scripts/substitute-local-appservices.gradle"
+  appServicesSrcDir = gradle.getProperty('localProperties.autoPublish.application-services.dir')
+} else if (gradle.hasProperty('localProperties.branchBuild.application-services.dir')) {
+  appServicesSrcDir = gradle.getProperty('localProperties.branchBuild.application-services.dir')
+}
+if (appServicesSrcDir) {
+    if (appServicesSrcDir.startsWith("/")) {
+        apply from: "${appServicesSrcDir}/build-scripts/substitute-local-appservices.gradle"
+    } else {
+        apply from: "../${appServicesSrcDir}/build-scripts/substitute-local-appservices.gradle"
+    }
 }
 
 if (gradle.hasProperty('localProperties.autoPublish.glean.dir')) {

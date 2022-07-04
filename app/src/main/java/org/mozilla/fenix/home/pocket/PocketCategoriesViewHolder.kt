@@ -49,11 +49,16 @@ class PocketCategoriesViewHolder(
             composeView.resources.getDimensionPixelSize(R.dimen.home_item_horizontal_margin)
         composeView.setPadding(horizontalPadding, 0, horizontalPadding, 0)
 
+        val homeScreenReady = components.appStore
+            .observeAsComposableState { state -> state.firstFrameDrawn }.value ?: false
+
         val categories = components.appStore
             .observeAsComposableState { state -> state.pocketStoriesCategories }.value
         val categoriesSelections = components.appStore
             .observeAsComposableState { state -> state.pocketStoriesCategoriesSelections }.value
 
+        // See the detailed comment in PocketStoriesViewHolder for reasoning behind this change.
+        if (!homeScreenReady) return
         Column {
             Spacer(Modifier.height(24.dp))
 
@@ -99,7 +104,7 @@ private fun PocketTopics(
 @Composable
 @Preview
 private fun PocketCategoriesViewHolderPreview() {
-    FirefoxTheme(theme = Theme.getTheme(isPrivate = false)) {
+    FirefoxTheme(theme = Theme.getTheme()) {
         PocketTopics(
             categories = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
                 .split(" ")

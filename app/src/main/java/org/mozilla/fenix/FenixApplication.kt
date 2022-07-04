@@ -36,15 +36,18 @@ import mozilla.components.feature.addons.update.GlobalAddonDependencyProvider
 import mozilla.components.feature.autofill.AutofillUseCases
 import mozilla.components.feature.search.ext.buildSearchUrl
 import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
+import mozilla.components.feature.top.sites.TopSitesFrecencyConfig
 import mozilla.components.feature.top.sites.TopSitesProviderConfig
 import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.config.Configuration
 import mozilla.components.service.glean.net.ConceptFetchHttpUploader
+import mozilla.components.support.rusterrors.initializeRustErrors
 import mozilla.components.support.base.facts.register
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.ktx.android.content.isMainProcess
 import mozilla.components.support.ktx.android.content.runOnlyInMainProcess
 import mozilla.components.support.locale.LocaleAwareApplication
@@ -69,9 +72,11 @@ import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
+import org.mozilla.fenix.ext.containsQueryParameters
 import org.mozilla.fenix.ext.isCustomEngine
 import org.mozilla.fenix.ext.isKnownSearchDomain
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
 import org.mozilla.fenix.perf.ProfilerMarkerFactProcessor
 import org.mozilla.fenix.perf.StartupTimeline
@@ -86,6 +91,7 @@ import org.mozilla.fenix.telemetry.TelemetryLifecycleObserver
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
+import org.mozilla.fenix.wallpapers.WallpaperManager
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
@@ -258,7 +264,9 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                         // we can prevent with this.
                         components.core.topSitesStorage.getTopSites(
                             totalSites = components.settings.topSitesMaxLimit,
-                            frecencyConfig = FrecencyThresholdOption.SKIP_ONE_TIME_PAGES,
+                            frecencyConfig = TopSitesFrecencyConfig(
+                                FrecencyThresholdOption.SKIP_ONE_TIME_PAGES
+                            ) { !it.containsQueryParameters(components.settings.frecencyFilterQuery) },
                             providerConfig = TopSitesProviderConfig(
                                 showProviderTopSites = components.settings.showContileFeature,
                                 maxThreshold = TOP_SITES_PROVIDER_MAX_THRESHOLD
@@ -393,16 +401,43 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     private fun setupMegazord(): Deferred<Unit> {
         // Note: Megazord.init() must be called as soon as possible ...
         Megazord.init()
-
+        // Give the generated FxNimbus a closure to lazily get the Nimbus object
+        FxNimbus.initialize { components.analytics.experiments }
         return GlobalScope.async(Dispatchers.IO) {
+            initializeRustErrors(components.analytics.crashReporter)
             // ... but RustHttpConfig.setClient() and RustLog.enable() can be called later.
             RustHttpConfig.setClient(lazy { components.core.client })
+            // Once application-services has switched to using the new
+            // error reporting system, RustLog shouldn't input a CrashReporter
+            // anymore.
+            // (https://github.com/mozilla/application-services/issues/4981).
             RustLog.enable(components.analytics.crashReporter)
             // We want to ensure Nimbus is initialized as early as possible so we can
             // experiment on features close to startup.
             // But we need viaduct (the RustHttp client) to be ready before we do.
-            components.analytics.experiments.initialize()
+            components.analytics.experiments.apply {
+                initialize()
+                setupNimbusObserver(this)
+            }
         }
+    }
+
+    private fun setupNimbusObserver(nimbus: Observable<NimbusInterface.Observer>) {
+        nimbus.register(object : NimbusInterface.Observer {
+            override fun onUpdatesApplied(updated: List<EnrolledExperiment>) {
+                onNimbusStartupAndUpdate()
+            }
+        })
+
+        onNimbusStartupAndUpdate()
+    }
+
+    private fun onNimbusStartupAndUpdate() {
+        val settings = settings()
+        if (FeatureFlags.messagingFeature && settings.isExperimentationEnabled) {
+            components.appStore.dispatch(AppAction.MessagingAction.Restore)
+        }
+        reportHomeScreenSectionMetrics(settings)
     }
 
     override fun onTrimMemory(level: Int) {
@@ -640,6 +675,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 packageManager.getInstallerPackageName(packageName)
             }
             installSource.set(installSourcePackage.orEmpty())
+
+            defaultWallpaper.set(WallpaperManager.isDefaultTheCurrentWallpaper(settings))
         }
 
         with(AndroidAutofill) {
@@ -738,6 +775,11 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
     @VisibleForTesting
     internal fun reportHomeScreenMetrics(settings: Settings) {
+        reportOpeningScreenMetrics(settings)
+        reportHomeScreenSectionMetrics(settings)
+    }
+
+    private fun reportOpeningScreenMetrics(settings: Settings) {
         CustomizeHome.openingScreen.set(
             when {
                 settings.alwaysOpenTheHomepageWhenOpeningTheApp -> "homepage"
@@ -746,21 +788,19 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 else -> ""
             }
         )
-        components.analytics.experiments.register(object : NimbusInterface.Observer {
-            override fun onExperimentsFetched() {
-                if (FeatureFlags.messagingFeature && settings().isExperimentationEnabled) {
-                    components.appStore.dispatch(AppAction.MessagingAction.Restore)
-                }
-            }
-            override fun onUpdatesApplied(updated: List<EnrolledExperiment>) {
-                CustomizeHome.jumpBackIn.set(settings.showRecentTabsFeature)
-                CustomizeHome.recentlySaved.set(settings.showRecentBookmarksFeature)
-                CustomizeHome.mostVisitedSites.set(settings.showTopSitesFeature)
-                CustomizeHome.recentlyVisited.set(settings.historyMetadataUIFeature)
-                CustomizeHome.pocket.set(settings.showPocketRecommendationsFeature)
-                CustomizeHome.contile.set(settings.showContileFeature)
-            }
-        })
+    }
+
+    private fun reportHomeScreenSectionMetrics(settings: Settings) {
+        // These settings are backed by Nimbus features.
+        // We break them out here so they can be recorded when
+        // `nimbus.applyPendingExperiments()` is called.
+        CustomizeHome.jumpBackIn.set(settings.showRecentTabsFeature)
+        CustomizeHome.recentlySaved.set(settings.showRecentBookmarksFeature)
+        CustomizeHome.mostVisitedSites.set(settings.showTopSitesFeature)
+        CustomizeHome.recentlyVisited.set(settings.historyMetadataUIFeature)
+        CustomizeHome.pocket.set(settings.showPocketRecommendationsFeature)
+        CustomizeHome.sponsoredPocket.set(settings.showPocketSponsoredStories)
+        CustomizeHome.contile.set(settings.showContileFeature)
     }
 
     protected fun recordOnInit() {

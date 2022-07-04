@@ -15,12 +15,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
-import mozilla.components.ui.widgets.WidgetSiteItemView
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.home.BottomSpacerViewHolder
 import org.mozilla.fenix.home.TopPlaceholderViewHolder
 import org.mozilla.fenix.home.collections.CollectionViewHolder
+import org.mozilla.fenix.home.collections.TabInCollectionViewHolder
 import org.mozilla.fenix.home.pocket.PocketCategoriesViewHolder
 import org.mozilla.fenix.home.pocket.PocketRecommendationsHeaderViewHolder
 import org.mozilla.fenix.home.pocket.PocketStoriesViewHolder
@@ -34,7 +34,6 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHol
 import org.mozilla.fenix.home.sessioncontrol.viewholders.CustomizeHomeButtonViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.NoCollectionsMessageViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.PrivateBrowsingDescriptionViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.TabInCollectionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.MessageCardViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingFinishViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingHeaderViewHolder
@@ -118,7 +117,9 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
 
         override fun contentsSameAs(other: AdapterItem): Boolean {
             (other as? CollectionItem)?.let {
-                return it.expanded == this.expanded && it.collection.title == this.collection.title
+                return it.expanded == this.expanded &&
+                    it.collection.title == this.collection.title &&
+                    it.collection.tabs == this.collection.tabs
             } ?: return false
         }
     }
@@ -175,8 +176,7 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
 
     object PocketStoriesItem : AdapterItem(PocketStoriesViewHolder.LAYOUT_ID)
     object PocketCategoriesItem : AdapterItem(PocketCategoriesViewHolder.LAYOUT_ID)
-    object PocketRecommendationsFooterItem :
-        AdapterItem(PocketRecommendationsHeaderViewHolder.LAYOUT_ID)
+    object PocketRecommendationsFooterItem : AdapterItem(PocketRecommendationsHeaderViewHolder.LAYOUT_ID)
 
     object BottomSpacer : AdapterItem(BottomSpacerViewHolder.LAYOUT_ID)
 
@@ -218,6 +218,11 @@ class SessionControlAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
             CustomizeHomeButtonViewHolder.LAYOUT_ID -> return CustomizeHomeButtonViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor
+            )
+            MessageCardViewHolder.LAYOUT_ID -> return MessageCardViewHolder(
                 composeView = ComposeView(parent.context),
                 viewLifecycleOwner = viewLifecycleOwner,
                 interactor = interactor
@@ -277,15 +282,15 @@ class SessionControlAdapter(
                 composeView = ComposeView(parent.context),
                 viewLifecycleOwner = viewLifecycleOwner
             )
-            NoCollectionsMessageViewHolder.LAYOUT_ID -> return NoCollectionsMessageViewHolder(
+            CollectionViewHolder.LAYOUT_ID -> return CollectionViewHolder(
                 composeView = ComposeView(parent.context),
                 viewLifecycleOwner = viewLifecycleOwner,
                 interactor = interactor
             )
-            CollectionViewHolder.LAYOUT_ID -> return CollectionViewHolder(
+            TabInCollectionViewHolder.LAYOUT_ID -> return TabInCollectionViewHolder(
                 composeView = ComposeView(parent.context),
-                viewLifecycleOwner,
-                interactor = interactor
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor,
             )
         }
 
@@ -297,10 +302,13 @@ class SessionControlAdapter(
                 viewLifecycleOwner = viewLifecycleOwner,
                 interactor = interactor
             )
-            TabInCollectionViewHolder.LAYOUT_ID -> TabInCollectionViewHolder(
-                view as WidgetSiteItemView,
-                interactor
-            )
+            NoCollectionsMessageViewHolder.LAYOUT_ID ->
+                NoCollectionsMessageViewHolder(
+                    view,
+                    viewLifecycleOwner,
+                    components.core.store,
+                    interactor
+                )
             OnboardingHeaderViewHolder.LAYOUT_ID -> OnboardingHeaderViewHolder(view)
             OnboardingSectionHeaderViewHolder.LAYOUT_ID -> OnboardingSectionHeaderViewHolder(view)
             OnboardingManualSignInViewHolder.LAYOUT_ID -> OnboardingManualSignInViewHolder(view)
@@ -316,7 +324,6 @@ class SessionControlAdapter(
             OnboardingToolbarPositionPickerViewHolder.LAYOUT_ID -> OnboardingToolbarPositionPickerViewHolder(
                 view
             )
-            MessageCardViewHolder.LAYOUT_ID -> MessageCardViewHolder(view, interactor)
             BottomSpacerViewHolder.LAYOUT_ID -> BottomSpacerViewHolder(view)
             else -> throw IllegalStateException()
         }
@@ -326,7 +333,6 @@ class SessionControlAdapter(
         when (holder) {
             is CollectionHeaderViewHolder,
             is CustomizeHomeButtonViewHolder,
-            is NoCollectionsMessageViewHolder,
             is RecentlyVisitedViewHolder,
             is RecentVisitsHeaderViewHolder,
             is RecentBookmarksViewHolder,
@@ -344,6 +350,16 @@ class SessionControlAdapter(
                 // The composition will live until the ViewTreeLifecycleOwner to which it's attached to is destroyed.
             }
             is CollectionViewHolder -> {
+                // Dispose the underlying composition immediately.
+                // This ViewHolder can be removed / re-added and we need it to show a fresh new composition.
+                holder.composeView.disposeComposition()
+            }
+            is MessageCardViewHolder -> {
+                // Dispose the underlying composition immediately.
+                // This ViewHolder can be removed / re-added and we need it to show a fresh new composition.
+                holder.composeView.disposeComposition()
+            }
+            is TabInCollectionViewHolder -> {
                 // Dispose the underlying composition immediately.
                 // This ViewHolder can be removed / re-added and we need it to show a fresh new composition.
                 holder.composeView.disposeComposition()

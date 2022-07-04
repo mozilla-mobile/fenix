@@ -24,6 +24,8 @@ import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
@@ -38,16 +40,17 @@ import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers.allOf
-import org.hamcrest.CoreMatchers.startsWith
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.Constants
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
-import org.mozilla.fenix.helpers.Constants.PackageName
+import org.mozilla.fenix.helpers.Constants.SPEECH_RECOGNITION
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
+import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.waitForObjects
 import org.mozilla.fenix.helpers.click
@@ -88,9 +91,9 @@ class SearchRobot {
                 allowPermission.click()
             }
 
-            mDevice.waitNotNull(
-                Until.findObject(By.pkg(PackageName.GOOGLE_QUICK_SEARCH)), waitingTime
-            )
+            if (isPackageInstalled(Constants.PackageName.GOOGLE_QUICK_SEARCH)) {
+                Intents.intended(IntentMatchers.hasAction(SPEECH_RECOGNITION))
+            }
         }
     }
 
@@ -102,8 +105,6 @@ class SearchRobot {
         assertSearchEngineSuggestionResults(rule, searchSuggestion)
     fun verifyNoSuggestionsAreDisplayed(rule: ComposeTestRule, searchSuggestion: String) =
         assertNoSuggestionsAreDisplayed(rule, searchSuggestion)
-
-    fun verifySearchEngineURL(searchEngineName: String) = assertSearchEngineURL(searchEngineName)
     fun verifySearchSettings() = assertSearchSettings()
     fun verifySearchBarEmpty() = assertSearchBarEmpty()
 
@@ -299,15 +300,6 @@ private fun clearButton() =
     mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_clear_view"))
 
 private fun searchWrapper() = mDevice.findObject(UiSelector().resourceId("$packageName:id/search_wrapper"))
-
-private fun assertSearchEngineURL(searchEngineName: String) {
-    mDevice.waitNotNull(
-        Until.findObject(By.textContains("${searchEngineName.lowercase()}.com/?q=mozilla")),
-        waitingTime
-    )
-    onView(allOf(withText(startsWith("${searchEngineName.lowercase()}.com"))))
-        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-}
 
 private fun assertSearchEngineResults(rule: ComposeTestRule, searchSuggestion: String, searchEngineName: String) {
     rule.waitUntil(waitingTime, waitForSearchSuggestions(rule, searchSuggestion, searchEngineName))

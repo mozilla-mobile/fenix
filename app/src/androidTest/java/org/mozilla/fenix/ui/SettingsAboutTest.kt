@@ -10,11 +10,13 @@ import androidx.test.uiautomator.UiSelector
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.ui.robots.clickRateButtonGooglePlay
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.mDevice
@@ -32,6 +34,10 @@ class SettingsAboutTest {
 
     @get:Rule
     val activityIntentTestRule = HomeActivityIntentTestRule()
+
+    @Rule
+    @JvmField
+    val retryTestRule = RetryTestRule(3)
 
     @Before
     fun setUp() {
@@ -74,6 +80,7 @@ class SettingsAboutTest {
         }
     }
 
+    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/25355")
     @Test
     fun verifyAboutFirefoxPreview() {
         val settings = activityIntentTestRule.activity.settings()

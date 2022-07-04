@@ -19,6 +19,7 @@ import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.history.DefaultPagedHistoryProvider
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
 @Suppress("TooManyFunctions")
@@ -57,6 +58,7 @@ class DefaultHistoryController(
         delete: (Set<History>) -> suspend (context: Context) -> Unit
     ) -> Unit,
     private val syncHistory: suspend () -> Unit,
+    private val settings: Settings,
 ) : HistoryController {
 
     override fun handleOpen(item: History) {
@@ -102,7 +104,12 @@ class DefaultHistoryController(
     }
 
     override fun handleSearch() {
-        val directions = NavGraphDirections.actionGlobalHistorySearchDialog()
+        val directions = if (settings.showUnifiedSearchFeature) {
+            NavGraphDirections.actionGlobalSearchDialog(null)
+        } else {
+            NavGraphDirections.actionGlobalHistorySearchDialog()
+        }
+
         navController.navigate(directions)
     }
 

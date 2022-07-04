@@ -183,6 +183,8 @@
     <string name="pref_key_credit_cards_manage_cards" translatable="false">pref_key_credit_cards_manage_cards</string>
     <!-- Key for the "Manage addresses" preference in the "Autofill" fragment -->
     <string name="pref_key_addresses_manage_addresses" translatable="false">pref_key_addresses_manage_addresses</string>
+    <!-- Key for the "Save and autofill addresses" preference in the "Autofill" fragment -->
+    <string name="pref_key_addresses_save_and_autofill_addresses" translatable="false">pref_key_addresses_save_and_autofill_addresses</string>
 
     <!-- Privacy Settings -->
     <string name="pref_key_open_links_in_a_private_tab" translatable="false">pref_key_open_links_in_a_private_tab</string>
@@ -216,6 +218,8 @@
     <string name="pref_key_enable_contile" translatable="false">pref_key_enable_contile</string>
     <!-- Whether or not the Task Continuity enhancements are shown -->
     <string name="pref_key_enable_task_continuity" translatable="false">pref_key_enable_task_continuity</string>
+    <!-- Query containing the search parameters to be hidden from the top frecent sites  -->
+    <string name="pref_key_frecency_filter_query" translatable="false">pref_key_frecency_filter_query</string>
 
     <!-- A value  of `true` means the PWA dialog has been showed or user already has PWAs installed -->
     <string name="pref_key_user_knows_about_pwa" translatable="false">pref_key_user_knows_about_pwa</string>
@@ -277,14 +281,19 @@
 
     <string name="pref_key_open_next_tab_desktop_mode" translatable="false">pref_key_open_next_tab_desktop_mode</string>
 
+    <!-- Pocket -->
+    <string name="pref_key_pocket_homescreen_recommendations" translatable="false">pref_key_pocket_homescreen_recommendations</string>
+    <string name="pref_key_pocket_sponsored_stories" translatable="false">pref_key_pocket_sponsored_stories</string>
+    <string name="pref_key_pocket_sponsored_stories_profile" translatable="false">pref_key_pocket_sponsored_stories_profile</string>
+
     <!-- Secret Info Setting Keys -->
     <string name="pref_key_secret_debug_info" translatable="false">pref_key_secret_debug_info</string>
+    <string name="pref_key_start_profiler" translatable="false">pref_key_start_profiler</string>
 
     <!-- Secret Settings -->
     <string name="pref_key_show_address_feature" translatable="false">pref_key_show_address_feature</string>
     <string name="pref_key_nimbus_experiments" translatable="false">pref_key_nimbus_experiments</string>
     <string name="pref_key_nimbus_use_preview" translatable="false">pref_key_nimbus_use_preview</string>
     <string name="pref_key_history_metadata_feature" translatable="false">pref_key_history_metadata_feature</string>
-    <string name="pref_key_pocket_homescreen_recommendations" translatable="false">pref_key_pocket_homescreen_recommendations</string>
     <string name="pref_key_show_unified_search" translatable="false">pref_key_show_unified_search</string>
 </resources>

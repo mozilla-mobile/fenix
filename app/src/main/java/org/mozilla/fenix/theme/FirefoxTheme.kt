@@ -19,6 +19,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import mozilla.components.ui.colors.PhotonColors
+import org.mozilla.fenix.compose.inComposePreview
 import org.mozilla.fenix.ext.settings
 
 /**
@@ -33,12 +34,11 @@ enum class Theme {
         /**
          * Returns the current [Theme] that is displayed.
          *
-         * @param isPrivate Whether or not private browsing mode is enabled.
          * @return the current [Theme] that is displayed.
          */
         @Composable
-        fun getTheme(isPrivate: Boolean = LocalContext.current.settings().lastKnownMode.isPrivate) =
-            if (isPrivate) {
+        fun getTheme() =
+            if (!inComposePreview && LocalContext.current.settings().lastKnownMode.isPrivate) {
                 Private
             } else if (isSystemInDarkTheme()) {
                 Dark
@@ -75,6 +75,9 @@ object FirefoxTheme {
     val colors: FirefoxColors
         @Composable
         get() = localFirefoxColors.current
+
+    val typography: FenixTypography
+        get() = defaultTypography
 }
 
 private val privateColorPalette = FirefoxColors(
@@ -132,6 +135,7 @@ private val privateColorPalette = FirefoxColors(
     iconAccentYellow = PhotonColors.Yellow20,
     iconActionPrimary = PhotonColors.LightGrey05,
     iconActionSecondary = PhotonColors.DarkGrey90,
+    iconActionTertiary = PhotonColors.LightGrey05,
     iconGradientStart = PhotonColors.Violet20,
     iconGradientEnd = PhotonColors.Blue20,
     borderPrimary = PhotonColors.DarkGrey05,
@@ -197,6 +201,7 @@ private val darkColorPalette = FirefoxColors(
     iconAccentYellow = PhotonColors.Yellow20,
     iconActionPrimary = PhotonColors.LightGrey05,
     iconActionSecondary = PhotonColors.DarkGrey90,
+    iconActionTertiary = PhotonColors.LightGrey05,
     iconGradientStart = PhotonColors.Violet20,
     iconGradientEnd = PhotonColors.Blue20,
     borderPrimary = PhotonColors.DarkGrey05,
@@ -262,6 +267,7 @@ private val lightColorPalette = FirefoxColors(
     iconAccentYellow = PhotonColors.Yellow60,
     iconActionPrimary = PhotonColors.LightGrey05,
     iconActionSecondary = PhotonColors.DarkGrey90,
+    iconActionTertiary = PhotonColors.DarkGrey90,
     iconGradientStart = PhotonColors.Violet50,
     iconGradientEnd = PhotonColors.Blue60,
     borderPrimary = PhotonColors.LightGrey30,
@@ -332,6 +338,7 @@ class FirefoxColors(
     iconAccentYellow: Color,
     iconActionPrimary: Color,
     iconActionSecondary: Color,
+    iconActionTertiary: Color,
     iconGradientStart: Color,
     iconGradientEnd: Color,
     borderPrimary: Color,
@@ -507,6 +514,9 @@ class FirefoxColors(
     // Action secondary icon
     var iconActionSecondary by mutableStateOf(iconActionSecondary)
         private set
+    // Action tertiary icon
+    var iconActionTertiary by mutableStateOf(iconActionTertiary)
+        private set
     // Reader, ETP Shield
     var iconGradientStart by mutableStateOf(iconGradientStart)
         private set
@@ -590,6 +600,7 @@ class FirefoxColors(
         iconAccentYellow = other.iconAccentYellow
         iconActionPrimary = other.iconActionPrimary
         iconActionSecondary = other.iconActionSecondary
+        iconActionTertiary = other.iconActionTertiary
         iconGradientStart = other.iconGradientStart
         iconGradientEnd = other.iconGradientEnd
         borderPrimary = other.borderPrimary
@@ -655,6 +666,7 @@ class FirefoxColors(
         iconAccentYellow = iconAccentYellow,
         iconActionPrimary = iconActionPrimary,
         iconActionSecondary = iconActionSecondary,
+        iconActionTertiary = iconActionTertiary,
         iconGradientStart = iconGradientStart,
         iconGradientEnd = iconGradientEnd,
         borderPrimary = borderPrimary,

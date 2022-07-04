@@ -40,6 +40,7 @@ import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.searchEngines
 import mozilla.components.browser.toolbar.BrowserToolbar
@@ -49,6 +50,7 @@ import mozilla.components.concept.menu.candidate.TextMenuCandidate
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.feature.qr.QrFeature
+import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.service.glean.private.NoExtras
@@ -70,6 +72,8 @@ import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.VoiceSearch
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.Core.Companion.BOOKMARKS_SEARCH_ENGINE_ID
+import org.mozilla.fenix.components.Core.Companion.HISTORY_SEARCH_ENGINE_ID
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentSearchDialogBinding
 import org.mozilla.fenix.databinding.SearchSuggestionsHintBinding
@@ -204,13 +208,28 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             requireContext(),
             requireContext().settings(),
             interactor,
-            historyStorageProvider(),
             isPrivate,
             binding.toolbar,
-            requireComponents.core.engine,
             fromHomeFragment
         ).also {
             inlineAutocompleteEditText = it.view.findViewById(R.id.mozac_browser_toolbar_edit_url_view)
+        }
+
+        if (requireContext().settings().shouldAutocompleteInAwesomebar) {
+            val engineForSpeculativeConnects = if (!isPrivate) requireComponents.core.engine else null
+
+            ToolbarAutocompleteFeature(
+                binding.toolbar,
+                engineForSpeculativeConnects,
+                { store.state.searchEngineSource.searchEngine?.type != SearchEngine.Type.APPLICATION }
+            ).apply {
+                addDomainProvider(
+                    ShippedDomainsProvider().also { shippedDomainsProvider ->
+                        shippedDomainsProvider.initialize(requireContext())
+                    }
+                )
+                historyStorageProvider()?.also(::addHistoryStorageProvider)
+            }
         }
 
         val awesomeBar = binding.awesomeBar
@@ -233,14 +252,31 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
         requireComponents.core.engine.speculativeCreateSession(isPrivate)
 
-        if (fromHomeFragment) {
-            // When displayed above home, dispatches the touch events to scrim area to the HomeFragment
-            binding.searchWrapper.background = ColorDrawable(Color.TRANSPARENT)
-            dialog?.window?.decorView?.setOnTouchListener { _, event ->
-                requireActivity().dispatchTouchEvent(event)
-                // toolbarView.view.displayMode()
-                false
+        when (findNavController().previousBackStackEntry?.destination?.id) {
+            R.id.homeFragment -> {
+                // When displayed above home, dispatches the touch events to scrim area to the HomeFragment
+                binding.searchWrapper.background = ColorDrawable(Color.TRANSPARENT)
+                dialog?.window?.decorView?.setOnTouchListener { _, event ->
+                    requireActivity().dispatchTouchEvent(event)
+                    // toolbarView.view.displayMode()
+                    false
+                }
             }
+            R.id.historyFragment -> {
+                requireComponents.core.store.state.search.searchEngines.firstOrNull { searchEngine ->
+                    searchEngine.id == HISTORY_SEARCH_ENGINE_ID
+                }?.let { searchEngine ->
+                    store.dispatch(SearchFragmentAction.SearchHistoryEngineSelected(searchEngine))
+                }
+            }
+            R.id.bookmarkFragment -> {
+                requireComponents.core.store.state.search.searchEngines.firstOrNull { searchEngine ->
+                    searchEngine.id == BOOKMARKS_SEARCH_ENGINE_ID
+                }?.let { searchEngine ->
+                    store.dispatch(SearchFragmentAction.SearchBookmarksEngineSelected(searchEngine))
+                }
+            }
+            else -> {}
         }
 
         return binding.root
@@ -270,6 +306,12 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 binding.searchWrapper.setOnTouchListener { _, _ ->
                     binding.searchWrapper.hideKeyboard()
                     false
+                }
+            }
+            R.id.historyFragment, R.id.bookmarkFragment -> {
+                binding.searchWrapper.setOnTouchListener { _, _ ->
+                    dismissAllowingStateLoss()
+                    true
                 }
             }
             else -> {}
@@ -670,21 +712,20 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
      * @param searchEngines List of [SearchEngine] to display.
      */
     private fun updateSearchSelectorMenu(searchEngines: List<SearchEngine>) {
-        searchSelectorMenu.menuController.submitList(
-            searchSelectorMenu.menuItems() +
-                searchEngines
-                    .reversed()
-                    .map {
-                        TextMenuCandidate(
-                            text = it.name,
-                            start = DrawableMenuIcon(
-                                drawable = it.icon.toDrawable(resources)
-                            )
-                        ) {
-                            interactor.onMenuItemTapped(SearchSelectorMenu.Item.SearchEngine(it))
-                        }
-                    }
-        )
+        val searchEngineList = searchEngines
+            .map {
+                TextMenuCandidate(
+                    text = it.name,
+                    start = DrawableMenuIcon(
+                        drawable = it.icon.toDrawable(resources)
+                    )
+                ) {
+                    interactor.onMenuItemTapped(SearchSelectorMenu.Item.SearchEngine(it))
+                }
+            } + searchSelectorMenu.menuItems()
+
+        searchSelectorMenu.menuController.submitList(searchEngineList)
+        toolbarView.view.invalidateActions()
     }
 
     private fun addSearchSelector() {
@@ -694,7 +735,6 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             SearchSelectorToolbarAction(
                 store = store,
                 menu = searchSelectorMenu,
-                viewLifecycleOwner = viewLifecycleOwner
             )
         )
 

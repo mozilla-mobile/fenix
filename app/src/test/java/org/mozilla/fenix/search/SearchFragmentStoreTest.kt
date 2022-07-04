@@ -16,6 +16,7 @@ import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.SearchState
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.support.test.ext.joinBlocking
+import mozilla.components.support.test.libstate.ext.waitUntilIdle
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -68,6 +69,7 @@ class SearchFragmentStoreTest {
             showHistorySuggestions = false,
             showBookmarkSuggestions = false,
             showSyncedTabsSuggestions = false,
+            showSessionSuggestions = true,
             tabId = null,
             pastedText = "pastedText",
             searchAccessPoint = MetricsUtils.Source.ACTION
@@ -126,6 +128,7 @@ class SearchFragmentStoreTest {
                 showHistorySuggestions = false,
                 showBookmarkSuggestions = false,
                 showSyncedTabsSuggestions = false,
+                showSessionSuggestions = true,
                 tabId = "tabId",
                 pastedText = "",
                 searchAccessPoint = MetricsUtils.Source.SHORTCUT
@@ -156,10 +159,40 @@ class SearchFragmentStoreTest {
         val initialState = emptyDefaultState()
         val store = SearchFragmentStore(initialState)
 
-        store.dispatch(SearchFragmentAction.SearchShortcutEngineSelected(searchEngine)).join()
+        store.dispatch(SearchFragmentAction.SearchShortcutEngineSelected(searchEngine, settings)).join()
         assertNotSame(initialState, store.state)
         assertEquals(SearchEngineSource.Shortcut(searchEngine), store.state.searchEngineSource)
         assertEquals(false, store.state.showSearchShortcuts)
+    }
+
+    @Test
+    fun `WHEN history engine selected action dispatched THEN update search engine source`() = runTest {
+        val initialState = emptyDefaultState()
+        val store = SearchFragmentStore(initialState)
+
+        store.dispatch(SearchFragmentAction.SearchHistoryEngineSelected(searchEngine)).join()
+        assertNotSame(initialState, store.state)
+        assertEquals(SearchEngineSource.History(searchEngine), store.state.searchEngineSource)
+    }
+
+    @Test
+    fun `WHEN bookmarks engine selected action dispatched THEN update search engine source`() = runTest {
+        val initialState = emptyDefaultState()
+        val store = SearchFragmentStore(initialState)
+
+        store.dispatch(SearchFragmentAction.SearchBookmarksEngineSelected(searchEngine)).join()
+        assertNotSame(initialState, store.state)
+        assertEquals(SearchEngineSource.Bookmarks(searchEngine), store.state.searchEngineSource)
+    }
+
+    @Test
+    fun `WHEN tabs engine selected action dispatched THEN update search engine source`() = runTest {
+        val initialState = emptyDefaultState()
+        val store = SearchFragmentStore(initialState)
+
+        store.dispatch(SearchFragmentAction.SearchTabsEngineSelected(searchEngine)).join()
+        assertNotSame(initialState, store.state)
+        assertEquals(SearchEngineSource.Tabs(searchEngine), store.state.searchEngineSource)
     }
 
     @Test
@@ -213,7 +246,7 @@ class SearchFragmentStoreTest {
     }
 
     @Test
-    fun `Updating SearchFragmentState from SearchState`() = runTest {
+    fun `Updating SearchFragmentState from SearchState`() {
         val store = SearchFragmentStore(
             emptyDefaultState(
                 searchEngineSource = SearchEngineSource.None,
@@ -256,7 +289,9 @@ class SearchFragmentStoreTest {
                     userSelectedSearchEngineName = null
                 )
             )
-        ).join()
+        )
+
+        store.waitUntilIdle()
 
         assertNotNull(store.state.defaultEngine)
         assertEquals("Engine B", store.state.defaultEngine!!.name)
@@ -270,7 +305,7 @@ class SearchFragmentStoreTest {
     }
 
     @Test
-    fun `Updating SearchFragmentState from SearchState - shortcuts disabled`() = runTest {
+    fun `Updating SearchFragmentState from SearchState - shortcuts disabled`() {
         val store = SearchFragmentStore(
             emptyDefaultState(
                 searchEngineSource = SearchEngineSource.None,
@@ -313,7 +348,9 @@ class SearchFragmentStoreTest {
                     userSelectedSearchEngineName = null
                 )
             )
-        ).join()
+        )
+
+        store.waitUntilIdle()
 
         assertNotNull(store.state.defaultEngine)
         assertEquals("Engine B", store.state.defaultEngine!!.name)
@@ -347,6 +384,7 @@ class SearchFragmentStoreTest {
         showHistorySuggestions = false,
         showBookmarkSuggestions = false,
         showSyncedTabsSuggestions = false,
+        showSessionSuggestions = false,
         searchAccessPoint = MetricsUtils.Source.NONE
     )
 }
