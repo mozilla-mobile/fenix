@@ -46,7 +46,8 @@ class HistoryView(
 
     init {
         stickyHeaderClickDetector = GestureDetectorCompat(
-            activity, StickyHeaderGestureListener(
+            activity,
+            StickyHeaderGestureListener(
                 recyclerView = binding.historyList,
                 onStickyHeaderClicked = ::onStickyHeaderClicked,
                 stickyHeaderBottom = ::getStickyHeaderBottom,
@@ -87,7 +88,7 @@ class HistoryView(
         binding.progressBar.isVisible = state.isDeletingItems
         binding.swipeRefresh.isRefreshing = state.mode === HistoryFragmentState.Mode.Syncing
         binding.swipeRefresh.isEnabled = state.mode === HistoryFragmentState.Mode.Normal ||
-                state.mode === HistoryFragmentState.Mode.Syncing
+            state.mode === HistoryFragmentState.Mode.Syncing
         mode = state.mode
 
         historyAdapter.updatePendingDeletionItems(state.pendingDeletionItems)

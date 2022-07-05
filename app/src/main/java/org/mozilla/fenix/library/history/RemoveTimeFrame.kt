@@ -4,7 +4,8 @@
 
 package org.mozilla.fenix.library.history
 
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 
 enum class RemoveTimeFrame {
     OneHour,

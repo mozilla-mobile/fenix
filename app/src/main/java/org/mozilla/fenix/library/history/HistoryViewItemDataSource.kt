@@ -86,7 +86,7 @@ class HistoryViewItemDataSource(
                     is HistoryViewItem.HistoryGroupItem -> {
                         deletedItems.first.find { pendingItem ->
                             pendingItem is PendingDeletionHistory.Group &&
-                                    pendingItem.visitedAt == historyItem.data.visitedAt
+                                pendingItem.visitedAt == historyItem.data.visitedAt
                         } == null
                     }
                     is HistoryViewItem.TimeGroupHeader -> {

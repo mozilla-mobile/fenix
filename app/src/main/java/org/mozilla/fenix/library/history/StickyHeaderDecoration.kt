@@ -13,7 +13,6 @@ import android.view.ViewGroup.getChildMeasureSpec
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-
 class StickyHeaderDecoration(
     private val headerManager: HeaderManager
 ) : RecyclerView.ItemDecoration() {
@@ -121,7 +120,7 @@ class StickyHeaderDecoration(
                 }
             }
 
-            //add heightTolerance if child top be in display area
+            // add heightTolerance if child top be in display area
             val childBottomPosition: Int = if (view.top > 0) {
                 view.bottom + heightTolerance
             } else {
@@ -137,7 +136,6 @@ class StickyHeaderDecoration(
         }
         return result
     }
-
 
     /**
      * Properly measures and layouts the top sticky header.

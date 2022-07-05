@@ -31,7 +31,8 @@ class HistoryAdapter(
     private val historyInteractor: HistoryInteractor,
     private val onEmptyStateChanged: (Boolean) -> Unit,
 ) : PagingDataAdapter<HistoryViewItem, RecyclerView.ViewHolder>(historyDiffCallback),
-    SelectionHolder<History>, HeaderManager {
+    SelectionHolder<History>,
+    HeaderManager {
 
     private var recycler: RecyclerView? = null
 
@@ -132,8 +133,8 @@ class HistoryAdapter(
                 val groupPendingDeletionCount = groupMetaData.count { historyMetadata ->
                     pendingDeletionItems.find {
                         it is PendingDeletionHistory.MetaData &&
-                                it.key == historyMetadata.historyMetadataKey &&
-                                it.visitedAt == historyMetadata.visitedAt
+                            it.key == historyMetadata.historyMetadataKey &&
+                            it.visitedAt == historyMetadata.visitedAt
                     } != null
                 }
                 holder.bind(item, mode, groupPendingDeletionCount)

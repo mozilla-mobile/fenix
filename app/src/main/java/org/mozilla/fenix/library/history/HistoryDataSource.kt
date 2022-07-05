@@ -13,7 +13,9 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.history.HistoryDB
 import org.mozilla.fenix.components.history.PagedHistoryProvider
 import org.mozilla.fenix.ext.components
-import java.util.*
+import java.util.LinkedList
+import java.util.SortedMap
+import java.util.TreeMap
 
 /**
  * PagingSource of [HistoryViewItem], used in [HistoryViewItemDataSource] as a base of the list.
@@ -87,7 +89,7 @@ class HistoryDataSource(
                         val header = HistoryViewItem.TimeGroupHeader(
                             title = history.historyTimeGroup.humanReadable(context),
                             timeGroup = history.historyTimeGroup,
-                            collapsed = historyStore.state.collapsedHeaders.contains(history.historyTimeGroup)//collapsedHeaders.contains(secondTimeGroup)
+                            collapsed = historyStore.state.collapsedHeaders.contains(history.historyTimeGroup)
                         )
                         this.headerPositions[history.historyTimeGroup] = position
                         headerPositions.add(Pair(header, position))
@@ -99,7 +101,7 @@ class HistoryDataSource(
                     val header = HistoryViewItem.TimeGroupHeader(
                         title = history.historyTimeGroup.humanReadable(context),
                         timeGroup = history.historyTimeGroup,
-                        collapsed = historyStore.state.collapsedHeaders.contains(history.historyTimeGroup)//collapsedHeaders.contains(secondTimeGroup)
+                        collapsed = historyStore.state.collapsedHeaders.contains(history.historyTimeGroup)
                     )
                     this.headerPositions[history.historyTimeGroup] = position
                     headerPositions.add(Pair(header, position))
