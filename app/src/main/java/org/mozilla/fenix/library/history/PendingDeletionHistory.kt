@@ -49,7 +49,11 @@ sealed class PendingDeletionHistory {
  */
 fun History.toPendingDeletionHistory(): PendingDeletionHistory {
     return when (this) {
-        is History.Regular -> PendingDeletionHistory.Item(visitedAt = visitedAt, timeGroup = historyTimeGroup, url = url)
+        is History.Regular -> PendingDeletionHistory.Item(
+            visitedAt = visitedAt,
+            timeGroup = historyTimeGroup,
+            url = url
+        )
         is History.Group -> PendingDeletionHistory.Group(
             visitedAt = visitedAt,
             timeGroup = historyTimeGroup,

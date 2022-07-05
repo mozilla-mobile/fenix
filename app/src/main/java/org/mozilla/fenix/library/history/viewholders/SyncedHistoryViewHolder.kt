@@ -12,6 +12,11 @@ import org.mozilla.fenix.databinding.SyncedHistoryNavItemBinding
 import org.mozilla.fenix.library.history.HistoryInteractor
 import org.mozilla.fenix.library.history.HistoryViewItem
 
+/**
+ * A view representing a synced history button in the history list.
+ * [org.mozilla.fenix.library.history.HistoryAdapter] is responsible for creating
+ * and populating the view.
+ */
 class SyncedHistoryViewHolder(
     view: View,
     private val historyInteractor: HistoryInteractor
@@ -26,6 +31,9 @@ class SyncedHistoryViewHolder(
         binding.syncedHistoryNav.isVisible = true
     }
 
+    /**
+     * Binds data to the view.
+     */
     fun bind(item: HistoryViewItem.SyncedHistoryItem) {
         binding.syncedHistoryHeader.text = item.title
     }

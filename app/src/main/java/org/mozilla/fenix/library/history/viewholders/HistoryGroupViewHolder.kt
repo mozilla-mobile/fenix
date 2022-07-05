@@ -16,6 +16,11 @@ import org.mozilla.fenix.library.history.HistoryInteractor
 import org.mozilla.fenix.library.history.HistoryViewItem
 import org.mozilla.fenix.selection.SelectionHolder
 
+/**
+ * A view representing a search group (a group of history items) in the history list.
+ * [org.mozilla.fenix.library.history.HistoryAdapter] is responsible for creating
+ * and populating the view.
+ */
 class HistoryGroupViewHolder(
     view: View,
     private val historyInteractor: HistoryInteractor,
@@ -38,6 +43,12 @@ class HistoryGroupViewHolder(
         }
     }
 
+    /**
+     * Binds data to the view.
+     * @param mode is used to determine if the list is in the multiple-selection state or not.
+     * @param groupPendingDeletionCount is used to adjust the number of items inside a group,
+     * based on the number of items the user has removed from it.
+     */
     fun bind(
         item: HistoryViewItem.HistoryGroupItem,
         mode: HistoryFragmentState.Mode,

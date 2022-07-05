@@ -366,9 +366,9 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                         }
                     } else {
                         val timeFrame = when (radioGroup.checkedRadioButtonId) {
-                            R.id.last_hour_button -> RemoveTimeFrame.OneHour.timeFrameForTimeGroup()
+                            R.id.last_hour_button -> RemoveTimeFrame.LastHour.timeFrameForTimeGroup()
                             R.id.today_and_yesterday_button -> RemoveTimeFrame.TodayAndYesterday.timeFrameForTimeGroup()
-                            else -> throw RuntimeException("Unexpected view id")
+                            else -> throw IllegalStateException("Unknown radioButton id")
                         }
                         historyStore.dispatch(HistoryFragmentAction.EnterDeletionMode)
                         // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.

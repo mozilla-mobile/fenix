@@ -10,10 +10,18 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.HistoryListEmptyBinding
 import org.mozilla.fenix.library.history.HistoryViewItem
 
+/**
+ * A view representing the empty state in history and synced history screens.
+ * [org.mozilla.fenix.library.history.HistoryAdapter] is responsible for creating
+ * and populating the view.
+ */
 class EmptyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     private val binding = HistoryListEmptyBinding.bind(view)
 
+    /**
+     * Binds data to the view.
+     */
     fun bind(item: HistoryViewItem.EmptyHistoryItem) {
         binding.emptyMessage.text = item.title
     }

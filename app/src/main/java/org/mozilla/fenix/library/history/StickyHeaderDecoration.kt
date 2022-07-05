@@ -13,6 +13,13 @@ import android.view.ViewGroup.getChildMeasureSpec
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
+/**
+ * A decorator for a [RecyclerView] that makes header items in a list sticky. If a top visible item
+ * in the list has a header somewhere up the list, a header view will be drawn on a [Canvas] over
+ * the [RecyclerView]. It also adjusts the sticky header size if there is another header down the
+ * list, that is in contact with the sticky header. The decorator can not capture click events.
+ * [StickyHeaderGestureListener] is responsible for capturing and propagating clicks.
+ */
 class StickyHeaderDecoration(
     private val headerManager: HeaderManager
 ) : RecyclerView.ItemDecoration() {
@@ -69,6 +76,11 @@ class StickyHeaderDecoration(
         drawHeader(c, stickyHeaderView)
     }
 
+    /**
+     * Returns the bottom coordinate of the currently visible sticky header.
+     * Based on the returned value, [StickyHeaderGestureListener] calculates if the click happened
+     * over the sticky header or an actual item.
+     */
     fun getStickyHeaderBottom(): Float {
         return stickyHeaderBottom.toFloat()
     }
@@ -126,12 +138,10 @@ class StickyHeaderDecoration(
             } else {
                 view.bottom
             }
-            if (childBottomPosition > contactPoint - 1) {
-                if (view.top <= contactPoint) {
-                    // This child overlaps the contactPoint
-                    result = view
-                    break
-                }
+            val isOverlapping = childBottomPosition > contactPoint - 1 && view.top <= contactPoint
+            if (isOverlapping) {
+                result = view
+                break
             }
         }
         return result
@@ -169,18 +179,30 @@ class StickyHeaderDecoration(
     }
 }
 
+/**
+ * An interface for [HistoryAdapter] to provide information about header and populate it.
+ */
 interface HeaderManager {
+
+    /**
+     * This method gets called by [StickyHeaderDecoration] to verify whether the item represents a header.
+     * @param itemPosition
+     * @return Does the item at the specified adapter's position represent a header or not.
+     */
+    fun isHeader(itemPosition: Int): Boolean
 
     /**
      * This method gets called by [StickyHeaderDecoration] to fetch the position of the header item
      * in the adapter that is used for the item at the specified position.
-     * @param itemPosition Adapter's position of the item for which to do the search of the position of the header item.
+     * @param itemPosition Adapter's position of the item for which to do the search of the position
+     * of the header item.
      * @return Position of the header item in the adapter.
      */
     fun getHeaderPositionForItem(itemPosition: Int): Int
 
     /**
-     * This method gets called by [StickyHeaderDecoration] to get layout resource id for the header item at specified adapter's position.
+     * This method gets called by [StickyHeaderDecoration] to get layout resource id for the header
+     * item at specified adapter's position.
      * @param headerPosition Position of the header item in the adapter.
      * @return Layout resource id.
      */
@@ -192,13 +214,4 @@ interface HeaderManager {
      * @param headerPosition Position of the header item in the adapter.
      */
     fun bindHeader(header: View, headerPosition: Int)
-
-    /**
-     * This method gets called by [StickyHeaderDecoration] to verify whether the item represents a header.
-     * @param itemPosition
-     * @return Does the item at the specified adapter's position represent a header or not.
-     */
-    fun isHeader(itemPosition: Int): Boolean
-
-    fun onStickyHeaderClicked(headerPosition: Int)
 }

@@ -12,6 +12,11 @@ import org.mozilla.fenix.databinding.RecentlyClosedNavItemBinding
 import org.mozilla.fenix.library.history.HistoryInteractor
 import org.mozilla.fenix.library.history.HistoryViewItem
 
+/**
+ * A view containing a recently closed button in the history list.
+ * [org.mozilla.fenix.library.history.HistoryAdapter] is responsible for creating
+ * and populating the view.
+ */
 class RecentlyClosedViewHolder(
     view: View,
     private val historyInteractor: HistoryInteractor
@@ -26,6 +31,9 @@ class RecentlyClosedViewHolder(
         binding.recentlyClosedNav.isVisible = true
     }
 
+    /**
+     * Binds data to the view.
+     */
     fun bind(item: HistoryViewItem.RecentlyClosedItem) {
         binding.recentlyClosedTabsHeader.text = item.title
         binding.recentlyClosedTabsDescription.text = item.body

@@ -8,6 +8,10 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
 
+/**
+ * A view used as an extra space for timeGroup items, when they are not in a collapsed state.
+ * [org.mozilla.fenix.library.history.HistoryAdapter] is responsible for creating this view.
+ */
 class TopSeparatorViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {

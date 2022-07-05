@@ -51,21 +51,20 @@ class HistoryAdapter(
     private val headerPositions: MutableMap<HistoryItemTimeGroup, Int> = mutableMapOf()
 
     init {
-        // Tracking updates of data flow. Delete data flow might have filtered out the last history
-        // item or group item, so the empty view should be shown. 6 is the itemCount for local
-        // history screen with one item. Listener is triggered on every change including loading new
-        // items. Checking only a small amount of items that might signal the empty state prevents from
-        // slowing down the scrolling.
+//         Tracking updates of data flow. Delete data flow might have filtered out the last history
+//         or group history item, so the empty view should be displayed. Listener is triggered on
+//         every change, including loading additional items, so we don't want to do extra checks
+//         after there are more items in the adapter than in a single load.
         addOnPagesUpdatedListener {
-            if (itemCount <= 6) {
+            if (itemCount <= HistoryViewItemDataSource.PAGE_SIZE) {
                 for (i in 0 until itemCount) {
                     val item = getItem(i)
                     // If there is a single visible item, it's enough to change the empty state of the view.
-                    if (item is HistoryViewItem.HistoryItem ||
+                    val hasVisibleItems = item is HistoryViewItem.HistoryItem ||
                         item is HistoryViewItem.HistoryGroupItem ||
                         item is HistoryViewItem.TimeGroupHeader ||
                         item is HistoryViewItem.SignInHistoryItem
-                    ) {
+                    if (hasVisibleItems) {
                         onEmptyStateChanged.invoke(false)
                         break
                     } else if (i + 1 == itemCount) {
@@ -274,24 +273,5 @@ class HistoryAdapter(
         return getItem(itemPosition)?.let {
             it is HistoryViewItem.TimeGroupHeader
         } ?: false
-    }
-
-    override fun onStickyHeaderClicked(itemPosition: Int) {
-        val item = getItem(itemPosition) ?: return
-        val timeGroup = when (item) {
-            is HistoryViewItem.HistoryItem -> item.data.historyTimeGroup
-            is HistoryViewItem.HistoryGroupItem -> item.data.historyTimeGroup
-            is HistoryViewItem.TimeGroupHeader -> item.timeGroup
-            else -> return
-        }
-        val headerPosition = headerPositions[timeGroup] ?: return
-        getItem(headerPosition)?.let { headerItem ->
-            if (headerItem is HistoryViewItem.TimeGroupHeader) {
-                historyInteractor.onTimeGroupClicked(
-                    headerItem.timeGroup,
-                    headerItem.collapsed
-                )
-            }
-        }
     }
 }

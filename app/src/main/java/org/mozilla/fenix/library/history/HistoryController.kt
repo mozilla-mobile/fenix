@@ -30,15 +30,26 @@ interface HistoryController {
     fun handleBackPressed(): Boolean
     fun handleModeSwitched()
     fun handleSearch()
+    /**
+     * Handles a click on a bin icon on [HistoryFragment].
+     */
     fun handleDeleteTimeRange()
+    /**
+     * Handles removal of history items and time groups. Latter is calculated inside [HistoryAdapter],
+     * because we don't have direct access to the data in [HistoryViewItemDataSource.historyFlow].
+     * So the only way to iterate through the items is the [HistoryAdapter.getItem] method.
+     */
     fun handleDeleteSome(items: Set<History>, groups: Set<HistoryItemTimeGroup> = setOf())
     fun handleRequestSync()
     fun handleEnterRecentlyClosed()
     /**
-     * Navigates to [org.mozilla.fenix.library.history.HistoryFragment] with isSyncedHistory == true
+     * Navigates to [HistoryFragment] with isSyncedHistory == true
      */
     fun handleEnterSyncedHistory()
 
+    /**
+     * Handles click on a [org.mozilla.fenix.library.history.viewholders.TimeGroupViewHolder].
+     */
     fun handleCollapsedStateChanged(timeGroup: HistoryItemTimeGroup, collapsed: Boolean)
 }
 

@@ -8,15 +8,17 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import androidx.recyclerview.widget.RecyclerView
 
-// A helper class to process clicks on sticky header. The header is not a regular view, but is drawn
-// over Canvas, so regular clickListener doesn't work. The listener intercepts the MotionEvents,
-// and calculates if the click happened on a sticky header, and depending on that consumes the event
-// or passes it down.
+/**
+ * A helper class to process clicks on sticky header. The header is not a regular view, but is drawn
+ * over Canvas, so regular clickListener doesn't work. The listener intercepts the MotionEvents
+ * if it happened within the sticky header height, or passes it down to the [RecyclerView].
+ */
 class StickyHeaderGestureListener(
     private val recyclerView: RecyclerView,
     private val onStickyHeaderClicked: (Int) -> Unit,
     private val stickyHeaderBottom: () -> Float,
 ) : GestureDetector.SimpleOnGestureListener() {
+
     override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
         val bottom = stickyHeaderBottom.invoke()
         if (e.y < bottom) {

@@ -11,6 +11,11 @@ import org.mozilla.fenix.databinding.HistoryListHeaderBinding
 import org.mozilla.fenix.library.history.HistoryInteractor
 import org.mozilla.fenix.library.history.HistoryViewItem
 
+/**
+ * A view representing a timeGroup in the history and synced history lists.
+ * [org.mozilla.fenix.library.history.HistoryAdapter] is responsible for creating
+ * and populating the view with data.
+ */
 class TimeGroupViewHolder(
     view: View,
     private val historyInteractor: HistoryInteractor
@@ -25,6 +30,9 @@ class TimeGroupViewHolder(
         }
     }
 
+    /**
+     * Binds data to the view.
+     */
     fun bind(item: HistoryViewItem.TimeGroupHeader) {
         binding.headerTitle.text = item.title
         binding.chevron.isActivated = item.collapsed

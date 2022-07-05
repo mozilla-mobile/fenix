@@ -36,6 +36,7 @@ class HistoryDataSource(
     // updates such as pull to refresh, and return the user to the start of the list.
     override fun getRefreshKey(state: PagingState<Int, HistoryViewItem>): Int? = null
 
+    @Suppress("LongMethod", "ComplexMethod")
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, HistoryViewItem> {
         // Get the offset of the last loaded page or default to 0 when it is null on the initial
         // load or a refresh.
@@ -84,16 +85,16 @@ class HistoryDataSource(
             // Calculating header positions.
             previousHistory?.let {
                 // Adding headers between items.
-                if (it.historyTimeGroup != history.historyTimeGroup) {
-                    if (!this.headerPositions.contains(history.historyTimeGroup)) {
-                        val header = HistoryViewItem.TimeGroupHeader(
-                            title = history.historyTimeGroup.humanReadable(context),
-                            timeGroup = history.historyTimeGroup,
-                            collapsed = historyStore.state.collapsedHeaders.contains(history.historyTimeGroup)
-                        )
-                        this.headerPositions[history.historyTimeGroup] = position
-                        headerPositions.add(Pair(header, position))
-                    }
+                val isHeaderRequired = it.historyTimeGroup != history.historyTimeGroup &&
+                    !this.headerPositions.contains(history.historyTimeGroup)
+                if (isHeaderRequired) {
+                    val header = HistoryViewItem.TimeGroupHeader(
+                        title = history.historyTimeGroup.humanReadable(context),
+                        timeGroup = history.historyTimeGroup,
+                        collapsed = historyStore.state.collapsedHeaders.contains(history.historyTimeGroup)
+                    )
+                    this.headerPositions[history.historyTimeGroup] = position
+                    headerPositions.add(Pair(header, position))
                 }
             } ?: run {
                 // Adding a header before the first item.

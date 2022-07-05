@@ -145,6 +145,9 @@ sealed class HistoryFragmentAction : Action {
     data class UndoPendingDeletionSet(val historyItems: Set<PendingDeletionHistory>) :
         HistoryFragmentAction()
 
+    /**
+     *  An action that updates [HistoryFragmentState.collapsedHeaders].
+     */
     data class ChangeCollapsedState(val timeGroup: HistoryItemTimeGroup, val collapsed: Boolean) :
         HistoryFragmentAction()
     object EnterDeletionMode : HistoryFragmentAction()
@@ -179,6 +182,7 @@ data class HistoryFragmentState(
 /**
  * The HistoryState Reducer.
  */
+@Suppress("NestedBlockDepth")
 private fun historyStateReducer(
     state: HistoryFragmentState,
     action: HistoryFragmentAction

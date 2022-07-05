@@ -16,6 +16,11 @@ import org.mozilla.fenix.library.history.HistoryInteractor
 import org.mozilla.fenix.library.history.HistoryViewItem
 import org.mozilla.fenix.selection.SelectionHolder
 
+/**
+ * A view representing a regular history record in the history and synced history lists.
+ * [org.mozilla.fenix.library.history.HistoryAdapter] is responsible for creating
+ * and populating the view.
+ */
 class HistoryViewHolder(
     view: View,
     private val historyInteractor: HistoryInteractor,
@@ -39,6 +44,10 @@ class HistoryViewHolder(
         }
     }
 
+    /**
+     * Binds data to the view.
+     * @param mode is used to determine if the list is in the multiple-selection state or not.
+     */
     fun bind(item: HistoryViewItem.HistoryItem, mode: HistoryFragmentState.Mode) {
         with(binding.historyLayout) {
             titleView.text = item.data.title

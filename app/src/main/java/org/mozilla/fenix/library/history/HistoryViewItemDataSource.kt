@@ -75,7 +75,8 @@ class HistoryViewItemDataSource(
             }
         }
         // Filtering out items that have been marked for removal.
-        .combine(deleteFlow) { historyItems: PagingData<HistoryViewItem>, deletedItems: Pair<Set<PendingDeletionHistory>, Set<HistoryItemTimeGroup>> ->
+        .combine(deleteFlow) { historyItems: PagingData<HistoryViewItem>,
+            deletedItems: Pair<Set<PendingDeletionHistory>, Set<HistoryItemTimeGroup>> ->
             historyItems.filter { historyItem ->
                 when (historyItem) {
                     is HistoryViewItem.HistoryItem -> {
@@ -137,11 +138,19 @@ class HistoryViewItemDataSource(
             }
         }
 
+    /**
+     * Updates [HistoryViewItemDataSource.collapsedFlow] with the new value, causing [HistoryAdapter]
+     * to update its state.
+     */
     fun setCollapsedHeaders(collapsedHeaders: Set<HistoryItemTimeGroup>) {
         this.collapsedHeaders = collapsedHeaders
         collapsedFlow.value = collapsedHeaders
     }
 
+    /**
+     * Updates [HistoryViewItemDataSource.deleteFlow] with the new value, causing [HistoryAdapter]
+     * to update its state.
+     */
     fun setDeleteItems(
         historyItems: Set<PendingDeletionHistory>,
         historyHeaders: Set<HistoryItemTimeGroup>
@@ -149,11 +158,15 @@ class HistoryViewItemDataSource(
         deleteFlow.value = Pair(historyItems, historyHeaders)
     }
 
+    /**
+     * Updates [HistoryViewItemDataSource.emptyFlow] with the new value, causing [HistoryAdapter]
+     * to update its state.
+     */
     fun setEmptyState(isEmpty: Boolean) {
         emptyFlow.value = isEmpty
     }
 
     companion object {
-        private const val PAGE_SIZE = 25
+        const val PAGE_SIZE = 25
     }
 }

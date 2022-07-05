@@ -8,6 +8,10 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
 
+/**
+ * A view used as an extra space at the top of history and synced history lists.
+ * [org.mozilla.fenix.library.history.HistoryAdapter] is responsible for creating this view.
+ */
 class TimeGroupSeparatorViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {

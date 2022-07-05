@@ -15,6 +15,11 @@ import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsErrorItem
 import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsListItem
 import org.mozilla.fenix.theme.FirefoxTheme
 
+/**
+ * A view representing a sign in window inside the synced history screen.
+ * [org.mozilla.fenix.library.history.HistoryAdapter] is responsible for creating
+ * and populating the view.
+ */
 class SignInViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     private val binding = HistoryListSignInBinding.bind(view)
@@ -26,6 +31,9 @@ class SignInViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         )
     }
 
+    /**
+     * Binds data to the view.
+     */
     fun bind(item: HistoryViewItem.SignInHistoryItem) {
         binding.composeContainer.setContent {
             FirefoxTheme {

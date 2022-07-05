@@ -7,13 +7,21 @@ package org.mozilla.fenix.library.history
 import java.util.Calendar
 import java.util.Date
 
+/**
+ * A helper class that provides starting and ending timestamps for a set time frame. Is used by
+ * [HistoryFragment] to provide timestamps for options inside the delete history dialog.
+ */
 enum class RemoveTimeFrame {
-    OneHour,
+    LastHour,
     TodayAndYesterday;
 
+    /**
+     * Provides starting and ending timestamps for a set time frame. Each call is calculated at the
+     * moment of execution, which is different from [HistoryItemTimeGroup] implementation.
+     */
     fun timeFrameForTimeGroup(): Pair<Long, Long> {
         return when (this) {
-            OneHour -> {
+            LastHour -> {
                 val oneHourRange = LongRange(getHourAgo(1).time, getHourAgo(0).time)
                 Pair(oneHourRange.first, oneHourRange.last)
             }
