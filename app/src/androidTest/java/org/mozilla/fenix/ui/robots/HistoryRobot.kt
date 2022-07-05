@@ -117,7 +117,7 @@ private fun assertHistoryMenuView() {
 private fun assertEmptyHistoryView() =
     onView(
         allOf(
-            withId(R.id.history_empty_view),
+            withId(R.id.empty_message),
             withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)
         )
     )
