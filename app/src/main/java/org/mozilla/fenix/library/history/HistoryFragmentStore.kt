@@ -127,8 +127,7 @@ sealed class HistoryFragmentAction : Action {
      * to the [HistoryFragmentStore], to be hidden from the UI.
      */
     data class UpdatePendingDeletionItems(
-        val pendingDeletionItems: Set<PendingDeletionHistory>,
-        val groups: Set<HistoryItemTimeGroup> = setOf()
+        val pendingDeletionItems: Set<PendingDeletionHistory>
     ) : HistoryFragmentAction()
 
     /**
@@ -210,8 +209,7 @@ private fun historyStateReducer(
         is HistoryFragmentAction.FinishSync -> state.copy(mode = HistoryFragmentState.Mode.Normal)
         is HistoryFragmentAction.ChangeEmptyState -> state.copy(isEmpty = action.isEmpty)
         is HistoryFragmentAction.UpdatePendingDeletionItems -> state.copy(
-            pendingDeletionItems = action.pendingDeletionItems,
-            hiddenHeaders = action.groups
+            pendingDeletionItems = action.pendingDeletionItems
         )
         is HistoryFragmentAction.ChangeCollapsedState -> {
             state.copy(

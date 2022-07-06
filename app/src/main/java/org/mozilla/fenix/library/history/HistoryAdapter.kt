@@ -51,10 +51,10 @@ class HistoryAdapter(
     private val headerPositions: MutableMap<HistoryItemTimeGroup, Int> = mutableMapOf()
 
     init {
-//         Tracking updates of data flow. Delete data flow might have filtered out the last history
-//         or group history item, so the empty view should be displayed. Listener is triggered on
-//         every change, including loading additional items, so we don't want to do extra checks
-//         after there are more items in the adapter than in a single load.
+        //  Tracking updates of data flow. Delete data flow might have filtered out the last history
+        //  or group history item, so the empty view should be displayed. Listener is triggered on
+        //  every change, including loading additional items, so we don't want to do extra checks
+        //  after there are more items in the adapter than in a single load.
         addOnPagesUpdatedListener {
             if (itemCount <= HistoryViewItemDataSource.PAGE_SIZE) {
                 for (i in 0 until itemCount) {
@@ -108,7 +108,17 @@ class HistoryAdapter(
                 this,
                 ::onDeleteClicked
             )
-            TimeGroupViewHolder.LAYOUT_ID -> TimeGroupViewHolder(view, historyInteractor)
+            TimeGroupViewHolder.LAYOUT_ID -> TimeGroupViewHolder(view) { timeGroup, isCollapsed ->
+                // We can't allow user to collapse timeGroups in selecting mode. Collapsed items
+                // will make it impossible to calculate if we should remove TimeGroup in case
+                // it has zero items or not. [HistoryViewItemDataSource.historyFlow] is [PagingData],
+                // and doesn't allow direct access to the items. [HistoryAdapter] receives already
+                // filtered list, so collapsed items are not reachable (without duplicating the data
+                // of [HistoryDataSource], which seems like too much of a hack.
+                if (isCollapsed || mode !is HistoryFragmentState.Mode.Editing) {
+                    historyInteractor.onTimeGroupClicked(timeGroup, isCollapsed)
+                }
+            }
             RecentlyClosedViewHolder.LAYOUT_ID -> RecentlyClosedViewHolder(view, historyInteractor)
             SyncedHistoryViewHolder.LAYOUT_ID -> SyncedHistoryViewHolder(view, historyInteractor)
             EmptyViewHolder.LAYOUT_ID -> EmptyViewHolder(view)
@@ -164,6 +174,61 @@ class HistoryAdapter(
                 }
             }
         }
+    }
+
+    /**
+     * A helper method for [HistoryFragment] to decide if after removal of multiple items any of
+     * headers should be removed as well. Adapter is the only place to get access to the data snapshot.
+     */
+    @Suppress("NestedBlockDepth")
+    fun calculateTimeGroupsToRemove(historyItems: Set<History>): Set<HistoryItemTimeGroup> {
+        val result: MutableSet<HistoryItemTimeGroup> = mutableSetOf()
+
+        // Group selected items into timeGroup buckets, and rely on a bucket size to calculate if
+        // all items of one historyGroup have been removed and the timeGroup should be hidden as well.
+        val historyTimeFrames: MutableMap<HistoryItemTimeGroup, MutableSet<History>> =
+            mutableMapOf()
+        for (historyItem in historyItems) {
+            if (!historyTimeFrames.contains(historyItem.historyTimeGroup)) {
+                historyTimeFrames[historyItem.historyTimeGroup] = mutableSetOf(historyItem)
+            }
+            historyTimeFrames[historyItem.historyTimeGroup]!!.add(historyItem)
+        }
+
+        // Iterate through items, remember timeGroup with selected items, and count the number of
+        // items withing a specific timeGroup, while looking for the next timeGroup. If the number
+        // matches the sorted bucket size, then all items are set for deletion.
+        var previousTimeGroupPosition = 0
+        var previousTimeGroup: HistoryItemTimeGroup? = null
+        val items = snapshot().items
+        for ((index, item) in items.withIndex()) {
+            if (item is HistoryViewItem.TimeGroupHeader) {
+                if (previousTimeGroup != null) {
+                    // Additional subtraction comes from a [HistoryViewItem.TimeGroupSeparatorHistoryItem],
+                    // that is always [HistoryViewItem.TimeGroupHeader]. Except the very first item,
+                    // which is irrelevant in this case.
+                    val timeGroupSize = (index - previousTimeGroupPosition) - 2
+                    if (historyTimeFrames[previousTimeGroup]!!.size == timeGroupSize) {
+                        result.add(previousTimeGroup)
+                    }
+                    previousTimeGroup = null
+                }
+                if (historyTimeFrames.contains(item.timeGroup)) {
+                    previousTimeGroupPosition = index
+                    previousTimeGroup = item.timeGroup
+                }
+            }
+        }
+
+        // No next timeGroup was found, we reached the end of the list. Check if the timeGroup size
+        // matches the bucket size.
+        if (previousTimeGroup != null) {
+            val timeGroupSize = (items.size - previousTimeGroupPosition) - 1
+            if (historyTimeFrames[previousTimeGroup]!!.size == timeGroupSize) {
+                result.add(previousTimeGroup)
+            }
+        }
+        return result
     }
 
     private fun onDeleteClicked(adapterPosition: Int) {

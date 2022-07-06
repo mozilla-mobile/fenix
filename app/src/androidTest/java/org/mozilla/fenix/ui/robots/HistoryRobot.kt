@@ -146,7 +146,7 @@ private fun assertPageUrl(expectedUrl: Uri) = pageUrl()
     .check(matches(withText(Matchers.containsString(expectedUrl.toString()))))
 
 private fun assertDeleteConfirmationMessage() =
-    onView(withText("This will delete all of your browsing data."))
+    onView(withText("Removes history (including history synced from other devices), cookies and other browsing data."))
         .inRoot(isDialog())
         .check(matches(isDisplayed()))
 

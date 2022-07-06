@@ -8,7 +8,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.HistoryListHeaderBinding
-import org.mozilla.fenix.library.history.HistoryInteractor
+import org.mozilla.fenix.library.history.HistoryItemTimeGroup
 import org.mozilla.fenix.library.history.HistoryViewItem
 
 /**
@@ -18,7 +18,7 @@ import org.mozilla.fenix.library.history.HistoryViewItem
  */
 class TimeGroupViewHolder(
     view: View,
-    private val historyInteractor: HistoryInteractor
+    private val onClickListener: (HistoryItemTimeGroup, Boolean) -> Unit
 ) : RecyclerView.ViewHolder(view) {
 
     private val binding = HistoryListHeaderBinding.bind(view)
@@ -26,7 +26,7 @@ class TimeGroupViewHolder(
 
     init {
         binding.root.setOnClickListener {
-            historyInteractor.onTimeGroupClicked(item.timeGroup, item.collapsed)
+            onClickListener.invoke(item.timeGroup, item.collapsed)
         }
     }
 
