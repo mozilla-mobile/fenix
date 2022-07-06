@@ -8,6 +8,7 @@ package org.mozilla.fenix.ui.robots
 
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
@@ -93,10 +94,11 @@ class NavigationToolbarRobot {
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
 
             openEditURLView()
-
+            Log.i("Andi", "enterURLAndEnterToBrowser: Opened edit url view")
             awesomeBar().setText(url.toString())
+            Log.i("Andi", "enterURLAndEnterToBrowser: Set the toolbar text to: $url")
             mDevice.pressEnter()
-
+            Log.i("Andi", "enterURLAndEnterToBrowser: Pressed enter")
             runWithIdleRes(sessionLoadedIdlingResource) {
                 onView(
                     anyOf(

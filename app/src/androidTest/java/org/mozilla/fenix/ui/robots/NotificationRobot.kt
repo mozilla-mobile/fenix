@@ -6,6 +6,7 @@ package org.mozilla.fenix.ui.robots
 
 import android.app.NotificationManager
 import android.content.Context
+import android.util.Log
 import androidx.test.uiautomator.By.text
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
@@ -13,12 +14,11 @@ import androidx.test.uiautomator.Until
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.ext.waitNotNull
-import java.lang.AssertionError
-import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 
 class NotificationRobot {
 
@@ -65,8 +65,11 @@ class NotificationRobot {
     }
 
     fun verifyPrivateTabsNotification() {
+        Log.i("Andi", "verifyPrivateTabsNotification: Waiting for PB notification")
         mDevice.waitNotNull(Until.hasObject(text("Close private tabs")), waitingTime)
+        Log.i("Andi", "verifyPrivateTabsNotification: Waited for PB notification")
         assertPrivateTabsNotification()
+        Log.i("Andi", "verifyPrivateTabsNotification: Asserted PB notification")
     }
 
     fun clickMediaNotificationControlButton(action: String) {
@@ -116,7 +119,9 @@ class NotificationRobot {
 
         fun clickClosePrivateTabsNotification(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
             NotificationRobot().verifySystemNotificationExists("Close private tabs")
+            Log.i("Andi", "clickClosePrivateTabsNotification: Verified system PB notification")
             closePrivateTabsNotification().click()
+            Log.i("Andi", "clickClosePrivateTabsNotification: Clicked PB notification")
 
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()
@@ -131,7 +136,9 @@ fun notificationShade(interact: NotificationRobot.() -> Unit): NotificationRobot
 
 private fun assertPrivateTabsNotification() {
     mDevice.findObject(UiSelector().text("Firefox Preview (Private)")).exists()
+    Log.i("Andi", "assertPrivateTabsNotification: Firefox Preview (Private) exists")
     mDevice.findObject(UiSelector().text("Close private tabs")).exists()
+    Log.i("Andi", "assertPrivateTabsNotification: Close private tabs exists")
 }
 
 private fun closePrivateTabsNotification() =

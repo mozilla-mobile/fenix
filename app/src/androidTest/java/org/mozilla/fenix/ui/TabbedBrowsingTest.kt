@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ui
 
+import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -15,7 +16,6 @@ import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityTestRule
-import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -47,10 +47,6 @@ class TabbedBrowsingTest {
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
     @get:Rule
     val activityTestRule = HomeActivityTestRule()
-
-    @Rule
-    @JvmField
-    val retryTestRule = RetryTestRule(3)
 
     @Before
     fun setUp() {
@@ -266,7 +262,9 @@ class TabbedBrowsingTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            Log.i("Andi", "Test: Opened web page")
             mDevice.openNotification()
+            Log.i("Andi", "Test: Opened the notification")
         }
 
         notificationShade {

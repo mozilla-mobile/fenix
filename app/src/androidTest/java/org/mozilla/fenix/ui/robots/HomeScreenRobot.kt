@@ -7,6 +7,7 @@
 package org.mozilla.fenix.ui.robots
 
 import android.graphics.Bitmap
+import android.util.Log
 import android.widget.EditText
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
@@ -50,13 +51,13 @@ import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
+import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.matchers.hasItem
 import org.mozilla.fenix.helpers.withBitmapDrawable
-import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.ui.util.STRING_ONBOARDING_ACCOUNT_SIGN_IN_HEADER
 import org.mozilla.fenix.ui.util.STRING_ONBOARDING_TOOLBAR_PLACEMENT_HEADER
 import org.mozilla.fenix.ui.util.STRING_ONBOARDING_TRACKING_PROTECTION_HEADER
@@ -269,12 +270,15 @@ class HomeScreenRobot {
         }
 
         fun togglePrivateBrowsingMode() {
+            Log.i("Andi", "togglePrivateBrowsingMode: Waiting for private browsing button")
             mDevice.findObject(UiSelector().resourceId("$packageName:id/privateBrowsingButton"))
                 .waitForExists(
                     waitingTime
                 )
+            Log.i("Andi", "togglePrivateBrowsingMode: Waited for private browsing button")
             privateBrowsingButton()
                 .perform(click())
+            Log.i("Andi", "togglePrivateBrowsingMode: Clicked private browsing button")
         }
 
         fun triggerPrivateBrowsingShortcutPrompt(interact: AddToHomeScreenRobot.() -> Unit): AddToHomeScreenRobot.Transition {
@@ -442,9 +446,12 @@ private fun assertFocusedNavigationToolbar() =
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertHomeScreen() {
+    Log.i("Andi", "assertHomeScreen: Waiting for home layout")
     mDevice.findObject(UiSelector().resourceId("$packageName:id/homeLayout")).waitForExists(waitingTime)
+    Log.i("Andi", "assertHomeScreen: Waited for home layout")
     onView(ViewMatchers.withResourceName("homeLayout"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    Log.i("Andi", "assertHomeScreen: Home layout is visible")
 }
 
 private fun assertHomeMenu() = onView(ViewMatchers.withResourceName("menuButton"))
