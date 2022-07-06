@@ -5,17 +5,17 @@
 package org.mozilla.fenix.library.history
 
 import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.MotionEvent.ACTION_UP
 import android.view.ViewGroup
-import androidx.core.view.isInvisible
+import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.isVisible
-import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import mozilla.components.support.base.feature.UserInteractionHandler
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.ComponentHistoryBinding
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.library.LibraryPageView
 import org.mozilla.fenix.theme.ThemeManager
 
@@ -25,8 +25,9 @@ import org.mozilla.fenix.theme.ThemeManager
 class HistoryView(
     container: ViewGroup,
     val interactor: HistoryInteractor,
-    val onZeroItemsLoaded: () -> Unit,
-    val onEmptyStateChanged: (Boolean) -> Unit
+    val historyViewItemDataSource: HistoryViewItemDataSource,
+    val onEmptyStateChanged: (Boolean) -> Unit,
+    val isSyncedHistory: Boolean
 ) : LibraryPageView(container), UserInteractionHandler {
 
     val binding = ComponentHistoryBinding.inflate(
@@ -38,30 +39,40 @@ class HistoryView(
 
     val historyAdapter = HistoryAdapter(interactor) { isEmpty ->
         onEmptyStateChanged(isEmpty)
-    }.apply {
-        addLoadStateListener {
-            // First call will always have itemCount == 0, but we want to keep adapterItemCount
-            // as null until we can distinguish an empty list from populated, so updateEmptyState()
-            // could work correctly.
-            if (itemCount > 0) {
-                adapterItemCount = itemCount
-            } else if (it.source.refresh is LoadState.NotLoading &&
-                it.append.endOfPaginationReached &&
-                itemCount < 1
-            ) {
-                adapterItemCount = 0
-                onZeroItemsLoaded.invoke()
-            }
-        }
     }
     private val layoutManager = LinearLayoutManager(container.context)
-    private var adapterItemCount: Int? = null
+    private val decorator = StickyHeaderDecoration(historyAdapter)
+    private var stickyHeaderClickDetector: GestureDetectorCompat
 
     init {
+        stickyHeaderClickDetector = GestureDetectorCompat(
+            activity,
+            StickyHeaderGestureListener(
+                recyclerView = binding.historyList,
+                onStickyHeaderClicked = ::onStickyHeaderClicked,
+                stickyHeaderBottom = ::getStickyHeaderBottom,
+            )
+        )
+
         binding.historyList.apply {
             layoutManager = this@HistoryView.layoutManager
             adapter = historyAdapter
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+
+            // Adding sticky header and listener to intercept clicks on it. Sticky header is drawn
+            // on Canvas over recyclerview, it is not a regular view and regular click listener
+            // can not be used.
+            addItemDecoration(decorator)
+            addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                    val consumed = stickyHeaderClickDetector.onTouchEvent(e)
+                    return if (e.action == ACTION_UP) {
+                        consumed
+                    } else {
+                        false
+                    }
+                }
+            })
         }
 
         val primaryTextColor = ThemeManager.resolveAttribute(R.attr.textPrimary, context)
@@ -76,17 +87,15 @@ class HistoryView(
 
         binding.progressBar.isVisible = state.isDeletingItems
         binding.swipeRefresh.isRefreshing = state.mode === HistoryFragmentState.Mode.Syncing
-        binding.swipeRefresh.isEnabled =
-            state.mode === HistoryFragmentState.Mode.Normal || state.mode === HistoryFragmentState.Mode.Syncing
+        binding.swipeRefresh.isEnabled = state.mode === HistoryFragmentState.Mode.Normal ||
+            state.mode === HistoryFragmentState.Mode.Syncing
         mode = state.mode
 
         historyAdapter.updatePendingDeletionItems(state.pendingDeletionItems)
-
-        updateEmptyState(userHasHistory = !state.isEmpty)
-
         historyAdapter.updateMode(state.mode)
-        // We want to update the one item above the upper border of the screen, because
-        // RecyclerView won't redraw it on scroll and onBindViewHolder() method won't be called.
+
+        // We track header positions in the list inside the onBindViewHolder method. Rebinding is
+        // necessary for that to work.
         val first = layoutManager.findFirstVisibleItemPosition() - 1
         val last = layoutManager.findLastVisibleItemPosition() + 1
         historyAdapter.notifyItemRangeChanged(first, last - first)
@@ -95,11 +104,18 @@ class HistoryView(
             interactor.onModeSwitched()
         }
 
+        historyViewItemDataSource.setCollapsedHeaders(state.collapsedHeaders)
+        historyViewItemDataSource.setDeleteItems(state.pendingDeletionItems, state.hiddenHeaders)
+        historyViewItemDataSource.setEmptyState(state.isEmpty)
+
         when (val mode = state.mode) {
             is HistoryFragmentState.Mode.Normal -> {
-                setUiForNormalMode(
+                val title = if (isSyncedHistory) {
+                    context.getString(R.string.history_from_other_devices)
+                } else {
                     context.getString(R.string.library_history)
-                )
+                }
+                setUiForNormalMode(title)
             }
             is HistoryFragmentState.Mode.Editing -> {
                 setUiForSelectingMode(
@@ -112,39 +128,16 @@ class HistoryView(
         }
     }
 
-    private fun updateEmptyState(userHasHistory: Boolean) {
-        binding.historyList.isInvisible = !userHasHistory
-        binding.historyEmptyView.isVisible = !userHasHistory
-        binding.topSpacer.isVisible = !userHasHistory
+    private fun onStickyHeaderClicked(position: Int) {
+        layoutManager.smoothScrollToPosition(
+            binding.historyList,
+            RecyclerView.State(),
+            historyAdapter.getHeaderPositionForItem(position)
+        )
+    }
 
-        with(binding.recentlyClosedNavEmpty) {
-            recentlyClosedNav.setOnClickListener {
-                interactor.onRecentlyClosedClicked()
-            }
-            val numRecentTabs = recentlyClosedNav.context.components.core.store.state.closedTabs.size
-            recentlyClosedTabsDescription.text = String.format(
-                context.getString(
-                    if (numRecentTabs == 1) {
-                        R.string.recently_closed_tab
-                    } else {
-                        R.string.recently_closed_tabs
-                    }
-                ),
-                numRecentTabs
-            )
-            recentlyClosedNav.isVisible = !userHasHistory
-        }
-
-        with(binding.syncedHistoryNavEmpty) {
-            syncedHistoryNav.setOnClickListener {
-                interactor.onSyncedHistoryClicked()
-            }
-            syncedHistoryNav.isVisible = FeatureFlags.showSyncedHistory && !userHasHistory
-        }
-
-        if (!userHasHistory) {
-            binding.historyEmptyView.announceForAccessibility(context.getString(R.string.history_empty_message))
-        }
+    private fun getStickyHeaderBottom(): Float {
+        return decorator.getStickyHeaderBottom()
     }
 
     override fun onBackPressed(): Boolean {

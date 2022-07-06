@@ -13,7 +13,7 @@
         android:id="@+id/top_spacer"
         android:layout_width="match_parent"
         android:layout_height="8dp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <include
         android:id="@+id/recently_closed_nav_empty"
@@ -27,7 +27,7 @@
         android:id="@+id/bottom_spacer"
         android:layout_width="match_parent"
         android:layout_height="32dp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/header_title"

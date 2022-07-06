@@ -28,15 +28,16 @@ interface HistoryInteractor : SelectionInteractor<History> {
     fun onSearch()
 
     /**
-     * Called when delete all is tapped
+     * Called when bin icon is tapped.
      */
-    fun onDeleteAll()
+    fun onDeleteTimeRange()
 
     /**
-     * Called when multiple history items are deleted
+     * Called when single or multiple history items are set to be deleted.
      * @param items the history items to delete
+     * @param headers the time group headers to hide.
      */
-    fun onDeleteSome(items: Set<History>)
+    fun onDeleteSome(items: Set<History>, headers: Set<HistoryItemTimeGroup> = setOf())
 
     /**
      * Called when the user requests a sync of the history
@@ -52,6 +53,11 @@ interface HistoryInteractor : SelectionInteractor<History> {
      * Called when the user clicks on synced history button.
      */
     fun onSyncedHistoryClicked()
+
+    /**
+     * Called when the user clicks on a time group header.
+     */
+    fun onTimeGroupClicked(timeGroup: HistoryItemTimeGroup, collapsed: Boolean)
 }
 
 /**
@@ -86,12 +92,12 @@ class DefaultHistoryInteractor(
         historyController.handleSearch()
     }
 
-    override fun onDeleteAll() {
-        historyController.handleDeleteAll()
+    override fun onDeleteTimeRange() {
+        historyController.handleDeleteTimeRange()
     }
 
-    override fun onDeleteSome(items: Set<History>) {
-        historyController.handleDeleteSome(items)
+    override fun onDeleteSome(items: Set<History>, headers: Set<HistoryItemTimeGroup>) {
+        historyController.handleDeleteSome(items, headers)
     }
 
     override fun onRequestSync() {
@@ -104,5 +110,9 @@ class DefaultHistoryInteractor(
 
     override fun onSyncedHistoryClicked() {
         historyController.handleEnterSyncedHistory()
+    }
+
+    override fun onTimeGroupClicked(timeGroup: HistoryItemTimeGroup, collapsed: Boolean) {
+        historyController.handleCollapsedStateChanged(timeGroup, collapsed)
     }
 }

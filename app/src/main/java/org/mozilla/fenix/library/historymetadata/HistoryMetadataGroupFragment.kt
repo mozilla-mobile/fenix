@@ -194,7 +194,7 @@ class HistoryMetadataGroupFragment :
                 showTabTray()
                 true
             }
-            R.id.history_delete_all -> {
+            R.id.history_delete_time_range -> {
                 interactor.onDeleteAllMenuItem()
                 true
             }
@@ -257,7 +257,7 @@ class HistoryMetadataGroupFragment :
     internal class DeleteAllConfirmationDialogFragment(private val delete: () -> Unit) : DialogFragment() {
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
             AlertDialog.Builder(requireContext())
-                .setMessage(R.string.delete_history_group_prompt_message)
+                .setMessage(R.string.delete_all_history_group_prompt_message)
                 .setNegativeButton(R.string.delete_history_group_prompt_cancel) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }

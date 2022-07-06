@@ -13,12 +13,12 @@ import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.HistoryMetadataAction
 import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.history.DefaultPagedHistoryProvider
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
@@ -30,14 +30,27 @@ interface HistoryController {
     fun handleBackPressed(): Boolean
     fun handleModeSwitched()
     fun handleSearch()
-    fun handleDeleteAll()
-    fun handleDeleteSome(items: Set<History>)
+    /**
+     * Handles a click on a bin icon on [HistoryFragment].
+     */
+    fun handleDeleteTimeRange()
+    /**
+     * Handles removal of history items and time groups. Latter is calculated inside [HistoryAdapter],
+     * because we don't have direct access to the data in [HistoryViewItemDataSource.historyFlow].
+     * So the only way to iterate through the items is the [HistoryAdapter.getItem] method.
+     */
+    fun handleDeleteSome(items: Set<History>, groups: Set<HistoryItemTimeGroup> = setOf())
     fun handleRequestSync()
     fun handleEnterRecentlyClosed()
     /**
-     * Navigates to [org.mozilla.fenix.library.syncedhistory.SyncedHistoryFragment]
+     * Navigates to [HistoryFragment] with isSyncedHistory == true
      */
     fun handleEnterSyncedHistory()
+
+    /**
+     * Handles click on a [org.mozilla.fenix.library.history.viewholders.TimeGroupViewHolder].
+     */
+    fun handleCollapsedStateChanged(timeGroup: HistoryItemTimeGroup, collapsed: Boolean)
 }
 
 @Suppress("TooManyFunctions", "LongParameterList")
@@ -48,7 +61,7 @@ class DefaultHistoryController(
     private val navController: NavController,
     private val scope: CoroutineScope,
     private val openToBrowser: (item: History.Regular) -> Unit,
-    private val displayDeleteAll: () -> Unit,
+    private val displayDeleteTimeRange: () -> Unit,
     private val invalidateOptionsMenu: () -> Unit,
     private val deleteSnackbar: (
         items: Set<History>,
@@ -103,26 +116,28 @@ class DefaultHistoryController(
 
     override fun handleSearch() {
         val directions = if (settings.showUnifiedSearchFeature) {
-            HistoryFragmentDirections.actionGlobalSearchDialog(null)
+            NavGraphDirections.actionGlobalSearchDialog(null)
         } else {
-            HistoryFragmentDirections.actionGlobalHistorySearchDialog()
+            NavGraphDirections.actionGlobalHistorySearchDialog()
         }
 
-        navController.navigateSafe(R.id.historyFragment, directions)
+        navController.navigate(directions)
     }
 
-    override fun handleDeleteAll() {
-        displayDeleteAll.invoke()
+    override fun handleDeleteTimeRange() {
+        displayDeleteTimeRange.invoke()
     }
 
-    override fun handleDeleteSome(items: Set<History>) {
+    override fun handleDeleteSome(items: Set<History>, groups: Set<HistoryItemTimeGroup>) {
         val pendingDeletionItems = items.map { it.toPendingDeletionHistory() }.toSet()
         appStore.dispatch(AppAction.AddPendingDeletionSet(pendingDeletionItems))
+        store.dispatch(HistoryFragmentAction.AddPendingDeletionSet(pendingDeletionItems, groups))
         deleteSnackbar.invoke(items, ::undo, ::delete)
     }
 
     private fun undo(items: Set<History>) {
         val pendingDeletionItems = items.map { it.toPendingDeletionHistory() }.toSet()
+        store.dispatch(HistoryFragmentAction.UndoPendingDeletionSet(pendingDeletionItems))
         appStore.dispatch(AppAction.UndoPendingDeletionSet(pendingDeletionItems))
     }
 
@@ -168,8 +183,10 @@ class DefaultHistoryController(
     }
 
     override fun handleEnterSyncedHistory() {
-        navController.navigate(
-            HistoryFragmentDirections.actionHistoryFragmentToSyncedHistoryFragment()
-        )
+        navController.navigate(HistoryFragmentDirections.actionGlobalSyncedHistoryFragment())
+    }
+
+    override fun handleCollapsedStateChanged(timeGroup: HistoryItemTimeGroup, collapsed: Boolean) {
+        store.dispatch(HistoryFragmentAction.ChangeCollapsedState(timeGroup, collapsed))
     }
 }

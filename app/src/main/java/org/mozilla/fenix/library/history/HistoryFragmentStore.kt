@@ -126,7 +126,28 @@ sealed class HistoryFragmentAction : Action {
      * Updates the set of items marked for removal from the [org.mozilla.fenix.components.AppStore]
      * to the [HistoryFragmentStore], to be hidden from the UI.
      */
-    data class UpdatePendingDeletionItems(val pendingDeletionItems: Set<PendingDeletionHistory>) :
+    data class UpdatePendingDeletionItems(
+        val pendingDeletionItems: Set<PendingDeletionHistory>
+    ) : HistoryFragmentAction()
+
+    /**
+     * Adds a set of items marked for removal to the app state, to be hidden in the UI.
+     */
+    data class AddPendingDeletionSet(
+        val historyItems: Set<PendingDeletionHistory>,
+        val groups: Set<HistoryItemTimeGroup> = setOf()
+    ) : HistoryFragmentAction()
+
+    /**
+     * Removes a set of items, previously marked for removal, to be displayed again in the UI.
+     */
+    data class UndoPendingDeletionSet(val historyItems: Set<PendingDeletionHistory>) :
+        HistoryFragmentAction()
+
+    /**
+     *  An action that updates [HistoryFragmentState.collapsedHeaders].
+     */
+    data class ChangeCollapsedState(val timeGroup: HistoryItemTimeGroup, val collapsed: Boolean) :
         HistoryFragmentAction()
     object EnterDeletionMode : HistoryFragmentAction()
     object ExitDeletionMode : HistoryFragmentAction()
@@ -144,7 +165,9 @@ data class HistoryFragmentState(
     val mode: Mode,
     val pendingDeletionItems: Set<PendingDeletionHistory>,
     val isEmpty: Boolean,
-    val isDeletingItems: Boolean
+    val isDeletingItems: Boolean,
+    val collapsedHeaders: Set<HistoryItemTimeGroup> = setOf(),
+    val hiddenHeaders: Set<HistoryItemTimeGroup> = setOf(),
 ) : State {
     sealed class Mode {
         open val selectedItems = emptySet<History>()
@@ -158,6 +181,7 @@ data class HistoryFragmentState(
 /**
  * The HistoryState Reducer.
  */
+@Suppress("NestedBlockDepth")
 private fun historyStateReducer(
     state: HistoryFragmentState,
     action: HistoryFragmentAction
@@ -178,11 +202,46 @@ private fun historyStateReducer(
         is HistoryFragmentAction.ExitEditMode -> state.copy(mode = HistoryFragmentState.Mode.Normal)
         is HistoryFragmentAction.EnterDeletionMode -> state.copy(isDeletingItems = true)
         is HistoryFragmentAction.ExitDeletionMode -> state.copy(isDeletingItems = false)
-        is HistoryFragmentAction.StartSync -> state.copy(mode = HistoryFragmentState.Mode.Syncing)
+        is HistoryFragmentAction.StartSync -> state.copy(
+            mode = HistoryFragmentState.Mode.Syncing,
+            collapsedHeaders = setOf()
+        )
         is HistoryFragmentAction.FinishSync -> state.copy(mode = HistoryFragmentState.Mode.Normal)
         is HistoryFragmentAction.ChangeEmptyState -> state.copy(isEmpty = action.isEmpty)
         is HistoryFragmentAction.UpdatePendingDeletionItems -> state.copy(
             pendingDeletionItems = action.pendingDeletionItems
         )
+        is HistoryFragmentAction.ChangeCollapsedState -> {
+            state.copy(
+                collapsedHeaders = if (!state.collapsedHeaders.contains(action.timeGroup)) {
+                    state.collapsedHeaders + action.timeGroup
+                } else {
+                    state.collapsedHeaders - action.timeGroup
+                }
+            )
+        }
+        is HistoryFragmentAction.AddPendingDeletionSet -> state.copy(
+            pendingDeletionItems = state.pendingDeletionItems + action.historyItems,
+            hiddenHeaders = state.hiddenHeaders + action.groups
+        )
+        is HistoryFragmentAction.UndoPendingDeletionSet -> {
+            if (state.hiddenHeaders.isNotEmpty()) {
+                val hiddenHeadersToRestore: MutableSet<HistoryItemTimeGroup> = mutableSetOf()
+                action.historyItems.forEach {
+                    if (state.hiddenHeaders.contains(it.timeGroup)) {
+                        hiddenHeadersToRestore.add(it.timeGroup)
+                    }
+                }
+                state.copy(
+                    hiddenHeaders = state.hiddenHeaders - hiddenHeadersToRestore,
+                    pendingDeletionItems = state.pendingDeletionItems - action.historyItems,
+                    isEmpty = false
+                )
+            } else {
+                state.copy(
+                    pendingDeletionItems = state.pendingDeletionItems - action.historyItems
+                )
+            }
+        }
     }
 }
