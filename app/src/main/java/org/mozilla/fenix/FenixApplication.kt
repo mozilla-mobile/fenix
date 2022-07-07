@@ -423,8 +423,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 onNimbusStartupAndUpdate()
             }
         })
-
-        onNimbusStartupAndUpdate()
     }
 
     private fun onNimbusStartupAndUpdate() {
