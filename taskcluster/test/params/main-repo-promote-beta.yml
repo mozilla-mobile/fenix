@@ -50,7 +50,7 @@ pushdate: 0
 pushlog_id: '0'
 release_type: beta
 repository_type: git
-shipping_phase: ship
-target_tasks_method: release
+shipping_phase: promote
+target_tasks_method: promote
 tasks_for: action
 version: 96.0.0-beta.5
