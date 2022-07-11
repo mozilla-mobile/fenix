@@ -22,9 +22,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers.allOf
@@ -32,7 +30,10 @@ import org.hamcrest.Matchers.not
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
+import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
@@ -121,14 +122,28 @@ class ThreeDotMenuMainRobot {
     }
 
     fun verifyAddonAvailableInMainMenu(addonName: String) {
-        onView(withText(addonName))
-            .check(matches(isDisplayed()))
+        for (i in 1..RETRY_COUNT) {
+            try {
+                assertTrue(
+                    "Addon not listed in the Add-ons menu",
+                    mDevice.findObject(UiSelector().text(addonName)).waitForExists(waitingTime)
+                )
+                break
+            } catch (e: AssertionError) {
+                if (i == RETRY_COUNT) {
+                    throw e
+                } else {
+                    mDevice.pressBack()
+                    browserScreen {
+                    }.openThreeDotMenu {
+                        openAddonsSubList()
+                    }
+                }
+            }
+        }
     }
 
     class Transition {
-
-        private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-
         fun openSettings(interact: SettingsRobot.() -> Unit): SettingsRobot.Transition {
             // We require one swipe to display the full size 3-dot menu. On smaller devices
             // such as the Pixel 2, we require two swipes to display the "Settings" menu item
@@ -340,6 +355,8 @@ class ThreeDotMenuMainRobot {
 
         fun openAddonsManagerMenu(interact: SettingsSubMenuAddonsManagerRobot.() -> Unit): SettingsSubMenuAddonsManagerRobot.Transition {
             clickAddonsManagerButton()
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/add_ons_list"))
+                .waitForExists(waitingTimeLong)
 
             SettingsSubMenuAddonsManagerRobot().interact()
             return SettingsSubMenuAddonsManagerRobot.Transition()

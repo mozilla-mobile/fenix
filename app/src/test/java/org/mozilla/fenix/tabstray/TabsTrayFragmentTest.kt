@@ -54,6 +54,7 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.helpers.MockkRetryTestRule
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
+import org.mozilla.fenix.tabstray.browser.InactiveTabsInteractor
 import org.mozilla.fenix.tabstray.ext.showWithTheme
 import org.mozilla.fenix.utils.allowUndo
 
@@ -86,7 +87,8 @@ class TabsTrayFragmentTest {
         fragment._tabsTrayDialogBinding = tabsTrayDialogBinding
         fragment._fabButtonBinding = fabButtonBinding
         every { fragment.context } returns context
-        every { fragment.view } returns view
+        every { fragment.context } returns context
+        every { fragment.viewLifecycleOwner } returns mockk(relaxed = true)
     }
 
     @Test
@@ -99,6 +101,7 @@ class TabsTrayFragmentTest {
             fabButtonBinding.newTabButton.isVisible = true
             every { fragment.context } returns testContext // needed for getString()
             every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } just Runs
+            every { fragment.requireView() } returns view
 
             fragment.showUndoSnackbarForTab(true)
 
@@ -129,6 +132,7 @@ class TabsTrayFragmentTest {
             every { any<LifecycleOwner>().lifecycleScope } returns lifecycleScope
             every { fragment.context } returns testContext // needed for getString()
             every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } just Runs
+            every { fragment.requireView() } returns view
 
             fragment.showUndoSnackbarForTab(true)
 
@@ -160,6 +164,7 @@ class TabsTrayFragmentTest {
             fabButtonBinding.newTabButton.isVisible = true
             every { fragment.context } returns testContext // needed for getString()
             every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } just Runs
+            every { fragment.requireView() } returns view
 
             fragment.showUndoSnackbarForTab(false)
 
@@ -190,6 +195,7 @@ class TabsTrayFragmentTest {
             every { any<LifecycleOwner>().lifecycleScope } returns lifecycleScope
             every { fragment.context } returns testContext // needed for getString()
             every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } just Runs
+            every { fragment.requireView() } returns view
 
             fragment.showUndoSnackbarForTab(false)
 
@@ -218,6 +224,7 @@ class TabsTrayFragmentTest {
         val trayInteractor: TabsTrayInteractor = mockk()
         val browserInteractor: BrowserTrayInteractor = mockk()
         val navigationInteractor: NavigationInteractor = mockk()
+        val inactiveTabsInteractor: InactiveTabsInteractor = mockk()
         val browserStore: BrowserStore = mockk()
         every { context.components.core.store } returns browserStore
 
@@ -228,6 +235,7 @@ class TabsTrayFragmentTest {
             trayInteractor = trayInteractor,
             browserInteractor = browserInteractor,
             navigationInteractor = navigationInteractor,
+            inactiveTabsInteractor = inactiveTabsInteractor,
         )
 
         val adapter = (tabsTrayBinding.tabsTray.adapter as TrayPagerAdapter)

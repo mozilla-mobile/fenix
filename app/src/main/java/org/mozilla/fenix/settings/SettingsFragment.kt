@@ -5,7 +5,6 @@
 package org.mozilla.fenix.settings
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
@@ -18,6 +17,8 @@ import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
@@ -49,11 +50,10 @@ import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.navigateToNotificationsSettings
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.ext.REQUEST_CODE_BROWSER_ROLE
 import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.nimbus.FxNimbus
-import org.mozilla.fenix.nimbus.MessageSurfaceId
+import org.mozilla.fenix.perf.ProfilerViewModel
 import org.mozilla.fenix.settings.account.AccountUiView
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
@@ -64,6 +64,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private val args by navArgs<SettingsFragmentArgs>()
     private lateinit var accountUiView: AccountUiView
+    private val profilerViewModel: ProfilerViewModel by activityViewModels()
 
     private val accountObserver = object : AccountObserver {
         private fun updateAccountUi(profile: Profile? = null) {
@@ -146,25 +147,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     // The setting is not a boolean, not tracked
                 }
             }
+
+        profilerViewModel.getProfilerState().observe(
+            this,
+            Observer<Boolean> {
+                updateProfilerUI(it)
+            }
+        )
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        val preferencesId = getPreferenceLayoutId()
-
-        setPreferencesFromResource(preferencesId, rootKey)
-        updateMakeDefaultBrowserPreference()
+        setPreferencesFromResource(R.xml.preferences, rootKey)
     }
-
-    /**
-     * @return The preference layout to be used depending on flags and existing experiment branches.
-     * Note: Changing Settings screen before experiment is over requires changing all layouts.
-     */
-    private fun getPreferenceLayoutId() =
-        if (isDefaultBrowserExperimentBranch()) {
-            R.xml.preferences_default_browser_experiment
-        } else {
-            R.xml.preferences
-        }
 
     @SuppressLint("RestrictedApi")
     override fun onResume() {
@@ -188,7 +182,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (args.preferenceToScrollTo != null) {
             scrollToPreference(args.preferenceToScrollTo)
         }
-
         // Consider finish of `onResume` to be the point at which we consider this fragment as 'created'.
         creatingFragment = false
     }
@@ -199,14 +192,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun update(shouldUpdateAccountUIState: Boolean) {
+        val settings = requireContext().settings()
+
         val trackingProtectionPreference =
             requirePreference<Preference>(R.string.pref_key_tracking_protection_settings)
-        trackingProtectionPreference.summary = context?.let {
-            if (it.settings().shouldUseTrackingProtection) {
-                getString(R.string.tracking_protection_on)
-            } else {
-                getString(R.string.tracking_protection_off)
-            }
+        trackingProtectionPreference.summary = if (settings.shouldUseTrackingProtection) {
+            getString(R.string.tracking_protection_on)
+        } else {
+            getString(R.string.tracking_protection_off)
         }
 
         val aboutPreference = requirePreference<Preference>(R.string.pref_key_about)
@@ -215,17 +208,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val deleteBrowsingDataPreference =
             requirePreference<Preference>(R.string.pref_key_delete_browsing_data_on_quit_preference)
-        deleteBrowsingDataPreference.summary = context?.let {
-            if (it.settings().shouldDeleteBrowsingDataOnQuit) {
-                getString(R.string.delete_browsing_data_quit_on)
-            } else {
-                getString(R.string.delete_browsing_data_quit_off)
-            }
+        deleteBrowsingDataPreference.summary = if (settings.shouldDeleteBrowsingDataOnQuit) {
+            getString(R.string.delete_browsing_data_quit_on)
+        } else {
+            getString(R.string.delete_browsing_data_quit_off)
         }
 
         val tabSettingsPreference =
             requirePreference<Preference>(R.string.pref_key_tabs)
         tabSettingsPreference.summary = context?.settings()?.getTabTimeoutString()
+
+        val autofillPreference = requirePreference<Preference>(R.string.pref_key_credit_cards)
+        autofillPreference.title = if (settings.addressFeature) {
+            getString(R.string.preferences_autofill)
+        } else {
+            getString(R.string.preferences_credit_cards)
+        }
 
         setupPreferences()
 
@@ -235,8 +233,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 requireComponents.backgroundServices.accountManager.accountProfile()
             )
         }
-
-        updateMakeDefaultBrowserPreference()
     }
 
     @SuppressLint("InflateParams")
@@ -403,6 +399,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
                 null
             }
+            resources.getString(R.string.pref_key_start_profiler) -> {
+                if (profilerViewModel.getProfilerState().value == true) {
+                    SettingsFragmentDirections.actionSettingsFragmentToStopProfilerDialog()
+                } else {
+                    SettingsFragmentDirections.actionSettingsFragmentToStartProfilerDialog()
+                }
+            }
             else -> null
         }
         directions?.let { navigateFromSettings(directions) }
@@ -418,7 +421,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             requirePreference<Preference>(R.string.pref_key_make_default_browser)
         val preferenceOpenLinksInExternalApp =
             findPreference<Preference>(getPreferenceKey(R.string.pref_key_open_links_in_external_app))
-
         if (!Config.channel.isReleased) {
             preferenceLeakCanary?.setOnPreferenceChangeListener { _, newValue ->
                 val isEnabled = newValue == true
@@ -466,6 +468,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         preferenceFxAOverride?.onPreferenceChangeListener = syncFxAOverrideUpdater
         preferenceSyncOverride?.onPreferenceChangeListener = syncFxAOverrideUpdater
 
+        val preferenceStartProfiler =
+            findPreference<Preference>(getPreferenceKey(R.string.pref_key_start_profiler))
+
         with(requireContext().settings()) {
             findPreference<Preference>(
                 getPreferenceKey(R.string.pref_key_nimbus_experiments)
@@ -476,8 +481,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference<Preference>(
                 getPreferenceKey(R.string.pref_key_secret_debug_info)
             )?.isVisible = showSecretDebugMenuThisSession
+            preferenceStartProfiler?.isVisible = showSecretDebugMenuThisSession &&
+                (requireContext().components.core.engine.profiler?.isProfilerActive() != null)
         }
-
         setupAmoCollectionOverridePreference(requireContext().settings())
         setupAllowDomesticChinaFxaServerPreference()
         setupHttpsOnlyPreferences()
@@ -492,23 +498,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         return Preference.OnPreferenceClickListener {
             activity?.openSetDefaultBrowserOption()
             true
-        }
-    }
-
-    @Suppress("DEPRECATION")
-    // https://github.com/mozilla-mobile/fenix/issues/19919
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        // If the user made us the default browser, update the switch
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_BROWSER_ROLE) {
-            updateMakeDefaultBrowserPreference()
-        }
-    }
-
-    private fun updateMakeDefaultBrowserPreference() {
-        if (!isDefaultBrowserExperimentBranch()) {
-            requirePreference<DefaultBrowserPreference>(R.string.pref_key_make_default_browser).updateSwitch()
         }
     }
 
@@ -631,12 +620,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun isDefaultBrowserExperimentBranch(): Boolean =
-        requireContext().settings().isDefaultBrowserMessageLocation(MessageSurfaceId.SETTINGS)
-
     private fun isFirefoxDefaultBrowser(): Boolean {
         val browsers = BrowsersCache.all(requireContext())
         return browsers.isFirefoxDefaultBrowser
+    }
+
+    private fun updateProfilerUI(profilerStatus: Boolean) {
+        if (profilerStatus) {
+            findPreference<Preference>(getPreferenceKey(R.string.pref_key_start_profiler))?.title =
+                resources.getString(R.string.profiler_stop)
+            findPreference<Preference>(getPreferenceKey(R.string.pref_key_start_profiler))?.summary =
+                resources.getString(R.string.profiler_running)
+        } else {
+            findPreference<Preference>(getPreferenceKey(R.string.pref_key_start_profiler))?.title =
+                resources.getString(R.string.preferences_start_profiler)
+            findPreference<Preference>(getPreferenceKey(R.string.pref_key_start_profiler))?.summary = ""
+        }
     }
 
     companion object {

@@ -9,7 +9,6 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.ext.settings
@@ -29,7 +28,7 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  */
 
 class NavigationToolbarTest {
-    private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
 
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
@@ -38,6 +37,7 @@ class NavigationToolbarTest {
 
     @Before
     fun setUp() {
+        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
             start()
@@ -108,17 +108,13 @@ class NavigationToolbarTest {
         }
     }
 
-    @Ignore("Temp disable broken test - see:  https://github.com/mozilla-mobile/fenix/issues/5534")
     @Test
     fun findInPageTest() {
-        val loremIpsumWebPage = TestAssetHelper.getLoremIpsumAsset(mockWebServer)
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 3)
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(loremIpsumWebPage.url) {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
             mDevice.waitForIdle()
-        }
-
-        navigationToolbar {
         }.openThreeDotMenu {
             verifyThreeDotMenuExists()
             verifyFindInPageButton()
@@ -126,19 +122,18 @@ class NavigationToolbarTest {
             verifyFindInPageNextButton()
             verifyFindInPagePrevButton()
             verifyFindInPageCloseButton()
-            enterFindInPageQuery("lab")
+            enterFindInPageQuery("a")
             verifyFindNextInPageResult("1/3")
+            clickFindInPageNextButton()
             verifyFindNextInPageResult("2/3")
+            clickFindInPageNextButton()
             verifyFindNextInPageResult("3/3")
-            verifyFindPrevInPageResult("1/3")
-            verifyFindPrevInPageResult("3/3")
+            clickFindInPagePrevButton()
             verifyFindPrevInPageResult("2/3")
-            enterFindInPageQuery("in")
-            verifyFindNextInPageResult("3/7")
-            verifyFindNextInPageResult("4/7")
-            verifyFindNextInPageResult("5/7")
-            verifyFindNextInPageResult("6/7")
-            verifyFindNextInPageResult("7/7")
+            clickFindInPagePrevButton()
+            verifyFindPrevInPageResult("1/3")
+            enterFindInPageQuery("3")
+            verifyFindNextInPageResult("1/1")
         }.closeFindInPage { }
     }
 }

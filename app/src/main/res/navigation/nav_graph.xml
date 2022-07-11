@@ -300,11 +300,6 @@
         android:name="org.mozilla.fenix.library.syncedhistory.SyncedHistoryFragment"
         android:label="@string/history_from_other_devices"
         tools:layout="@layout/fragment_synced_history">
-        <action
-            android:id="@+id/action_global_history_search_dialog"
-            app:destination="@id/historySearchDialogFragment"
-            app:popUpTo="@id/historySearchDialogFragment"
-            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -664,7 +659,29 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_settingsFragment_to_startProfilerDialog"
+            app:destination="@id/profilerStartDialogFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_settingsFragment_to_stopProfilerDialog"
+            app:destination="@id/profilerStopDialogFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
+    <dialog
+        android:id="@+id/profilerStartDialogFragment"
+        android:name="org.mozilla.fenix.perf.ProfilerStartDialogFragment">
+    </dialog>
+    <dialog
+        android:id="@+id/profilerStopDialogFragment"
+        android:name="org.mozilla.fenix.perf.ProfilerStopDialogFragment">
+    </dialog>
     <fragment
         android:id="@+id/tabsSettingsFragment"
         android:name="org.mozilla.fenix.settings.TabsSettingsFragment"
@@ -740,7 +757,7 @@
     <fragment
         android:id="@+id/turnOnSyncFragment"
         android:name="org.mozilla.fenix.settings.account.TurnOnSyncFragment"
-        android:label="@string/preferences_sync"
+        android:label="@string/preferences_sync_2"
         tools:layout="@layout/fragment_turn_on_sync">
         <argument
             android:name="padSnackbar"
@@ -754,7 +771,7 @@
     <fragment
         android:id="@+id/pairFragment"
         android:name="org.mozilla.fenix.settings.PairFragment"
-        android:label="@string/preferences_sync"
+        android:label="@string/preferences_sync_2"
         tools:layout="@layout/fragment_pair" />
 
     <fragment

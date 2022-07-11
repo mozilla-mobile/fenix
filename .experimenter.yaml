@@ -1,12 +1,15 @@
 ---
-default-browser-message:
-  description: A small feature allowing experiments on the placement of a default browser message.
+engine-settings:
+  description: Contains a set of settings for controlling the web engine configurations.
   hasExposure: true
   exposureDescription: ""
   variables:
-    message-location:
-      type: string
-      description: Where is the message to be put.
+    tabs-prioritization-enabled:
+      type: boolean
+      description: "If true, enables tabs prioritization feature."
+    total-cookie-protection-enabled:
+      type: boolean
+      description: "If true, enables the total cookie protection in all browsing modes."
 homescreen:
   description: The homescreen that the user goes to when they press home or new tab.
   hasExposure: true
@@ -33,8 +36,8 @@ messaging:
       type: string
       description: What should be displayed when a control message is selected.
       enum:
-        - show-none
         - show-next-message
+        - show-none
     styles:
       type: json
       description: "A map of styles to configure message appearance.\n"

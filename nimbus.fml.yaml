@@ -63,13 +63,6 @@ features:
       - channel: developer
         value:
           enabled: true
-  default-browser-message:
-    description: A small feature allowing experiments on the placement of a default browser message.
-    variables:
-      message-location:
-        description: Where is the message to be put.
-        type: Option<MessageSurfaceId>
-        default: null
   messaging:
     description: |
       Configuration for the messaging system.
@@ -125,6 +118,7 @@ features:
             NEVER: "false"
             I_AM_DEFAULT_BROWSER: "is_default_browser_string == 'true'"
             I_AM_NOT_DEFAULT_BROWSER: "is_default_browser_string == 'false'"
+            USER_ESTABLISHED_INSTALL: "number_of_app_launches >=4"
           actions:
             ENABLE_PRIVATE_BROWSING: ://enable_private_browsing
             INSTALL_SEARCH_WIDGET: ://install_search_widget
@@ -164,8 +158,8 @@ features:
             default-browser:
               text: default_browser_experiment_card_text
               action: "MAKE_DEFAULT_BROWSER"
-              trigger: [ "I_AM_NOT_DEFAULT_BROWSER" ]
-              style: "DEFAULT"
+              trigger: [ "I_AM_NOT_DEFAULT_BROWSER","USER_ESTABLISHED_INSTALL" ]
+              style: "PERSISTENT"
               button-label: preferences_set_as_default_browser
 
       - channel: developer
@@ -202,6 +196,17 @@ features:
         value:
           enabled: true
 
+  engine-settings:
+    description: Contains a set of settings for controlling the web engine configurations.
+    variables:
+      tabs-prioritization-enabled:
+        description: If true, enables tabs prioritization feature.
+        type: Boolean
+        default: true
+      total-cookie-protection-enabled:
+        description: If true, enables the total cookie protection in all browsing modes.
+        type: Boolean
+        default: false
 types:
   objects:
     MessageData:

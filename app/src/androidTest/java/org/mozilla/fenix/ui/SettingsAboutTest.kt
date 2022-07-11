@@ -10,15 +10,16 @@ import androidx.test.uiautomator.UiSelector
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
+import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.ui.robots.clickRateButtonGooglePlay
 import org.mozilla.fenix.ui.robots.homeScreen
-import org.mozilla.fenix.ui.robots.mDevice
 
 /**
  *  Tests for verifying the main three dot menu options
@@ -28,7 +29,7 @@ import org.mozilla.fenix.ui.robots.mDevice
 class SettingsAboutTest {
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
 
-    private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
 
     @get:Rule
@@ -40,6 +41,7 @@ class SettingsAboutTest {
 
     @Before
     fun setUp() {
+        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
             start()
@@ -79,6 +81,7 @@ class SettingsAboutTest {
         }
     }
 
+    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/25355")
     @Test
     fun verifyAboutFirefoxPreview() {
         val settings = activityIntentTestRule.activity.settings()

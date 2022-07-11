@@ -466,6 +466,7 @@ dependencies {
     implementation Deps.androidx_appcompat
     implementation Deps.androidx_constraintlayout
     implementation Deps.androidx_coordinatorlayout
+    implementation Deps.google_accompanist_drawablepainter
 
     implementation Deps.sentry
 
@@ -538,6 +539,7 @@ dependencies {
 
     implementation Deps.mozilla_support_extensions
     implementation Deps.mozilla_support_base
+    implementation Deps.mozilla_support_rusterrors
     implementation Deps.mozilla_support_images
     implementation Deps.mozilla_support_ktx
     implementation Deps.mozilla_support_rustlog

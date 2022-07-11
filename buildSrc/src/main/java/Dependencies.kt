@@ -39,6 +39,7 @@ object Versions {
     const val androidx_work = "2.7.1"
     const val androidx_datastore = "1.0.0"
     const val google_material = "1.2.1"
+    const val accompanist_drawablepainter = "0.23.1"
 
     const val mozilla_android_components = AndroidComponents.VERSION
 
@@ -50,7 +51,7 @@ object Versions {
 
     const val mockwebserver = "4.9.0"
     const val uiautomator = "2.2.0"
-    const val robolectric = "4.6.1"
+    const val robolectric = "4.8.1"
 
     const val google_ads_id_version = "16.0.0"
 
@@ -164,6 +165,7 @@ object Deps {
     const val mozilla_lib_publicsuffixlist = "org.mozilla.components:lib-publicsuffixlist:${Versions.mozilla_android_components}"
 
     const val mozilla_support_base = "org.mozilla.components:support-base:${Versions.mozilla_android_components}"
+    const val mozilla_support_rusterrors = "org.mozilla.components:support-rusterrors:${Versions.mozilla_android_components}"
     const val mozilla_support_images = "org.mozilla.components:support-images:${Versions.mozilla_android_components}"
     const val mozilla_support_ktx = "org.mozilla.components:support-ktx:${Versions.mozilla_android_components}"
     const val mozilla_support_rusthttp = "org.mozilla.components:support-rusthttp:${Versions.mozilla_android_components}"
@@ -208,6 +210,8 @@ object Deps {
     const val androidx_work_testing = "androidx.work:work-testing:${Versions.androidx_work}"
     const val androidx_datastore = "androidx.datastore:datastore:${Versions.androidx_datastore}"
     const val google_material = "com.google.android.material:material:${Versions.google_material}"
+    const val google_accompanist_drawablepainter =
+        "com.google.accompanist:accompanist-drawablepainter:${Versions.accompanist_drawablepainter}"
 
     const val protobuf_javalite = "com.google.protobuf:protobuf-javalite:${Versions.protobuf}"
     const val protobuf_compiler = "com.google.protobuf:protoc:${Versions.protobuf}"

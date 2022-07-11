@@ -16,6 +16,7 @@ import mozilla.components.browser.state.search.RegionState
 import mozilla.components.concept.storage.UpdatableAddressFields
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.android.view.showKeyboard
+import org.mozilla.fenix.GleanMetrics.Addresses
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentAddressEditorBinding
 import org.mozilla.fenix.ext.placeCursorAtEnd
@@ -92,7 +93,7 @@ class AddressEditorView(
             organization = "",
             streetAddress = binding.streetAddressInput.text.toString(),
             addressLevel3 = "",
-            addressLevel2 = "",
+            addressLevel2 = binding.cityInput.text.toString(),
             addressLevel1 = binding.subregionDropDown.selectedItem.toString(),
             postalCode = binding.zipInput.text.toString(),
             country = binding.countryDropDown.selectedItem.toString().toCountryCode(),
@@ -102,8 +103,10 @@ class AddressEditorView(
 
         if (address != null) {
             interactor.onUpdateAddress(address.guid, addressFields)
+            Addresses.updated.add()
         } else {
             interactor.onSaveAddress(addressFields)
+            Addresses.saved.add()
         }
     }
 
@@ -115,6 +118,7 @@ class AddressEditorView(
             }
             setPositiveButton(R.string.addressess_confirm_dialog_ok_button) { _, _ ->
                 interactor.onDeleteAddress(guid)
+                Addresses.deleted.add()
             }
             create()
         }.show()

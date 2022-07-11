@@ -9,14 +9,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
-import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
+import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
 import org.hamcrest.CoreMatchers.allOf
 import org.mozilla.fenix.helpers.click
 
@@ -30,7 +28,6 @@ class SettingsSubMenuSitePermissionsRobot {
     fun verifySitePermissionsSubMenuItems() = assertSitePermissionsSubMenuItems()
 
     class Transition {
-        val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())!!
         fun goBack(interact: SettingsRobot.() -> Unit): SettingsRobot.Transition {
             goBackButton().click()
 

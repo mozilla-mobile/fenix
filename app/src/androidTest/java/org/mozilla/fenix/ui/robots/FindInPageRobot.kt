@@ -13,12 +13,11 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
@@ -26,13 +25,12 @@ import org.mozilla.fenix.helpers.ext.waitNotNull
  * Implementation of Robot Pattern for the find in page UI.
  */
 class FindInPageRobot {
-
-    val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())!!
-
     fun verifyFindInPageQuery() = assertFindInPageQuery()!!
     fun verifyFindInPageNextButton() = assertFindInPageNextButton()!!
     fun verifyFindInPagePrevButton() = assertFindInPagePrevButton()!!
     fun verifyFindInPageCloseButton() = assertFindInPageCloseButton()!!
+    fun clickFindInPageNextButton() = findInPageNextButton().click()
+    fun clickFindInPagePrevButton() = findInPagePrevButton().click()
 
     fun verifyFindInPageSearchBarItems() {
         verifyFindInPageQuery()
@@ -51,18 +49,12 @@ class FindInPageRobot {
 
     fun verifyFindNextInPageResult(ratioCounter: String) {
         mDevice.waitNotNull(Until.findObject(By.text(ratioCounter)), waitingTime)
-        val element = mDevice.findObject(By.text(ratioCounter))
         findInPageResult().check(matches(withText((ratioCounter))))
-        findInPageNextButton().click()
-        element.wait(Until.textNotEquals(ratioCounter), waitingTime)
     }
 
     fun verifyFindPrevInPageResult(ratioCounter: String) {
         mDevice.waitNotNull(Until.findObject(By.text(ratioCounter)), waitingTime)
-        val element = mDevice.findObject(By.text(ratioCounter))
         findInPageResult().check(matches(withText((ratioCounter))))
-        findInPagePrevButton().click()
-        element.wait(Until.textNotEquals(ratioCounter), waitingTime)
     }
 
     class Transition {

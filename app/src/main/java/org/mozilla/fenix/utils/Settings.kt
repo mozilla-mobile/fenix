@@ -27,6 +27,8 @@ import mozilla.components.support.ktx.android.content.intPreference
 import mozilla.components.support.ktx.android.content.longPreference
 import mozilla.components.support.ktx.android.content.stringPreference
 import mozilla.components.support.ktx.android.content.stringSetPreference
+import mozilla.components.support.locale.LocaleManager
+import org.mozilla.experiments.nimbus.internal.NimbusFeatureException
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -40,10 +42,8 @@ import org.mozilla.fenix.components.settings.lazyFeatureFlagPreference
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
-import org.mozilla.fenix.nimbus.DefaultBrowserMessage
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.nimbus.HomeScreenSection
-import org.mozilla.fenix.nimbus.MessageSurfaceId
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
 import org.mozilla.fenix.settings.logins.SavedLoginsSortingStrategyMenu
@@ -247,9 +247,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true
     )
 
-    val isMarketingTelemetryEnabled by booleanPreference(
+    var isMarketingTelemetryEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_marketing_telemetry),
-        default = true
+        default = !Config.channel.isMozillaOnline
     )
 
     var isExperimentationEnabled by booleanPreference(
@@ -311,20 +311,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_show_search_engine_shortcuts),
         default = false
     )
-
-    private val defaultBrowserFeature: DefaultBrowserMessage by lazy {
-        FxNimbus.features.defaultBrowserMessage.value()
-    }
-
-    fun isDefaultBrowserMessageLocation(surfaceId: MessageSurfaceId): Boolean =
-        defaultBrowserFeature.messageLocation?.let { experimentalSurfaceId ->
-            if (experimentalSurfaceId == surfaceId) {
-                val browsers = BrowsersCache.all(appContext)
-                !browsers.isFirefoxDefaultBrowser
-            } else {
-                false
-            }
-        } ?: false
 
     var gridTabView by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_tab_view_grid),
@@ -603,6 +589,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection_custom_cookies),
         true
     )
+
+    val enabledTotalCookieProtection: Boolean by lazy {
+        FxNimbus.features.engineSettings.value().totalCookieProtectionEnabled
+    }
 
     val blockCookiesSelectionInCustomTrackingProtection by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection_custom_cookies_select),
@@ -1136,6 +1126,18 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_installed_addons_list),
         default = ""
     )
+    /**
+     *  URLs from the user's history that contain this search param will be hidden
+     * from the top sites. The value is a string with one of the following forms:
+     * - "" (empty) - Disable this feature
+     * - "key" - Search param named "key" with any or no value
+     * - "key=" - Search param named "key" with no value
+     * - "key=value" - Search param named "key" with value "value"
+     */
+    val frecencyFilterQuery by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_frecency_filter_query),
+        default = "mfadid=adm"
+    )
 
     /**
      * Storing number of enabled add-ons for telemetry purposes
@@ -1194,17 +1196,32 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var addressFeature by featureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_show_address_feature),
-        default = false,
-        featureFlag = FeatureFlags.addressesFeature
+        default = true,
+        featureFlag = isAddressFeatureEnabled(appContext)
     )
+
+    /**
+     * Show the Addresses autofill feature.
+     */
+    private fun isAddressFeatureEnabled(context: Context): Boolean {
+        val langTag = LocaleManager.getCurrentLocale(context)
+            ?.toLanguageTag() ?: LocaleManager.getSystemDefault().toLanguageTag()
+        return listOf(
+            "en-US",
+            "en-CA",
+            "fr-CA"
+        ).contains(langTag) && Config.channel.isNightlyOrDebug
+    }
 
     private var isHistoryMetadataEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_history_metadata_feature),
         default = false
     )
 
-    private val homescreenSections: Map<HomeScreenSection, Boolean> by lazy {
+    private val homescreenSections: Map<HomeScreenSection, Boolean> get() = try {
         FxNimbus.features.homescreen.value().sectionsEnabled
+    } catch (e: NimbusFeatureException) {
+        emptyMap()
     }
 
     var historyMetadataUIFeature by lazyFeatureFlagPreference(

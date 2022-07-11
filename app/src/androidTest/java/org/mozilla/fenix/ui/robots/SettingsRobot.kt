@@ -27,10 +27,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withClassName
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.By.textContains
-import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
@@ -47,6 +45,7 @@ import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.hasCousin
 import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
+import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
@@ -67,7 +66,7 @@ class SettingsRobot {
     fun verifySetAsDefaultBrowserButton() = assertSetAsDefaultBrowserButton()
     fun verifyTabsButton() = assertTabsButton()
     fun verifyHomepageButton() = assertHomepageButton()
-    fun verifyCreditCardsButton() = assertCreditCardsButton()
+    fun verifyAutofillButton() = assertAutofillButton()
     fun verifyLanguageButton() = assertLanguageButton()
     fun verifyDefaultBrowserIsDisabled() = assertDefaultBrowserIsDisabled()
     fun clickDefaultBrowserSwitch() = toggleDefaultBrowserSwitch()
@@ -112,9 +111,6 @@ class SettingsRobot {
     fun verifyGooglePlayRedirect() = assertGooglePlayRedirect()
 
     class Transition {
-
-        val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-
         fun goBack(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
             goBackButton().click()
 
@@ -344,8 +340,8 @@ private fun assertSearchButton() {
 private fun assertHomepageButton() =
     onView(withText(R.string.preferences_home_2)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertCreditCardsButton() =
-    onView(withText(R.string.preferences_credit_cards)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+private fun assertAutofillButton() =
+    onView(withText(R.string.preferences_autofill)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertLanguageButton() =
     onView(withText(R.string.preferences_language)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))

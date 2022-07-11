@@ -71,7 +71,7 @@ val defaultTypography = FenixTypography(
     ),
 
     headline8 = TextStyle(
-        fontSize = 12.sp,
+        fontSize = 14.sp,
         fontWeight = FontWeight.W500,
         letterSpacing = 0.4.sp,
         lineHeight = 20.sp,
@@ -144,7 +144,7 @@ private fun TypographyPreview() {
         Pair("Overline", defaultTypography.overline),
     )
 
-    FirefoxTheme(theme = Theme.getTheme(isPrivate = false)) {
+    FirefoxTheme(theme = Theme.getTheme()) {
         LazyColumn(
             modifier = Modifier
                 .background(FirefoxTheme.colors.layer1)

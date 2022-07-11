@@ -14,9 +14,11 @@ object Constants {
         const val YOUTUBE_APP = "com.google.android.youtube"
         const val GMAIL_APP = "com.google.android.gm"
         const val PHONE_APP = "com.android.dialer"
+        const val ANDROID_SETTINGS = "com.android.settings"
     }
 
     const val SPEECH_RECOGNITION = "android.speech.action.RECOGNIZE_SPEECH"
     const val LONG_CLICK_DURATION: Long = 5000
     const val LISTS_MAXSWIPES: Int = 3
+    const val RETRY_COUNT = 3
 }

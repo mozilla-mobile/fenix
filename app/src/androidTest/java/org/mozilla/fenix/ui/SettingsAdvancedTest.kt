@@ -16,7 +16,6 @@ import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_PLAY_SERVICES
 import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
-import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -30,19 +29,16 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
 class SettingsAdvancedTest {
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
 
-    private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
     private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
     val activityIntentTestRule = HomeActivityIntentTestRule()
 
-    @Rule
-    @JvmField
-    val retryTestRule = RetryTestRule(3)
-
     @Before
     fun setUp() {
+        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
             start()

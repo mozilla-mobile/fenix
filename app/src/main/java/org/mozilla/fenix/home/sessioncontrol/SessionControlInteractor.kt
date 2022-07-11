@@ -239,11 +239,6 @@ interface MessageCardInteractor {
      * Called when close button on a [Message] card.
      */
     fun onMessageClosedClicked(message: Message)
-
-    /**
-     * Called when close button on a [Message] card.
-     */
-    fun onMessageDisplayed(message: Message)
 }
 
 /**
@@ -435,8 +430,8 @@ class SessionControlInteractor(
         controller.handleCustomizeHomeTapped()
     }
 
-    override fun onStoryShown(storyShown: PocketStory) {
-        pocketStoriesController.handleStoryShown(storyShown)
+    override fun onStoryShown(storyShown: PocketStory, storyPosition: Pair<Int, Int>) {
+        pocketStoriesController.handleStoryShown(storyShown, storyPosition)
     }
 
     override fun onStoriesShown(storiesShown: List<PocketStory>) {
@@ -469,9 +464,5 @@ class SessionControlInteractor(
 
     override fun onMessageClosedClicked(message: Message) {
         controller.handleMessageClosed(message)
-    }
-
-    override fun onMessageDisplayed(message: Message) {
-        controller.handleMessageDisplayed(message)
     }
 }

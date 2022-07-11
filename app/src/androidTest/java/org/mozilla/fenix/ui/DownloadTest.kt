@@ -4,14 +4,19 @@
 
 package org.mozilla.fenix.ui
 
+import android.os.Build
 import androidx.core.net.toUri
+import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.runner.permission.PermissionRequester
 import androidx.test.uiautomator.UiDevice
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
+import org.junit.rules.TestWatcher
+import org.junit.runner.Description
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
@@ -30,7 +35,7 @@ import org.mozilla.fenix.ui.robots.notificationShade
  *  - Verifies managing downloads inside the Downloads listing.
  **/
 class DownloadTest {
-    private val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    private lateinit var mDevice: UiDevice
     private val featureSettingsHelper = FeatureSettingsHelper()
     /* Remote test page managed by Mozilla Mobile QA team at https://github.com/mozilla-mobile/testapp */
     private val downloadTestPage = "https://storage.googleapis.com/mobile_test_assets/test_app/downloads.html"
@@ -39,8 +44,25 @@ class DownloadTest {
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule()
 
+    @get: Rule
+    // Making sure to grant storage access for this test running on API 28
+    var watcher: TestRule = object : TestWatcher() {
+        override fun starting(description: Description) {
+            if (description.methodName == "pauseResumeCancelDownloadTest") {
+                PermissionRequester().apply {
+                    addPermissions(
+                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE
+                    )
+                    requestPermissions()
+                }
+            }
+        }
+    }
+
     @Before
     fun setUp() {
+        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         // disabling the jump-back-in pop-up that interferes with the tests.
         featureSettingsHelper.setJumpBackCFREnabled(false)
         // disabling the PWA CFR on 3rd visit
@@ -112,7 +134,7 @@ class DownloadTest {
         }
     }
 
-    @Ignore("Intermittent: https://github.com/mozilla-mobile/fenix/issues/23434")
+    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @SmokeTest
     @Test
     fun pauseResumeCancelDownloadTest() {
@@ -140,7 +162,6 @@ class DownloadTest {
         }
     }
 
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/17485")
     @SmokeTest
     @Test
         /* Verifies downloads in the Downloads Menu:

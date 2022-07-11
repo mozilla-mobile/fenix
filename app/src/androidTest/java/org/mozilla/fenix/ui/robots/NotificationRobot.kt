@@ -15,8 +15,10 @@ import org.junit.Assert.assertTrue
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appName
+import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import java.lang.AssertionError
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 
 class NotificationRobot {
 
@@ -63,8 +65,8 @@ class NotificationRobot {
     }
 
     fun verifyPrivateTabsNotification() {
-        mDevice.waitNotNull(Until.hasObject(text("Close private tabs")), waitingTime)
-        assertPrivateTabsNotification()
+        verifySystemNotificationExists("$appName (Private)")
+        verifySystemNotificationExists("Close private tabs")
     }
 
     fun clickMediaNotificationControlButton(action: String) {
@@ -73,9 +75,13 @@ class NotificationRobot {
     }
 
     fun clickDownloadNotificationControlButton(action: String) {
-        assertTrue(downloadSystemNotificationButton(action).waitForExists(waitingTime))
-        downloadSystemNotificationButton(action).click()
+        try {
+            assertTrue(downloadSystemNotificationButton(action).waitForExists(waitingTimeShort))
+        } catch (e: AssertionError) {
+            notificationTray().flingToEnd(1)
+        }
 
+        downloadSystemNotificationButton(action).click()
         // API 30 Bug? Sometimes a click doesn't register, try again
         try {
             assertTrue(downloadSystemNotificationButton(action).waitUntilGone(waitingTime))
@@ -86,10 +92,6 @@ class NotificationRobot {
 
     fun verifyMediaSystemNotificationButtonState(action: String) {
         assertTrue(mediaSystemNotificationButton(action).waitForExists(waitingTime))
-    }
-
-    fun verifyDownloadSystemNotificationButtonState(action: String) {
-        assertTrue(downloadSystemNotificationButton(action).waitForExists(waitingTime))
     }
 
     fun expandNotificationMessage() {
@@ -113,7 +115,14 @@ class NotificationRobot {
     class Transition {
 
         fun clickClosePrivateTabsNotification(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
-            NotificationRobot().verifySystemNotificationExists("Close private tabs")
+            try {
+                assertTrue(
+                    closePrivateTabsNotification().exists()
+                )
+            } catch (e: AssertionError) {
+                notificationTray().flingToEnd(1)
+            }
+
             closePrivateTabsNotification().click()
 
             HomeScreenRobot().interact()
@@ -125,11 +134,6 @@ class NotificationRobot {
 fun notificationShade(interact: NotificationRobot.() -> Unit): NotificationRobot.Transition {
     NotificationRobot().interact()
     return NotificationRobot.Transition()
-}
-
-private fun assertPrivateTabsNotification() {
-    mDevice.findObject(UiSelector().text("Firefox Preview (Private)")).exists()
-    mDevice.findObject(UiSelector().text("Close private tabs")).exists()
 }
 
 private fun closePrivateTabsNotification() =

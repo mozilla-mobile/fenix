@@ -14,7 +14,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import android.view.View
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.test.espresso.Espresso
@@ -37,7 +36,6 @@ import androidx.test.uiautomator.UiObjectNotFoundException
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
-import java.util.regex.Pattern
 import junit.framework.AssertionFailedError
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.support.ktx.android.content.appName
@@ -45,6 +43,7 @@ import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.Matcher
 import org.junit.Assert
+import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_APPS_PHOTOS
@@ -53,14 +52,15 @@ import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.idlingresource.NetworkConnectionIdlingResource
 import org.mozilla.fenix.ui.robots.BrowserRobot
-import org.mozilla.fenix.ui.robots.mDevice
 import org.mozilla.fenix.utils.IntentUtils
+import java.util.regex.Pattern
 
 object TestHelper {
 
     val appContext: Context = InstrumentationRegistry.getInstrumentation().targetContext
-    val packageName: String = appContext.packageName
     val appName = appContext.appName
+    var mDevice: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    val packageName: String = appContext.packageName
 
     fun scrollToElementByText(text: String): UiScrollable {
         val appView = UiScrollable(UiSelector().scrollable(true))
@@ -130,22 +130,24 @@ object TestHelper {
     // Remove test file from Google Photos (AOSP) on Firebase
     fun deleteDownloadFromStorage() {
         val deleteButton = mDevice.findObject(UiSelector().resourceId("$GOOGLE_APPS_PHOTOS:id/trash"))
+        deleteButton.waitForExists(waitingTime)
         deleteButton.click()
 
         // Sometimes there's a secondary confirmation
         try {
             val deleteConfirm = mDevice.findObject(UiSelector().text("Got it"))
+            deleteConfirm.waitForExists(waitingTime)
             deleteConfirm.click()
         } catch (e: UiObjectNotFoundException) {
             // Do nothing
         }
 
         val trashIt = mDevice.findObject(UiSelector().resourceId("$GOOGLE_APPS_PHOTOS:id/move_to_trash"))
+        trashIt.waitForExists(waitingTime)
         trashIt.click()
     }
 
     fun setNetworkEnabled(enabled: Boolean) {
-        val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         val networkDisconnectedIdlingResource = NetworkConnectionIdlingResource(false)
         val networkConnectedIdlingResource = NetworkConnectionIdlingResource(true)
 
@@ -219,7 +221,6 @@ object TestHelper {
                 e.printStackTrace()
             }
         } else {
-            val mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
             mDevice.waitNotNull(
                 Until.findObject(By.text("Could not open file")),
                 waitingTime
@@ -227,14 +228,13 @@ object TestHelper {
         }
     }
 
-    fun assertNativeAppOpens(appPackageName: String, url: String) {
+    fun assertNativeAppOpens(appPackageName: String, url: String = "") {
         if (isPackageInstalled(appPackageName)) {
-            try {
-                intended(toPackage(appPackageName))
-            } catch (e: AssertionFailedError) {
-                e.printStackTrace()
-                Log.e("TestLog", "intent to $appPackageName not sent or doesn't match")
-            }
+            mDevice.waitForIdle(waitingTimeShort)
+            assertTrue(
+                mDevice.findObject(UiSelector().packageName(appPackageName))
+                    .waitForExists(waitingTime)
+            )
         } else {
             BrowserRobot().verifyUrl(url)
         }
@@ -274,9 +274,8 @@ object TestHelper {
     }
 
     fun grantPermission() {
-        val instrumentation = InstrumentationRegistry.getInstrumentation()
         if (Build.VERSION.SDK_INT >= 23) {
-            UiDevice.getInstance(instrumentation).findObject(
+            mDevice.findObject(
                 By.text(
                     when (Build.VERSION.SDK_INT) {
                         Build.VERSION_CODES.R -> Pattern.compile(
@@ -290,9 +289,8 @@ object TestHelper {
     }
 
     fun denyPermission() {
-        val instrumentation = InstrumentationRegistry.getInstrumentation()
         if (Build.VERSION.SDK_INT >= 23) {
-            UiDevice.getInstance(instrumentation).findObject(
+            mDevice.findObject(
                 By.text(
                     when (Build.VERSION.SDK_INT) {
                         Build.VERSION_CODES.R -> Pattern.compile(
