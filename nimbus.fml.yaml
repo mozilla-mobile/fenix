@@ -63,13 +63,6 @@ features:
       - channel: developer
         value:
           enabled: true
-  default-browser-message:
-    description: A small feature allowing experiments on the placement of a default browser message.
-    variables:
-      message-location:
-        description: Where is the message to be put.
-        type: Option<MessageSurfaceId>
-        default: null
   messaging:
     description: |
       Configuration for the messaging system.
@@ -166,7 +159,7 @@ features:
               text: default_browser_experiment_card_text
               action: "MAKE_DEFAULT_BROWSER"
               trigger: [ "I_AM_NOT_DEFAULT_BROWSER","USER_ESTABLISHED_INSTALL" ]
-              style: "DEFAULT"
+              style: "PERSISTENT"
               button-label: preferences_set_as_default_browser
 
       - channel: developer
