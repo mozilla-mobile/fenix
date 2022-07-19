@@ -39,7 +39,6 @@ pull_request_rules:
             - head=import-l10n
             - status-success=complete-pr
           - and:
-            - author=github-actions[bot]
             - base~=^releases[_/].*
             - head~=^automation/sync-strings-\d+
             - status-success=complete-push
