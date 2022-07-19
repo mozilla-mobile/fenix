@@ -539,7 +539,7 @@
     <!-- Header of the Turn on Sync preference view -->
     <string moz:RemovedIn="104" name="preferences_sync" tools:ignore="UnusedResources">Sync inschakelen</string>
     <!-- Header of the Sync and save your data preference view -->
-    <string name="preferences_sync_2">Synchroniseren en uw gegevens opslaan</string>
+    <string name="preferences_sync_2">Uw gegevens synchroniseren en opslaan</string>
     <!-- Preference for reconnecting to FxA sync -->
     <string name="preferences_sync_sign_in_to_reconnect">Aanmelden om opnieuw te verbinden</string>
     <!-- Preference for removing FxA account -->
@@ -794,6 +794,13 @@
     <string name="history_synced_from_other_devices">Gesynchroniseerd vanaf andere apparaten</string>
     <!-- The page title for browsing history coming from other devices. -->
     <string name="history_from_other_devices">Vanaf andere apparaten</string>
+
+    <!-- The synced history sign in dialog message -->
+    <string name="history_sign_in_message">Meld u aan om van uw andere apparaten gesynchroniseerde geschiedenis te bekijken.</string>
+    <!-- The synced history sign in dialog button text -->
+    <string name="history_sign_in_button">Aanmelden</string>
+    <!-- The synced history sign in dialog create a new account link -->
+    <string name="history_sign_in_create_account"><![CDATA[<u>Of maak een Firefox-account om te beginnen met synchroniseren</u>]]></string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1859,4 +1866,5 @@
     <string name="experiments_snackbar">Schakel telemetrie in om gegevens te verzenden.</string>
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">Naar Instellingen</string>
+    <string name="firefox_suggest_header">Firefox Suggesties</string>
 </resources>
