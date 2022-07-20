@@ -191,6 +191,24 @@ class BrowserRobot {
     }
 
     fun verifyNotificationDotOnMainMenu() {
+        for (i in 1..RETRY_COUNT) {
+            try {
+                assertTrue(
+                    mDevice.findObject(UiSelector().resourceId("$packageName:id/notification_dot"))
+                        .waitForExists(waitingTime)
+                )
+
+                break
+            } catch (e: AssertionError) {
+                Log.e("TestLog", "Main menu dot isn't displayed ${e.localizedMessage}")
+
+                navigationToolbar {
+                }.openThreeDotMenu {
+                }.refreshPage {
+                }
+            }
+        }
+
         assertTrue(
             mDevice.findObject(UiSelector().resourceId("$packageName:id/notification_dot"))
                 .waitForExists(waitingTime)
