@@ -1,7 +1,9 @@
 package org.mozilla.fenix.ui
 
 import android.Manifest
+import android.os.Build
 import androidx.core.net.toUri
+import androidx.test.filters.SdkSuppress
 import androidx.test.rule.GrantPermissionRule
 import org.junit.After
 import org.junit.Before
@@ -34,6 +36,7 @@ class PwaTest {
 
     @get:Rule
     val grantPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(
+        Manifest.permission.CAMERA,
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
@@ -139,6 +142,27 @@ class PwaTest {
         browserScreen {
         }.clickOpenNotificationButton {
             verifyNotificationsPermissionPrompt(testPageSubstring)
+        }
+    }
+
+    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
+    @SmokeTest
+    @Test
+    fun cameraPermissionsPWATest() {
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(testPage.toUri()) {
+            waitForPageToLoad()
+            verifyNotificationDotOnMainMenu()
+        }.openThreeDotMenu {
+        }.clickInstall {
+            clickAddAutomaticallyButton()
+        }.openHomeScreenShortcut(shortcutTitle) {
+        }
+
+        browserScreen {
+        }.clickStartCameraButton {
+            verifyCameraPermissionPrompt(testPageSubstring)
         }
     }
 }

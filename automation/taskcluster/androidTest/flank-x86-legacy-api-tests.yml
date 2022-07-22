@@ -51,6 +51,7 @@ gcloud:
     - class org.mozilla.fenix.ui.SitePermissionsTest#rememberBlockCameraPermissionChoiceTest
     - class org.mozilla.fenix.ui.SitePermissionsTest#rememberBlockMicrophonePermissionChoiceTest
     - class org.mozilla.fenix.ui.SmokeTest#redirectToAppPermissionsSystemSettingsTest
+    - class org.mozilla.fenix.ui.PwaTest#cameraPermissionsPWATest
 
   device:
     - model: Pixel2
