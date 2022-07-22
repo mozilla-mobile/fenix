@@ -16,9 +16,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
+import androidx.compose.material.DismissDirection.EndToStart
+import androidx.compose.material.DismissDirection.StartToEnd
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
+import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.createTab
 import org.mozilla.fenix.R
+import org.mozilla.fenix.compose.DismissedTabBackground
 import org.mozilla.fenix.compose.ThumbnailCard
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.theme.FirefoxTheme
@@ -51,7 +58,7 @@ import org.mozilla.fenix.theme.Theme
  * @param onClick Callback to handle when item is clicked.
  * @param onLongClick Callback to handle when item is long clicked.
  */
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 @Suppress("MagicNumber")
 fun TabListItem(
@@ -65,61 +72,77 @@ fun TabListItem(
     onLongClick: (tab: TabSessionState) -> Unit,
 ) {
 
+    val dismissState = rememberDismissState()
+
     val contentBackgroundColor = if (isSelected) {
         FirefoxTheme.colors.layerAccentNonOpaque
     } else {
         FirefoxTheme.colors.layer1
     }
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(contentBackgroundColor)
-            .combinedClickable(
-                onLongClick = { onLongClick(tab) },
-                onClick = { onClick(tab) }
-            )
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Thumbnail(
-            tab = tab,
-            multiSelectionEnabled = multiSelectionEnabled,
-            isSelected = multiSelectionSelected,
-            onMediaIconClicked = { onMediaClick(it) }
-        )
 
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .weight(weight = 1f)
-        ) {
-            Text(
-                text = tab.content.title,
-                fontSize = 16.sp,
-                maxLines = 2,
-                color = FirefoxTheme.colors.textPrimary,
-            )
+    if (dismissState.isDismissed(EndToStart) || dismissState.isDismissed(StartToEnd)) {
+        onCloseClick(tab)
+    }
 
-            Text(
-                text = tab.content.url.toShortUrl(),
-                fontSize = 12.sp,
-                color = FirefoxTheme.colors.textSecondary,
-            )
+    SwipeToDismiss(
+        state = dismissState,
+        dismissThresholds = { FractionalThreshold(1.0f) },
+        background = {
+            DismissedTabBackground(dismissState.dismissDirection)
         }
-
-        if (!multiSelectionEnabled) {
-            IconButton(
-                onClick = { onCloseClick(tab) },
-                modifier = Modifier.size(size = 24.dp),
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.mozac_ic_close),
-                    contentDescription = stringResource(
-                        id = R.string.close_tab_title,
-                        tab.content.title
-                    ),
-                    tint = FirefoxTheme.colors.iconPrimary
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(FirefoxTheme.colors.layer1)
+                .background(contentBackgroundColor)
+                .combinedClickable(
+                    onLongClick = { onLongClick(tab) },
+                    onClick = { onClick(tab) }
                 )
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Thumbnail(
+                tab = tab,
+                multiSelectionEnabled = multiSelectionEnabled,
+                isSelected = multiSelectionSelected,
+                onMediaIconClicked = { onMediaClick(it) }
+            )
+
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .weight(weight = 1f)
+            ) {
+                Text(
+                    text = tab.content.title,
+                    fontSize = 16.sp,
+                    maxLines = 2,
+                    color = FirefoxTheme.colors.textPrimary,
+                )
+
+                Text(
+                    text = tab.content.url.toShortUrl(),
+                    fontSize = 12.sp,
+                    color = FirefoxTheme.colors.textSecondary,
+                )
+            }
+
+            if (!multiSelectionEnabled) {
+                IconButton(
+                    onClick = { onCloseClick(tab) },
+                    modifier = Modifier.size(size = 24.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.mozac_ic_close),
+                        contentDescription = stringResource(
+                            id = R.string.close_tab_title,
+                            tab.content.title
+                        ),
+                        tint = FirefoxTheme.colors.iconPrimary
+                    )
+                }
             }
         }
     }

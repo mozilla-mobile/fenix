@@ -25,9 +25,15 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.DismissDirection.EndToStart
+import androidx.compose.material.DismissDirection.StartToEnd
 import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Icon
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
+import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +48,7 @@ import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.core.text.BidiFormatter
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.createTab
@@ -65,7 +72,7 @@ import org.mozilla.fenix.theme.FirefoxTheme
  * @param onClick Callback to handle when item is clicked.
  * @param onLongClick Callback to handle when item is long clicked.
  */
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 @Suppress("MagicNumber", "LongParameterList", "LongMethod")
 fun TabGridItem(
@@ -88,95 +95,113 @@ fun TabGridItem(
         Modifier
     }
 
-    Box(
-        modifier = Modifier
-            .wrapContentHeight()
-            .wrapContentWidth()
-    ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(202.dp)
-                .padding(4.dp)
-                .then(tabBorderModifier)
-                .padding(4.dp)
-                .combinedClickable(
-                    onLongClick = { onLongClick(tab) },
-                    onClick = { onClick(tab) }
-                ),
-            elevation = 0.dp,
-            shape = RoundedCornerShape(dimensionResource(id = R.dimen.tab_tray_grid_item_border_radius)),
-            border = BorderStroke(1.dp, FirefoxTheme.colors.borderPrimary)
-        ) {
-            Column(
-                modifier = Modifier.background(FirefoxTheme.colors.layer2)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                ) {
-                    Favicon(
-                        url = tab.content.url,
-                        size = 16.dp,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 8.dp)
-                    )
+    val dismissState = rememberDismissState()
 
-                    HorizontalFadingEdgeBox(
+    if (dismissState.isDismissed(EndToStart) || dismissState.isDismissed(StartToEnd)) {
+        onCloseClick(tab)
+    }
+
+    SwipeToDismiss(
+        state = dismissState,
+        dismissThresholds = { FractionalThreshold(1.0f) },
+        background = {},
+        modifier = Modifier.zIndex(
+            if (dismissState.dismissDirection == null) {
+                0f
+            } else {
+                1f
+            }
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .wrapContentHeight()
+                .wrapContentWidth()
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(202.dp)
+                    .padding(4.dp)
+                    .then(tabBorderModifier)
+                    .padding(4.dp)
+                    .combinedClickable(
+                        onLongClick = { onLongClick(tab) },
+                        onClick = { onClick(tab) }
+                    ),
+                elevation = 0.dp,
+                shape = RoundedCornerShape(dimensionResource(id = R.dimen.tab_tray_grid_item_border_radius)),
+                border = BorderStroke(1.dp, FirefoxTheme.colors.borderPrimary)
+            ) {
+                Column(
+                    modifier = Modifier.background(FirefoxTheme.colors.layer2)
+                ) {
+                    Row(
                         modifier = Modifier
-                            .weight(1f)
+                            .fillMaxWidth()
                             .wrapContentHeight()
-                            .requiredHeight(30.dp)
-                            .padding(7.dp, 5.dp)
-                            .clipToBounds(),
-                        backgroundColor = FirefoxTheme.colors.layer2,
-                        isContentRtl = BidiFormatter.getInstance().isRtl(tab.content.title)
                     ) {
-                        Text(
-                            text = tab.content.title,
-                            fontSize = 14.sp,
-                            maxLines = 1,
-                            softWrap = false,
-                            style = TextStyle(
-                                color = FirefoxTheme.colors.textPrimary,
-                                textDirection = TextDirection.Content
+                        Favicon(
+                            url = tab.content.url,
+                            size = 16.dp,
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .padding(start = 8.dp)
+                        )
+
+                        HorizontalFadingEdgeBox(
+                            modifier = Modifier
+                                .weight(1f)
+                                .wrapContentHeight()
+                                .requiredHeight(30.dp)
+                                .padding(7.dp, 5.dp)
+                                .clipToBounds(),
+                            backgroundColor = FirefoxTheme.colors.layer2,
+                            isContentRtl = BidiFormatter.getInstance().isRtl(tab.content.title)
+                        ) {
+                            Text(
+                                text = tab.content.title,
+                                fontSize = 14.sp,
+                                maxLines = 1,
+                                softWrap = false,
+                                style = TextStyle(
+                                    color = FirefoxTheme.colors.textPrimary,
+                                    textDirection = TextDirection.Content
+                                )
                             )
+                        }
+
+                        Icon(
+                            painter = painterResource(id = R.drawable.mozac_ic_close),
+                            contentDescription = stringResource(id = R.string.close_tab),
+                            tint = FirefoxTheme.colors.iconPrimary,
+                            modifier = Modifier
+                                .clickable { onCloseClick(tab) }
+                                .size(24.dp)
+                                .align(Alignment.CenterVertically)
+
                         )
                     }
 
-                    Icon(
-                        painter = painterResource(id = R.drawable.mozac_ic_close),
-                        contentDescription = stringResource(id = R.string.close_tab),
-                        tint = FirefoxTheme.colors.iconPrimary,
-                        modifier = Modifier
-                            .clickable { onCloseClick(tab) }
-                            .size(24.dp)
-                            .align(Alignment.CenterVertically)
+                    Divider(
+                        color = FirefoxTheme.colors.borderPrimary,
+                        thickness = 1.dp
+                    )
 
+                    Thumbnail(
+                        tab = tab,
+                        multiSelectionSelected = multiSelectionSelected,
                     )
                 }
+            }
 
-                Divider(
-                    color = FirefoxTheme.colors.borderPrimary,
-                    thickness = 1.dp
-                )
-
-                Thumbnail(
+            if (!multiSelectionEnabled) {
+                MediaImage(
                     tab = tab,
-                    multiSelectionSelected = multiSelectionSelected,
+                    onMediaIconClicked = { onMediaClick(tab) },
+                    modifier = Modifier.align(Alignment.TopStart)
                 )
             }
-        }
-
-        if (!multiSelectionEnabled) {
-            MediaImage(
-                tab = tab,
-                onMediaIconClicked = { onMediaClick(tab) },
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-            )
         }
     }
 }

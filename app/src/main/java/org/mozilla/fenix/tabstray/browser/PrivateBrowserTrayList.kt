@@ -20,15 +20,6 @@ class PrivateBrowserTrayList @JvmOverloads constructor(
         PrivateTabsBinding(tabsTrayStore, context.components.core.store, adapter as BrowserTabsAdapter)
     }
 
-    private val touchHelper by lazy {
-        TabsTouchHelper(
-            interactionDelegate = (adapter as BrowserTabsAdapter).delegate,
-            onViewHolderTouched = { swipeToDelete.isSwipeable },
-            onViewHolderDraw = { context.components.settings.gridTabView.not() },
-            featureNameHolder = (adapter as BrowserTabsAdapter)
-        )
-    }
-
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 
@@ -36,8 +27,6 @@ class PrivateBrowserTrayList @JvmOverloads constructor(
         swipeToDelete.start()
 
         adapter?.onAttachedToRecyclerView(this)
-
-        touchHelper.attachToRecyclerView(this)
     }
 
     @VisibleForTesting(otherwise = PACKAGE_PRIVATE)
@@ -49,7 +38,5 @@ class PrivateBrowserTrayList @JvmOverloads constructor(
 
         // Notify the adapter that it is released from the view preemptively.
         adapter?.onDetachedFromRecyclerView(this)
-
-        touchHelper.attachToRecyclerView(null)
     }
 }

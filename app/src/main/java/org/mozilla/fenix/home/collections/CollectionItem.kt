@@ -78,7 +78,7 @@ fun CollectionItem(
         background = {
             DismissedTabBackground(
                 dismissDirection = dismissState.dismissDirection,
-                shape =  if (isLastInCollection) BOTTOM_TAB_SHAPE else MIDDLE_TAB_SHAPE,
+                shape = if (isLastInCollection) BOTTOM_TAB_SHAPE else MIDDLE_TAB_SHAPE,
             )
         }
     ) {
