@@ -1118,7 +1118,7 @@
     <string name="delete_browsing_data_on_quit_action">Quit</string>
 
     <!-- Dialog message to the user asking to delete browsing data. -->
-    <string moz:removedIn="105" name="delete_browsing_data_prompt_message" tools:ignore="UnusedResources">This will delete all of your browsing data.</string>
+    <string moz:removedIn="104" name="delete_browsing_data_prompt_message" tools:ignore="UnusedResources">This will delete all of your browsing data.</string>
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">Time range to delete</string>
     <!-- Body text of a delete browsing data dialog. -->
@@ -1142,7 +1142,7 @@
     <string name="deleting_browsing_data_in_progress">Deleting browsing data&#8230;</string>
 
     <!-- Dialog message to the user asking to delete all history items inside the opened group. Parameter will be replaced by a history group name. -->
-    <string name="delete_all_history_group_prompt_message">Delete all sites in \"%s\"</string>
+    <string name="delete_all_history_group_prompt_message">Delete all sites in “%s”</string>
     <!-- Text for the cancel button for the history group deletion dialog -->
     <string name="delete_history_group_prompt_cancel">Cancel</string>
     <!-- Text for the allow button for the history group dialog -->
@@ -1542,8 +1542,6 @@
     <string name="addresses_edit_address">Edit address</string>
     <!-- Title of the "Manage addresses" screen -->
     <string name="addresses_manage_addresses">Manage addresses</string>
-    <!-- The header for the full name of an address -->
-    <string name="addresses_full_name" moz:removedIn="102" tools:ignore="UnusedResources">Full Name</string>
     <!-- The header for the first name of an address -->
     <string name="addresses_first_name">First Name</string>
     <!-- The header for the middle name of an address -->
