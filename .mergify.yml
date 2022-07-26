@@ -4,10 +4,12 @@ queue_rules:
       - or:
         - status-success=complete-pr
         - and:
-          # For more context, see "L10N - Auto Merge" rule down below
+          # For more context, see "Auto Merge" rules down below
           - base~=^releases[_/].*
-          - head~=^automation/sync-strings-\d+
           - status-success=complete-push
+          - or:
+            - head~=^automation/sync-strings-\d+
+            - head~=^relbot/fenix-\d+
 pull_request_rules:
   - name: Resolve conflict
     conditions:
@@ -15,15 +17,26 @@ pull_request_rules:
     actions:
         comment:
           message: This pull request has conflicts when rebasing. Could you fix it @{{author}}? 🙏
-  - name: MickeyMoz - Auto Merge
+  - name: Android-Components bump - Auto Merge
     conditions:
-      - author=MickeyMoz
-      - status-success=complete-pr
-      - files~=(Gecko.kt|AndroidComponents.kt)
+      - and:
+        - files=buildSrc/src/main/java/AndroidComponents.kt
+        - -files~=^(?!buildSrc/src/main/java/AndroidComponents.kt).+$
+        - or:
+          - and:
+            - author=MickeyMoz
+            - base=main
+            - head=ac-update
+            - status-success=complete-pr
+          - and:
+            - author=github-actions[bot]
+            - base~=^releases[_/].*
+            - head~=^relbot/fenix-\d+
+            - status-success=complete-push
     actions:
       review:
         type: APPROVE
-        message: MickeyMoz 💪
+        message: 🚢
       queue:
         method: rebase
         name: default
@@ -59,64 +72,6 @@ pull_request_rules:
         method: rebase
         name: default
         rebase_fallback: none
-  - name: Release automation (Old)
-    conditions:
-      - base~=releases[_/].*
-      - author=github-actions[bot]
-      # Listing checks manually beause we do not have a "push complete" check yet.
-      - check-success=build-android-test-debug
-      - check-success=build-debug
-      - check-success=build-nightly-simulation
-      - check-success=lint-compare-locales
-      - check-success=lint-detekt
-      - check-success=lint-ktlint
-      - check-success=lint-lint
-      - check-success=signing-android-test-debug
-      - check-success=signing-debug
-      - check-success=signing-nightly-simulation
-      - check-success=test-debug
-      - check-success=ui-test-x86-debug
-      - files~=(AndroidComponents.kt)
-    actions:
-      review:
-        type: APPROVE
-        message: 🚢
-      queue:
-        method: rebase
-        name: default
-        rebase_fallback: none
-      delete_head_branch:
-        force: false
-  - name: Release automation (New)
-    conditions:
-      - base~=releases[_/].*
-      - author=github-actions[bot]
-      # Listing checks manually beause we do not have a "push complete" check yet.
-      - check-success=build-android-test-beta
-      - check-success=build-android-test-debug
-      - check-success=build-beta-firebase
-      - check-success=build-debug
-      - check-success=build-nightly-simulation
-      - check-success=lint-compare-locales
-      - check-success=lint-detekt
-      - check-success=lint-ktlint
-      - check-success=lint-lint
-      - check-success=signing-android-test-beta
-      - check-success=signing-beta-firebase
-      - check-success=signing-nightly-simulation
-      - check-success=test-debug
-      - check-success=ui-test-x86-beta
-      - files~=(AndroidComponents.kt)
-    actions:
-      review:
-        type: APPROVE
-        message: 🚢
-      queue:
-        method: rebase
-        name: default
-        rebase_fallback: none
-      delete_head_branch:
-        force: false
   - name: Needs landing - Rebase
     conditions:
       - check-success=complete-pr

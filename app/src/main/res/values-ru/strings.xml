@@ -400,7 +400,7 @@
     <string name="preferences_account_settings">Настройки Аккаунта</string>
 
     <!-- Preference for enabling url autocomplete-->
-    <string name="preferences_enable_autocomplete_urls">Автозаполнение URL</string>
+    <string name="preferences_enable_autocomplete_urls">Автодополнение URL</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Открывать ссылки в приложениях</string>
 
@@ -761,7 +761,7 @@
     <string name="pwa_site_controls_title_private">%1$s (Приватный просмотр)</string>
 
     <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string name="tab_tray_header_title_1">Другие вкладки</string>
+    <string moz:removedIn="104" name="tab_tray_header_title_1" tools:ignore="UnusedResources">Другие вкладки</string>
 
     <!-- History -->
     <!-- Text for the button to search all history -->
@@ -795,6 +795,13 @@
     <string name="history_synced_from_other_devices">Синхронизировано с других устройств</string>
     <!-- The page title for browsing history coming from other devices. -->
     <string name="history_from_other_devices">С других устройств</string>
+
+    <!-- The synced history sign in dialog message -->
+    <string name="history_sign_in_message">Войдите, чтобы увидеть историю с других ваших устройств.</string>
+    <!-- The synced history sign in dialog button text -->
+    <string name="history_sign_in_button">Войти</string>
+    <!-- The synced history sign in dialog create a new account link -->
+    <string name="history_sign_in_create_account"><![CDATA[<u>Или создайте учётную запись Firefox, чтобы начать синхронизацию</u>]]></string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1876,4 +1883,5 @@
     <string name="experiments_snackbar">Включите телеметрию для отправки данных.</string>
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">Перейти в настройки</string>
+    <string name="firefox_suggest_header">Firefox Suggest</string>
 </resources>
