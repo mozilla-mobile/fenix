@@ -127,25 +127,24 @@ class HistoryAdapter(
             is TimeGroupViewHolder -> holder.bind(item as HistoryViewItem.TimeGroupHeader)
             is RecentlyClosedViewHolder -> holder.bind(item as HistoryViewItem.RecentlyClosedItem)
             is SyncedHistoryViewHolder -> holder.bind(item as HistoryViewItem.SyncedHistoryItem)
-            is EmptyViewHolder -> holder.bind(item as HistoryViewItem.EmptyHistoryItem)
-        }
-
-        // Resize emptyViewHolder to fill the rest of the recyclerview space.
-        if (holder is EmptyViewHolder) {
-            val lastItemView = holder.itemView
-            lastItemView.viewTreeObserver.addOnGlobalLayoutListener {
-                recycler?.height?.let { recyclerViewHeight ->
-                    val lastItemBottom = lastItemView.bottom
-                    val heightDifference = recyclerViewHeight - lastItemBottom
-                    if (heightDifference > 0) {
-                        lastItemView.layoutParams.height = lastItemView.height + heightDifference
-                        lastItemView.requestLayout()
+            is EmptyViewHolder -> {
+                holder.bind(item as HistoryViewItem.EmptyHistoryItem)
+                // Resize emptyViewHolder to fill the rest of the recyclerview space.
+                val lastItemView = holder.itemView
+                lastItemView.viewTreeObserver.addOnGlobalLayoutListener {
+                    recycler?.height?.let { recyclerViewHeight ->
+                        val lastItemBottom = lastItemView.bottom
+                        val heightDifference = recyclerViewHeight - lastItemBottom
+                        if (heightDifference > 0) {
+                            lastItemView.layoutParams.height = lastItemView.height + heightDifference
+                            lastItemView.requestLayout()
+                        }
                     }
                 }
             }
         }
     }
-    // TODO may be reuse the method lower
+
     private fun onDeleteClicked(adapterPosition: Int) {
         // The click might have happened during animation.
         if (adapterPosition == RecyclerView.NO_POSITION) return
@@ -155,25 +154,9 @@ class HistoryAdapter(
                 is HistoryViewItem.HistoryItem -> it.data
                 is HistoryViewItem.HistoryGroupItem -> it.data
                 else -> null
-            }?.let { data ->
-                // We assume that adapterPosition can not be 0 here, because there should be a header
-                // above the first history item and because there is always a top separator
-                // in the beginning of a non empty list.
-                val previousItem = getItem(adapterPosition - 1)
-                val nextItem = if (adapterPosition < itemCount - 1) {
-                    getItem(adapterPosition + 1)
-                } else {
-                    null
-                }
-                // If the item above the deleted item is a header and there are no items below or
-                // there is another header below, we remove the header above.
-                if (previousItem is HistoryViewItem.TimeGroupHeader &&
-                    (nextItem is HistoryViewItem.TimeGroupSeparatorHistoryItem || nextItem == null)
-                ) {
-                    historyInteractor.onDeleteSome(setOf(data), setOf(data.historyTimeGroup))
-                } else {
-                    historyInteractor.onDeleteSome(setOf(data))
-                }
+            }?.let { historyItem ->
+                val headerToRemove = calculateTimeGroupsToRemove(setOf(historyItem))
+                historyInteractor.onDeleteSome(setOf(historyItem), headerToRemove)
             }
         }
     }

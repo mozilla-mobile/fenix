@@ -5,7 +5,6 @@
 package org.mozilla.fenix.library.history
 
 import android.content.res.Resources
-import androidx.annotation.VisibleForTesting
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import mozilla.components.browser.state.store.BrowserStore
@@ -37,7 +36,7 @@ class HistoryDataSource(
     private val accountManager: FxaAccountManager,
 ) : PagingSource<Int, HistoryViewItem>() {
 
-    // A map that helps to insure that headers don't get duplicated. It is cleared open pull to
+    // A map that helps to insure that headers don't get duplicated. It is cleared upon pull to
     // refresh.
     private lateinit var headerPositions: SortedMap<HistoryItemTimeGroup, Int>
 
@@ -96,7 +95,7 @@ class HistoryDataSource(
         }.mapIndexed { position, history ->
             // Calculating header positions.
             previousItem?.let {
-                // Adding headers between items.
+                // Calculating header positions between items.
                 val isHeaderRequired = it.historyTimeGroup != history.historyTimeGroup &&
                     !this.headerPositions.contains(history.historyTimeGroup)
                 if (isHeaderRequired) {
@@ -108,7 +107,7 @@ class HistoryDataSource(
                     headerPositions.add(Pair(header, position))
                 }
             } ?: run {
-                // Adding a header before the first item.
+                // Checking if a header before the first item is needed.
                 if (!this.headerPositions.contains(history.historyTimeGroup)) {
                     val header = HistoryViewItem.TimeGroupHeader(
                         title = history.historyTimeGroup.humanReadable(resources),
@@ -132,7 +131,6 @@ class HistoryDataSource(
             for (header in headerPositions.reversed()) {
                 mutableList.add(header.second, header.first)
             }
-
             // Adding synced and recently closed buttons.
             val isFirstLoad = params.key == null
             if (isFirstLoad) {
@@ -144,7 +142,6 @@ class HistoryDataSource(
                         )
                     )
                 }
-
                 // For local or mixed history show RecentlyClosed button.
                 if (isRemote == false || isRemote == null) {
                     val numRecentTabs = browserStore.state.closedTabs.size
@@ -185,8 +182,7 @@ class HistoryDataSource(
     }
 }
 
-@VisibleForTesting
-internal fun List<HistoryDB>.positionWithOffset(offset: Int): List<History> {
+private fun List<HistoryDB>.positionWithOffset(offset: Int): List<History> {
     return this.foldIndexed(listOf()) { index, prev, item ->
         // Only offset once while folding, so that we don't accumulate the offset for each element.
         val itemOffset = if (index == 0) {

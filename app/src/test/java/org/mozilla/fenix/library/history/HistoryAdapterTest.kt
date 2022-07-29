@@ -156,7 +156,7 @@ internal class HistoryAdapterTest {
 
         assert(
             !adapter.calculateTimeGroupsToRemove(
-                removedItems = setOf(removedItemA, removedItemB, removedItemC),
+                removedItems = setOf(removedItemA, removedItemB, removedItemC, removedItemD),
                 snapshot = snapshot
             ).contains(HistoryItemTimeGroup.Today)
         )

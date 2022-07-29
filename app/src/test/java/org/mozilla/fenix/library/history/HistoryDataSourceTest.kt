@@ -275,7 +275,7 @@ class HistoryDataSourceTest {
     }
 
     @Test
-    fun `WHEN data source is local THEN the first loaded page does not contain a recently closed item`() = runTest {
+    fun `WHEN data source is local THEN the first loaded page contains a recently closed item`() = runTest {
         val dataSource = createDataSource(isRemote = false)
 
         val firstPage = dataSource.load(
