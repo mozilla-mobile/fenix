@@ -21,13 +21,14 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.lib.state.ext.consumeFrom
@@ -68,10 +69,11 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     ) {
         HistoryDataSource(
             historyProvider = historyProvider,
-            isRemote = if (FeatureFlags.showSyncedHistory) false else null
+            isRemote = if (FeatureFlags.showSyncedHistory) args.isSyncedHistory else null,
         )
     }.flow
 
+    private val args: HistoryFragmentArgs by navArgs()
     private var _historyView: HistoryView? = null
     private val historyView: HistoryView
         get() = _historyView!!
@@ -127,7 +129,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                 historyStore.dispatch(
                     HistoryFragmentAction.ChangeEmptyState(it)
                 )
-            }
+            },
+            isSyncedHistory = args.isSyncedHistory,
         )
 
         return view
@@ -200,7 +203,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             history.collect {
                 historyView.historyAdapter.submitData(it)
             }
@@ -383,6 +386,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                 setView(layout)
 
                 setNegativeButton(R.string.delete_browsing_data_prompt_cancel) { dialog: DialogInterface, _ ->
+                    GleanHistory.removePromptCancelled.record(NoExtras())
                     dialog.cancel()
                 }
                 setPositiveButton(R.string.delete_browsing_data_prompt_allow) { dialog: DialogInterface, _ ->
@@ -395,6 +399,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                     historyInteractor.onDeleteTimeRangeConfirmed(selectedTimeFrame)
                     dialog.dismiss()
                 }
+
+                GleanHistory.removePromptOpened.record(NoExtras())
             }.create()
     }
 

@@ -22,7 +22,6 @@ import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.history.DefaultPagedHistoryProvider
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.library.history.HistoryFragment.DeleteConfirmationDialogFragment
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
@@ -52,7 +51,7 @@ interface HistoryController {
     fun handleEnterRecentlyClosed()
 
     /**
-     * Navigates to [org.mozilla.fenix.library.syncedhistory.SyncedHistoryFragment]
+     * Navigates to [HistoryFragment] that would display history synced from other devices.
      */
     fun handleEnterSyncedHistory()
 }
@@ -128,7 +127,7 @@ class DefaultHistoryController(
             HistoryFragmentDirections.actionGlobalHistorySearchDialog()
         }
 
-        navController.navigateSafe(R.id.historyFragment, directions)
+        navController.navigate(directions)
     }
 
     override fun handleDeleteTimeRange() {
@@ -145,13 +144,18 @@ class DefaultHistoryController(
         scope.launch {
             store.dispatch(HistoryFragmentAction.EnterDeletionMode)
             if (timeFrame == null) {
-                GleanHistory.removedAll.record(mozilla.telemetry.glean.private.NoExtras())
                 historyStorage.deleteEverything()
             } else {
+                val longRange = timeFrame.toLongRange()
                 historyStorage.deleteVisitsBetween(
-                    startTime = timeFrame.toLongRange().first,
-                    endTime = timeFrame.toLongRange().last,
+                    startTime = longRange.first,
+                    endTime = longRange.last,
                 )
+            }
+            when (timeFrame) {
+                RemoveTimeFrame.LastHour -> GleanHistory.removedLastHour.record(NoExtras())
+                RemoveTimeFrame.TodayAndYesterday -> GleanHistory.removedTodayAndYesterday.record(NoExtras())
+                null -> GleanHistory.removedAll.record(NoExtras())
             }
             // We introduced more deleting options, but are keeping these actions for all options.
             // The approach could be improved: https://github.com/mozilla-mobile/fenix/issues/26102
@@ -213,8 +217,6 @@ class DefaultHistoryController(
     }
 
     override fun handleEnterSyncedHistory() {
-        navController.navigate(
-            HistoryFragmentDirections.actionHistoryFragmentToSyncedHistoryFragment()
-        )
+        navController.navigate(HistoryFragmentDirections.actionSyncedHistoryFragment())
     }
 }
