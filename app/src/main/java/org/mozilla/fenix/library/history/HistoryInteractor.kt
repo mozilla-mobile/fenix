@@ -34,9 +34,11 @@ interface HistoryInteractor : SelectionInteractor<History> {
 
     /**
      * Called when multiple history items are deleted
-     * @param items the history items to delete
+     *
+     * @param items The history items to delete.
+     * @param headers The time group headers to hide.
      */
-    fun onDeleteSome(items: Set<History>)
+    fun onDeleteSome(items: Set<History>, headers: Set<HistoryItemTimeGroup> = setOf())
 
     /**
      * Called when the user has confirmed deletion of a time range.
@@ -60,6 +62,16 @@ interface HistoryInteractor : SelectionInteractor<History> {
      * Called when the user clicks on synced history button.
      */
     fun onSyncedHistoryClicked()
+
+    /**
+     * Called when the user clicks on the sign in button.
+     */
+    fun onSignInClicked()
+
+    /**
+     * Called when the user clicks on the create account button.
+     */
+    fun onCreateAccountClicked()
 }
 
 /**
@@ -98,8 +110,8 @@ class DefaultHistoryInteractor(
         historyController.handleDeleteTimeRange()
     }
 
-    override fun onDeleteSome(items: Set<History>) {
-        historyController.handleDeleteSome(items)
+    override fun onDeleteSome(items: Set<History>, headers: Set<HistoryItemTimeGroup>) {
+        historyController.handleDeleteSome(items, headers)
     }
 
     override fun onDeleteTimeRangeConfirmed(timeFrame: RemoveTimeFrame?) {
@@ -116,5 +128,13 @@ class DefaultHistoryInteractor(
 
     override fun onSyncedHistoryClicked() {
         historyController.handleEnterSyncedHistory()
+    }
+
+    override fun onSignInClicked() {
+        historyController.handleSignIn()
+    }
+
+    override fun onCreateAccountClicked() {
+        historyController.handleCreateAccount()
     }
 }

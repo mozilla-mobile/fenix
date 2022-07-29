@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.library.history
 
-import android.content.Context
+import android.content.res.Resources
 import org.mozilla.fenix.R
 import java.util.Calendar
 import java.util.Date
@@ -12,12 +12,15 @@ import java.util.Date
 enum class HistoryItemTimeGroup {
     Today, Yesterday, ThisWeek, ThisMonth, Older;
 
-    fun humanReadable(context: Context): String = when (this) {
-        Today -> context.getString(R.string.history_today)
-        Yesterday -> context.getString(R.string.history_yesterday)
-        ThisWeek -> context.getString(R.string.history_7_days)
-        ThisMonth -> context.getString(R.string.history_30_days)
-        Older -> context.getString(R.string.history_older)
+    /**
+     * Converts a [HistoryItemTimeGroup] enum to a matching string resource.
+     */
+    fun humanReadable(resources: Resources): String = when (this) {
+        Today -> resources.getString(R.string.history_today)
+        Yesterday -> resources.getString(R.string.history_yesterday)
+        ThisWeek -> resources.getString(R.string.history_7_days)
+        ThisMonth -> resources.getString(R.string.history_30_days)
+        Older -> resources.getString(R.string.history_older)
     }
 
     companion object {

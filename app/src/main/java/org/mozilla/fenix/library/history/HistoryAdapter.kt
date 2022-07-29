@@ -8,122 +8,246 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
+import org.mozilla.fenix.library.history.viewholders.EmptyViewHolder
+import org.mozilla.fenix.library.history.viewholders.HistoryGroupViewHolder
+import org.mozilla.fenix.library.history.viewholders.HistoryViewHolder
+import org.mozilla.fenix.library.history.viewholders.RecentlyClosedViewHolder
+import org.mozilla.fenix.library.history.viewholders.SignInViewHolder
+import org.mozilla.fenix.library.history.viewholders.SyncedHistoryViewHolder
+import org.mozilla.fenix.library.history.viewholders.TimeGroupSeparatorViewHolder
+import org.mozilla.fenix.library.history.viewholders.TimeGroupViewHolder
+import org.mozilla.fenix.library.history.viewholders.TopSeparatorViewHolder
 import org.mozilla.fenix.selection.SelectionHolder
-import org.mozilla.fenix.library.history.viewholders.HistoryListItemViewHolder
 
 /**
  * Adapter for the list of visited pages, that uses Paging 3 versions of the Paging library.
  */
 class HistoryAdapter(
     private val historyInteractor: HistoryInteractor,
-    private val isSyncedHistory: Boolean,
     private val onEmptyStateChanged: (Boolean) -> Unit,
-) : PagingDataAdapter<History, HistoryListItemViewHolder>(historyDiffCallback),
+) : PagingDataAdapter<HistoryViewItem, RecyclerView.ViewHolder>(historyDiffCallback),
     SelectionHolder<History> {
 
     private var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
     private var pendingDeletionItems = emptySet<PendingDeletionHistory>()
-    private val itemsWithHeaders: MutableMap<HistoryItemTimeGroup, Int> = mutableMapOf()
-    // A flag to track the empty state of the list. Items are not being deleted immediately,
-    // but hidden from the UI until the Undo snackbar will execute the delayed operation.
-    // Whether the adapter has actually zero items or all present items are hidden,
-    // the screen should be updated into proper empty/not empty state.
-    private var isEmpty = true
+    private var recycler: RecyclerView? = null
 
     override val selectedItems
         get() = mode.selectedItems
 
-    override fun getItemViewType(position: Int): Int = HistoryListItemViewHolder.LAYOUT_ID
+    init {
+        //  Tracking updates of data flow. Delete data flow might have filtered out the last history
+        //  or group history item, so the empty view should be displayed. Listener is triggered on
+        //  every change, including loading additional items, so we don't want to do extra checks
+        //  after there are more items in the adapter than in a single load.
+        addOnPagesUpdatedListener {
+            if (itemCount <= HistoryViewItemFlow.PAGE_SIZE) {
+                for (i in 0 until itemCount) {
+                    val item = getItem(i)
+                    // If there is a single visible item, it's enough to change the empty state of the view.
+                    val hasVisibleItems = item is HistoryViewItem.HistoryItem ||
+                        item is HistoryViewItem.HistoryGroupItem ||
+                        item is HistoryViewItem.TimeGroupHeader ||
+                        item is HistoryViewItem.SignInHistoryItem
+                    if (hasVisibleItems) {
+                        onEmptyStateChanged.invoke(false)
+                        break
+                    } else if (i + 1 == itemCount) {
+                        // If we reached the bottom of the list and there still has been zero visible items,
+                        // we can can change the History view state to empty.
+                        onEmptyStateChanged.invoke(true)
+                    }
+                }
+            }
+        }
+    }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryListItemViewHolder {
+    override fun getItemViewType(position: Int): Int = when (getItem(position)) {
+        is HistoryViewItem.HistoryItem -> HistoryViewHolder.LAYOUT_ID
+        is HistoryViewItem.HistoryGroupItem -> HistoryGroupViewHolder.LAYOUT_ID
+        is HistoryViewItem.TimeGroupHeader -> TimeGroupViewHolder.LAYOUT_ID
+        is HistoryViewItem.RecentlyClosedItem -> RecentlyClosedViewHolder.LAYOUT_ID
+        is HistoryViewItem.SyncedHistoryItem -> SyncedHistoryViewHolder.LAYOUT_ID
+        is HistoryViewItem.EmptyHistoryItem -> EmptyViewHolder.LAYOUT_ID
+        is HistoryViewItem.SignInHistoryItem -> SignInViewHolder.LAYOUT_ID
+        is HistoryViewItem.TimeGroupSeparatorHistoryItem -> TimeGroupSeparatorViewHolder.LAYOUT_ID
+        is HistoryViewItem.TopSeparatorHistoryItem -> TopSeparatorViewHolder.LAYOUT_ID
+        else -> throw IllegalStateException("Unknown dataType.")
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
+        return when (viewType) {
+            HistoryViewHolder.LAYOUT_ID -> HistoryViewHolder(
+                view,
+                historyInteractor,
+                this,
+                ::onDeleteClicked
+            )
+            HistoryGroupViewHolder.LAYOUT_ID -> HistoryGroupViewHolder(
+                view,
+                historyInteractor,
+                this,
+                ::onDeleteClicked
+            )
+            TimeGroupViewHolder.LAYOUT_ID -> TimeGroupViewHolder(view) { _, _ ->
+                // Will be implemented as the next step as part of breaking down this
+                // PR: https://github.com/mozilla-mobile/fenix/pull/25879
+            }
+            RecentlyClosedViewHolder.LAYOUT_ID -> RecentlyClosedViewHolder(view, historyInteractor)
+            SyncedHistoryViewHolder.LAYOUT_ID -> SyncedHistoryViewHolder(view, historyInteractor)
+            EmptyViewHolder.LAYOUT_ID -> EmptyViewHolder(view)
+            SignInViewHolder.LAYOUT_ID -> SignInViewHolder(view, historyInteractor)
+            TimeGroupSeparatorViewHolder.LAYOUT_ID -> TimeGroupSeparatorViewHolder(view)
+            TopSeparatorViewHolder.LAYOUT_ID -> TopSeparatorViewHolder(view)
+            else -> throw IllegalStateException("Unknown viewType.")
+        }
+    }
 
-        return HistoryListItemViewHolder(view, historyInteractor, this)
+    @Suppress("ComplexMethod")
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val item = getItem(position) ?: return
+
+        when (holder) {
+            is HistoryViewHolder -> holder.bind(item as HistoryViewItem.HistoryItem, mode)
+            is HistoryGroupViewHolder -> {
+                // Items inside a group might be pending to be removed, so we have to adjust the
+                // number of items on a group.
+                val groupMetaData = (item as HistoryViewItem.HistoryGroupItem).data.items
+                val groupPendingDeletionCount = groupMetaData.count { historyMetadata ->
+                    pendingDeletionItems.find {
+                        it is PendingDeletionHistory.MetaData &&
+                            it.key == historyMetadata.historyMetadataKey &&
+                            it.visitedAt == historyMetadata.visitedAt
+                    } != null
+                }
+                holder.bind(item, mode, groupPendingDeletionCount)
+            }
+            is TimeGroupViewHolder -> holder.bind(item as HistoryViewItem.TimeGroupHeader)
+            is RecentlyClosedViewHolder -> holder.bind(item as HistoryViewItem.RecentlyClosedItem)
+            is SyncedHistoryViewHolder -> holder.bind(item as HistoryViewItem.SyncedHistoryItem)
+            is EmptyViewHolder -> holder.bind(item as HistoryViewItem.EmptyHistoryItem)
+        }
+
+        // Resize emptyViewHolder to fill the rest of the recyclerview space.
+        if (holder is EmptyViewHolder) {
+            val lastItemView = holder.itemView
+            lastItemView.viewTreeObserver.addOnGlobalLayoutListener {
+                recycler?.height?.let { recyclerViewHeight ->
+                    val lastItemBottom = lastItemView.bottom
+                    val heightDifference = recyclerViewHeight - lastItemBottom
+                    if (heightDifference > 0) {
+                        lastItemView.layoutParams.height = lastItemView.height + heightDifference
+                        lastItemView.requestLayout()
+                    }
+                }
+            }
+        }
+    }
+    // TODO may be reuse the method lower
+    private fun onDeleteClicked(adapterPosition: Int) {
+        // The click might have happened during animation.
+        if (adapterPosition == RecyclerView.NO_POSITION) return
+
+        getItem(adapterPosition)?.let {
+            when (it) {
+                is HistoryViewItem.HistoryItem -> it.data
+                is HistoryViewItem.HistoryGroupItem -> it.data
+                else -> null
+            }?.let { data ->
+                // We assume that adapterPosition can not be 0 here, because there should be a header
+                // above the first history item and because there is always a top separator
+                // in the beginning of a non empty list.
+                val previousItem = getItem(adapterPosition - 1)
+                val nextItem = if (adapterPosition < itemCount - 1) {
+                    getItem(adapterPosition + 1)
+                } else {
+                    null
+                }
+                // If the item above the deleted item is a header and there are no items below or
+                // there is another header below, we remove the header above.
+                if (previousItem is HistoryViewItem.TimeGroupHeader &&
+                    (nextItem is HistoryViewItem.TimeGroupSeparatorHistoryItem || nextItem == null)
+                ) {
+                    historyInteractor.onDeleteSome(setOf(data), setOf(data.historyTimeGroup))
+                } else {
+                    historyInteractor.onDeleteSome(setOf(data))
+                }
+            }
+        }
+    }
+
+    /**
+     * A helper method for [HistoryFragment] to decide if after removal of multiple items any of
+     * headers should be removed as well.
+     */
+    @Suppress("NestedBlockDepth")
+    fun calculateTimeGroupsToRemove(
+        removedItems: Set<History>,
+        snapshot: List<HistoryViewItem> = snapshot().items
+    ): Set<HistoryItemTimeGroup> {
+        val result: MutableSet<HistoryItemTimeGroup> = mutableSetOf()
+
+        // Group selected for removal items into timeGroup buckets, and rely on a bucket size to
+        // determine if all items under a header have been removed.
+        val timeGroupMap: MutableMap<HistoryItemTimeGroup, MutableSet<History>> =
+            mutableMapOf()
+        for (historyItem in removedItems) {
+            if (!timeGroupMap.contains(historyItem.historyTimeGroup)) {
+                timeGroupMap[historyItem.historyTimeGroup] = mutableSetOf(historyItem)
+            }
+            timeGroupMap[historyItem.historyTimeGroup]!!.add(historyItem)
+        }
+
+        // Calculate if the number of items between two different headers matches the bucket size of
+        // items to be removed. If true, the header should be hidden.
+        var previousTimeGroupPosition = 0
+        var previousTimeGroup: HistoryItemTimeGroup? = null
+        for ((index, item) in snapshot.withIndex()) {
+            if (item is HistoryViewItem.TimeGroupHeader) {
+                if (previousTimeGroup != null) {
+                    // Additional subtraction comes from a [HistoryViewItem.TimeGroupSeparatorHistoryItem],
+                    // that is always above a non collapsed [HistoryViewItem.TimeGroupHeader].
+                    // Except the very first item, which is irrelevant in this case.
+                    val timeGroupSize = (index - previousTimeGroupPosition) - 2
+                    if (timeGroupMap[previousTimeGroup]!!.size == timeGroupSize) {
+                        result.add(previousTimeGroup)
+                    }
+                    previousTimeGroup = null
+                }
+                if (timeGroupMap.contains(item.timeGroup)) {
+                    previousTimeGroupPosition = index
+                    previousTimeGroup = item.timeGroup
+                }
+            }
+        }
+
+        // If there is only one timeGroup in the list, check if all its items were selected for
+        // removal.
+        if (previousTimeGroup != null) {
+            val timeGroupSize = (snapshot.size - previousTimeGroupPosition) - 1
+            if (timeGroupMap[previousTimeGroup]!!.size == timeGroupSize) {
+                result.add(previousTimeGroup)
+            }
+        }
+        return result
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        recycler = recyclerView
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        recycler = null
     }
 
     fun updateMode(mode: HistoryFragmentState.Mode) {
         this.mode = mode
         // Update the delete button alpha that the first item holds
         if (itemCount > 0) notifyItemChanged(0)
-    }
-
-    @Suppress("ComplexMethod")
-    override fun onBindViewHolder(holder: HistoryListItemViewHolder, position: Int) {
-        val current = getItem(position) ?: return
-        var isPendingDeletion = false
-        var groupPendingDeletionCount = 0
-        var timeGroup: HistoryItemTimeGroup? = null
-        if (position == 0) {
-            isEmpty = true
-        }
-
-        if (pendingDeletionItems.isNotEmpty()) {
-            when (current) {
-                is History.Regular -> {
-                    isPendingDeletion = pendingDeletionItems.find {
-                        it is PendingDeletionHistory.Item && it.visitedAt == current.visitedAt
-                    } != null
-                }
-                is History.Group -> {
-                    isPendingDeletion = pendingDeletionItems.find {
-                        it is PendingDeletionHistory.Group && it.visitedAt == current.visitedAt
-                    } != null
-
-                    if (!isPendingDeletion) {
-                        groupPendingDeletionCount = current.items.count { historyMetadata ->
-                            pendingDeletionItems.find {
-                                it is PendingDeletionHistory.MetaData &&
-                                    it.key == historyMetadata.historyMetadataKey &&
-                                    it.visitedAt == historyMetadata.visitedAt
-                            } != null
-                        }.also {
-                            if (it == current.items.size) {
-                                isPendingDeletion = true
-                            }
-                        }
-                    }
-                }
-                else -> {}
-            }
-        }
-
-        // Add or remove the header and position to the map depending on it's deletion status
-        if (itemsWithHeaders.containsKey(current.historyTimeGroup)) {
-            if (isPendingDeletion && itemsWithHeaders[current.historyTimeGroup] == position) {
-                itemsWithHeaders.remove(current.historyTimeGroup)
-            } else if (isPendingDeletion && itemsWithHeaders[current.historyTimeGroup] != position) {
-                // do nothing
-            } else {
-                if (position <= itemsWithHeaders[current.historyTimeGroup] as Int) {
-                    itemsWithHeaders[current.historyTimeGroup] = position
-                    timeGroup = current.historyTimeGroup
-                }
-            }
-        } else if (!isPendingDeletion) {
-            itemsWithHeaders[current.historyTimeGroup] = position
-            timeGroup = current.historyTimeGroup
-        }
-
-        // If there is a single visible item, it's enough to change the empty state of the view.
-        if (isEmpty && !isPendingDeletion) {
-            isEmpty = false
-            onEmptyStateChanged.invoke(isEmpty)
-        } else if (position + 1 == itemCount) {
-            // If we reached the bottom of the list and there still has been zero visible items,
-            // we can can change the History view state to empty.
-            if (isEmpty) {
-                onEmptyStateChanged.invoke(isEmpty)
-            }
-        }
-
-        holder.bind(
-            item = current,
-            timeGroup = timeGroup,
-            showTopContent = !isSyncedHistory && position == 0,
-            mode = mode,
-            isPendingDeletion = isPendingDeletion,
-            groupPendingDeletionCount = groupPendingDeletionCount,
-        )
     }
 
     /**
@@ -134,16 +258,25 @@ class HistoryAdapter(
     }
 
     companion object {
-        private val historyDiffCallback = object : DiffUtil.ItemCallback<History>() {
-            override fun areItemsTheSame(oldItem: History, newItem: History): Boolean {
+        private val historyDiffCallback = object : DiffUtil.ItemCallback<HistoryViewItem>() {
+            override fun areItemsTheSame(
+                oldItem: HistoryViewItem,
+                newItem: HistoryViewItem
+            ): Boolean {
                 return oldItem == newItem
             }
 
-            override fun areContentsTheSame(oldItem: History, newItem: History): Boolean {
+            override fun areContentsTheSame(
+                oldItem: HistoryViewItem,
+                newItem: HistoryViewItem
+            ): Boolean {
                 return oldItem == newItem
             }
 
-            override fun getChangePayload(oldItem: History, newItem: History): Any? {
+            override fun getChangePayload(
+                oldItem: HistoryViewItem,
+                newItem: HistoryViewItem
+            ): Any {
                 return newItem
             }
         }

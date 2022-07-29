@@ -22,13 +22,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.lib.state.ext.consumeFrom
@@ -38,6 +35,7 @@ import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.GleanMetrics.SyncAuth
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
@@ -62,16 +60,6 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     private lateinit var historyStore: HistoryFragmentStore
     private lateinit var historyInteractor: HistoryInteractor
     private lateinit var historyProvider: DefaultPagedHistoryProvider
-
-    private var history: Flow<PagingData<History>> = Pager(
-        PagingConfig(PAGE_SIZE),
-        null
-    ) {
-        HistoryDataSource(
-            historyProvider = historyProvider,
-            isRemote = if (FeatureFlags.showSyncedHistory) args.isSyncedHistory else null,
-        )
-    }.flow
 
     private val args: HistoryFragmentArgs by navArgs()
     private var _historyView: HistoryView? = null
@@ -98,6 +86,14 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                 )
             )
         }
+        val historyViewItemDataSource = HistoryViewItemFlow(
+            historyProvider = historyProvider,
+            browserStore = requireComponents.core.store,
+            isRemote = if (FeatureFlags.showSyncedHistory) args.isSyncedHistory else null,
+            resources = resources,
+            accountManager = requireComponents.backgroundServices.accountManager,
+            scope = lifecycleScope
+        )
         val historyController: HistoryController = DefaultHistoryController(
             store = historyStore,
             appStore = requireContext().components.appStore,
@@ -112,6 +108,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             deleteSnackbar = ::deleteSnackbar,
             onTimeFrameDeleted = ::onTimeFrameDeleted,
             syncHistory = ::syncHistory,
+            createAccount = ::createAccount,
             settings = requireContext().components.settings,
         )
         historyInteractor = DefaultHistoryInteractor(
@@ -120,6 +117,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         _historyView = HistoryView(
             binding.historyLayout,
             historyInteractor,
+            historyViewItemDataSource,
             onZeroItemsLoaded = {
                 historyStore.dispatch(
                     HistoryFragmentAction.ChangeEmptyState(isEmpty = true)
@@ -204,7 +202,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            history.collect {
+            historyView.historyViewItemFlow.historyFlow.collectLatest {
                 historyView.historyAdapter.submitData(it)
             }
         }
@@ -261,7 +259,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
             true
         }
         R.id.delete_history_multi_select -> {
-            historyInteractor.onDeleteSome(historyStore.state.mode.selectedItems)
+            val headers = historyView.historyAdapter.calculateTimeGroupsToRemove(historyStore.state.mode.selectedItems)
+            historyInteractor.onDeleteSome(historyStore.state.mode.selectedItems, headers)
             historyStore.dispatch(HistoryFragmentAction.ExitEditMode)
             true
         }
@@ -374,6 +373,16 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         historyView.historyAdapter.refresh()
     }
 
+    private fun createAccount() {
+        requireComponents.services.accountsAuthFeature.beginAuthentication(requireContext())
+        SyncAuth.useEmail.record(NoExtras())
+        // TODO The sign-in web content populates session history,
+        // so pressing "back" after signing in won't take us back into the settings screen, but rather up the
+        // session history stack.
+        // We could auto-close this tab once we get to the end of the authentication process?
+        // Via an interceptor, perhaps.
+    }
+
     internal class DeleteConfirmationDialogFragment(
         private val historyInteractor: HistoryInteractor
     ) : DialogFragment() {
@@ -402,10 +411,5 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
 
                 GleanHistory.removePromptOpened.record(NoExtras())
             }.create()
-    }
-
-    @Suppress("UnusedPrivateMember")
-    companion object {
-        private const val PAGE_SIZE = 25
     }
 }

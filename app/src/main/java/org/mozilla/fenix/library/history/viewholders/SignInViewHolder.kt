@@ -5,34 +5,38 @@
 package org.mozilla.fenix.library.history.viewholders
 
 import android.view.View
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.HistoryListSignInBinding
 import org.mozilla.fenix.library.history.HistoryAdapter
+import org.mozilla.fenix.library.history.HistoryInteractor
 
 /**
  * A view representing a sign in window inside the synced history screen.
  * [HistoryAdapter] is responsible for creating and populating the view.
  *
  * @param view that is passed down to the parent's constructor.
- * @param onSignInClicked Invokes when a signIn button is pressed.
- * @param onCreateAccountClicked Invokes when a createAccount button is pressed.
+ * @param historyInteractor Interactor to capture user interactions with the UI element.
  */
 class SignInViewHolder(
     view: View,
-    private val onSignInClicked: () -> Unit,
-    private val onCreateAccountClicked: () -> Unit
+    private val historyInteractor: HistoryInteractor
 ) : RecyclerView.ViewHolder(view) {
 
     private val binding = HistoryListSignInBinding.bind(view)
 
     init {
         binding.signInButton.setOnClickListener {
-            onSignInClicked.invoke()
+            historyInteractor.onSignInClicked()
         }
         binding.createAccount.setOnClickListener {
-            onCreateAccountClicked.invoke()
+            historyInteractor.onCreateAccountClicked()
         }
+        binding.createAccount.text = HtmlCompat.fromHtml(
+            binding.createAccount.text.toString(),
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        )
     }
 
     companion object {

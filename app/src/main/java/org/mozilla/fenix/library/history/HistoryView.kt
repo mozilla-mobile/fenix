@@ -6,16 +6,13 @@ package org.mozilla.fenix.library.history
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import mozilla.components.support.base.feature.UserInteractionHandler
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.ComponentHistoryBinding
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.library.LibraryPageView
 import org.mozilla.fenix.theme.ThemeManager
 
@@ -25,6 +22,7 @@ import org.mozilla.fenix.theme.ThemeManager
 class HistoryView(
     container: ViewGroup,
     val interactor: HistoryInteractor,
+    val historyViewItemFlow: HistoryViewItemFlow,
     val onZeroItemsLoaded: () -> Unit,
     val onEmptyStateChanged: (Boolean) -> Unit,
     val isSyncedHistory: Boolean,
@@ -39,7 +37,6 @@ class HistoryView(
 
     val historyAdapter = HistoryAdapter(
         historyInteractor = interactor,
-        isSyncedHistory = isSyncedHistory,
         onEmptyStateChanged = { isEmpty ->
             onEmptyStateChanged(isEmpty)
         },
@@ -86,9 +83,6 @@ class HistoryView(
         mode = state.mode
 
         historyAdapter.updatePendingDeletionItems(state.pendingDeletionItems)
-
-        updateEmptyState(userHasHistory = !state.isEmpty)
-
         historyAdapter.updateMode(state.mode)
         // We want to update the one item above the upper border of the screen, because
         // RecyclerView won't redraw it on scroll and onBindViewHolder() method won't be called.
@@ -99,6 +93,9 @@ class HistoryView(
         if (state.mode::class != oldMode::class) {
             interactor.onModeSwitched()
         }
+
+        historyViewItemFlow.setDeleteItems(state.pendingDeletionItems, state.hiddenHeaders)
+        historyViewItemFlow.setEmptyState(state.isEmpty)
 
         when (val mode = state.mode) {
             is HistoryFragmentState.Mode.Normal -> {
@@ -117,42 +114,6 @@ class HistoryView(
             else -> {
                 // no-op
             }
-        }
-    }
-
-    private fun updateEmptyState(userHasHistory: Boolean) {
-        binding.historyList.isInvisible = !userHasHistory
-        binding.historyEmptyView.isVisible = !userHasHistory
-        binding.topSpacer.isVisible = !isSyncedHistory && !userHasHistory
-
-        with(binding.recentlyClosedNavEmpty) {
-            recentlyClosedNav.setOnClickListener {
-                interactor.onRecentlyClosedClicked()
-            }
-            val numRecentTabs = recentlyClosedNav.context.components.core.store.state.closedTabs.size
-            recentlyClosedTabsDescription.text = String.format(
-                context.getString(
-                    if (numRecentTabs == 1) {
-                        R.string.recently_closed_tab
-                    } else {
-                        R.string.recently_closed_tabs
-                    }
-                ),
-                numRecentTabs
-            )
-            recentlyClosedNav.isVisible = !isSyncedHistory && !userHasHistory
-        }
-
-        with(binding.syncedHistoryNavEmpty) {
-            syncedHistoryNav.setOnClickListener {
-                interactor.onSyncedHistoryClicked()
-            }
-            syncedHistoryNav.isVisible =
-                !isSyncedHistory && FeatureFlags.showSyncedHistory && !userHasHistory
-        }
-
-        if (!userHasHistory) {
-            binding.historyEmptyView.announceForAccessibility(context.getString(R.string.history_empty_message))
         }
     }
 

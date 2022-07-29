@@ -22,6 +22,7 @@ import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.history.DefaultPagedHistoryProvider
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.settings.account.TurnOnSyncFragment
 import org.mozilla.fenix.library.history.HistoryFragment.DeleteConfirmationDialogFragment
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
@@ -39,7 +40,16 @@ interface HistoryController {
      * Displays a [DeleteConfirmationDialogFragment].
      */
     fun handleDeleteTimeRange()
-    fun handleDeleteSome(items: Set<History>)
+
+    /**
+     * Hides the deleted items from the UI and triggers the UNDO snackbar, that gives the user a
+     * chance to cancel the removal. After the snackbar is gone, [DefaultHistoryController.delete]
+     * would remove the items from the data layer.
+     *
+     * @param items History and History group items to be deleted.
+     * @param groups Header to be hidden from the UI.
+     */
+    fun handleDeleteSome(items: Set<History>, groups: Set<HistoryItemTimeGroup> = setOf())
 
     /**
      * Deletes history items inside the time frame.
@@ -54,6 +64,16 @@ interface HistoryController {
      * Navigates to [HistoryFragment] that would display history synced from other devices.
      */
     fun handleEnterSyncedHistory()
+
+    /**
+     * Navigates the user to [TurnOnSyncFragment].
+     */
+    fun handleSignIn()
+
+    /**
+     * Invokes [DefaultHistoryController.createAccount] that starts the authentication process.
+     */
+    fun handleCreateAccount()
 }
 
 @Suppress("TooManyFunctions", "LongParameterList")
@@ -75,6 +95,7 @@ class DefaultHistoryController(
         delete: (Set<History>) -> suspend (context: Context) -> Unit
     ) -> Unit,
     private val syncHistory: suspend () -> Unit,
+    private val createAccount: () -> Unit,
     private val settings: Settings,
 ) : HistoryController {
 
@@ -134,9 +155,10 @@ class DefaultHistoryController(
         displayDeleteTimeRange.invoke()
     }
 
-    override fun handleDeleteSome(items: Set<History>) {
+    override fun handleDeleteSome(items: Set<History>, groups: Set<HistoryItemTimeGroup>) {
         val pendingDeletionItems = items.map { it.toPendingDeletionHistory() }.toSet()
         appStore.dispatch(AppAction.AddPendingDeletionSet(pendingDeletionItems))
+        store.dispatch(HistoryFragmentAction.AddPendingDeletionSet(pendingDeletionItems, groups))
         deleteSnackbar.invoke(items, ::undo, ::delete)
     }
 
@@ -173,6 +195,7 @@ class DefaultHistoryController(
     private fun undo(items: Set<History>) {
         val pendingDeletionItems = items.map { it.toPendingDeletionHistory() }.toSet()
         appStore.dispatch(AppAction.UndoPendingDeletionSet(pendingDeletionItems))
+        store.dispatch(HistoryFragmentAction.UndoPendingDeletionSet(pendingDeletionItems))
     }
 
     private fun delete(items: Set<History>): suspend (context: Context) -> Unit {
@@ -218,5 +241,15 @@ class DefaultHistoryController(
 
     override fun handleEnterSyncedHistory() {
         navController.navigate(HistoryFragmentDirections.actionSyncedHistoryFragment())
+    }
+
+    override fun handleSignIn() {
+        navController.navigate(
+            HistoryFragmentDirections.actionGlobalTurnOnSync()
+        )
+    }
+
+    override fun handleCreateAccount() {
+        createAccount.invoke()
     }
 }

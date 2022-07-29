@@ -88,7 +88,7 @@ class HistoryListItemViewHolder(
 
         toggleTopContent(showTopContent, mode === HistoryFragmentState.Mode.Normal)
 
-        val headerText = timeGroup?.humanReadable(itemView.context)
+        val headerText = timeGroup?.humanReadable(itemView.resources)
         toggleHeader(headerText)
 
         binding.historyLayout.setSelectionInteractor(item, selectionHolder, historyInteractor)
