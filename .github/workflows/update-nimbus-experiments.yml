@@ -1,0 +1,33 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+name: "Update Nimbus Experiments"
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '*/30 * * * *'
+
+jobs:
+  main:
+    name: "Update Nimbus Experiments"
+    runs-on: ubuntu-20.04
+    steps:
+      - name: "Checkout Master Branch"
+        uses: actions/checkout@v2
+        with:
+          path: main
+          ref: main
+      - name: "Update Experiments JSON"
+        run: |
+          curl https://experimenter.services.mozilla.com/api/v6/experiments/?is_first_run=True | jq '{"data":map(select(.appName == "fenix"))}' > app/src/main/res/raw/initial_experiments.json
+          git status
+      # - name: Create Pull Request
+      #   uses: peter-evans/create-pull-request@v3
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     path: beta
+      #     branch: automation/sync-strings-${{ steps.fenix-beta-version.outputs.beta_version }}
+      #     title: "Sync Strings from main to releases_${{steps.fenix-beta-version.outputs.beta_version}}.0"
+      #     body: "This (automated) PR syncs strings from `main` to `releases_${{steps.fenix-beta-version.outputs.beta_version}}.0.0`"
