@@ -37,14 +37,14 @@ job-defaults:
                     subject: '[{product_name}] Raptor-Browsertime job "{task_name}" failed'
                     to-addresses: [perftest-alerts@mozilla.com]
             default: {}
-    run-on-tasks-for: []
+    run-on-tasks-for: [github-pull-request]
     treeherder:
         kind: test
         tier: 2
         platform:
             by-abi:
                 arm64-v8a: android-hw-p2-8-0-android-aarch64-shippable-qr/opt
-                armeabi-v7a: android-hw-a51-11-0-arm7-shippable/opt
+                armeabi-v7a: android-hw-a51-11-0-aarch64-shippable-qr/opt
     worker-type:
         by-abi:
             armeabi-v7a: t-bitbar-gw-perf-a51
