@@ -46,7 +46,10 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import mozilla.components.browser.menu.view.MenuButton
 import mozilla.components.browser.state.selector.findTab
@@ -66,15 +69,14 @@ import mozilla.components.feature.top.sites.TopSitesFrecencyConfig
 import mozilla.components.feature.top.sites.TopSitesProviderConfig
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.consumeFrom
+import mozilla.components.lib.state.ext.flow
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
-import mozilla.components.ui.tabcounter.TabCounterMenu
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.HomeScreen
-import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.GleanMetrics.Wallpapers
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -84,7 +86,6 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
-import org.mozilla.fenix.components.toolbar.FenixTabCounterMenu
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentHomeBinding
 import org.mozilla.fenix.ext.components
@@ -119,7 +120,7 @@ import org.mozilla.fenix.tabstray.TabsTrayAccessPoint
 import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
 import org.mozilla.fenix.utils.ToolbarPopupWindow
 import org.mozilla.fenix.utils.allowUndo
-import org.mozilla.fenix.wallpapers.WallpaperManager
+import org.mozilla.fenix.wallpapers.Wallpaper
 import java.lang.ref.WeakReference
 import kotlin.math.min
 
@@ -393,6 +394,7 @@ class HomeFragment : Fragment() {
         binding.root.doOnPreDraw {
             requireComponents.appStore.dispatch(AppAction.UpdateFirstFrameDrawn(drawn = true))
         }
+
         // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL!
         requireComponents.core.engine.profiler?.addMarker(
             MarkersFragmentLifecycleCallbacks.MARKER_NAME, profilerStartTime, "HomeFragment.onCreateView",
@@ -404,7 +406,6 @@ class HomeFragment : Fragment() {
         super.onConfigurationChanged(newConfig)
 
         getMenuButton()?.dismissMenu()
-        displayWallpaperIfEnabled()
     }
 
     /**
@@ -510,7 +511,12 @@ class HomeFragment : Fragment() {
             hideOnboardingIfNeeded = ::hideOnboardingIfNeeded,
         ).build()
 
-        createTabCounterMenu()
+        TabCounterBuilder(
+            context = requireContext(),
+            browsingModeManager = browsingModeManager,
+            navController = findNavController(),
+            tabCounter = binding.tabButton,
+        ).build()
 
         binding.toolbar.compoundDrawablePadding =
             view.resources.getDimensionPixelSize(R.dimen.search_bar_search_engine_icon_padding)
@@ -526,11 +532,6 @@ class HomeFragment : Fragment() {
                 copyVisible = false
             )
             true
-        }
-
-        binding.tabButton.setOnClickListener {
-            StartOnHome.openTabsTray.record(NoExtras())
-            openTabsTray()
         }
 
         PrivateBrowsingButtonView(binding.privateBrowsingButton, browsingModeManager) { newMode ->
@@ -624,40 +625,6 @@ class HomeFragment : Fragment() {
                         it.storage.notifyObservers { onStorageUpdated() }
                     }
                 }
-        }
-    }
-
-    private fun createTabCounterMenu() {
-        val browsingModeManager = (activity as HomeActivity).browsingModeManager
-        val mode = browsingModeManager.mode
-
-        val onItemTapped: (TabCounterMenu.Item) -> Unit = {
-            if (it is TabCounterMenu.Item.NewTab) {
-                browsingModeManager.mode = BrowsingMode.Normal
-            } else if (it is TabCounterMenu.Item.NewPrivateTab) {
-                browsingModeManager.mode = BrowsingMode.Private
-            }
-        }
-
-        val tabCounterMenu = FenixTabCounterMenu(
-            requireContext(),
-            onItemTapped,
-            iconColor = if (mode == BrowsingMode.Private) {
-                ContextCompat.getColor(requireContext(), R.color.fx_mobile_private_text_color_primary)
-            } else {
-                null
-            }
-        )
-
-        val inverseBrowsingMode = when (mode) {
-            BrowsingMode.Normal -> BrowsingMode.Private
-            BrowsingMode.Private -> BrowsingMode.Normal
-        }
-
-        tabCounterMenu.updateMenu(showOnly = inverseBrowsingMode)
-        binding.tabButton.setOnLongClickListener {
-            tabCounterMenu.menuController.show(anchor = it)
-            true
         }
     }
 
@@ -786,10 +753,6 @@ class HomeFragment : Fragment() {
                         name = newWallpaper.name,
                         themeCollection = newWallpaper::class.simpleName
                     )
-                )
-                manager.updateWallpaper(
-                    wallpaperContainer = binding.wallpaperImageView,
-                    newWallpaper = newWallpaper
                 )
             }
         }
@@ -995,12 +958,25 @@ class HomeFragment : Fragment() {
 
     private fun displayWallpaperIfEnabled() {
         if (shouldEnableWallpaper()) {
-            val wallpaperManger = requireComponents.wallpaperManager
-            // We only want to update the wallpaper when it's different from the default one
-            // as the default is applied already on xml by default.
-            if (wallpaperManger.currentWallpaper != WallpaperManager.defaultWallpaper) {
-                wallpaperManger.updateWallpaper(binding.wallpaperImageView, wallpaperManger.currentWallpaper)
-            }
+            requireComponents.appStore.flow()
+                .ifChanged { state -> state.wallpaperState.currentWallpaper }
+                .onEach { state ->
+                    // We only want to update the wallpaper when it's different from the default one
+                    // as the default is applied already on xml by default.
+                    when (val currentWallpaper = state.wallpaperState.currentWallpaper) {
+                        is Wallpaper.Default -> {
+                            binding.wallpaperImageView.visibility = View.GONE
+                        }
+                        else -> {
+                            with(requireComponents.wallpaperManager) {
+                                val bitmap = currentWallpaper.load(requireContext()) ?: return@onEach
+                                bitmap.scaleBitmapToBottomOfView(binding.wallpaperImageView)
+                            }
+                            binding.wallpaperImageView.visibility = View.VISIBLE
+                        }
+                    }
+                }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
         }
     }
 
