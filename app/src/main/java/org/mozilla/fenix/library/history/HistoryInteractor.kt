@@ -38,7 +38,7 @@ interface HistoryInteractor : SelectionInteractor<History> {
      * @param items The history items to delete.
      * @param headers The time group headers to hide.
      */
-    fun onDeleteSome(items: Set<History>, headers: Set<HistoryItemTimeGroup> = setOf())
+    fun onDeleteHistoryItems(items: Set<History>, headers: Set<HistoryItemTimeGroup> = setOf())
 
     /**
      * Called when the user has confirmed deletion of a time range.
@@ -110,8 +110,8 @@ class DefaultHistoryInteractor(
         historyController.handleDeleteTimeRange()
     }
 
-    override fun onDeleteSome(items: Set<History>, headers: Set<HistoryItemTimeGroup>) {
-        historyController.handleDeleteSome(items, headers)
+    override fun onDeleteHistoryItems(items: Set<History>, headers: Set<HistoryItemTimeGroup>) {
+        historyController.handleDeleteHistoryItems(items, headers)
     }
 
     override fun onDeleteTimeRangeConfirmed(timeFrame: RemoveTimeFrame?) {

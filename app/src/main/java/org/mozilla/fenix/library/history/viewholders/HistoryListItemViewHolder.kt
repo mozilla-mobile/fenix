@@ -43,7 +43,7 @@ class HistoryListItemViewHolder(
             contentDescription = view.context.getString(R.string.history_delete_item)
             setOnClickListener {
                 val item = item ?: return@setOnClickListener
-                historyInteractor.onDeleteSome(setOf(item))
+                historyInteractor.onDeleteHistoryItems(setOf(item))
             }
         }
     }

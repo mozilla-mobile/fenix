@@ -156,7 +156,7 @@ class HistoryAdapter(
                 else -> null
             }?.let { historyItem ->
                 val headerToRemove = calculateTimeGroupsToRemove(setOf(historyItem))
-                historyInteractor.onDeleteSome(setOf(historyItem), headerToRemove)
+                historyInteractor.onDeleteHistoryItems(setOf(historyItem), headerToRemove)
             }
         }
     }

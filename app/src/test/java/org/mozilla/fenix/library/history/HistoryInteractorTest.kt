@@ -96,10 +96,10 @@ class HistoryInteractorTest {
     fun onDeleteSome() {
         val items = setOf(historyItem)
 
-        interactor.onDeleteSome(items)
+        interactor.onDeleteHistoryItems(items)
 
         verifyAll {
-            controller.handleDeleteSome(items)
+            controller.handleDeleteHistoryItems(items)
         }
     }
 

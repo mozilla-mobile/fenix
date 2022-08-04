@@ -223,7 +223,7 @@ class HistoryControllerTest {
             }
         )
 
-        controller.handleDeleteSome(itemsToDelete)
+        controller.handleDeleteHistoryItems(itemsToDelete)
         assertEquals(itemsToDelete, actualItems)
     }
 

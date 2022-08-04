@@ -44,7 +44,8 @@ class HistoryViewItemFlow(
 ) {
     private val deleteFlow =
         MutableStateFlow(Pair(emptySet<PendingDeletionHistory>(), emptySet<HistoryItemTimeGroup>()))
-    private val emptyFlow = MutableStateFlow(false)
+    // The flow adds an emptyView item as a footer to the list.
+    private val emptyStateFlow = MutableStateFlow(false)
     val historyFlow: Flow<PagingData<HistoryViewItem>> = Pager(
         PagingConfig(PAGE_SIZE),
         null
@@ -87,7 +88,7 @@ class HistoryViewItemFlow(
         // reached. Because of local/remote item separation, there might be cases when the only
         // visible item is being deleted, but the pager is still trying to load items and footer the
         // item won't be shown until the loading is complete.
-        .combine(emptyFlow) { historyItems: PagingData<HistoryViewItem>, isEmpty: Boolean ->
+        .combine(emptyStateFlow) { historyItems: PagingData<HistoryViewItem>, isEmpty: Boolean ->
             if (isEmpty) {
                 historyItems.insertFooterItem(
                     item = HistoryViewItem.EmptyHistoryItem(
@@ -143,7 +144,7 @@ class HistoryViewItemFlow(
      * @param isEmpty The new empty state.
      */
     fun setEmptyState(isEmpty: Boolean) {
-        emptyFlow.value = isEmpty
+        emptyStateFlow.value = isEmpty
     }
 
     companion object {

@@ -260,7 +260,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         }
         R.id.delete_history_multi_select -> {
             val headers = historyView.historyAdapter.calculateTimeGroupsToRemove(historyStore.state.mode.selectedItems)
-            historyInteractor.onDeleteSome(historyStore.state.mode.selectedItems, headers)
+            historyInteractor.onDeleteHistoryItems(historyStore.state.mode.selectedItems, headers)
             historyStore.dispatch(HistoryFragmentAction.ExitEditMode)
             true
         }

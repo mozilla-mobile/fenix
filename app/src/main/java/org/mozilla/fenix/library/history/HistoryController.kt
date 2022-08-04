@@ -42,14 +42,13 @@ interface HistoryController {
     fun handleDeleteTimeRange()
 
     /**
-     * Hides the deleted items from the UI and triggers the UNDO snackbar, that gives the user a
-     * chance to cancel the removal. After the snackbar is gone, [DefaultHistoryController.delete]
-     * would remove the items from the data layer.
+     * Hides the deleted items from the UI and triggers the UNDO snackbar.
+     * After the snackbar is gone, the items are removed from the data layer.
      *
      * @param items History and History group items to be deleted.
      * @param groups Header to be hidden from the UI.
      */
-    fun handleDeleteSome(items: Set<History>, groups: Set<HistoryItemTimeGroup> = setOf())
+    fun handleDeleteHistoryItems(items: Set<History>, groups: Set<HistoryItemTimeGroup> = setOf())
 
     /**
      * Deletes history items inside the time frame.
@@ -71,7 +70,7 @@ interface HistoryController {
     fun handleSignIn()
 
     /**
-     * Invokes [DefaultHistoryController.createAccount] that starts the authentication process.
+     * Handles a user's request to create an account.
      */
     fun handleCreateAccount()
 }
@@ -155,7 +154,7 @@ class DefaultHistoryController(
         displayDeleteTimeRange.invoke()
     }
 
-    override fun handleDeleteSome(items: Set<History>, groups: Set<HistoryItemTimeGroup>) {
+    override fun handleDeleteHistoryItems(items: Set<History>, groups: Set<HistoryItemTimeGroup>) {
         val pendingDeletionItems = items.map { it.toPendingDeletionHistory() }.toSet()
         appStore.dispatch(AppAction.AddPendingDeletionSet(pendingDeletionItems))
         store.dispatch(HistoryFragmentAction.AddPendingDeletionSet(pendingDeletionItems, groups))
@@ -250,6 +249,6 @@ class DefaultHistoryController(
     }
 
     override fun handleCreateAccount() {
-        createAccount.invoke()
+        createAccount()
     }
 }

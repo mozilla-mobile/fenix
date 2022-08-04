@@ -150,6 +150,7 @@ sealed class HistoryFragmentAction : Action {
  * The state for the History Screen
  * @property items List of History to display
  * @property mode Current Mode of History
+ * @property isEmpty An indication of whether the user has history.
  */
 data class HistoryFragmentState(
     val items: List<History>,

@@ -36,8 +36,7 @@ class HistoryDataSource(
     private val accountManager: FxaAccountManager,
 ) : PagingSource<Int, HistoryViewItem>() {
 
-    // A map that helps to insure that headers don't get duplicated. It is cleared upon pull to
-    // refresh.
+    // A map that helps to insure that headers don't get duplicated. It is cleared when refreshed.
     private lateinit var headerPositions: SortedMap<HistoryItemTimeGroup, Int>
 
     // The refresh key is set to null so that it will always reload the entire list for any data
