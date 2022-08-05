@@ -104,6 +104,7 @@
     <string name="pref_key_show_search_suggestions_in_private_onboarding" translatable="false">pref_key_show_search_suggestions_in_privateonboarding</string>
     <string name="pref_key_show_voice_search" translatable="false">pref_key_show_voice_search</string>
     <string name="pref_key_enable_autocomplete_urls" translatable="false">pref_key_enable_domain_autocomplete</string>
+    <string name="pref_key_update_search_widget" translatable="false">pref_key_update_search_widget</string>
 
     <!-- Site Permissions Settings -->
     <string name="pref_key_show_site_exceptions" translatable="false">pref_key_show_site_exceptions</string>

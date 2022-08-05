@@ -259,13 +259,14 @@
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
-    <string name="search_widget_content_description_2">Open a new %1$s tab</string>
-    <!-- Text preview for smaller sized widgets -->
-    <string name="search_widget_text_short">Search</string>
-    <!-- Text preview for larger sized widgets -->
-    <string name="search_widget_text_long">Search the web</string>
-    <!-- Content description (not visible, for screen readers etc.): Voice search -->
-    <string name="search_widget_voice">Voice search</string>
+    <string name="search_widget_content_description_2" moz:RemovedIn="105" tools:ignore="UnusedResources">Open a new %1$s tab</string>
+    <string name="search_widget_content_description">Open a new %1$s tab</string>
+    <!-- Text preview for smaller sized widgets (This string is used in Android Components)-->
+    <string name="search_widget_text_short" tools:ignore="UnusedResources">Search</string>
+    <!-- Text preview for larger sized widgets (This string is used in Android Components)-->
+    <string name="search_widget_text_long" tools:ignore="UnusedResources">Search the web</string>
+    <!-- Content description (not visible, for screen readers etc.): Voice search (This string is used in Android Components)-->
+    <string name="search_widget_voice" tools:ignore="UnusedResources">Voice search</string>
 
     <!-- Preferences -->
     <!-- Title for the settings page-->

@@ -11,11 +11,11 @@ import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
+import mozilla.components.feature.search.widget.BaseVoiceSearchActivity.Companion.SPEECH_PROCESSING
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.widget.VoiceSearchActivity.Companion.SPEECH_PROCESSING
 
 /**
  * The search widget has a microphone button to let users search with their voice.

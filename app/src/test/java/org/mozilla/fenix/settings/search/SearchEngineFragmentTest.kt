@@ -99,7 +99,6 @@ class SearchEngineFragmentTest {
             voiceSearchPreference.callChangeListener(true)
 
             verify { preferencesEditor.putBoolean(voiceSearchPreferenceKey, true) }
-            verify { SearchWidgetProvider.updateAllWidgets(testContext) }
         } finally {
             unmockkObject(SearchWidgetProvider.Companion)
         }

@@ -37,7 +37,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
@@ -88,7 +87,6 @@ import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.search.toolbar.SearchSelectorToolbarAction
 import org.mozilla.fenix.search.toolbar.ToolbarView
 import org.mozilla.fenix.settings.SupportUtils
-import org.mozilla.fenix.widget.VoiceSearchActivity
 
 typealias SearchDialogFragmentStore = SearchFragmentStore
 
@@ -549,7 +547,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        if (requestCode == VoiceSearchActivity.SPEECH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == SPEECH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             intent?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.first()?.also {
                 toolbarView.view.edit.updateUrl(url = it, shouldHighlight = true)
                 interactor.onTextChanged(it)
@@ -790,7 +788,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_PROMPT, requireContext().getString(R.string.voice_search_explainer))
         }
-        startActivityForResult(speechIntent, VoiceSearchActivity.SPEECH_REQUEST_CODE)
+        startActivityForResult(speechIntent, SPEECH_REQUEST_CODE)
     }
 
     private fun updateQrButton(searchFragmentState: SearchFragmentState) {
@@ -904,6 +902,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
     companion object {
         private const val TAP_INCREASE_DPS = 8
+        const val SPEECH_REQUEST_CODE = 0
         private const val QR_FRAGMENT_TAG = "MOZAC_QR_FRAGMENT"
         private const val REQUEST_CODE_CAMERA_PERMISSIONS = 1
     }

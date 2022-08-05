@@ -316,6 +316,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
+    var shouldUpdateSearchWidget: Boolean
+        get() = preferences.getBoolean(appContext.getPreferenceKey(R.string.pref_key_update_search_widget), true)
+        set(value) {
+            preferences.edit()
+                .putBoolean(appContext.getPreferenceKey(R.string.pref_key_update_search_widget), value)
+                .apply()
+        }
+
     var gridTabView by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_tab_view_grid),
         default = true

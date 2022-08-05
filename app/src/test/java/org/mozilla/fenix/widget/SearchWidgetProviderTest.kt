@@ -16,130 +16,15 @@ import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.unmockkStatic
 import io.mockk.verify
+import mozilla.components.feature.search.widget.AppSearchWidgetProvider
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.gecko.search.SearchWidgetProvider
-import org.mozilla.gecko.search.SearchWidgetProviderSize
 
 @RunWith(FenixRobolectricTestRunner::class)
 class SearchWidgetProviderTest {
-
-    @Test
-    fun testGetLayoutSize() {
-        val sizes = mapOf(
-            0 to SearchWidgetProviderSize.EXTRA_SMALL_V1,
-            10 to SearchWidgetProviderSize.EXTRA_SMALL_V1,
-            63 to SearchWidgetProviderSize.EXTRA_SMALL_V1,
-            64 to SearchWidgetProviderSize.EXTRA_SMALL_V2,
-            99 to SearchWidgetProviderSize.EXTRA_SMALL_V2,
-            100 to SearchWidgetProviderSize.SMALL,
-            191 to SearchWidgetProviderSize.SMALL,
-            192 to SearchWidgetProviderSize.MEDIUM,
-            255 to SearchWidgetProviderSize.MEDIUM,
-            256 to SearchWidgetProviderSize.LARGE,
-            1000 to SearchWidgetProviderSize.LARGE
-        )
-
-        for ((dp, layoutSize) in sizes) {
-            assertEquals(layoutSize, SearchWidgetProvider.getLayoutSize(dp))
-        }
-    }
-
-    @Test
-    fun testGetLargeLayout() {
-        assertEquals(
-            R.layout.search_widget_large,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.LARGE, showMic = false)
-        )
-        assertEquals(
-            R.layout.search_widget_large,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.LARGE, showMic = true)
-        )
-    }
-
-    @Test
-    fun testGetMediumLayout() {
-        assertEquals(
-            R.layout.search_widget_medium,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.MEDIUM, showMic = false)
-        )
-        assertEquals(
-            R.layout.search_widget_medium,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.MEDIUM, showMic = true)
-        )
-    }
-
-    @Test
-    fun testGetSmallLayout() {
-        assertEquals(
-            R.layout.search_widget_small_no_mic,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.SMALL, showMic = false)
-        )
-        assertEquals(
-            R.layout.search_widget_small,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.SMALL, showMic = true)
-        )
-    }
-
-    @Test
-    fun testGetExtraSmall2Layout() {
-        assertEquals(
-            R.layout.search_widget_extra_small_v2,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.EXTRA_SMALL_V2, showMic = false)
-        )
-        assertEquals(
-            R.layout.search_widget_extra_small_v2,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.EXTRA_SMALL_V2, showMic = true)
-        )
-    }
-
-    @Test
-    fun testGetExtraSmall1Layout() {
-        assertEquals(
-            R.layout.search_widget_extra_small_v1,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.EXTRA_SMALL_V1, showMic = false)
-        )
-        assertEquals(
-            R.layout.search_widget_extra_small_v1,
-            SearchWidgetProvider.getLayout(SearchWidgetProviderSize.EXTRA_SMALL_V1, showMic = true)
-        )
-    }
-
-    @Test
-    fun testGetText() {
-        val context = mockk<Context>()
-        every { context.getString(R.string.search_widget_text_short) } returns "Search"
-        every { context.getString(R.string.search_widget_text_long) } returns "Search the web"
-
-        assertEquals(
-            "Search the web",
-            SearchWidgetProvider.getText(SearchWidgetProviderSize.LARGE, context)
-        )
-        assertEquals(
-            "Search",
-            SearchWidgetProvider.getText(SearchWidgetProviderSize.MEDIUM, context)
-        )
-        assertNull(SearchWidgetProvider.getText(SearchWidgetProviderSize.SMALL, context))
-        assertNull(SearchWidgetProvider.getText(SearchWidgetProviderSize.EXTRA_SMALL_V1, context))
-        assertNull(SearchWidgetProvider.getText(SearchWidgetProviderSize.EXTRA_SMALL_V2, context))
-    }
-
-    @Test
-    fun `GIVEN voice search is disabled WHEN createVoiceSearchIntent is called THEN it returns null`() {
-        val widgetProvider = SearchWidgetProvider()
-        val context: Context = mockk {
-            every { settings().shouldShowVoiceSearch } returns false
-        }
-
-        val result = widgetProvider.createVoiceSearchIntent(context)
-
-        assertNull(result)
-    }
 
     @Test
     fun `GIVEN widgets set on screen shown WHEN updateAllWidgets is called THEN it sends a broadcast to update all widgets`() {
@@ -154,7 +39,7 @@ class SearchWidgetProviderTest {
             val intentCaptor = slot<Intent>()
             every { context.sendBroadcast(capture(intentCaptor)) } just Runs
 
-            SearchWidgetProvider.updateAllWidgets(context)
+            AppSearchWidgetProvider.updateAllWidgets(context, SearchWidgetProvider::class.java)
 
             verify { context.sendBroadcast(any()) }
             assertEquals(SearchWidgetProvider::class.java.name, componentNameCaptor.captured.className)
@@ -179,7 +64,7 @@ class SearchWidgetProviderTest {
             val intentCaptor = slot<Intent>()
             every { context.sendBroadcast(capture(intentCaptor)) } just Runs
 
-            SearchWidgetProvider.updateAllWidgets(context)
+            AppSearchWidgetProvider.updateAllWidgets(context, SearchWidgetProvider::class.java)
 
             verify(exactly = 0) { context.sendBroadcast(any()) }
         } finally {

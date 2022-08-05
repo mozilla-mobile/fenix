@@ -10,6 +10,6 @@
     android:minResizeWidth="30dp"
     android:previewImage="@drawable/fenix_search_widget"
     android:updatePeriodMillis="3600000"
-    android:initialLayout="@layout/search_widget_large"
+    android:initialLayout="@layout/mozac_search_widget_large"
     android:widgetCategory="home_screen">
 </appwidget-provider>

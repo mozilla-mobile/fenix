@@ -37,6 +37,7 @@ import mozilla.components.feature.addons.update.GlobalAddonDependencyProvider
 import mozilla.components.feature.autofill.AutofillUseCases
 import mozilla.components.feature.search.ext.buildSearchUrl
 import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
+import mozilla.components.feature.search.widget.AppSearchWidgetProvider
 import mozilla.components.feature.top.sites.TopSitesFrecencyConfig
 import mozilla.components.feature.top.sites.TopSitesProviderConfig
 import mozilla.components.lib.crash.CrashReporter
@@ -93,6 +94,7 @@ import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
 import org.mozilla.fenix.wallpapers.WallpaperManager
+import org.mozilla.gecko.search.SearchWidgetProvider
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
@@ -145,6 +147,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         GlobalScope.launch(Dispatchers.IO) {
             PerfStartup.applicationOnCreate.accumulateSamples(listOf(durationMillis))
         }
+        updateSearchWidgetProvider()
     }
 
     @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
@@ -335,6 +338,18 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         queueMetrics()
         queueReviewPrompt()
         queueRestoreLocale()
+    }
+
+    // This update is needed to prevent the icons disappearing from the old version of search widget
+    // the was implemented only in Fenix to the current version with AC.
+    private fun updateSearchWidgetProvider() {
+        if (settings().shouldUpdateSearchWidget) {
+            AppSearchWidgetProvider.updateAllWidgets(
+                this,
+                SearchWidgetProvider::class.java
+            )
+            settings().shouldUpdateSearchWidget = false
+        }
     }
 
     private fun startMetricsIfEnabled() {

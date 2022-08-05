@@ -11,6 +11,7 @@ import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import mozilla.components.feature.search.widget.AppSearchWidgetProvider.Companion.updateAllWidgets
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getPreferenceKey
@@ -90,7 +91,7 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
                 requireContext().settings().preferences.edit {
                     putBoolean(preference.key, newBooleanValue)
                 }
-                SearchWidgetProvider.updateAllWidgets(requireContext())
+                updateAllWidgets(requireContext(), SearchWidgetProvider::class.java)
                 return true
             }
         }

@@ -15,6 +15,7 @@ import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.SearchState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.search.ext.createSearchEngine
+import mozilla.components.feature.search.widget.BaseVoiceSearchActivity.Companion.SPEECH_PROCESSING
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Before
 import org.junit.Test
@@ -24,7 +25,6 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.helpers.perf.TestStrictModeManager
-import org.mozilla.fenix.widget.VoiceSearchActivity.Companion.SPEECH_PROCESSING
 
 @RunWith(FenixRobolectricTestRunner::class)
 class SpeechProcessingIntentProcessorTest {
