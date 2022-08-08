@@ -6,8 +6,8 @@ name: "Update Nimbus Experiments"
 
 on:
   workflow_dispatch: {}
-  schedule:
-    - cron: '*/30 * * * *'
+  # schedule:
+  #   - cron: '*/30 * * * *'
   pull_request: {}
 
 jobs:
