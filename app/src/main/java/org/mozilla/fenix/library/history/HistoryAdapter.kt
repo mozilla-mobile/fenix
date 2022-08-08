@@ -170,7 +170,7 @@ class HistoryAdapter(
         removedItems: Set<History>,
         snapshot: List<HistoryViewItem> = snapshot().items
     ): Set<HistoryItemTimeGroup> {
-        val result: MutableSet<HistoryItemTimeGroup> = mutableSetOf()
+        val headersToRemove: MutableSet<HistoryItemTimeGroup> = mutableSetOf()
 
         // Group selected for removal items into timeGroup buckets, and rely on a bucket size to
         // determine if all items under a header have been removed.
@@ -195,7 +195,7 @@ class HistoryAdapter(
                     // Except the very first item, which is irrelevant in this case.
                     val timeGroupSize = (index - previousTimeGroupPosition) - 2
                     if (timeGroupMap[previousTimeGroup]!!.size == timeGroupSize) {
-                        result.add(previousTimeGroup)
+                        headersToRemove.add(previousTimeGroup)
                     }
                     previousTimeGroup = null
                 }
@@ -211,10 +211,10 @@ class HistoryAdapter(
         if (previousTimeGroup != null) {
             val timeGroupSize = (snapshot.size - previousTimeGroupPosition) - 1
             if (timeGroupMap[previousTimeGroup]!!.size == timeGroupSize) {
-                result.add(previousTimeGroup)
+                headersToRemove.add(previousTimeGroup)
             }
         }
-        return result
+        return headersToRemove
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {

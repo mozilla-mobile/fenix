@@ -21,7 +21,7 @@ import org.mozilla.fenix.library.history.HistoryInteractor
  */
 class SignInViewHolder(
     view: View,
-    private val historyInteractor: HistoryInteractor
+    private val historyInteractor: HistoryInteractor,
 ) : RecyclerView.ViewHolder(view) {
 
     private val binding = HistoryListSignInBinding.bind(view)
@@ -34,7 +34,7 @@ class SignInViewHolder(
             historyInteractor.onCreateAccountClicked()
         }
         binding.createAccount.text = HtmlCompat.fromHtml(
-            binding.createAccount.text.toString(),
+            binding.root.resources.getString(R.string.history_sign_in_create_account),
             HtmlCompat.FROM_HTML_MODE_LEGACY
         )
     }

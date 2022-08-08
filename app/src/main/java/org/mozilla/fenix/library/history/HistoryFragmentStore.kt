@@ -150,7 +150,10 @@ sealed class HistoryFragmentAction : Action {
  * The state for the History Screen
  * @property items List of History to display
  * @property mode Current Mode of History
+ * @property pendingDeletionItems Set of history items that have been hidden from the UI and were marked for removal.
  * @property isEmpty An indication of whether the user has history.
+ * @property isDeletingItems Whether or not history items are being removed from the storage.
+ * @property hiddenHeaders Set of headers in history list that have been hidden from the UI.
  */
 data class HistoryFragmentState(
     val items: List<History>,

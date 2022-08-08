@@ -65,6 +65,10 @@ fun History.toPendingDeletionHistory(): PendingDeletionHistory {
                 )
             }
         )
-        is History.Metadata -> PendingDeletionHistory.MetaData(visitedAt, historyTimeGroup, historyMetadataKey)
+        is History.Metadata -> PendingDeletionHistory.MetaData(
+            visitedAt,
+            historyTimeGroup,
+            historyMetadataKey
+        )
     }
 }

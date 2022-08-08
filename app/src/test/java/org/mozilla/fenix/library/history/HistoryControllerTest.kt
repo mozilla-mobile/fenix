@@ -251,8 +251,8 @@ class HistoryControllerTest {
         onTimeFrameDeleted: () -> Unit = {},
         invalidateOptionsMenu: () -> Unit = {},
         deleteHistoryItems: (Set<History>) -> Unit = { _ -> },
-        createAccount: () -> Unit = {},
         syncHistory: suspend () -> Unit = {},
+        createAccount: () -> Unit = {},
     ): HistoryController {
         return DefaultHistoryController(
             store,
