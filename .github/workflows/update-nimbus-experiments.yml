@@ -33,5 +33,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           path: main
           branch: automation/update-experiments-json
+          commit-message: "update initial_experiments.json based on the current first-run experiments in experimenter"
           title: "Update initial experiments JSON for Nimbus"
           body: "This (automated) PR updates the initial_experiments.json on the `main` branch"
