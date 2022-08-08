@@ -13,7 +13,7 @@
                 android:type="linear" />
         </shape>
     </item>
-    <item android:gravity="top">
+    <item android:bottom="55dp">
         <shape android:shape="rectangle">
             <size android:height="1dp" />
             <solid android:color="?neutralFaded" />
