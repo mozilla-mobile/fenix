@@ -8,26 +8,30 @@ on:
   workflow_dispatch: {}
   schedule:
     - cron: '*/30 * * * *'
+  pull_request: {}
 
 jobs:
-  main:
+  update-nimbus-experiments:
     name: "Update Nimbus Experiments"
     runs-on: ubuntu-20.04
     steps:
-      - name: "Checkout Master Branch"
+      - name: "Checkout Main Branch"
         uses: actions/checkout@v2
         with:
           path: main
           ref: main
       - name: "Update Experiments JSON"
-        run: |
-          curl https://experimenter.services.mozilla.com/api/v6/experiments/?is_first_run=True | jq '{"data":map(select(.appName == "fenix"))}' > app/src/main/res/raw/initial_experiments.json
-          git status
-      # - name: Create Pull Request
-      #   uses: peter-evans/create-pull-request@v3
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     path: beta
-      #     branch: automation/sync-strings-${{ steps.fenix-beta-version.outputs.beta_version }}
-      #     title: "Sync Strings from main to releases_${{steps.fenix-beta-version.outputs.beta_version}}.0"
-      #     body: "This (automated) PR syncs strings from `main` to `releases_${{steps.fenix-beta-version.outputs.beta_version}}.0.0`"
+        id: update-experiments-json
+        uses: jeddai/update-initial-experiments@v1
+        with:
+          repo-path: main
+          output-path: app/src/main/res/raw/initial_experiments.json
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        if: steps.update-experiments-json.outputs.CHANGED == 1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: main
+          branch: automation/update-experiments-json
+          title: "Update initial experiments JSON for Nimbus"
+          body: "This (automated) PR updates the initial_experiments.json on the `main` branch"
