@@ -17,22 +17,21 @@ jobs:
       - name: "Checkout Main Branch"
         uses: actions/checkout@v2
         with:
-          path: main
+          path: fenix
           ref: main
       - name: "Update Experiments JSON"
         id: update-experiments-json
         uses: jeddai/update-initial-experiments@v1
         with:
-          repo-path: main
-          # branch: automation/test-experiments-update
+          repo-path: fenix
           output-path: app/src/main/res/raw/initial_experiments.json
-          experimenter-url: https://experimenter.services.mozilla.com/api/v6/experiments/
+          experimenter-url: https://stage.experimenter.nonprod.dataops.mozgcp.net/api/v6/experiments/?is_first_run=true
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         if: steps.update-experiments-json.outputs.changed == 1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          path: main
+          path: fenix
           branch: automation/test-experiments-update
           commit-message: "update initial_experiments.json based on the current first-run experiments in experimenter"
           title: "Update initial experiments JSON for Nimbus"
