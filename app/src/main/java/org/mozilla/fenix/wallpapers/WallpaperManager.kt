@@ -19,6 +19,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.perf.runBlockingIncrement
 import org.mozilla.fenix.utils.Settings
 import java.io.File
@@ -30,6 +32,7 @@ import java.util.Date
 @Suppress("TooManyFunctions")
 class WallpaperManager(
     private val settings: Settings,
+    private val appStore: AppStore,
     private val downloader: WallpaperDownloader,
     private val fileManager: WallpaperFileManager,
     private val currentLocale: String,
@@ -40,39 +43,19 @@ class WallpaperManager(
     val wallpapers = allWallpapers
         .filter(::filterExpiredRemoteWallpapers)
         .filter(::filterPromotionalWallpapers)
+        .also {
+            appStore.dispatch(AppAction.WallpaperAction.UpdateAvailableWallpapers(it))
+        }
 
     var currentWallpaper: Wallpaper = getCurrentWallpaperFromSettings()
         set(value) {
             settings.currentWallpaper = value.name
+            appStore.dispatch(AppAction.WallpaperAction.UpdateCurrentWallpaper(value))
             field = value
         }
 
     init {
         fileManager.clean(currentWallpaper, wallpapers.filterIsInstance<Wallpaper.Remote>())
-    }
-
-    /**
-     * Apply the [newWallpaper] into the [wallpaperContainer] and update the [currentWallpaper].
-     */
-    fun updateWallpaper(wallpaperContainer: ImageView, newWallpaper: Wallpaper) {
-        val context = wallpaperContainer.context
-        if (newWallpaper == defaultWallpaper) {
-            wallpaperContainer.visibility = View.GONE
-            logger.info("Wallpaper update to default background")
-        } else {
-            val bitmap = loadSavedWallpaper(context, newWallpaper)
-            if (bitmap == null) {
-                val message = "Could not load wallpaper bitmap. Resetting to default."
-                logger.error(message)
-                currentWallpaper = defaultWallpaper
-                wallpaperContainer.visibility = View.GONE
-                return
-            } else {
-                wallpaperContainer.visibility = View.VISIBLE
-                scaleBitmapToBottom(bitmap, wallpaperContainer)
-            }
-        }
-        currentWallpaper = newWallpaper
     }
 
     /**
@@ -96,6 +79,8 @@ class WallpaperManager(
             values.first()
         } else {
             values[index]
+        }.also {
+            currentWallpaper = it
         }
     }
 
@@ -122,16 +107,18 @@ class WallpaperManager(
             wallpapers.find { it.name == currentWallpaper }
                 ?: fileManager.lookupExpiredWallpaper(currentWallpaper)
                 ?: defaultWallpaper
+        }.also {
+            appStore.dispatch(AppAction.WallpaperAction.UpdateCurrentWallpaper(it))
         }
     }
 
     /**
      * Load a wallpaper that is saved locally.
      */
-    fun loadSavedWallpaper(context: Context, wallpaper: Wallpaper): Bitmap? =
-        when (wallpaper) {
-            is Wallpaper.Local -> loadWallpaperFromDrawables(context, wallpaper)
-            is Wallpaper.Remote -> loadWallpaperFromDisk(context, wallpaper)
+    fun Wallpaper.load(context: Context): Bitmap? =
+        when (this) {
+            is Wallpaper.Local -> loadWallpaperFromDrawables(context, this)
+            is Wallpaper.Remote -> loadWallpaperFromDisk(context, this)
             else -> null
         }
 
@@ -152,7 +139,14 @@ class WallpaperManager(
         }
     }.getOrNull()
 
-    private fun scaleBitmapToBottom(bitmap: Bitmap, view: ImageView) {
+    /**
+     * This will scale the received [Bitmap] to the size of the [view]. It retains the bitmap's
+     * original aspect ratio, but will shrink or enlarge it to fit the viewport. If bitmap does not
+     * correctly fit the aspect ratio of the view, it will be shifted to prioritize the bottom-left
+     * of the bitmap.
+     */
+    fun Bitmap.scaleBitmapToBottomOfView(view: ImageView) {
+        val bitmap = this
         view.setImageBitmap(bitmap)
         view.scaleType = ImageView.ScaleType.MATRIX
         val matrix = Matrix()
