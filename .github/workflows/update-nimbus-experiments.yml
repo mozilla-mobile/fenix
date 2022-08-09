@@ -24,7 +24,7 @@ jobs:
         uses: jeddai/update-initial-experiments@v1
         with:
           repo-path: main
-          branch: automation/test-experiments-update
+          # branch: automation/test-experiments-update
           output-path: app/src/main/res/raw/initial_experiments.json
           experimenter-url: https://experimenter.services.mozilla.com/api/v6/experiments/
       - name: Create Pull Request
@@ -33,7 +33,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           path: main
-          base: main
           branch: automation/test-experiments-update
           commit-message: "update initial_experiments.json based on the current first-run experiments in experimenter"
           title: "Update initial experiments JSON for Nimbus"
