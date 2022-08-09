@@ -33,6 +33,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           path: main
+          base: main
           branch: automation/test-experiments-update
           commit-message: "update initial_experiments.json based on the current first-run experiments in experimenter"
           title: "Update initial experiments JSON for Nimbus"
