@@ -70,6 +70,7 @@ import mozilla.components.feature.top.sites.TopSitesProviderConfig
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.lib.state.ext.flow
+import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
@@ -284,6 +285,7 @@ class HomeFragment : Fragment() {
                         syncStore = requireComponents.backgroundServices.syncStore,
                         storage = requireComponents.backgroundServices.syncedTabsStorage,
                         accountManager = requireComponents.backgroundServices.accountManager,
+                        syncEnginesStorage = SyncEnginesStorage(requireContext()),
                         coroutineScope = viewLifecycleOwner.lifecycleScope,
                     ),
                     owner = viewLifecycleOwner,

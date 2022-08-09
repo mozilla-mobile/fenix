@@ -4,14 +4,20 @@
 
 package org.mozilla.fenix.home.recentsyncedtabs
 
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import mozilla.components.concept.sync.DeviceType
 import mozilla.components.feature.syncedtabs.storage.SyncedTabsStorage
 import mozilla.components.lib.state.ext.flow
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.manager.FxaAccountManager
+import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.fxa.manager.ext.withConstellation
 import mozilla.components.service.fxa.store.SyncStatus
 import mozilla.components.service.fxa.store.SyncStore
@@ -37,6 +43,7 @@ class RecentSyncedTabFeature(
     private val syncStore: SyncStore,
     private val storage: SyncedTabsStorage,
     private val accountManager: FxaAccountManager,
+    private val syncEnginesStorage: SyncEnginesStorage,
     private val coroutineScope: CoroutineScope,
 ) : LifecycleAwareFeature {
 
@@ -44,8 +51,15 @@ class RecentSyncedTabFeature(
     private var lastSyncedTab: RecentSyncedTab? = null
 
     override fun start() {
-        collectAccountUpdates()
-        collectStatusUpdates()
+        coroutineScope.launch {
+            val tabsAreEnabled = withContext(Dispatchers.IO) { syncEnginesStorage.getStatus()[SyncEngine.Tabs] ?: true }
+            if (!tabsAreEnabled) {
+                appStore.dispatch(AppAction.RecentSyncedTabStateChange(RecentSyncedTabState.None))
+                return@launch
+            }
+            collectAccountUpdates()
+            collectStatusUpdates()
+        }
     }
 
     override fun stop() = Unit
@@ -65,7 +79,7 @@ class RecentSyncedTabFeature(
             }.launchIn(coroutineScope)
     }
 
-    private fun collectStatusUpdates() {
+    private suspend fun collectStatusUpdates() {
         syncStore.flow()
             .ifChanged { state ->
                 state.status
@@ -84,13 +98,14 @@ class RecentSyncedTabFeature(
     private fun dispatchLoading() {
         syncStartId?.let { RecentSyncedTabs.recentSyncedTabTimeToLoad.cancel(it) }
         syncStartId = RecentSyncedTabs.recentSyncedTabTimeToLoad.start()
-        if (appStore.state.recentSyncedTabState == RecentSyncedTabState.None) {
+        if (appStore.state.recentSyncedTabState !is RecentSyncedTabState.Success) {
             appStore.dispatch(AppAction.RecentSyncedTabStateChange(RecentSyncedTabState.Loading))
         }
     }
 
     private suspend fun dispatchSyncedTabs() {
         val syncedTab = storage.getSyncedDeviceTabs()
+            .also { Log.i("tighe", "dispatch called ${it.size}") }
             .filterNot { it.device.isCurrentDevice || it.tabs.isEmpty() }
             .maxByOrNull { it.device.lastAccessTime ?: 0 }
             ?.let {

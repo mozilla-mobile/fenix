@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.components.appstate
 
+import android.util.Log
 import androidx.annotation.VisibleForTesting
 import mozilla.components.service.pocket.PocketStory.PocketRecommendedStory
 import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
@@ -73,6 +74,7 @@ internal object AppStoreReducer {
             )
         }
         is AppAction.RecentSyncedTabStateChange -> {
+            Log.i("tighe", "${action.state}")
             state.copy(
                 recentSyncedTabState = action.state
             )

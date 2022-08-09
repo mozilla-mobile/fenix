@@ -24,6 +24,7 @@ import mozilla.components.concept.sync.DeviceType
 import mozilla.components.feature.syncedtabs.storage.SyncedTabsStorage
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.manager.FxaAccountManager
+import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.fxa.manager.ext.withConstellation
 import mozilla.components.service.fxa.store.Account
 import mozilla.components.service.fxa.store.SyncAction
@@ -87,6 +88,8 @@ class RecentSyncedTabFeatureTest {
     private val appStore: AppStore = mockk()
     private val accountManager: FxaAccountManager = mockk(relaxed = true)
     private val storage: SyncedTabsStorage = mockk()
+    private val syncEnginesStorage: SyncEnginesStorage = mockk()
+    private val scope = TestScope()
 
     private val syncStore = SyncStore()
 
@@ -97,14 +100,28 @@ class RecentSyncedTabFeatureTest {
         Dispatchers.setMain(StandardTestDispatcher())
 
         every { appStore.dispatch(any()) } returns mockk()
+        every { syncEnginesStorage.getStatus() } returns mapOf(SyncEngine.Tabs to true)
 
         feature = RecentSyncedTabFeature(
             appStore = appStore,
             syncStore = syncStore,
             accountManager = accountManager,
             storage = storage,
-            coroutineScope = TestScope(),
+            syncEnginesStorage = syncEnginesStorage,
+            coroutineScope = scope,
         )
+    }
+
+    @Test
+    fun `GIVEN tabs are disabled in sync account WHEN started THEN nothing state is dispatched and syncs are not started`() = scope.runTest {
+        every { syncEnginesStorage.getStatus() } returns mapOf(SyncEngine.Tabs to false)
+        syncStore.setState(account = mockk())
+
+        feature.start()
+        runCurrent()
+
+        verify { appStore.dispatch(AppAction.RecentSyncedTabStateChange(RecentSyncedTabState.None)) }
+        verify(exactly = 0) { appStore.dispatch(AppAction.RecentSyncedTabStateChange(RecentSyncedTabState.Loading)) }
     }
 
     @Test

@@ -180,6 +180,6 @@ fun AppState.filterState(blocklistHandler: BlocklistHandler): AppState =
  * and the availability of local or Synced tabs.
  */
 fun AppState.shouldShowRecentTabs(settings: Settings): Boolean {
-    val hasTab = recentTabs.isNotEmpty() || recentSyncedTabState is RecentSyncedTabState.Success
+    val hasTab = recentTabs.isNotEmpty() || recentSyncedTabState !is RecentSyncedTabState.None
     return settings.showRecentTabsFeature && hasTab
 }
