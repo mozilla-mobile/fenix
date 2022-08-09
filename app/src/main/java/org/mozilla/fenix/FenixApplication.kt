@@ -8,6 +8,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.StrictMode
+import android.os.SystemClock
 import android.util.Log.INFO
 import androidx.annotation.CallSuper
 import androidx.annotation.VisibleForTesting
@@ -113,8 +114,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         private set
 
     override fun onCreate() {
-        // We use start/stop instead of measure so we don't measure outside the main process.
-        val completeMethodDurationTimerId = PerfStartup.applicationOnCreate.start() // DO NOT MOVE ANYTHING ABOVE HERE.
+        // We measure ourselves to avoid a call into Glean before its loaded.
+        val start = SystemClock.elapsedRealtimeNanos()
 
         super.onCreate()
 
@@ -134,8 +135,16 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         setupInMainProcessOnly()
 
         downloadWallpapers()
-        // DO NOT MOVE ANYTHING BELOW THIS stop CALL.
-        PerfStartup.applicationOnCreate.stopAndAccumulate(completeMethodDurationTimerId)
+
+        // DO NOT MOVE ANYTHING BELOW THIS elapsedRealtimeNanos CALL.
+        val stop = SystemClock.elapsedRealtimeNanos()
+        val durationMillis = TimeUnit.NANOSECONDS.toMillis(stop - start)
+
+        // We avoid blocking the main thread on startup by calling into Glean on the background thread.
+        @OptIn(DelicateCoroutinesApi::class)
+        GlobalScope.launch(Dispatchers.IO) {
+            PerfStartup.applicationOnCreate.accumulateSamples(listOf(durationMillis))
+        }
     }
 
     @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
@@ -425,12 +434,28 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     private fun setupNimbusObserver(nimbus: Observable<NimbusInterface.Observer>) {
         nimbus.register(object : NimbusInterface.Observer {
             override fun onUpdatesApplied(updated: List<EnrolledExperiment>) {
+                // To workaround a caching bug in Nimbus that appears when we try to query an
+                // experiment **before** `FxNimbus.initialize` is called we need to set the `api`
+                // value again so that we can still access the NimbusApi that is wrapped
+                // in `FxNimbus.initialize.getSdk`.
+                //
+                // We set this value here to minimize the race between setting the `api` value and
+                // the callers of FxNimbus.
+                // See: https://github.com/mozilla/application-services/issues/5075
+                FxNimbus.api = components.analytics.experiments
                 onNimbusStartupAndUpdate()
             }
         })
     }
 
     private fun onNimbusStartupAndUpdate() {
+        // When Nimbus has successfully started up, we can apply our engine settings experiment.
+        // Any previous value that was set on the engine will be overridden from those set in
+        // Core.Engine.DefaultSettings.
+        // NOTE ⚠️: Any startup experiment we want to run needs to have it's value re-applied here.
+        components.core.engine.settings.trackingProtectionPolicy =
+            components.core.trackingProtectionPolicyFactory.createTrackingProtectionPolicy()
+
         val settings = settings()
         if (FeatureFlags.messagingFeature && settings.isExperimentationEnabled) {
             components.appStore.dispatch(AppAction.MessagingAction.Restore)
@@ -719,7 +744,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             voiceSearchEnabled.set(settings.shouldShowVoiceSearch)
             openLinksInAppEnabled.set(settings.openLinksInExternalApp)
             signedInSync.set(settings.signedInFxaAccount)
-            searchTermGroupsEnabled.set(settings.searchTermTabGroupsAreEnabled)
 
             val syncedItems = SyncEnginesStorage(applicationContext).getStatus().entries.filter {
                 it.value

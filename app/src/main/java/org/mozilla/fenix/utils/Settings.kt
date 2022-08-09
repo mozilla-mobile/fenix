@@ -426,15 +426,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
-    /**
-     * Indicates if the user has enabled the search term tab groups feature.
-     */
-    var searchTermTabGroupsAreEnabled by lazyFeatureFlagPreference(
-        appContext.getPreferenceKey(R.string.pref_key_search_term_tab_groups),
-        default = { FxNimbus.features.searchTermGroups.value().enabled },
-        featureFlag = FeatureFlags.tabGroupFeature
-    )
-
     @VisibleForTesting
     internal fun timeNowInMillis(): Long = System.currentTimeMillis()
 
@@ -590,9 +581,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         true
     )
 
-    val enabledTotalCookieProtection: Boolean by lazy {
-        FxNimbus.features.engineSettings.value().totalCookieProtectionEnabled
-    }
+    val enabledTotalCookieProtection: Boolean
+        get() = FxNimbus.features.engineSettings.value().totalCookieProtectionEnabled
 
     val blockCookiesSelectionInCustomTrackingProtection by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection_custom_cookies_select),
