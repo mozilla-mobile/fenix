@@ -10,7 +10,11 @@ import androidx.navigation.NavOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.HistoryMetadataAction
+import mozilla.components.browser.state.action.RecentlyClosedAction
+import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.R
@@ -18,7 +22,7 @@ import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.history.DefaultPagedHistoryProvider
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.navigateSafe
+import org.mozilla.fenix.library.history.HistoryFragment.DeleteConfirmationDialogFragment
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
@@ -30,12 +34,24 @@ interface HistoryController {
     fun handleBackPressed(): Boolean
     fun handleModeSwitched()
     fun handleSearch()
-    fun handleDeleteAll()
+
+    /**
+     * Displays a [DeleteConfirmationDialogFragment].
+     */
+    fun handleDeleteTimeRange()
     fun handleDeleteSome(items: Set<History>)
+
+    /**
+     * Deletes history items inside the time frame.
+     *
+     * @param timeFrame Selected time frame by the user. If `null`, removes all history.
+     */
+    fun handleDeleteTimeRangeConfirmed(timeFrame: RemoveTimeFrame?)
     fun handleRequestSync()
     fun handleEnterRecentlyClosed()
+
     /**
-     * Navigates to [org.mozilla.fenix.library.syncedhistory.SyncedHistoryFragment]
+     * Navigates to [HistoryFragment] that would display history synced from other devices.
      */
     fun handleEnterSyncedHistory()
 }
@@ -44,11 +60,14 @@ interface HistoryController {
 class DefaultHistoryController(
     private val store: HistoryFragmentStore,
     private val appStore: AppStore,
+    private val browserStore: BrowserStore,
+    private val historyStorage: PlacesHistoryStorage,
     private var historyProvider: DefaultPagedHistoryProvider,
     private val navController: NavController,
     private val scope: CoroutineScope,
     private val openToBrowser: (item: History.Regular) -> Unit,
-    private val displayDeleteAll: () -> Unit,
+    private val displayDeleteTimeRange: () -> Unit,
+    private val onTimeFrameDeleted: () -> Unit,
     private val invalidateOptionsMenu: () -> Unit,
     private val deleteSnackbar: (
         items: Set<History>,
@@ -108,17 +127,47 @@ class DefaultHistoryController(
             HistoryFragmentDirections.actionGlobalHistorySearchDialog()
         }
 
-        navController.navigateSafe(R.id.historyFragment, directions)
+        navController.navigate(directions)
     }
 
-    override fun handleDeleteAll() {
-        displayDeleteAll.invoke()
+    override fun handleDeleteTimeRange() {
+        displayDeleteTimeRange.invoke()
     }
 
     override fun handleDeleteSome(items: Set<History>) {
         val pendingDeletionItems = items.map { it.toPendingDeletionHistory() }.toSet()
         appStore.dispatch(AppAction.AddPendingDeletionSet(pendingDeletionItems))
         deleteSnackbar.invoke(items, ::undo, ::delete)
+    }
+
+    override fun handleDeleteTimeRangeConfirmed(timeFrame: RemoveTimeFrame?) {
+        scope.launch {
+            store.dispatch(HistoryFragmentAction.EnterDeletionMode)
+            if (timeFrame == null) {
+                historyStorage.deleteEverything()
+            } else {
+                val longRange = timeFrame.toLongRange()
+                historyStorage.deleteVisitsBetween(
+                    startTime = longRange.first,
+                    endTime = longRange.last,
+                )
+            }
+            when (timeFrame) {
+                RemoveTimeFrame.LastHour -> GleanHistory.removedLastHour.record(NoExtras())
+                RemoveTimeFrame.TodayAndYesterday -> GleanHistory.removedTodayAndYesterday.record(NoExtras())
+                null -> GleanHistory.removedAll.record(NoExtras())
+            }
+            // We introduced more deleting options, but are keeping these actions for all options.
+            // The approach could be improved: https://github.com/mozilla-mobile/fenix/issues/26102
+            browserStore.dispatch(RecentlyClosedAction.RemoveAllClosedTabAction)
+            browserStore.dispatch(EngineAction.PurgeHistoryAction).join()
+
+            store.dispatch(HistoryFragmentAction.ExitDeletionMode)
+
+            launch(Dispatchers.Main) {
+                onTimeFrameDeleted.invoke()
+            }
+        }
     }
 
     private fun undo(items: Set<History>) {
@@ -168,8 +217,6 @@ class DefaultHistoryController(
     }
 
     override fun handleEnterSyncedHistory() {
-        navController.navigate(
-            HistoryFragmentDirections.actionHistoryFragmentToSyncedHistoryFragment()
-        )
+        navController.navigate(HistoryFragmentDirections.actionSyncedHistoryFragment())
     }
 }

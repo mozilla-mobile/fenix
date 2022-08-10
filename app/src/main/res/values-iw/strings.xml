@@ -74,6 +74,9 @@
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">סגירה</string>
 
+    <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
+    <string name="cfr_dismiss_button_default_content_description">סגירה</string>
+
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">דרושה גישה למצלמה. יש לעבור להגדרות ה־Android, להקיש על הרשאות ולאחר מכן על ״לאפשר״.</string>
     <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
@@ -752,7 +755,7 @@
     <string name="pwa_site_controls_title_private">‏%1$s (מצב פרטי)</string>
 
     <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string name="tab_tray_header_title_1">לשוניות אחרות</string>
+    <string moz:removedIn="104" name="tab_tray_header_title_1" tools:ignore="UnusedResources">לשוניות אחרות</string>
 
     <!-- History -->
     <!-- Text for the button to search all history -->
@@ -785,6 +788,14 @@
     <string name="history_synced_from_other_devices">סונכרן ממכשירים אחרים</string>
     <!-- The page title for browsing history coming from other devices. -->
     <string name="history_from_other_devices">ממכשירים אחרים</string>
+
+    <!-- The synced history sign in dialog message -->
+    <string name="history_sign_in_message">יש להיכנס כדי לצפות בהיסטוריה המסונכרנת משאר מהמכשירים שלך.</string>
+
+    <!-- The synced history sign in dialog button text -->
+    <string name="history_sign_in_button">כניסה</string>
+    <!-- The synced history sign in dialog create a new account link -->
+    <string name="history_sign_in_create_account"><![CDATA[<u>או יצירת חשבון Firefox כדי להתחיל לסנכרן</u>]]></string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1155,7 +1166,18 @@
     <string name="delete_browsing_data_on_quit_action">יציאה</string>
 
     <!-- Dialog message to the user asking to delete browsing data. -->
-    <string name="delete_browsing_data_prompt_message">פעולה זו תמחק את כל נתוני הגלישה שלך.</string>
+    <string moz:removedIn="104" name="delete_browsing_data_prompt_message" tools:ignore="UnusedResources">פעולה זו תמחק את כל נתוני הגלישה שלך.</string>
+    <!-- Title text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_title">טווח זמן למחיקה</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body">מסיר היסטוריה (כולל היסטוריה מסונכרנת ממכשירים אחרים), עוגיות ונתוני גלישה אחרים.</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
+    <string name="delete_history_prompt_button_last_hour">שעה אחרונה</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
+    <string name="delete_history_prompt_button_today_and_yesterday">היום ואתמול</string>
+    <!-- Radio button in the delete browsing data dialog to delete all history. -->
+    <string name="delete_history_prompt_button_everything">הכול</string>
+
     <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
     <string name="delete_browsing_data_prompt_message_3">%s ימחק את נתוני הגלישה שנבחרו.</string>
     <!-- Text for the cancel button for the data deletion dialog -->
@@ -1168,8 +1190,8 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">בתהליך מחיקת נתוני גלישה…</string>
 
-    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
-    <string name="delete_history_group_prompt_message">פעולה זו תמחק את כל הפריטים.</string>
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. Parameter will be replaced by a history group name. -->
+    <string name="delete_all_history_group_prompt_message">מחיקת כל האתרים תחת ״%s״</string>
     <!-- Text for the cancel button for the history group deletion dialog -->
     <string name="delete_history_group_prompt_cancel">ביטול</string>
     <!-- Text for the allow button for the history group dialog -->
@@ -1585,8 +1607,6 @@
     <string name="addresses_edit_address">עריכת כתובת</string>
     <!-- Title of the "Manage addresses" screen -->
     <string name="addresses_manage_addresses">ניהול כתובות</string>
-    <!-- The header for the full name of an address -->
-    <string moz:removedIn="102" name="addresses_full_name" tools:ignore="UnusedResources">שם מלא</string>
     <!-- The header for the first name of an address -->
     <string name="addresses_first_name">שם פרטי</string>
     <!-- The header for the middle name of an address -->
@@ -1754,7 +1774,7 @@
     <!-- Text displayed when user has no tabs that have been synced -->
     <string name="synced_tabs_no_tabs">אין לך לשוניות פתוחות ב־Firefox בשאר המכשירים שלך.</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
-    <string name="synced_tabs_sign_in_message">הצגת רשימת הלשוניות מהמכשירים האחרים שלך.</string>
+    <string name="synced_tabs_sign_in_message">הצגת רשימת לשוניות משאר המכשירים שלך.</string>
 
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
     <string name="synced_tabs_sign_in_button">יש להתחבר כדי לסנכרן</string>
@@ -1852,4 +1872,5 @@
     <string name="experiments_snackbar">יש להפעיל טלמטריה כדי לשלוח נתונים.</string>
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">מעבר להגדרות</string>
+    <string name="firefox_suggest_header">הצעות של Firefox</string>
 </resources>

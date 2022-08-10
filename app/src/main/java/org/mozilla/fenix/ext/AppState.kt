@@ -15,7 +15,8 @@ import org.mozilla.fenix.home.blocklist.BlocklistHandler
 import org.mozilla.fenix.home.pocket.POCKET_STORIES_DEFAULT_CATEGORY_NAME
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketStory
-import org.mozilla.fenix.home.recenttabs.RecentTab.SearchGroup
+import org.mozilla.fenix.home.recentsyncedtabs.RecentSyncedTabState
+import org.mozilla.fenix.utils.Settings
 
 /**
  * Total count of all stories to show irrespective of their type.
@@ -161,13 +162,6 @@ internal fun getFilteredSponsoredStories(
 }
 
 /**
- * Get the [SearchGroup] shown in the "Jump back in" section.
- * May be null if no search group is shown.
- */
-internal val AppState.recentSearchGroup: SearchGroup?
-    get() = recentTabs.find { it is SearchGroup } as SearchGroup?
-
-/**
  * Filter a [AppState] by the blocklist.
  *
  * @param blocklistHandler The handler that will filter the state.
@@ -180,3 +174,12 @@ fun AppState.filterState(blocklistHandler: BlocklistHandler): AppState =
             recentHistory = recentHistory.filteredByBlocklist()
         )
     }
+
+/**
+ * Determines whether a recent tab section should be shown, based on user preference
+ * and the availability of local or Synced tabs.
+ */
+fun AppState.shouldShowRecentTabs(settings: Settings): Boolean {
+    val hasTab = recentTabs.isNotEmpty() || recentSyncedTabState is RecentSyncedTabState.Success
+    return settings.showRecentTabsFeature && hasTab
+}

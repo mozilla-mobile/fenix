@@ -74,6 +74,9 @@
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">Dimitter</string>
 
+    <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
+    <string name="cfr_dismiss_button_default_content_description">Dimitter</string>
+
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">Accesso al camera necessari. Vade al parametros de Android, tocca Permissiones e tocca Permitter.</string>
     <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
@@ -780,7 +783,7 @@
     <string name="pwa_site_controls_title_private">%1$s (modo private)</string>
 
     <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string name="tab_tray_header_title_1">Altere schedas</string>
+    <string moz:removedIn="104" name="tab_tray_header_title_1" tools:ignore="UnusedResources">Altere schedas</string>
 
     <!-- History -->
     <!-- Text for the button to search all history -->
@@ -815,6 +818,13 @@
     <string name="history_synced_from_other_devices">Synchronisate ab altere apparatos</string>
     <!-- The page title for browsing history coming from other devices. -->
     <string name="history_from_other_devices">Ab altere apparatos</string>
+
+    <!-- The synced history sign in dialog message -->
+    <string name="history_sign_in_message">Accede pro vider le chronologia synchronisate de tu altere apparatos.</string>
+    <!-- The synced history sign in dialog button text -->
+    <string name="history_sign_in_button">Acceder</string>
+    <!-- The synced history sign in dialog create a new account link -->
+    <string name="history_sign_in_create_account"><![CDATA[<u>O crea un conto Firefox pro initiar a synchronisar</u>]]></string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1190,7 +1200,18 @@
     <string name="delete_browsing_data_on_quit_action">Quitar</string>
 
     <!-- Dialog message to the user asking to delete browsing data. -->
-    <string name="delete_browsing_data_prompt_message">Isto delera tote tu datos de navigation.</string>
+    <string moz:removedIn="104" name="delete_browsing_data_prompt_message" tools:ignore="UnusedResources">Isto delera tote tu datos de navigation.</string>
+    <!-- Title text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_title">Intervallo pro deler</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body">Remove le chronologia (incluse le chronologia synchronisate de altere apparatos), cookies e altere datos de navigation.</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
+    <string name="delete_history_prompt_button_last_hour">Ultime hora</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
+    <string name="delete_history_prompt_button_today_and_yesterday">Hodie e heri</string>
+    <!-- Radio button in the delete browsing data dialog to delete all history. -->
+    <string name="delete_history_prompt_button_everything">Toto</string>
+
     <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
     <string name="delete_browsing_data_prompt_message_3">%s delera le datos de navigation eligite.
 </string>
@@ -1203,8 +1224,8 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">Deletion del datos de navigation…</string>
 
-    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
-    <string name="delete_history_group_prompt_message">Isto delera tote le elementos.</string>
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. Parameter will be replaced by a history group name. -->
+    <string name="delete_all_history_group_prompt_message">Deler tote le sitos in “%s”</string>
     <!-- Text for the cancel button for the history group deletion dialog -->
     <string name="delete_history_group_prompt_cancel">Cancellar</string>
     <!-- Text for the allow button for the history group dialog -->
@@ -1632,8 +1653,6 @@
     <string name="addresses_edit_address">Modificar le adresse</string>
     <!-- Title of the "Manage addresses" screen -->
     <string name="addresses_manage_addresses">Gerer addresses</string>
-    <!-- The header for the full name of an address -->
-    <string moz:removedIn="102" name="addresses_full_name" tools:ignore="UnusedResources">Nomine complete</string>
     <!-- The header for the first name of an address -->
     <string name="addresses_first_name">Prenomine</string>
     <!-- The header for the middle name of an address -->
@@ -1901,4 +1920,5 @@
     <string name="experiments_snackbar">Activar le telemetria pro inviar datos.</string>
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">Ir a parametros</string>
+    <string name="firefox_suggest_header">Firefox suggere</string>
 </resources>

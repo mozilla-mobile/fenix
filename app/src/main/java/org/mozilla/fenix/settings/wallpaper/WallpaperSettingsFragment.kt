@@ -30,10 +30,6 @@ class WallpaperSettingsFragment : Fragment() {
         requireComponents.wallpaperManager
     }
 
-    private val settings by lazy {
-        requireComponents.settings
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -45,12 +41,11 @@ class WallpaperSettingsFragment : Fragment() {
             setContent {
                 FirefoxTheme {
                     var currentWallpaper by remember { mutableStateOf(wallpaperManager.currentWallpaper) }
-                    var wallpapersSwitchedByLogo by remember { mutableStateOf(settings.wallpapersSwitchedByLogoTap) }
                     WallpaperSettings(
                         wallpapers = wallpaperManager.wallpapers,
                         defaultWallpaper = WallpaperManager.defaultWallpaper,
-                        loadWallpaperResource = {
-                            wallpaperManager.loadSavedWallpaper(requireContext(), it)
+                        loadWallpaperResource = { wallpaper ->
+                            with(wallpaperManager) { wallpaper.load(context) }
                         },
                         selectedWallpaper = currentWallpaper,
                         onSelectWallpaper = { selectedWallpaper: Wallpaper ->
@@ -64,16 +59,6 @@ class WallpaperSettingsFragment : Fragment() {
                             )
                         },
                         onViewWallpaper = { findNavController().navigate(R.id.homeFragment) },
-                        tapLogoSwitchChecked = wallpapersSwitchedByLogo,
-                        onTapLogoSwitchCheckedChange = {
-                            settings.wallpapersSwitchedByLogoTap = it
-                            wallpapersSwitchedByLogo = it
-                            Wallpapers.changeWallpaperLogoToggled.record(
-                                Wallpapers.ChangeWallpaperLogoToggledExtra(
-                                    checked = it
-                                )
-                            )
-                        }
                     )
                 }
             }

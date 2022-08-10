@@ -41,8 +41,6 @@
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string name="recent_bookmarks_title">Marcadores recientes</string>
-    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
-    <string moz:removedIn="101" name="recently_saved_show_all" tools:ignore="UnusedResources">Mostrar todos</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description_2">Mostrar todos los marcadores guardados</string>
 
@@ -75,6 +73,9 @@
     <string name="open_in_app_cfr_positive_button_text">Ir a Ajustes</string>
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">Descartar</string>
+
+    <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
+    <string name="cfr_dismiss_button_default_content_description">Descartar</string>
 
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">Se necesita acceso a la cámara. Andá a la configuración de Android, pulsá permisos y permitir.</string>
@@ -360,7 +361,9 @@
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Personalizar</string>
     <!-- Preference description for banner about signing in -->
-    <string name="preferences_sign_in_description">Sincronizar marcadores, historial y más con tu cuenta Firefox</string>
+    <string moz:RemovedIn="104" name="preferences_sign_in_description" tools:ignore="UnusedResources">Sincronizar marcadores, historial y más con tu cuenta Firefox</string>
+    <!-- Preference description for banner about signing in -->
+    <string name="preferences_sign_in_description_2">Iniciá la sesión para sincronizar pestañas, marcadores, contraseñas y más.</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
     <string name="preferences_account_default_name">Cuenta Firefox</string>
     <!-- Preference text for account title when there was an error syncing FxA -->
@@ -537,7 +540,9 @@
 
     <!-- Turn On Sync Preferences -->
     <!-- Header of the Turn on Sync preference view -->
-    <string name="preferences_sync">Activar Sync</string>
+    <string moz:RemovedIn="104" name="preferences_sync" tools:ignore="UnusedResources">Activar Sync</string>
+    <!-- Header of the Sync and save your data preference view -->
+    <string name="preferences_sync_2">Sincronizá y guardá los datos</string>
     <!-- Preference for reconnecting to FxA sync -->
     <string name="preferences_sync_sign_in_to_reconnect">Iniciar la sesión para reconectar</string>
 
@@ -762,7 +767,7 @@
     <string name="pwa_site_controls_title_private">%1$s (modo privado)</string>
 
     <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string name="tab_tray_header_title_1">Otras pestañas</string>
+    <string moz:removedIn="104" name="tab_tray_header_title_1" tools:ignore="UnusedResources">Otras pestañas</string>
 
     <!-- History -->
     <!-- Text for the button to search all history -->
@@ -796,6 +801,13 @@
     <string name="history_synced_from_other_devices">Sincronizados de otros dispositivos</string>
     <!-- The page title for browsing history coming from other devices. -->
     <string name="history_from_other_devices">Desde otros dispositivos</string>
+
+    <!-- The synced history sign in dialog message -->
+    <string name="history_sign_in_message">Iniciá la sesión para ver el historial sincronizado desde tus otros dispositivos.</string>
+    <!-- The synced history sign in dialog button text -->
+    <string name="history_sign_in_button">Iniciar la sesión</string>
+    <!-- The synced history sign in dialog create a new account link -->
+    <string name="history_sign_in_create_account"><![CDATA[<u>O creá una cuenta de Firefox para comenzar a sincronizar</u>]]></string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1089,8 +1101,6 @@
     <string name="snackbar_tabs_closed">Pestañas cerradas</string>
     <!-- Text shown in snackbar when user bookmarks a list of tabs -->
     <string name="snackbar_message_bookmarks_saved">¡Marcadores guardados!</string>
-    <!-- Text shown in snackbar when user adds a site to top sites -->
-    <string moz:RemovedIn="101" name="snackbar_added_to_top_sites" tools:ignore="UnusedResources">¡Agregado a los sitios principales!</string>
     <!-- Text shown in snackbar when user adds a site to shortcuts -->
     <string name="snackbar_added_to_shortcuts">¡Agregado a atajos!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1171,7 +1181,18 @@
     <string name="delete_browsing_data_on_quit_action">Salir</string>
 
     <!-- Dialog message to the user asking to delete browsing data. -->
-    <string name="delete_browsing_data_prompt_message">Esto eliminará todos tus datos de navegación.</string>
+    <string moz:removedIn="104" name="delete_browsing_data_prompt_message" tools:ignore="UnusedResources">Esto eliminará todos tus datos de navegación.</string>
+    <!-- Title text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_title">Intervalo de tiempo para borrar</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body">Elimina el historial (incluyendo historial sincronizado de otros dispositivos), cookies y otros datos de navegación.</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
+    <string name="delete_history_prompt_button_last_hour">Última hora</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
+    <string name="delete_history_prompt_button_today_and_yesterday">Hoy y ayer</string>
+    <!-- Radio button in the delete browsing data dialog to delete all history. -->
+    <string name="delete_history_prompt_button_everything">Todo</string>
+
     <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
     <string name="delete_browsing_data_prompt_message_3">%s va a eliminar los datos de navegación seleccionados.</string>
     <!-- Text for the cancel button for the data deletion dialog -->
@@ -1184,8 +1205,8 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">Eliminando datos de navegación…</string>
 
-    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
-    <string name="delete_history_group_prompt_message">Esto borrará todos los ítems.</string>
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. Parameter will be replaced by a history group name. -->
+    <string name="delete_all_history_group_prompt_message">Borrar todos los sitios en “%s”</string>
     <!-- Text for the cancel button for the history group deletion dialog -->
     <string name="delete_history_group_prompt_cancel">Cancelar</string>
     <!-- Text for the allow button for the history group dialog -->
@@ -1602,8 +1623,6 @@
     <string name="addresses_edit_address">Editar dirección</string>
     <!-- Title of the "Manage addresses" screen -->
     <string name="addresses_manage_addresses">Administrar direcciones</string>
-    <!-- The header for the full name of an address -->
-    <string moz:removedIn="102" name="addresses_full_name" tools:ignore="UnusedResources">Nombre completo</string>
     <!-- The header for the first name of an address -->
     <string name="addresses_first_name">Primer Nombre</string>
     <!-- The header for the middle name of an address -->
@@ -1713,10 +1732,6 @@
     <string name="no_site_exceptions">Sin excepciones para el sitio</string>
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">¿Estás seguro de que querés eliminar este marcador?</string>
-    <!-- Browser menu button that adds a top site to the home fragment -->
-    <string moz:RemovedIn="101" name="browser_menu_add_to_top_sites" tools:ignore="UnusedResources">Agregar a los sitios principales</string>
-    <!-- Browser menu button that removes a top site from the home fragment -->
-    <string moz:RemovedIn="101" name="browser_menu_remove_from_top_sites" tools:ignore="UnusedResources">Eliminar de los sitios más usados</string>
     <!-- Browser menu button that adds a shortcut to the home fragment -->
     <string name="browser_menu_add_to_shortcuts">Agregado a atajos</string>
     <!-- Browser menu button that removes a shortcut from the home fragment -->
@@ -1793,12 +1808,8 @@
     <string name="synced_tabs_collapse_group">Ocultar grupo de pestañas sincronizadas</string>
 
     <!-- Top Sites -->
-    <!-- Title text displayed in the dialog when top sites limit is reached. -->
-    <string moz:RemovedIn="101" name="top_sites_max_limit_title" tools:ignore="UnusedResources">Alcanzaste el límite para sitios importantes</string>
     <!-- Title text displayed in the dialog when shortcuts limit is reached. -->
     <string name="shortcut_max_limit_title">Alcanzaste el límite para atajos</string>
-    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string moz:RemovedIn="101" name="top_sites_max_limit_content_2" tools:ignore="UnusedResources">Para agregar un nuevo sitio importante, eliminá uno. Mantené presionado el sitio y seleccioná eliminar.</string>
     <!-- Content description text displayed in the dialog when shortcut limit is reached. -->
     <string name="shortcut_max_limit_content">Para agregar un nuevo atajo, eliminá uno. Tocá y mantené presionado el sitio y seleccioná eliminar.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
@@ -1808,8 +1819,6 @@
     <string name="top_sites_toggle_top_recent_sites_4">Accesos directos</string>
 	<!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Nombre</string>
-	<!-- Hint for renaming title of a top site -->
-	<string moz:RemovedIn="101" name="top_site_name_hint" tools:ignore="UnusedResources">Nombre del sitio principal</string>
     <!-- Hint for renaming title of a shortcut -->
     <string name="shortcut_name_hint">Nombre del atajo</string>
 	<!-- Button caption to confirm the renaming of the top site. -->
@@ -1883,4 +1892,5 @@
     <string name="experiments_snackbar">Habilitar telemetry para enviar datos.</string>
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">Ir a ajustes</string>
+    <string name="firefox_suggest_header">Sugerencia de Firefox</string>
 </resources>

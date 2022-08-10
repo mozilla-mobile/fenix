@@ -79,6 +79,9 @@
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">닫기</string>
 
+    <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
+    <string name="cfr_dismiss_button_default_content_description">닫기</string>
+
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">카메라 액세스가 필요합니다. Android 설정으로 이동하여 권한을 누른 다음 허용을 누르세요.</string>
     <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
@@ -364,7 +367,7 @@
     <!-- Preference description for banner about signing in -->
     <string moz:RemovedIn="104" name="preferences_sign_in_description" tools:ignore="UnusedResources">Firefox 계정으로 북마크, 기록 등을 동기화하세요</string>
     <!-- Preference description for banner about signing in -->
-    <string name="preferences_sign_in_description_2">로그인하여 탭, 북마크, 비밀번호 등을 동기화하세요.</string>
+    <string name="preferences_sign_in_description_2">탭, 북마크, 비밀번호 등을 동기화하려면 로그인하세요.</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
     <string name="preferences_account_default_name">Firefox 계정</string>
     <!-- Preference text for account title when there was an error syncing FxA -->
@@ -764,7 +767,7 @@
     <string name="pwa_site_controls_title_private">%1$s (사생활 보호 모드)</string>
 
     <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string name="tab_tray_header_title_1">기타 탭</string>
+    <string moz:removedIn="104" name="tab_tray_header_title_1" tools:ignore="UnusedResources">기타 탭</string>
 
     <!-- History -->
     <!-- Text for the button to search all history -->
@@ -798,6 +801,13 @@
     <string name="history_synced_from_other_devices">다른 기기에서 동기화됨</string>
     <!-- The page title for browsing history coming from other devices. -->
     <string name="history_from_other_devices">다른 기기에서</string>
+
+    <!-- The synced history sign in dialog message -->
+    <string name="history_sign_in_message">다른 기기에서 동기화된 기록을 보려면 로그인 하세요.</string>
+    <!-- The synced history sign in dialog button text -->
+    <string name="history_sign_in_button">로그인</string>
+    <!-- The synced history sign in dialog create a new account link -->
+    <string name="history_sign_in_create_account"><![CDATA[<u>또는 동기화를 시작하려면 Firefox 계정을 만드세요</u>]]></string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1193,7 +1203,18 @@
     <string name="delete_browsing_data_on_quit_action">종료</string>
 
     <!-- Dialog message to the user asking to delete browsing data. -->
-    <string name="delete_browsing_data_prompt_message">탐색 데이터가 모두 삭제됩니다.</string>
+    <string moz:removedIn="104" name="delete_browsing_data_prompt_message" tools:ignore="UnusedResources">탐색 데이터가 모두 삭제됩니다.</string>
+    <!-- Title text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_title">삭제할 시간 범위</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body">기록 (다른 기기에서 동기화된 기록 포함), 쿠키 및 기타 탐색 데이터를 제거합니다.</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
+    <string name="delete_history_prompt_button_last_hour">지난 시간</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
+    <string name="delete_history_prompt_button_today_and_yesterday">오늘 및 어제</string>
+    <!-- Radio button in the delete browsing data dialog to delete all history. -->
+    <string name="delete_history_prompt_button_everything">전체</string>
+
     <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
     <string name="delete_browsing_data_prompt_message_3">%s가 선택된 탐색 데이터를 삭제합니다.</string>
     <!-- Text for the cancel button for the data deletion dialog -->
@@ -1206,8 +1227,8 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">탐색 데이터 삭제 중…</string>
 
-    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
-    <string name="delete_history_group_prompt_message">모든 항목이 삭제됩니다.</string>
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. Parameter will be replaced by a history group name. -->
+    <string name="delete_all_history_group_prompt_message">“%s”의 모든 사이트를 삭제하시겠습니까?</string>
     <!-- Text for the cancel button for the history group deletion dialog -->
     <string name="delete_history_group_prompt_cancel">취소</string>
     <!-- Text for the allow button for the history group dialog -->
@@ -1282,7 +1303,7 @@
     <!-- Instructions on how to access pairing -->
     <string name="sign_in_instructions"><![CDATA[컴퓨터에서 Firefox를 열고 <b>https://firefox.com/pair</b>로 이동하세요]]></string>
     <!-- Text shown for sign in pairing when ready -->
-    <string name="sign_in_ready_for_scan">스캔 준비</string>
+    <string name="sign_in_ready_for_scan">스캔 준비 완료</string>
     <!-- Text shown for settings option for sign with pairing -->
     <string name="sign_in_with_camera">카메라로 로그인</string>
     <!-- Text shown for settings option for sign with email -->
@@ -1628,8 +1649,6 @@
     <string name="addresses_edit_address">주소 편집</string>
     <!-- Title of the "Manage addresses" screen -->
     <string name="addresses_manage_addresses">주소 관리</string>
-    <!-- The header for the full name of an address -->
-    <string moz:removedIn="102" name="addresses_full_name" tools:ignore="UnusedResources">이름</string>
     <!-- The header for the first name of an address -->
     <string name="addresses_first_name">이름</string>
     <!-- The header for the middle name of an address -->
@@ -1715,7 +1734,7 @@
     <!-- First step for the allowing a permission -->
     <string name="phone_feature_blocked_step_settings">1. 안드로이드 설정으로 이동하세요</string>
     <!-- Second step for the allowing a permission -->
-    <string name="phone_feature_blocked_step_permissions"><![CDATA[2. <b>권한<b>을 누르세요.]]></string>
+    <string name="phone_feature_blocked_step_permissions"><![CDATA[2. <b>권한</b>을 누르세요.]]></string>
 
     <!-- Third step for the allowing a permission (Fore example: Camera) -->
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. <b>%1$s</b>을(를) 켜기로 전환하세요]]></string>
@@ -1898,4 +1917,5 @@
     <string name="experiments_snackbar">데이터를 보내려면 원격 분석을 활성화하세요.</string>
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">설정으로 이동</string>
+    <string name="firefox_suggest_header">Firefox 제안</string>
 </resources>

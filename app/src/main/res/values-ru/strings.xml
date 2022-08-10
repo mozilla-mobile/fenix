@@ -78,6 +78,9 @@
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">Пропустить</string>
 
+    <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
+    <string name="cfr_dismiss_button_default_content_description">Убрать</string>
+
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">Требуется доступ к камере. Перейдите в системные настройки приложения, выберите «Разрешения», затем нажмите «Камера» и выберите «Разрешить».</string>
     <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
@@ -126,11 +129,11 @@
     <string name="recent_tabs_show_all_content_description_2">Кнопка показа всех недавних вкладок</string>
     <!-- Title for showing a group item in the 'Jump back in' section of the new tab
         The first parameter is the search term that the user used. (for example: your search for "cat")-->
-    <string name="recent_tabs_search_term">Ваш поиск \&quot;%1$s\&quot;</string>
+    <string moz:RemovedIn="105" name="recent_tabs_search_term" tools:ignore="UnusedResources">Ваш поиск \&quot;%1$s\&quot;</string>
 
     <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
         %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
-    <string name="recent_tabs_search_term_count_2">Сайтов: %d</string>
+    <string moz:RemovedIn="105" name="recent_tabs_search_term_count_2" tools:ignore="UnusedResources">Сайтов: %d</string>
 
     <!-- Text for button in synced tab card that opens synced tabs tray -->
     <string name="recent_tabs_see_all_synced_tabs_button_text">Все облачные вкладки</string>
@@ -400,7 +403,7 @@
     <string name="preferences_account_settings">Настройки Аккаунта</string>
 
     <!-- Preference for enabling url autocomplete-->
-    <string name="preferences_enable_autocomplete_urls">Автозаполнение URL</string>
+    <string name="preferences_enable_autocomplete_urls">Автодополнение URL</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Открывать ссылки в приложениях</string>
 
@@ -761,7 +764,7 @@
     <string name="pwa_site_controls_title_private">%1$s (Приватный просмотр)</string>
 
     <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string name="tab_tray_header_title_1">Другие вкладки</string>
+    <string moz:removedIn="104" name="tab_tray_header_title_1" tools:ignore="UnusedResources">Другие вкладки</string>
 
     <!-- History -->
     <!-- Text for the button to search all history -->
@@ -795,6 +798,13 @@
     <string name="history_synced_from_other_devices">Синхронизировано с других устройств</string>
     <!-- The page title for browsing history coming from other devices. -->
     <string name="history_from_other_devices">С других устройств</string>
+
+    <!-- The synced history sign in dialog message -->
+    <string name="history_sign_in_message">Войдите, чтобы увидеть историю с других ваших устройств.</string>
+    <!-- The synced history sign in dialog button text -->
+    <string name="history_sign_in_button">Войти</string>
+    <!-- The synced history sign in dialog create a new account link -->
+    <string name="history_sign_in_create_account"><![CDATA[<u>Или создайте учётную запись Firefox, чтобы начать синхронизацию</u>]]></string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1183,7 +1193,18 @@
     <string name="delete_browsing_data_on_quit_action">Выйти</string>
 
     <!-- Dialog message to the user asking to delete browsing data. -->
-    <string name="delete_browsing_data_prompt_message">Это действие удалит все данные вашего веб-сёрфинга.</string>
+    <string moz:removedIn="104" name="delete_browsing_data_prompt_message" tools:ignore="UnusedResources">Это действие удалит все данные вашего веб-сёрфинга.</string>
+    <!-- Title text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_title">Диапазон времени для удаления</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body">Удаляет историю (включая историю с других устройств), куки и другие данные просмотра.</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
+    <string name="delete_history_prompt_button_last_hour">За последний час</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
+    <string name="delete_history_prompt_button_today_and_yesterday">За сегодня и вчера</string>
+    <!-- Radio button in the delete browsing data dialog to delete all history. -->
+    <string name="delete_history_prompt_button_everything">Всё</string>
+
     <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
     <string name="delete_browsing_data_prompt_message_3">%s удалит выбранные данные веб-сёрфинга.</string>
     <!-- Text for the cancel button for the data deletion dialog -->
@@ -1196,8 +1217,8 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">Удаляем данные веб-сёрфинга…</string>
 
-    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
-    <string name="delete_history_group_prompt_message">Это удалит все элементы.</string>
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. Parameter will be replaced by a history group name. -->
+    <string name="delete_all_history_group_prompt_message">Удалить все сайты в «%s»</string>
     <!-- Text for the cancel button for the history group deletion dialog -->
     <string name="delete_history_group_prompt_cancel">Отмена</string>
     <!-- Text for the allow button for the history group dialog -->
@@ -1609,8 +1630,6 @@
     <string name="addresses_edit_address">Изменить адрес</string>
     <!-- Title of the "Manage addresses" screen -->
     <string name="addresses_manage_addresses">Управление адресами</string>
-    <!-- The header for the full name of an address -->
-    <string moz:removedIn="102" name="addresses_full_name" tools:ignore="UnusedResources">Полное имя</string>
     <!-- The header for the first name of an address -->
     <string name="addresses_first_name">Имя</string>
     <!-- The header for the middle name of an address -->
@@ -1876,4 +1895,5 @@
     <string name="experiments_snackbar">Включите телеметрию для отправки данных.</string>
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">Перейти в настройки</string>
+    <string name="firefox_suggest_header">Firefox Suggest</string>
 </resources>

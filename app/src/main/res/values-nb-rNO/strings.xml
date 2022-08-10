@@ -41,8 +41,6 @@
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string name="recent_bookmarks_title">Nylige bokmerker</string>
-    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
-    <string moz:removedIn="101" name="recently_saved_show_all" tools:ignore="UnusedResources">Vis alle</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description_2">Vis alle lagrede bokmerker</string>
 
@@ -76,6 +74,9 @@
     <string name="open_in_app_cfr_positive_button_text">Gå til innstillinger</string>
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">Ignorer</string>
+
+    <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
+    <string name="cfr_dismiss_button_default_content_description">Lukk</string>
 
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">Kameratilgang er nødvendig. Gå til Android-innstillinger, trykk på tillatelser, og trykk på tillat.</string>
@@ -125,11 +126,11 @@
     <string name="recent_tabs_show_all_content_description_2">Vis alle nylige faner-knappen</string>
     <!-- Title for showing a group item in the 'Jump back in' section of the new tab
         The first parameter is the search term that the user used. (for example: your search for "cat")-->
-    <string name="recent_tabs_search_term">Du søkte etter «%1$s»</string>
+    <string moz:RemovedIn="105" name="recent_tabs_search_term" tools:ignore="UnusedResources">Du søkte etter «%1$s»</string>
 
     <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
         %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
-    <string name="recent_tabs_search_term_count_2">%d nettsteder</string>
+    <string moz:RemovedIn="105" name="recent_tabs_search_term_count_2" tools:ignore="UnusedResources">%d nettsteder</string>
 
     <!-- Text for button in synced tab card that opens synced tabs tray -->
     <string name="recent_tabs_see_all_synced_tabs_button_text">Se alle synkroniserte faner</string>
@@ -360,7 +361,9 @@
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Tilpass</string>
     <!-- Preference description for banner about signing in -->
-    <string name="preferences_sign_in_description">Synkroniser bokmerker, historikk og mer med Firefox-kontoen din</string>
+    <string moz:RemovedIn="104" name="preferences_sign_in_description" tools:ignore="UnusedResources">Synkroniser bokmerker, historikk og mer med Firefox-kontoen din</string>
+    <!-- Preference description for banner about signing in -->
+    <string name="preferences_sign_in_description_2">Logg inn for å synkronisere faner, bokmerker, passord med mer.</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
     <string name="preferences_account_default_name">Firefox-konto</string>
     <!-- Preference text for account title when there was an error syncing FxA -->
@@ -533,7 +536,9 @@
 
     <!-- Turn On Sync Preferences -->
     <!-- Header of the Turn on Sync preference view -->
-    <string name="preferences_sync">Slå på Sync</string>
+    <string moz:RemovedIn="104" name="preferences_sync" tools:ignore="UnusedResources">Slå på Sync</string>
+    <!-- Header of the Sync and save your data preference view -->
+    <string name="preferences_sync_2">Synkroniser og lagre dataene dine</string>
     <!-- Preference for reconnecting to FxA sync -->
     <string name="preferences_sync_sign_in_to_reconnect">Logg inn for å koble til på nytt</string>
     <!-- Preference for removing FxA account -->
@@ -752,7 +757,7 @@
     <string name="pwa_site_controls_title_private">%1$s (privatmodus)</string>
 
     <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string name="tab_tray_header_title_1">Andre faner</string>
+    <string moz:removedIn="104" name="tab_tray_header_title_1" tools:ignore="UnusedResources">Andre faner</string>
 
     <!-- History -->
     <!-- Text for the button to search all history -->
@@ -786,6 +791,13 @@
     <string name="history_synced_from_other_devices">Synkronisert fra andre enheter</string>
     <!-- The page title for browsing history coming from other devices. -->
     <string name="history_from_other_devices">Fra andre enheter</string>
+
+    <!-- The synced history sign in dialog message -->
+    <string name="history_sign_in_message">Logg på for å se historikken synkronisert fra de andre enhetene dine.</string>
+    <!-- The synced history sign in dialog button text -->
+    <string name="history_sign_in_button">Logg inn</string>
+    <!-- The synced history sign in dialog create a new account link -->
+    <string name="history_sign_in_create_account"><![CDATA[<u>Eller opprett en Firefox-konto for å begynne å synkronisere</u>]]></string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1076,8 +1088,6 @@
     <string name="snackbar_tabs_closed">Faner lukket</string>
     <!-- Text shown in snackbar when user bookmarks a list of tabs -->
     <string name="snackbar_message_bookmarks_saved">Bokmerker lagret!</string>
-    <!-- Text shown in snackbar when user adds a site to top sites -->
-    <string moz:RemovedIn="101" name="snackbar_added_to_top_sites" tools:ignore="UnusedResources">Lagt til i foretrukne nettsteder!</string>
     <!-- Text shown in snackbar when user adds a site to shortcuts -->
     <string name="snackbar_added_to_shortcuts">Lagt til i snarveier!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1158,7 +1168,18 @@
     <string name="delete_browsing_data_on_quit_action">Avslutt</string>
 
     <!-- Dialog message to the user asking to delete browsing data. -->
-    <string name="delete_browsing_data_prompt_message">Dette vil slette alle dine nettleserdata.</string>
+    <string moz:removedIn="104" name="delete_browsing_data_prompt_message" tools:ignore="UnusedResources">Dette vil slette alle dine nettleserdata.</string>
+
+    <!-- Title text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_title">Tidsrom for sletting</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body">Fjerner historikk (inkludert historikk synkronisert fra andre enheter), infokapsler og andre nettlesingsdata.</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
+    <string name="delete_history_prompt_button_last_hour">Den siste timen</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
+    <string name="delete_history_prompt_button_today_and_yesterday">I dag og i går</string>
+    <!-- Radio button in the delete browsing data dialog to delete all history. -->
+    <string name="delete_history_prompt_button_everything">Alt</string>
 
     <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
     <string name="delete_browsing_data_prompt_message_3">%s vil slette valgte nettleserdata.</string>
@@ -1171,8 +1192,8 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">Sletter nettleserdata…</string>
 
-    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
-    <string name="delete_history_group_prompt_message">Dette vil slette alle elementer.</string>
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. Parameter will be replaced by a history group name. -->
+    <string name="delete_all_history_group_prompt_message">Slett alle nettsteder i «%s»</string>
     <!-- Text for the cancel button for the history group deletion dialog -->
     <string name="delete_history_group_prompt_cancel">Avbryt</string>
     <!-- Text for the allow button for the history group dialog -->
@@ -1600,8 +1621,6 @@
     <string name="addresses_edit_address">Rediger adresse</string>
     <!-- Title of the "Manage addresses" screen -->
     <string name="addresses_manage_addresses">Behandle adresser</string>
-    <!-- The header for the full name of an address -->
-    <string moz:removedIn="102" name="addresses_full_name" tools:ignore="UnusedResources">Fullt navn</string>
     <!-- The header for the first name of an address -->
     <string name="addresses_first_name">Fornavn</string>
     <!-- The header for the middle name of an address -->
@@ -1711,10 +1730,6 @@
     <string name="no_site_exceptions">Ingen unntak fra nettstedet</string>
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">Er du sikker på at du vil slette dette bokmerket?</string>
-    <!-- Browser menu button that adds a top site to the home fragment -->
-    <string moz:RemovedIn="101" name="browser_menu_add_to_top_sites" tools:ignore="UnusedResources">Legg til i foretrukne nettsteder</string>
-    <!-- Browser menu button that removes a top site from the home fragment -->
-    <string moz:RemovedIn="101" name="browser_menu_remove_from_top_sites" tools:ignore="UnusedResources">Fjernet fra mest besøkte nettsteder</string>
     <!-- Browser menu button that adds a shortcut to the home fragment -->
     <string name="browser_menu_add_to_shortcuts">Legg til i snarveier</string>
     <!-- Browser menu button that removes a shortcut from the home fragment -->
@@ -1790,12 +1805,8 @@
     <string name="synced_tabs_collapse_group">Skjul gruppen med synkroniserte faner</string>
 
     <!-- Top Sites -->
-    <!-- Title text displayed in the dialog when top sites limit is reached. -->
-    <string moz:RemovedIn="101" name="top_sites_max_limit_title" tools:ignore="UnusedResources">Grense for populære nettsteder nådd</string>
     <!-- Title text displayed in the dialog when shortcuts limit is reached. -->
     <string name="shortcut_max_limit_title">Grensen for antall snarveier nådd</string>
-    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string moz:RemovedIn="101" name="top_sites_max_limit_content_2" tools:ignore="UnusedResources">For å legge til et nytt populært nettsted må du fjerne et annet. Trykk og hold på nettstedet, og velg fjern.</string>
     <!-- Content description text displayed in the dialog when shortcut limit is reached. -->
     <string name="shortcut_max_limit_content">For å legge til en ny snarvei, må du fjerne et annet. Trykk og hold på nettstedet, og velg fjern.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
@@ -1805,8 +1816,6 @@
     <string name="top_sites_toggle_top_recent_sites_4">Snarveier</string>
 	<!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Navn</string>
-	<!-- Hint for renaming title of a top site -->
-	<string moz:RemovedIn="101" name="top_site_name_hint" tools:ignore="UnusedResources">Navn på mest besøkte</string>
     <!-- Hint for renaming title of a shortcut -->
     <string name="shortcut_name_hint">Navn på snarvei</string>
 	<!-- Button caption to confirm the renaming of the top site. -->
@@ -1879,4 +1888,5 @@
     <string name="experiments_snackbar">Aktiver telemetri for å sende data.</string>
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">Gå til innstillinger</string>
+    <string name="firefox_suggest_header">Firefox-forslag</string>
 </resources>

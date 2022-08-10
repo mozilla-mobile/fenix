@@ -21,7 +21,6 @@
         android:text="@string/collections_header"
         android:textAppearance="@style/HeaderTextStyle"
         android:textSize="16sp"
-        app:fontFamily="@font/metropolis_semibold"
         app:layout_constraintEnd_toStartOf="@id/remove_collection_placeholder"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,7 +35,8 @@
         app:layout_constraintBottom_toBottomOf="@id/no_collections_header"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/no_collections_header"
-        app:srcCompat="@drawable/ic_close" />
+        app:srcCompat="@drawable/mozac_ic_close_20"
+        app:tint="?attr/textPrimary" />
 
     <TextView
         android:id="@+id/no_collections_description"

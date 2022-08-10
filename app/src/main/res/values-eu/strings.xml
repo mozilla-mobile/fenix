@@ -42,8 +42,6 @@
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string name="recent_bookmarks_title">Azken laster-markak</string>
-    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
-    <string moz:removedIn="101" name="recently_saved_show_all" tools:ignore="UnusedResources">Erakutsi denak</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description_2">Erakutsi gordetako laster-marka guztiak</string>
 
@@ -76,6 +74,9 @@
     <string name="open_in_app_cfr_positive_button_text">Joan ezarpenetara</string>
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">Baztertu</string>
+
+    <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
+    <string name="cfr_dismiss_button_default_content_description">Baztertu</string>
 
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">Kamerarako sarbidea behar da. Joan Androideko ezarpenetara, sakatu baimenetan eta sakatu baimendu.</string>
@@ -124,11 +125,11 @@
     <string name="recent_tabs_show_all_content_description_2">Azken fitxa guztiak erakusteko botoia</string>
     <!-- Title for showing a group item in the 'Jump back in' section of the new tab
         The first parameter is the search term that the user used. (for example: your search for "cat")-->
-    <string name="recent_tabs_search_term">Zure bilaketa: \&quot;%1$s\&quot;</string>
+    <string moz:RemovedIn="105" name="recent_tabs_search_term" tools:ignore="UnusedResources">Zure bilaketa: \&quot;%1$s\&quot;</string>
 
     <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
         %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
-    <string name="recent_tabs_search_term_count_2">%d gune</string>
+    <string moz:RemovedIn="105" name="recent_tabs_search_term_count_2" tools:ignore="UnusedResources">%d gune</string>
 
     <!-- Text for button in synced tab card that opens synced tabs tray -->
     <string name="recent_tabs_see_all_synced_tabs_button_text">Ikusi sinkronizatutako fitxa guztiak</string>
@@ -359,7 +360,9 @@
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Pertsonalizatu</string>
     <!-- Preference description for banner about signing in -->
-    <string name="preferences_sign_in_description">Sinkronizatu laster-markak, historia eta gehiago zure Firefox kontua erabiliz</string>
+    <string moz:RemovedIn="104" name="preferences_sign_in_description" tools:ignore="UnusedResources">Sinkronizatu laster-markak, historia eta gehiago zure Firefox kontua erabiliz</string>
+    <!-- Preference description for banner about signing in -->
+    <string name="preferences_sign_in_description_2">Hasi saioa fitxak, laster-markak, pasahitzak eta gehiago sinkronizatzeko.</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
     <string name="preferences_account_default_name">Firefox kontua</string>
     <!-- Preference text for account title when there was an error syncing FxA -->
@@ -429,6 +432,8 @@
     <!-- Title for the customize home screen section with Pocket. -->
     <string name="customize_toggle_pocket">Pocket</string>
 
+    <!-- Title for the customize home screen section with sponsored Pocket stories. -->
+    <string name="customize_toggle_pocket_sponsored">Babesleen istorioak</string>
     <!-- Title for the opening wallpaper settings screen -->
     <string name="customize_wallpapers">Horma-paperak</string>
     <!-- Title for the customize home screen section with sponsored shortcuts. -->
@@ -532,7 +537,9 @@
 
     <!-- Turn On Sync Preferences -->
     <!-- Header of the Turn on Sync preference view -->
-    <string name="preferences_sync">Gaitu sinkronizazioa</string>
+    <string moz:RemovedIn="104" name="preferences_sync" tools:ignore="UnusedResources">Gaitu sinkronizazioa</string>
+    <!-- Header of the Sync and save your data preference view -->
+    <string name="preferences_sync_2">Sinkronizatu eta gorde datuak</string>
     <!-- Preference for reconnecting to FxA sync -->
     <string name="preferences_sync_sign_in_to_reconnect">Hasi saioa birkonektatzeko</string>
     <!-- Preference for removing FxA account -->
@@ -751,7 +758,7 @@
     <string name="pwa_site_controls_title_private">%1$s (modu pribatua)</string>
 
     <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string name="tab_tray_header_title_1">Beste fitxak</string>
+    <string moz:removedIn="104" name="tab_tray_header_title_1" tools:ignore="UnusedResources">Beste fitxak</string>
 
     <!-- History -->
     <!-- Text for the button to search all history -->
@@ -784,6 +791,13 @@
     <string name="history_synced_from_other_devices">Beste gailuetatik sinkronizatuta</string>
     <!-- The page title for browsing history coming from other devices. -->
     <string name="history_from_other_devices">Beste gailuetakoa</string>
+
+    <!-- The synced history sign in dialog message -->
+    <string name="history_sign_in_message">Hasi saioa zure beste gailuetatik sinkronizatutako historia ikusteko.</string>
+    <!-- The synced history sign in dialog button text -->
+    <string name="history_sign_in_button">Hasi saioa</string>
+    <!-- The synced history sign in dialog create a new account link -->
+    <string name="history_sign_in_create_account"><![CDATA[<u>Edo sortu Firefox kontua sinkronizatzen hasteko</u>]]></string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1074,8 +1088,6 @@
     <string name="snackbar_tabs_closed">Fitxak itxita</string>
     <!-- Text shown in snackbar when user bookmarks a list of tabs -->
     <string name="snackbar_message_bookmarks_saved">Laster-markak gordeta!</string>
-    <!-- Text shown in snackbar when user adds a site to top sites -->
-    <string moz:RemovedIn="101" name="snackbar_added_to_top_sites" tools:ignore="UnusedResources">Gune nagusietara gehituta!</string>
     <!-- Text shown in snackbar when user adds a site to shortcuts -->
     <string name="snackbar_added_to_shortcuts">Lasterbideetara gehituta!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1156,7 +1168,18 @@
     <string name="delete_browsing_data_on_quit_action">Irten</string>
 
     <!-- Dialog message to the user asking to delete browsing data. -->
-    <string name="delete_browsing_data_prompt_message">Zure nabigatze-datu guztiak ezabatuko ditu honek.</string>
+    <string moz:removedIn="104" name="delete_browsing_data_prompt_message" tools:ignore="UnusedResources">Zure nabigatze-datu guztiak ezabatuko ditu honek.</string>
+    <!-- Title text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_title">Ezabatu beharreko denbora-tartea</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body">Historia (beste gailuetatik sinkronizatutakoa barne), cookieak eta bestelako nabigazio-datuak ezabatzen ditu.</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
+    <string name="delete_history_prompt_button_last_hour">Azken ordua</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
+    <string name="delete_history_prompt_button_today_and_yesterday">Gaur eta atzo</string>
+    <!-- Radio button in the delete browsing data dialog to delete all history. -->
+    <string name="delete_history_prompt_button_everything">Guztia</string>
+
     <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
     <string name="delete_browsing_data_prompt_message_3">%s(e)k hautatutako nabigazio datuak ezabatuko ditu.</string>
     <!-- Text for the cancel button for the data deletion dialog -->
@@ -1169,8 +1192,8 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">Nabigatze-datuak ezabatzen…</string>
 
-    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
-    <string name="delete_history_group_prompt_message">Elementu guztiak ezabatuko ditu.</string>
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. Parameter will be replaced by a history group name. -->
+    <string name="delete_all_history_group_prompt_message">Ezabatu &quot;%s&quot; taldeko gune guztiak?</string>
     <!-- Text for the cancel button for the history group deletion dialog -->
     <string name="delete_history_group_prompt_cancel">Utzi</string>
     <!-- Text for the allow button for the history group dialog -->
@@ -1585,8 +1608,6 @@
     <string name="addresses_edit_address">Editatu helbidea</string>
     <!-- Title of the "Manage addresses" screen -->
     <string name="addresses_manage_addresses">Kudeatu helbideak</string>
-    <!-- The header for the full name of an address -->
-    <string moz:removedIn="102" name="addresses_full_name" tools:ignore="UnusedResources">Izen osoa</string>
     <!-- The header for the first name of an address -->
     <string name="addresses_first_name">Izena</string>
     <!-- The header for the middle name of an address -->
@@ -1693,10 +1714,6 @@
     <string name="no_site_exceptions">Salbuespenik ez gune honetarako</string>
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">Ziur zaude laster-marka hau ezabatu nahi duzula?</string>
-    <!-- Browser menu button that adds a top site to the home fragment -->
-    <string moz:RemovedIn="101" name="browser_menu_add_to_top_sites" tools:ignore="UnusedResources">Gehitu gune nagusietara</string>
-    <!-- Browser menu button that removes a top site from the home fragment -->
-    <string moz:RemovedIn="101" name="browser_menu_remove_from_top_sites" tools:ignore="UnusedResources">Kendu gune erabilienetatik</string>
     <!-- Browser menu button that adds a shortcut to the home fragment -->
     <string name="browser_menu_add_to_shortcuts">Gehitu lasterbideetara</string>
     <!-- Browser menu button that removes a shortcut from the home fragment -->
@@ -1773,12 +1790,8 @@
     <string name="synced_tabs_collapse_group">Tolestu sinkronizatutako fitxen taldea</string>
 
     <!-- Top Sites -->
-    <!-- Title text displayed in the dialog when top sites limit is reached. -->
-    <string moz:RemovedIn="101" name="top_sites_max_limit_title" tools:ignore="UnusedResources">Gune erabilienen mugara iritsi da</string>
     <!-- Title text displayed in the dialog when shortcuts limit is reached. -->
     <string name="shortcut_max_limit_title">Lasterbideen mugara iritsi da</string>
-    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string moz:RemovedIn="101" name="top_sites_max_limit_content_2" tools:ignore="UnusedResources">Gune erabilienetako bat gehitzeko, kendu aurretik dagoen bat. Sakatu eta mantendu gunea eta hautatu kentzeko aukera.</string>
     <!-- Content description text displayed in the dialog when shortcut limit is reached. -->
     <string name="shortcut_max_limit_content">Lasterbide berria gehitzeko, kendu aurretik dagoen bat. Sakatu eta mantendu gunea eta hautatu kentzeko aukera.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
@@ -1788,8 +1801,6 @@
     <string name="top_sites_toggle_top_recent_sites_4">Lasterbideak</string>
 	<!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Izena</string>
-	<!-- Hint for renaming title of a top site -->
-	<string moz:RemovedIn="101" name="top_site_name_hint" tools:ignore="UnusedResources">Gune erabilienaren izena</string>
     <!-- Hint for renaming title of a shortcut -->
     <string name="shortcut_name_hint">Lasterbidearen izena</string>
 	<!-- Button caption to confirm the renaming of the top site. -->
@@ -1862,4 +1873,5 @@
     <string name="experiments_snackbar">Gaitu telemetry datuak bidaltzeko.</string>
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">Joan ezarpenetara</string>
+    <string name="firefox_suggest_header">Firefoxen iradokizunak</string>
 </resources>

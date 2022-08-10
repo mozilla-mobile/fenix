@@ -190,11 +190,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = WallpaperManager.defaultWallpaper.name
     )
 
-    var wallpapersSwitchedByLogoTap by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_wallpapers_switched_by_logo_tap),
-        default = true
-    )
-
     var openLinksInAPrivateTab by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_open_links_in_a_private_tab),
         default = false
@@ -417,24 +412,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         featureFlag = FeatureFlags.inactiveTabs
     )
 
-    /**
-     * Indicates if the Firefox logo on the home screen should be animated,
-     * to show users that they can change the wallpaper by tapping on the Firefox logo.
-     */
-    var shouldAnimateFirefoxLogo by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_show_logo_animation),
-        default = true,
-    )
-
-    /**
-     * Indicates if the user has enabled the search term tab groups feature.
-     */
-    var searchTermTabGroupsAreEnabled by lazyFeatureFlagPreference(
-        appContext.getPreferenceKey(R.string.pref_key_search_term_tab_groups),
-        default = { FxNimbus.features.searchTermGroups.value().enabled },
-        featureFlag = FeatureFlags.tabGroupFeature
-    )
-
     @VisibleForTesting
     internal fun timeNowInMillis(): Long = System.currentTimeMillis()
 
@@ -590,9 +567,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         true
     )
 
-    val enabledTotalCookieProtection: Boolean by lazy {
-        FxNimbus.features.engineSettings.value().totalCookieProtectionEnabled
-    }
+    val enabledTotalCookieProtection: Boolean
+        get() = FxNimbus.features.engineSettings.value().totalCookieProtectionEnabled
 
     val blockCookiesSelectionInCustomTrackingProtection by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_tracking_protection_custom_cookies_select),
@@ -1210,7 +1186,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             "en-US",
             "en-CA",
             "fr-CA"
-        ).contains(langTag) && Config.channel.isNightlyOrDebug
+        ).contains(langTag)
     }
 
     private var isHistoryMetadataEnabled by booleanPreference(

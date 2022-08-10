@@ -153,7 +153,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 initialState = TabsTrayState(
                     selectedPage = initialPage,
                     mode = initialMode,
-                    focusGroupTabId = args.focusGroupTabId
                 ),
                 middlewares = listOf(
                     TabsTrayMiddleware()
@@ -281,7 +280,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                     tabsTrayStore
                 ),
                 store = requireContext().components.core.store,
-                defaultTabPartitionsFilter = { tabPartitions -> tabPartitions[SEARCH_TERM_TAB_GROUPS] }
             ),
             owner = this,
             view = view
@@ -585,6 +583,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                     findNavController().navigate(
                         TabsTrayFragmentDirections.actionGlobalHome(
                             focusOnAddressBar = false,
+                            scrollToCollection = true
                         )
                     )
                     dismissTabsTray()

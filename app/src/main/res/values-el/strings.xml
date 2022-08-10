@@ -45,8 +45,6 @@
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string name="recent_bookmarks_title">Πρόσφατοι σελιδοδείκτες</string>
-    <!-- Title for the button which navigates the user to show all of their saved bookmarks. -->
-    <string moz:removedIn="101" name="recently_saved_show_all" tools:ignore="UnusedResources">Εμφάνιση όλων</string>
 
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description_2">Εμφάνιση όλων των αποθηκευμένων σελιδοδεικτών</string>
@@ -81,6 +79,9 @@
     <string name="open_in_app_cfr_positive_button_text">Μετάβαση στις ρυθμίσεις</string>
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">Απόρριψη</string>
+
+    <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
+    <string name="cfr_dismiss_button_default_content_description">Απόρριψη</string>
 
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">Απαιτείται πρόσβαση στην κάμερα. Μεταβείτε στις Ρυθμίσεις Android, πατήστε «Δικαιώματα» και επιλέξτε «Να επιτρέπεται».</string>
@@ -365,7 +366,9 @@
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Προσαρμογή</string>
     <!-- Preference description for banner about signing in -->
-    <string name="preferences_sign_in_description">Συγχρονισμός σελιδοδεικτών, ιστορικού και άλλων δεδομένων με τον λογαριασμό Firefox σας</string>
+    <string moz:RemovedIn="104" name="preferences_sign_in_description" tools:ignore="UnusedResources">Συγχρονισμός σελιδοδεικτών, ιστορικού και άλλων δεδομένων με τον λογαριασμό Firefox σας</string>
+    <!-- Preference description for banner about signing in -->
+    <string name="preferences_sign_in_description_2">Συνδεθείτε για να συγχρονίσετε τις καρτέλες, τους σελιδοδείκτες, τους κωδικούς πρόσβασης και πολλά άλλα.</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
     <string name="preferences_account_default_name">Λογαριασμός Firefox</string>
     <!-- Preference text for account title when there was an error syncing FxA -->
@@ -537,8 +540,10 @@
 
     <!-- Turn On Sync Preferences -->
     <!-- Header of the Turn on Sync preference view -->
-    <string name="preferences_sync">Ενεργοποίηση Sync</string>
+    <string moz:RemovedIn="104" name="preferences_sync" tools:ignore="UnusedResources">Ενεργοποίηση Sync</string>
 
+    <!-- Header of the Sync and save your data preference view -->
+    <string name="preferences_sync_2">Συγχρονισμός και αποθήκευση δεδομένων</string>
     <!-- Preference for reconnecting to FxA sync -->
     <string name="preferences_sync_sign_in_to_reconnect">Συνδεθείτε για επανασύνδεση</string>
     <!-- Preference for removing FxA account -->
@@ -757,7 +762,7 @@
     <string name="pwa_site_controls_title_private">%1$s (Ιδιωτική λειτουργία)</string>
 
     <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string name="tab_tray_header_title_1">Άλλες καρτέλες</string>
+    <string moz:removedIn="104" name="tab_tray_header_title_1" tools:ignore="UnusedResources">Άλλες καρτέλες</string>
 
     <!-- History -->
     <!-- Text for the button to search all history -->
@@ -791,6 +796,13 @@
     <string name="history_synced_from_other_devices">Συγχρονισμένα από άλλες συσκευές</string>
     <!-- The page title for browsing history coming from other devices. -->
     <string name="history_from_other_devices">Από άλλες συσκευές</string>
+
+    <!-- The synced history sign in dialog message -->
+    <string name="history_sign_in_message">Συνδεθείτε για να δείτε το ιστορικό από τις άλλες συσκευές σας.</string>
+    <!-- The synced history sign in dialog button text -->
+    <string name="history_sign_in_button">Σύνδεση</string>
+    <!-- The synced history sign in dialog create a new account link -->
+    <string name="history_sign_in_create_account"><![CDATA[<u>Ή δημιουργήστε έναν λογαριασμό Firefox για να ξεκινήσει ο συγχρονισμός</u>]]></string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1081,8 +1093,6 @@
     <string name="snackbar_tabs_closed">Οι καρτέλες έκλεισαν</string>
     <!-- Text shown in snackbar when user bookmarks a list of tabs -->
     <string name="snackbar_message_bookmarks_saved">Οι σελιδοδείκτες αποθηκεύτηκαν!</string>
-    <!-- Text shown in snackbar when user adds a site to top sites -->
-    <string moz:RemovedIn="101" name="snackbar_added_to_top_sites" tools:ignore="UnusedResources">Προστέθηκε στις κορυφαίες σελίδες!</string>
     <!-- Text shown in snackbar when user adds a site to shortcuts -->
     <string name="snackbar_added_to_shortcuts">Προστέθηκε στις συντομεύσεις!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
@@ -1163,7 +1173,18 @@
     <string name="delete_browsing_data_on_quit_action">Έξοδος</string>
 
     <!-- Dialog message to the user asking to delete browsing data. -->
-    <string name="delete_browsing_data_prompt_message">Αυτό θα διαγράψει όλα τα δεδομένα περιήγησής σας.</string>
+    <string moz:removedIn="104" name="delete_browsing_data_prompt_message" tools:ignore="UnusedResources">Αυτό θα διαγράψει όλα τα δεδομένα περιήγησής σας.</string>
+    <!-- Title text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_title">Χρονικό διάστημα διαγραφής</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body">Διαγράφει το ιστορικό (και το συγχρονισμένο ιστορικό άλλων συσκευών), τα cookies και άλλα δεδομένα περιήγησης.</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
+    <string name="delete_history_prompt_button_last_hour">Τελευταία ώρα</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
+    <string name="delete_history_prompt_button_today_and_yesterday">Σήμερα και χθες</string>
+    <!-- Radio button in the delete browsing data dialog to delete all history. -->
+    <string name="delete_history_prompt_button_everything">Όλα</string>
+
     <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
     <string name="delete_browsing_data_prompt_message_3">Το %s θα διαγράψει τα επιλεγμένα δεδομένα περιήγησης.</string>
     <!-- Text for the cancel button for the data deletion dialog -->
@@ -1176,8 +1197,8 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">Διαγραφή δεδομένων περιήγησης…</string>
 
-    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
-    <string name="delete_history_group_prompt_message">Αυτό θα διαγράψει όλα τα στοιχεία.</string>
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. Parameter will be replaced by a history group name. -->
+    <string name="delete_all_history_group_prompt_message">Διαγραφή όλων των ιστοτόπων στο «%s»</string>
     <!-- Text for the cancel button for the history group deletion dialog -->
     <string name="delete_history_group_prompt_cancel">Ακύρωση</string>
     <!-- Text for the allow button for the history group dialog -->
@@ -1599,8 +1620,6 @@
     <string name="addresses_edit_address">Επεξεργασία διεύθυνσης</string>
     <!-- Title of the "Manage addresses" screen -->
     <string name="addresses_manage_addresses">Διαχείριση διευθύνσεων</string>
-    <!-- The header for the full name of an address -->
-    <string moz:removedIn="102" name="addresses_full_name" tools:ignore="UnusedResources">Πλήρες όνομα</string>
     <!-- The header for the first name of an address -->
     <string name="addresses_first_name">Όνομα</string>
     <!-- The header for the middle name of an address -->
@@ -1711,10 +1730,6 @@
     <string name="no_site_exceptions">Καμία εξαίρεση ιστοτόπων</string>
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">Θέλετε σίγουρα να διαγράψετε αυτό το σελιδοδείκτη;</string>
-    <!-- Browser menu button that adds a top site to the home fragment -->
-    <string moz:RemovedIn="101" name="browser_menu_add_to_top_sites" tools:ignore="UnusedResources">Προσθήκη κορυφαίου ιστοτόπου</string>
-    <!-- Browser menu button that removes a top site from the home fragment -->
-    <string moz:RemovedIn="101" name="browser_menu_remove_from_top_sites" tools:ignore="UnusedResources">Αφαίρεση από κορυφαίους ιστοτόπους</string>
     <!-- Browser menu button that adds a shortcut to the home fragment -->
     <string name="browser_menu_add_to_shortcuts">Προσθήκη συντόμευσης</string>
     <!-- Browser menu button that removes a shortcut from the home fragment -->
@@ -1791,12 +1806,8 @@
     <string name="synced_tabs_collapse_group">Σύμπτυξη ομάδας συγχρονισμένων καρτελών</string>
 
     <!-- Top Sites -->
-    <!-- Title text displayed in the dialog when top sites limit is reached. -->
-    <string moz:RemovedIn="101" name="top_sites_max_limit_title" tools:ignore="UnusedResources">Έχετε φτάσει το ανώτατο όριο κορυφαίων ιστοτόπων</string>
     <!-- Title text displayed in the dialog when shortcuts limit is reached. -->
     <string name="shortcut_max_limit_title">Έχετε φτάσει το όριο συντομεύσεων</string>
-    <!-- Content description text displayed in the dialog when top sites limit is reached. -->
-    <string moz:RemovedIn="101" name="top_sites_max_limit_content_2" tools:ignore="UnusedResources">Για να προσθέσετε έναν νέο κορυφαίο ιστότοπο, αφαιρέστε έναν υπάρχοντα. Πατήστε παρατεταμένα τον ιστότοπο και επιλέξτε «Αφαίρεση».</string>
     <!-- Content description text displayed in the dialog when shortcut limit is reached. -->
     <string name="shortcut_max_limit_content">Για να προσθέσετε μια νέα συντόμευση, αφαιρέστε μια υπάρχουσα. Πατήστε παρατεταμένα τον ιστότοπο και επιλέξτε «Αφαίρεση».</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
@@ -1806,8 +1817,6 @@
     <string name="top_sites_toggle_top_recent_sites_4">Συντομεύσεις</string>
 	<!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Όνομα</string>
-	<!-- Hint for renaming title of a top site -->
-	<string moz:RemovedIn="101" name="top_site_name_hint" tools:ignore="UnusedResources">Όνομα κορυφαίας σελίδας</string>
     <!-- Hint for renaming title of a shortcut -->
     <string name="shortcut_name_hint">Όνομα συντόμευσης</string>
 	<!-- Button caption to confirm the renaming of the top site. -->
@@ -1880,4 +1889,5 @@
     <string name="experiments_snackbar">Ενεργοποιήστε την τηλεμετρία για την αποστολή δεδομένων.</string>
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">Μετάβαση στις ρυθμίσεις</string>
+    <string name="firefox_suggest_header">Προτάσεις Firefox</string>
 </resources>

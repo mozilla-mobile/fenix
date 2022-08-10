@@ -9,18 +9,25 @@ import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import mozilla.components.browser.state.action.EngineAction
+import mozilla.components.browser.state.action.RecentlyClosedAction
+import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.browser.storage.sync.PlacesHistoryStorage
+import mozilla.components.service.glean.testing.GleanTestRule
+import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.R
+import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.history.DefaultPagedHistoryProvider
-import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
@@ -35,11 +42,16 @@ class HistoryControllerTest {
     )
 
     @get:Rule
+    val gleanTestRule = GleanTestRule(testContext)
+
+    @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
     private val scope = coroutinesTestRule.scope
 
     private val store: HistoryFragmentStore = mockk(relaxed = true)
     private val appStore: AppStore = mockk(relaxed = true)
+    private val browserStore: BrowserStore = mockk(relaxed = true)
+    private val historyStorage: PlacesHistoryStorage = mockk(relaxed = true)
     private val state: HistoryFragmentState = mockk(relaxed = true)
     private val navController: NavController = mockk(relaxed = true)
     private val historyProvider: DefaultPagedHistoryProvider = mockk(relaxed = true)
@@ -131,24 +143,74 @@ class HistoryControllerTest {
 
         controller.handleSearch()
         verify {
-            navController.navigateSafe(
-                R.id.historyFragment,
-                HistoryFragmentDirections.actionGlobalHistorySearchDialog()
+            navController.navigate(
+                NavGraphDirections.actionGlobalHistorySearchDialog()
             )
         }
     }
 
     @Test
-    fun onDeleteAll() {
-        var displayDeleteAllInvoked = false
+    fun onDeleteTimeRange() {
+        var displayDeleteTimeRangeInvoked = false
         val controller = createController(
-            displayDeleteAll = {
-                displayDeleteAllInvoked = true
+            displayDeleteTimeRange = {
+                displayDeleteTimeRangeInvoked = true
             }
         )
 
-        controller.handleDeleteAll()
-        assertTrue(displayDeleteAllInvoked)
+        controller.handleDeleteTimeRange()
+        assertTrue(displayDeleteTimeRangeInvoked)
+    }
+
+    @Test
+    fun `WHEN user confirms history deletion GIVEN timeFrame is null THEN delete all history, log the event, purge history and remove recently closed items`() {
+        val controller = createController()
+        assertNull(org.mozilla.fenix.GleanMetrics.History.removedAll.testGetValue())
+
+        controller.handleDeleteTimeRangeConfirmed(null)
+        coVerifyOrder {
+            store.dispatch(HistoryFragmentAction.EnterDeletionMode)
+            historyStorage.deleteEverything()
+            browserStore.dispatch(RecentlyClosedAction.RemoveAllClosedTabAction)
+            browserStore.dispatch(EngineAction.PurgeHistoryAction)
+            store.dispatch(HistoryFragmentAction.ExitDeletionMode)
+        }
+
+        assertNotNull(org.mozilla.fenix.GleanMetrics.History.removedAll.testGetValue())
+    }
+
+    @Test
+    fun `WHEN user confirms history deletion GIVEN timeFrame is lastHour THEN delete visits between the time frame, log the event, purge history and remove recently closed items`() {
+        val controller = createController()
+        assertNull(org.mozilla.fenix.GleanMetrics.History.removedLastHour.testGetValue())
+
+        controller.handleDeleteTimeRangeConfirmed(RemoveTimeFrame.LastHour)
+        coVerifyOrder {
+            store.dispatch(HistoryFragmentAction.EnterDeletionMode)
+            historyStorage.deleteVisitsBetween(any(), any())
+            browserStore.dispatch(RecentlyClosedAction.RemoveAllClosedTabAction)
+            browserStore.dispatch(EngineAction.PurgeHistoryAction)
+            store.dispatch(HistoryFragmentAction.ExitDeletionMode)
+        }
+
+        assertNotNull(org.mozilla.fenix.GleanMetrics.History.removedLastHour.testGetValue())
+    }
+
+    @Test
+    fun `WHEN user confirms history deletion GIVEN timeFrame is todayAndYesterday THEN delete visits between the time frame, log the event, purge history and remove recently closed items`() {
+        val controller = createController()
+        assertNull(org.mozilla.fenix.GleanMetrics.History.removedTodayAndYesterday.testGetValue())
+
+        controller.handleDeleteTimeRangeConfirmed(RemoveTimeFrame.TodayAndYesterday)
+        coVerifyOrder {
+            store.dispatch(HistoryFragmentAction.EnterDeletionMode)
+            historyStorage.deleteVisitsBetween(any(), any())
+            browserStore.dispatch(RecentlyClosedAction.RemoveAllClosedTabAction)
+            browserStore.dispatch(EngineAction.PurgeHistoryAction)
+            store.dispatch(HistoryFragmentAction.ExitDeletionMode)
+        }
+
+        assertNotNull(org.mozilla.fenix.GleanMetrics.History.removedTodayAndYesterday.testGetValue())
     }
 
     @Test
@@ -185,7 +247,8 @@ class HistoryControllerTest {
     @Suppress("LongParameterList")
     private fun createController(
         openInBrowser: (History) -> Unit = { _ -> },
-        displayDeleteAll: () -> Unit = {},
+        displayDeleteTimeRange: () -> Unit = {},
+        onTimeFrameDeleted: () -> Unit = {},
         invalidateOptionsMenu: () -> Unit = {},
         deleteHistoryItems: (Set<History>) -> Unit = { _ -> },
         syncHistory: suspend () -> Unit = {}
@@ -193,11 +256,14 @@ class HistoryControllerTest {
         return DefaultHistoryController(
             store,
             appStore,
+            browserStore,
+            historyStorage,
             historyProvider,
             navController,
             scope,
             openInBrowser,
-            displayDeleteAll,
+            displayDeleteTimeRange,
+            onTimeFrameDeleted,
             invalidateOptionsMenu,
             { items, _, _ -> deleteHistoryItems.invoke(items) },
             syncHistory,

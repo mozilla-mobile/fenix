@@ -75,6 +75,9 @@
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">Ignorera</string>
 
+    <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
+    <string name="cfr_dismiss_button_default_content_description">Ignorera</string>
+
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">Kameraåtkomst behövs. Gå till Android-inställningar, tryck på behörigheter och tryck på tillåt.</string>
     <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
@@ -760,7 +763,7 @@
     <string name="pwa_site_controls_title_private">%1$s (Privat läge)</string>
 
     <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string name="tab_tray_header_title_1">Andra flikar</string>
+    <string moz:removedIn="104" name="tab_tray_header_title_1" tools:ignore="UnusedResources">Andra flikar</string>
 
     <!-- History -->
     <!-- Text for the button to search all history -->
@@ -794,6 +797,13 @@
     <string name="history_synced_from_other_devices">Synkroniserad från andra enheter</string>
     <!-- The page title for browsing history coming from other devices. -->
     <string name="history_from_other_devices">Från andra enheter</string>
+
+    <!-- The synced history sign in dialog message -->
+    <string name="history_sign_in_message">Logga in för att se historik synkroniserad från dina andra enheter.</string>
+    <!-- The synced history sign in dialog button text -->
+    <string name="history_sign_in_button">Logga in</string>
+    <!-- The synced history sign in dialog create a new account link -->
+    <string name="history_sign_in_create_account"><![CDATA[<u>Eller skapa ett Firefox-konto för att börja synkronisera</u>]]></string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1165,7 +1175,18 @@
     <string name="delete_browsing_data_on_quit_action">Avsluta</string>
 
     <!-- Dialog message to the user asking to delete browsing data. -->
-    <string name="delete_browsing_data_prompt_message">Detta kommer att ta bort all dina surfdata.</string>
+    <string moz:removedIn="104" name="delete_browsing_data_prompt_message" tools:ignore="UnusedResources">Detta kommer att ta bort all dina surfdata.</string>
+    <!-- Title text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_title">Tidsintervall att radera</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body">Tar bort historik (inklusive historik som synkroniserats från andra enheter), kakor och annan webbinformation.</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
+    <string name="delete_history_prompt_button_last_hour">Senaste timmen</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
+    <string name="delete_history_prompt_button_today_and_yesterday">Idag och igår</string>
+    <!-- Radio button in the delete browsing data dialog to delete all history. -->
+    <string name="delete_history_prompt_button_everything">Allt</string>
+
     <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
     <string name="delete_browsing_data_prompt_message_3">%s kommer att ta bort vald surfdata.</string>
     <!-- Text for the cancel button for the data deletion dialog -->
@@ -1178,8 +1199,8 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">Tar bort surfsdata…</string>
 
-    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
-    <string name="delete_history_group_prompt_message">Detta tar bort alla objekt.</string>
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. Parameter will be replaced by a history group name. -->
+    <string name="delete_all_history_group_prompt_message">Ta bort alla webbplatser i &quot;%s&quot;</string>
     <!-- Text for the cancel button for the history group deletion dialog -->
     <string name="delete_history_group_prompt_cancel">Avbryt</string>
     <!-- Text for the allow button for the history group dialog -->
@@ -1595,8 +1616,6 @@
     <string name="addresses_edit_address">Redigera adress</string>
     <!-- Title of the "Manage addresses" screen -->
     <string name="addresses_manage_addresses">Hantera adresser</string>
-    <!-- The header for the full name of an address -->
-    <string moz:removedIn="102" name="addresses_full_name" tools:ignore="UnusedResources">Fullständigt namn</string>
     <!-- The header for the first name of an address -->
     <string name="addresses_first_name">Förnamn</string>
     <!-- The header for the middle name of an address -->
@@ -1863,4 +1882,5 @@
     <string name="experiments_snackbar">Aktivera telemetri för att skicka data.</string>
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">Gå till inställningar</string>
+    <string name="firefox_suggest_header">Firefox-förslag</string>
 </resources>
