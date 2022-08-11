@@ -440,6 +440,13 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     }
 
     private fun onNimbusStartupAndUpdate() {
+        // When Nimbus has successfully started up, we can apply our engine settings experiment.
+        // Any previous value that was set on the engine will be overridden from those set in
+        // Core.Engine.DefaultSettings.
+        // NOTE ⚠️: Any startup experiment we want to run needs to have it's value re-applied here.
+        components.core.engine.settings.trackingProtectionPolicy =
+            components.core.trackingProtectionPolicyFactory.createTrackingProtectionPolicy()
+
         val settings = settings()
         if (FeatureFlags.messagingFeature && settings.isExperimentationEnabled) {
             components.appStore.dispatch(AppAction.MessagingAction.Restore)
@@ -843,7 +850,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     @OptIn(DelicateCoroutinesApi::class)
     open fun downloadWallpapers() {
         GlobalScope.launch {
-            components.wallpaperManager.downloadAllRemoteWallpapers()
+            components.useCases.wallpaperUseCases.initialize()
         }
     }
 }
