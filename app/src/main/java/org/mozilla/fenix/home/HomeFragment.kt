@@ -351,7 +351,7 @@ class HomeFragment : Fragment() {
                 appStore = components.appStore,
             ),
             recentSyncedTabController = DefaultRecentSyncedTabController(
-                addNewTabUseCase = requireComponents.useCases.tabsUseCases.addTab,
+                tabsUseCase = requireComponents.useCases.tabsUseCases,
                 navController = findNavController(),
                 accessPoint = TabsTrayAccessPoint.HomeRecentSyncedTab,
             ),
