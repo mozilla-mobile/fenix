@@ -13,19 +13,23 @@ gcloud:
   # will start test then leave socket open. reports will be published
   # to /results
   # see: https://github.com/TestArmada/flank/issues/339
-  async: false 
+  async: false
 
   # results-history-name
   # by default, set to app name
   # declare results-history-name to create a separate dropdown menu in Firebase 
   # see: https://github.com/TestArmada/flank/issues/341
-  #results-history-name: tmp_parallel
+  #results-history-name: tmp_parallel 
+
+  # The number of times a test execution should be re-attempted if one or more failures occur.
+  # The maximum number of reruns allowed is 10. Default is 0, which implies no reruns.
+  num-flaky-test-attempts: 1
 
   # test and app are the only required args
-  app: /APP/PATH
-  test: /TEST/PATH
+  app: /app/path 
+  test: /test/path
 
-  auto-google-login: true
+  auto-google-login: false
   use-orchestrator: true
   environment-variables:
     clearPackageData: true
@@ -33,15 +37,30 @@ gcloud:
     - /sdcard/screenshots
   performance-metrics: true
 
+  test-targets:
+   - notPackage org.mozilla.fenix.screenshots
+   - notPackage org.mozilla.fenix.syncintegration
+
   device:
-   - model: Pixel2
+   - model: Pixel2.arm
      version: 30
+     locale: en_US
 
 flank:
   project: GOOGLE_PROJECT
   # test shards - the amount of groups to split the test suite into
-  # set to -1 to use one shard per test.
-  max-test-shards: -1 
-  # num-test-runs- the amount of times to run the tests.
+  # set to -1 to use one shard per test. default: 1
+  max-test-shards: 50
+  # num-test-runs: the amount of times to run the tests.
   # 1 runs the tests once. 10 runs all the tests 10x
   num-test-runs: 1
+  ### Output Style flag
+  ## Output style of execution status. May be one of [verbose, multi, single, compact].
+  ## For runs with only one test execution the default value is 'verbose', in other cases
+  ## 'multi' is used as the default. The output style 'multi' is not displayed correctly on consoles
+  ## which don't support ansi codes, to avoid corrupted output use single or verbose.
+  ## The output style `compact` is used to produce less detailed output, it prints just Args, test and matrix count, weblinks, cost, and result reports.
+  output-style: compact
+  ### Full Junit Result flag
+  ## Enable create additional local junit result on local storage with failure nodes on passed flaky tests.
+  full-junit-result: true
