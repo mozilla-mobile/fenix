@@ -42,7 +42,7 @@ gcloud:
    - notPackage org.mozilla.fenix.syncintegration
 
   device:
-   - model: 'Pixel2.arm'
+   - model: Pixel2.arm
      version: 30
      locale: en_US
 
