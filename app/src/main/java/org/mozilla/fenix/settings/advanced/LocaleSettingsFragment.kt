@@ -8,11 +8,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.locale.LocaleUseCases
@@ -30,11 +33,6 @@ class LocaleSettingsFragment : Fragment() {
 
     private var _binding: FragmentLocaleSettingsBinding? = null
     private val binding get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,26 +61,6 @@ class LocaleSettingsFragment : Fragment() {
         return view
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.languages_list, menu)
-        val searchItem = menu.findItem(R.id.search)
-        val searchView: SearchView = searchItem.actionView as SearchView
-        searchView.imeOptions = EditorInfo.IME_ACTION_DONE
-        searchView.queryHint = getString(R.string.locale_search_hint)
-        searchView.maxWidth = Int.MAX_VALUE
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                interactor.onSearchQueryTyped(newText)
-                return false
-            }
-        })
-    }
-
     override fun onResume() {
         super.onResume()
         localeView.onResume()
@@ -96,9 +74,38 @@ class LocaleSettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         consumeFrom(localeSettingsStore) {
             localeView.update(it)
         }
+
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.languages_list, menu)
+                    val searchItem = menu.findItem(R.id.search)
+                    val searchView: SearchView = searchItem.actionView as SearchView
+                    searchView.imeOptions = EditorInfo.IME_ACTION_DONE
+                    searchView.queryHint = getString(R.string.locale_search_hint)
+                    searchView.maxWidth = Int.MAX_VALUE
+
+                    searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                        override fun onQueryTextSubmit(query: String): Boolean {
+                            return false
+                        }
+
+                        override fun onQueryTextChange(newText: String): Boolean {
+                            interactor.onSearchQueryTyped(newText)
+                            return false
+                        }
+                    })
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem) = false
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
     }
 
     override fun onDestroyView() {

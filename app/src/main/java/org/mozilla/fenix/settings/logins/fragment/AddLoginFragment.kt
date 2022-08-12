@@ -15,8 +15,10 @@ import android.view.MenuItem
 import android.view.View
 import android.webkit.URLUtil
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import mozilla.components.lib.state.ext.consumeFrom
@@ -57,7 +59,6 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setHasOptionsMenu(true)
 
         _binding = FragmentAddLoginBinding.bind(view)
 
@@ -86,6 +87,34 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
             duplicateLogin = loginsFragmentStore.state.duplicateLogin
             updateUsernameField()
         }
+
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.login_save, menu)
+
+                    val saveButton = menu.findItem(R.id.save_login_button)
+                    val changesMadeWithNoErrors = validHostname && validUsername && validPassword
+
+                    saveButton.isEnabled = changesMadeWithNoErrors
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem) = when (menuItem.itemId) {
+                    R.id.save_login_button -> {
+                        view.hideKeyboard()
+                        interactor.onAddLogin(
+                            binding.hostnameText.text.toString(),
+                            binding.usernameText.text.toString(),
+                            binding.passwordText.text.toString()
+                        )
+                        true
+                    }
+                    else -> false
+                }
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
     }
 
     private fun initEditableValues() {
@@ -305,16 +334,6 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
         activity?.invalidateOptionsMenu()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.login_save, menu)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        val saveButton = menu.findItem(R.id.save_login_button)
-        val changesMadeWithNoErrors = validHostname && validUsername && validPassword
-        saveButton.isEnabled = changesMadeWithNoErrors
-    }
-
     override fun onPause() {
         redirectToReAuth(
             listOf(R.id.savedLoginsFragment),
@@ -327,19 +346,6 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
     override fun onResume() {
         super.onResume()
         showToolbar(getString(R.string.add_login))
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.save_login_button -> {
-            view?.hideKeyboard()
-            interactor.onAddLogin(
-                binding.hostnameText.text.toString(),
-                binding.usernameText.text.toString(),
-                binding.passwordText.text.toString()
-            )
-            true
-        }
-        else -> false
     }
 
     override fun onDestroyView() {

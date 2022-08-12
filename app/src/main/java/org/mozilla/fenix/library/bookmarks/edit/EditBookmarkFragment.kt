@@ -17,8 +17,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
@@ -62,11 +64,6 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
     private var bookmarkNode: BookmarkNode? = null
     private var bookmarkParent: BookmarkNode? = null
     private var initialParentGuid: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -159,6 +156,29 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                 }
             })
         }
+
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.bookmarks_edit, menu)
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem) = when (menuItem.itemId) {
+                    R.id.delete_bookmark_button -> {
+                        displayDeleteBookmarkDialog()
+                        true
+                    }
+                    R.id.save_bookmark_button -> {
+                        updateBookmarkFromTextChanges()
+                        true
+                    }
+
+                    else -> false
+                }
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
     }
 
     private fun initToolbar() {
@@ -177,25 +197,6 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
         binding.bookmarkNameEdit.hideKeyboard()
         binding.bookmarkUrlEdit.hideKeyboard()
         binding.progressBarBookmark.visibility = View.GONE
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.bookmarks_edit, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.delete_bookmark_button -> {
-                displayDeleteBookmarkDialog()
-                true
-            }
-            R.id.save_bookmark_button -> {
-                updateBookmarkFromTextChanges()
-                true
-            }
-
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     private fun displayDeleteBookmarkDialog() {

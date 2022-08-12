@@ -11,8 +11,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.Dispatchers.IO
@@ -36,13 +38,36 @@ class SelectBookmarkFolderFragment : Fragment() {
     private val sharedViewModel: BookmarksSharedViewModel by activityViewModels()
     private var bookmarkNode: BookmarkNode? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSelectBookmarkFolderBinding.inflate(inflater, container, false)
+
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    val args: SelectBookmarkFolderFragmentArgs by navArgs()
+
+                    if (!args.allowCreatingNewFolder) {
+                        menuInflater.inflate(R.menu.bookmarks_select_folder, menu)
+                    }
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem) = when (menuItem.itemId) {
+                    R.id.add_folder_button -> {
+                        viewLifecycleOwner.lifecycleScope.launch(Main) {
+                            nav(
+                                R.id.bookmarkSelectFolderFragment,
+                                SelectBookmarkFolderFragmentDirections
+                                    .actionBookmarkSelectFolderFragmentToBookmarkAddFolderFragment()
+                            )
+                        }
+                        true
+                    }
+                    else -> false
+                }
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
 
         return binding.root
     }
@@ -69,29 +94,6 @@ class SelectBookmarkFolderFragment : Fragment() {
             val adapter = SelectBookmarkFolderAdapter(sharedViewModel)
             binding.recylerViewBookmarkFolders.adapter = adapter
             adapter.updateData(bookmarkNode, args.hideFolderGuid)
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        val args: SelectBookmarkFolderFragmentArgs by navArgs()
-        if (!args.allowCreatingNewFolder) {
-            inflater.inflate(R.menu.bookmarks_select_folder, menu)
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.add_folder_button -> {
-                viewLifecycleOwner.lifecycleScope.launch(Main) {
-                    nav(
-                        R.id.bookmarkSelectFolderFragment,
-                        SelectBookmarkFolderFragmentDirections
-                            .actionBookmarkSelectFolderFragmentToBookmarkAddFolderFragment()
-                    )
-                }
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 }

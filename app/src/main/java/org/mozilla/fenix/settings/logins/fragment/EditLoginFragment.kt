@@ -14,8 +14,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -62,7 +64,6 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setHasOptionsMenu(true)
 
         _binding = FragmentEditLoginBinding.bind(view)
 
@@ -102,6 +103,38 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             duplicateLogin = loginsFragmentStore.state.duplicateLogin
             updateUsernameField()
         }
+
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.login_save, menu)
+
+                    val saveButton = menu.findItem(R.id.save_login_button)
+                    val changesMadeWithNoErrors =
+                        validUsername && validPassword && (usernameChanged || passwordChanged)
+
+                    // Don't enable saving until something has been changed
+                    saveButton.isEnabled = changesMadeWithNoErrors
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
+                    when (menuItem.itemId) {
+                        R.id.save_login_button -> {
+                            view.hideKeyboard()
+                            interactor.onSaveLogin(
+                                args.savedLoginItem.guid,
+                                binding.usernameText.text.toString(),
+                                binding.passwordText.text.toString()
+                            )
+                            Logins.saveEditedLogin.record(NoExtras())
+                            true
+                        }
+                        else -> false
+                    }
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
     }
 
     private fun formatEditableValues() {
@@ -260,17 +293,6 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
         activity?.invalidateOptionsMenu()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.login_save, menu)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        val saveButton = menu.findItem(R.id.save_login_button)
-        val changesMadeWithNoErrors =
-            validUsername && validPassword && (usernameChanged || passwordChanged)
-        saveButton.isEnabled = changesMadeWithNoErrors // don't enable saving until something has been changed
-    }
-
     override fun onPause() {
         redirectToReAuth(
             listOf(R.id.loginDetailFragment, R.id.savedLoginsFragment),
@@ -278,20 +300,6 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
             R.id.editLoginFragment
         )
         super.onPause()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.save_login_button -> {
-            view?.hideKeyboard()
-            interactor.onSaveLogin(
-                args.savedLoginItem.guid,
-                binding.usernameText.text.toString(),
-                binding.passwordText.text.toString()
-            )
-            Logins.saveEditedLogin.record(NoExtras())
-            true
-        }
-        else -> false
     }
 
     override fun onDestroyView() {

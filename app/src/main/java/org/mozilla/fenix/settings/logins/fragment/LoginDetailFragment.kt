@@ -15,6 +15,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -54,7 +56,6 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail) {
     private lateinit var savedLoginsStore: LoginsFragmentStore
     private lateinit var loginDetailsBindingDelegate: LoginDetailsBindingDelegate
     private lateinit var interactor: LoginDetailInteractor
-    private lateinit var menu: Menu
     private var deleteDialog: AlertDialog? = null
 
     private var _binding: FragmentLoginDetailBinding? = null
@@ -101,11 +102,29 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail) {
             setUpPasswordReveal()
         }
         togglePasswordReveal(binding.passwordText, binding.revealPasswordButton)
-    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.login_options_menu, menu)
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
+                    when (menuItem.itemId) {
+                        R.id.delete_login_button -> {
+                            displayDeleteLoginDialog()
+                            true
+                        }
+                        R.id.edit_login_button -> {
+                            editLogin()
+                            true
+                        }
+                        else -> false
+                    }
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
     }
 
     /**
@@ -115,7 +134,6 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail) {
      */
     override fun onPause() {
         deleteDialog?.isShowing.run { deleteDialog?.dismiss() }
-        menu.close()
         redirectToReAuth(
             listOf(R.id.editLoginFragment, R.id.savedLoginsFragment),
             findNavController().currentDestination?.id,
@@ -155,23 +173,6 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail) {
         binding.copyPassword.setOnClickListener(
             CopyButtonListener(login?.password, R.string.logins_password_copied)
         )
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.login_options_menu, menu)
-        this.menu = menu
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.delete_login_button -> {
-            displayDeleteLoginDialog()
-            true
-        }
-        R.id.edit_login_button -> {
-            editLogin()
-            true
-        }
-        else -> false
     }
 
     private fun navigateToBrowser(address: String) {

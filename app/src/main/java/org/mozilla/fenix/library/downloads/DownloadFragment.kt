@@ -14,6 +14,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
@@ -114,11 +116,6 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
         activity?.invalidateOptionsMenu()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     /**
      * Schedules [items] for deletion.
      * Note: When tapping on a download item's "trash" button
@@ -143,45 +140,52 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
         consumeFrom(downloadStore) {
             downloadView.update(it)
         }
+
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    val menuRes = when (downloadStore.state.mode) {
+                        is DownloadFragmentState.Mode.Normal -> R.menu.library_menu
+                        is DownloadFragmentState.Mode.Editing -> R.menu.download_select_multi
+                    }
+
+                    menuInflater.inflate(menuRes, menu)
+
+                    menu.findItem(R.id.delete_downloads_multi_select)?.title =
+                        SpannableString(getString(R.string.download_delete_item_1)).apply {
+                            setTextColor(requireContext(), R.attr.textWarning)
+                        }
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem) = when (menuItem.itemId) {
+                    R.id.close_history -> {
+                        close()
+                        true
+                    }
+
+                    R.id.delete_downloads_multi_select -> {
+                        deleteDownloadItems(downloadStore.state.mode.selectedItems)
+                        downloadStore.dispatch(DownloadFragmentAction.ExitEditMode)
+                        true
+                    }
+
+                    R.id.select_all_downloads_multi_select -> {
+                        for (items in downloadStore.state.items) {
+                            downloadInteractor.select(items)
+                        }
+                        true
+                    }
+                    else -> false
+                }
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
     }
 
     override fun onResume() {
         super.onResume()
         showToolbar(getString(R.string.library_downloads))
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        val menuRes = when (downloadStore.state.mode) {
-            is DownloadFragmentState.Mode.Normal -> R.menu.library_menu
-            is DownloadFragmentState.Mode.Editing -> R.menu.download_select_multi
-        }
-        inflater.inflate(menuRes, menu)
-
-        menu.findItem(R.id.delete_downloads_multi_select)?.title =
-            SpannableString(getString(R.string.download_delete_item_1)).apply {
-                setTextColor(requireContext(), R.attr.textWarning)
-            }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.close_history -> {
-            close()
-            true
-        }
-
-        R.id.delete_downloads_multi_select -> {
-            deleteDownloadItems(downloadStore.state.mode.selectedItems)
-            downloadStore.dispatch(DownloadFragmentAction.ExitEditMode)
-            true
-        }
-
-        R.id.select_all_downloads_multi_select -> {
-            for (items in downloadStore.state.items) {
-                downloadInteractor.select(items)
-            }
-            true
-        }
-        else -> super.onOptionsItemSelected(item)
     }
 
     /**

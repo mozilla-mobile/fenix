@@ -12,6 +12,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.flow.collect
@@ -49,50 +51,9 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
         showToolbar(getString(R.string.library_recently_closed_tabs))
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if (recentlyClosedFragmentStore.state.selectedTabs.isNotEmpty()) {
-            inflater.inflate(R.menu.history_select_multi, menu)
-            menu.findItem(R.id.delete_history_multi_select)?.let { deleteItem ->
-                deleteItem.title = SpannableString(deleteItem.title)
-                    .apply { setTextColor(requireContext(), R.attr.textWarning) }
-            }
-        } else {
-            inflater.inflate(R.menu.library_menu, menu)
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val selectedTabs = recentlyClosedFragmentStore.state.selectedTabs
-
-        return when (item.itemId) {
-            R.id.close_history -> {
-                close()
-                RecentlyClosedTabs.menuClose.record(NoExtras())
-                true
-            }
-            R.id.share_history_multi_select -> {
-                recentlyClosedController.handleShare(selectedTabs)
-                true
-            }
-            R.id.delete_history_multi_select -> {
-                recentlyClosedController.handleDelete(selectedTabs)
-                true
-            }
-            R.id.open_history_in_new_tabs_multi_select -> {
-                recentlyClosedController.handleOpen(selectedTabs, BrowsingMode.Normal)
-                true
-            }
-            R.id.open_history_in_private_tabs_multi_select -> {
-                recentlyClosedController.handleOpen(selectedTabs, BrowsingMode.Private)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
+
         RecentlyClosedTabs.opened.record(NoExtras())
     }
 
@@ -158,6 +119,53 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
                     )
                 }
         }
+
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    if (recentlyClosedFragmentStore.state.selectedTabs.isNotEmpty()) {
+                        menuInflater.inflate(R.menu.history_select_multi, menu)
+                        menu.findItem(R.id.delete_history_multi_select)?.let { deleteItem ->
+                            deleteItem.title = SpannableString(deleteItem.title)
+                                .apply { setTextColor(requireContext(), R.attr.textWarning) }
+                        }
+                    } else {
+                        menuInflater.inflate(R.menu.library_menu, menu)
+                    }
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                    val selectedTabs = recentlyClosedFragmentStore.state.selectedTabs
+
+                    return when (menuItem.itemId) {
+                        R.id.close_history -> {
+                            close()
+                            RecentlyClosedTabs.menuClose.record(NoExtras())
+                            true
+                        }
+                        R.id.share_history_multi_select -> {
+                            recentlyClosedController.handleShare(selectedTabs)
+                            true
+                        }
+                        R.id.delete_history_multi_select -> {
+                            recentlyClosedController.handleDelete(selectedTabs)
+                            true
+                        }
+                        R.id.open_history_in_new_tabs_multi_select -> {
+                            recentlyClosedController.handleOpen(selectedTabs, BrowsingMode.Normal)
+                            true
+                        }
+                        R.id.open_history_in_private_tabs_multi_select -> {
+                            recentlyClosedController.handleOpen(selectedTabs, BrowsingMode.Private)
+                            true
+                        }
+                        else -> false
+                    }
+                }
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
     }
 
     override val selectedItems: Set<RecoverableTab> = setOf()

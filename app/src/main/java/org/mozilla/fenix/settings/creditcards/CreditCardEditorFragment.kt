@@ -11,6 +11,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -38,7 +40,6 @@ class CreditCardEditorFragment : SecureFragment(R.layout.fragment_credit_card_ed
 
     private lateinit var creditCardEditorState: CreditCardEditorState
     private lateinit var creditCardEditorView: CreditCardEditorView
-    private lateinit var menu: Menu
 
     private var deleteDialog: AlertDialog? = null
 
@@ -54,8 +55,6 @@ class CreditCardEditorFragment : SecureFragment(R.layout.fragment_credit_card_ed
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        setHasOptionsMenu(true)
 
         val storage = requireContext().components.core.autofillStorage
         interactor = DefaultCreditCardEditorInteractor(
@@ -83,6 +82,29 @@ class CreditCardEditorFragment : SecureFragment(R.layout.fragment_credit_card_ed
                 showKeyboard()
             }
         }
+
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.credit_card_editor, menu)
+                    menu.findItem(R.id.delete_credit_card_button).isVisible = isEditing
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem) = when (menuItem.itemId) {
+                    R.id.delete_credit_card_button -> {
+                        args.creditCard?.let { interactor.onDeleteCardButtonClicked(it.guid) }
+                        true
+                    }
+                    R.id.save_credit_card_button -> {
+                        creditCardEditorView.saveCreditCard(creditCardEditorState)
+                        true
+                    }
+                    else -> false
+                }
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
     }
 
     override fun onResume() {
@@ -100,7 +122,6 @@ class CreditCardEditorFragment : SecureFragment(R.layout.fragment_credit_card_ed
      */
     override fun onPause() {
         view?.hideKeyboard()
-        menu.close()
         deleteDialog?.dismiss()
 
         redirectToReAuth(
@@ -110,26 +131,6 @@ class CreditCardEditorFragment : SecureFragment(R.layout.fragment_credit_card_ed
         )
 
         super.onPause()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.credit_card_editor, menu)
-        this.menu = menu
-
-        menu.findItem(R.id.delete_credit_card_button).isVisible = isEditing
-    }
-
-    @Suppress("MagicNumber")
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.delete_credit_card_button -> {
-            args.creditCard?.let { interactor.onDeleteCardButtonClicked(it.guid) }
-            true
-        }
-        R.id.save_credit_card_button -> {
-            creditCardEditorView.saveCreditCard(creditCardEditorState)
-            true
-        }
-        else -> false
     }
 
     private fun showDeleteDialog(onPositiveClickListener: DialogInterface.OnClickListener) {

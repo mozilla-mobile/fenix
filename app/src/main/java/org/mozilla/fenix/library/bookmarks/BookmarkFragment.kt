@@ -16,8 +16,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.getSystemService
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
@@ -134,7 +136,92 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    when (val mode = bookmarkStore.state.mode) {
+                        is BookmarkFragmentState.Mode.Normal -> {
+                            if (mode.showMenu) {
+                                menuInflater.inflate(R.menu.bookmarks_menu, menu)
+                            }
+
+                            if (!FeatureFlags.historyImprovementFeatures) {
+                                menu.findItem(R.id.bookmark_search)?.isVisible = false
+                            }
+                        }
+                        is BookmarkFragmentState.Mode.Selecting -> {
+                            if (mode.selectedItems.any { it.type != BookmarkNodeType.ITEM }) {
+                                menuInflater.inflate(R.menu.bookmarks_select_multi_not_item, menu)
+                            } else {
+                                menuInflater.inflate(R.menu.bookmarks_select_multi, menu)
+
+                                menu.findItem(R.id.delete_bookmarks_multi_select).title =
+                                    SpannableString(getString(R.string.bookmark_menu_delete_button)).apply {
+                                        setTextColor(requireContext(), R.attr.textWarning)
+                                    }
+                            }
+                        }
+                        else -> {
+                            // no-op
+                        }
+                    }
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem) = when (menuItem.itemId) {
+                    R.id.bookmark_search -> {
+                        bookmarkInteractor.onSearch()
+                        true
+                    }
+                    R.id.close_bookmarks -> {
+                        close()
+                        true
+                    }
+                    R.id.add_bookmark_folder -> {
+                        navigateToBookmarkFragment(
+                            BookmarkFragmentDirections
+                                .actionBookmarkFragmentToBookmarkAddFolderFragment()
+                        )
+                        true
+                    }
+                    R.id.open_bookmarks_in_new_tabs_multi_select -> {
+                        openItemsInNewTab { node -> node.url }
+
+                        showTabTray()
+                        BookmarksManagement.openInNewTabs.record(NoExtras())
+                        true
+                    }
+                    R.id.open_bookmarks_in_private_tabs_multi_select -> {
+                        openItemsInNewTab(private = true) { node -> node.url }
+
+                        showTabTray()
+                        BookmarksManagement.openInPrivateTabs.record(NoExtras())
+                        true
+                    }
+                    R.id.share_bookmark_multi_select -> {
+                        val shareTabs = bookmarkStore.state.mode.selectedItems.map {
+                            ShareData(url = it.url, title = it.title)
+                        }
+                        navigateToBookmarkFragment(
+                            BookmarkFragmentDirections.actionGlobalShareFragment(
+                                data = shareTabs.toTypedArray()
+                            )
+                        )
+                        true
+                    }
+                    R.id.delete_bookmarks_multi_select -> {
+                        deleteMulti(bookmarkStore.state.mode.selectedItems)
+                        true
+                    }
+                    else -> false
+                }
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
+
         val accountManager = requireComponents.backgroundServices.accountManager
+
         consumeFrom(bookmarkStore) {
             bookmarkView.update(it)
 
@@ -145,11 +232,6 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             bookmarkView.binding.bookmarkFoldersSignIn.isVisible =
                 it.tree?.guid == BookmarkRoot.Root.id && accountManager.authenticatedAccount() == null
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
     }
 
     override fun onResume() {
@@ -173,85 +255,6 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             if (isActive && currentRoot != null) {
                 bookmarkInteractor.onBookmarksChanged(currentRoot)
             }
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        when (val mode = bookmarkStore.state.mode) {
-            is BookmarkFragmentState.Mode.Normal -> {
-                if (mode.showMenu) {
-                    inflater.inflate(R.menu.bookmarks_menu, menu)
-                }
-
-                if (!FeatureFlags.historyImprovementFeatures) {
-                    menu.findItem(R.id.bookmark_search)?.isVisible = false
-                }
-            }
-            is BookmarkFragmentState.Mode.Selecting -> {
-                if (mode.selectedItems.any { it.type != BookmarkNodeType.ITEM }) {
-                    inflater.inflate(R.menu.bookmarks_select_multi_not_item, menu)
-                } else {
-                    inflater.inflate(R.menu.bookmarks_select_multi, menu)
-
-                    menu.findItem(R.id.delete_bookmarks_multi_select).title =
-                        SpannableString(getString(R.string.bookmark_menu_delete_button)).apply {
-                            setTextColor(requireContext(), R.attr.textWarning)
-                        }
-                }
-            }
-            else -> {
-                // no-op
-            }
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.bookmark_search -> {
-                bookmarkInteractor.onSearch()
-                true
-            }
-            R.id.close_bookmarks -> {
-                close()
-                true
-            }
-            R.id.add_bookmark_folder -> {
-                navigateToBookmarkFragment(
-                    BookmarkFragmentDirections
-                        .actionBookmarkFragmentToBookmarkAddFolderFragment()
-                )
-                true
-            }
-            R.id.open_bookmarks_in_new_tabs_multi_select -> {
-                openItemsInNewTab { node -> node.url }
-
-                showTabTray()
-                BookmarksManagement.openInNewTabs.record(NoExtras())
-                true
-            }
-            R.id.open_bookmarks_in_private_tabs_multi_select -> {
-                openItemsInNewTab(private = true) { node -> node.url }
-
-                showTabTray()
-                BookmarksManagement.openInPrivateTabs.record(NoExtras())
-                true
-            }
-            R.id.share_bookmark_multi_select -> {
-                val shareTabs = bookmarkStore.state.mode.selectedItems.map {
-                    ShareData(url = it.url, title = it.title)
-                }
-                navigateToBookmarkFragment(
-                    BookmarkFragmentDirections.actionGlobalShareFragment(
-                        data = shareTabs.toTypedArray()
-                    )
-                )
-                true
-            }
-            R.id.delete_bookmarks_multi_select -> {
-                deleteMulti(bookmarkStore.state.mode.selectedItems)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 

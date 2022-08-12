@@ -16,7 +16,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.CoroutineScope
@@ -66,11 +68,6 @@ class HistoryMetadataGroupFragment :
 
     override val selectedItems: Set<History.Metadata>
         get() = historyMetadataGroupStore.state.items.filter { it.selected }.toSet()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -135,6 +132,63 @@ class HistoryMetadataGroupFragment :
                 )
             }
         }
+
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    if (selectedItems.isNotEmpty()) {
+                        menuInflater.inflate(R.menu.history_select_multi, menu)
+
+                        menu.findItem(R.id.delete_history_multi_select)?.let { deleteItem ->
+                            deleteItem.title = SpannableString(deleteItem.title).apply {
+                                setTextColor(requireContext(), R.attr.textWarning)
+                            }
+                        }
+                    } else {
+                        menuInflater.inflate(R.menu.history_menu, menu)
+                    }
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem) = when (menuItem.itemId) {
+                    R.id.share_history_multi_select -> {
+                        interactor.onShareMenuItem(selectedItems)
+                        true
+                    }
+                    R.id.delete_history_multi_select -> {
+                        interactor.onDelete(selectedItems)
+                        true
+                    }
+                    R.id.open_history_in_new_tabs_multi_select -> {
+                        openItemsInNewTab { selectedItem ->
+                            selectedItem.url
+                        }
+
+                        showTabTray()
+                        true
+                    }
+                    R.id.open_history_in_private_tabs_multi_select -> {
+                        openItemsInNewTab(private = true) { selectedItem ->
+                            selectedItem.url
+                        }
+
+                        (activity as HomeActivity).apply {
+                            browsingModeManager.mode = BrowsingMode.Private
+                            supportActionBar?.hide()
+                        }
+
+                        showTabTray()
+                        true
+                    }
+                    R.id.history_delete -> {
+                        interactor.onDeleteAll()
+                        true
+                    }
+                    else -> false
+                }
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
     }
 
     override fun onResume() {
@@ -149,59 +203,6 @@ class HistoryMetadataGroupFragment :
     }
 
     override fun onBackPressed(): Boolean = interactor.onBackPressed(selectedItems)
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if (selectedItems.isNotEmpty()) {
-            inflater.inflate(R.menu.history_select_multi, menu)
-
-            menu.findItem(R.id.delete_history_multi_select)?.let { deleteItem ->
-                deleteItem.title = SpannableString(deleteItem.title).apply {
-                    setTextColor(requireContext(), R.attr.textWarning)
-                }
-            }
-        } else {
-            inflater.inflate(R.menu.history_menu, menu)
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.share_history_multi_select -> {
-                interactor.onShareMenuItem(selectedItems)
-                true
-            }
-            R.id.delete_history_multi_select -> {
-                interactor.onDelete(selectedItems)
-                true
-            }
-            R.id.open_history_in_new_tabs_multi_select -> {
-                openItemsInNewTab { selectedItem ->
-                    selectedItem.url
-                }
-
-                showTabTray()
-                true
-            }
-            R.id.open_history_in_private_tabs_multi_select -> {
-                openItemsInNewTab(private = true) { selectedItem ->
-                    selectedItem.url
-                }
-
-                (activity as HomeActivity).apply {
-                    browsingModeManager.mode = BrowsingMode.Private
-                    supportActionBar?.hide()
-                }
-
-                showTabTray()
-                true
-            }
-            R.id.history_delete -> {
-                interactor.onDeleteAll()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
 
     private fun deleteSnackbar(
         items: Set<History.Metadata>,

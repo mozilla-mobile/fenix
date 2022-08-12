@@ -18,7 +18,9 @@ import android.widget.CompoundButton
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.Dispatchers.IO
@@ -56,7 +58,6 @@ class AddSearchEngineFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
 
         availableEngines = requireContext()
             .components
@@ -113,6 +114,33 @@ class AddSearchEngineFragment :
                 from = BrowserDirection.FromAddSearchEngineFragment
             )
         }
+
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.add_custom_searchengine_menu, menu)
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
+                    when (menuItem.itemId) {
+                        R.id.add_search_engine -> {
+                            when (selectedIndex) {
+                                CUSTOM_INDEX -> createCustomEngine()
+                                else -> {
+                                    val engine = availableEngines[selectedIndex]
+                                    requireComponents.useCases.searchUseCases.addSearchEngine(engine)
+                                    findNavController().popBackStack()
+                                }
+                            }
+
+                            true
+                        }
+                        else -> false
+                    }
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
     }
 
     override fun onResume() {
@@ -123,28 +151,6 @@ class AddSearchEngineFragment :
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.add_custom_searchengine_menu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.add_search_engine -> {
-                when (selectedIndex) {
-                    CUSTOM_INDEX -> createCustomEngine()
-                    else -> {
-                        val engine = availableEngines[selectedIndex]
-                        requireComponents.useCases.searchUseCases.addSearchEngine(engine)
-                        findNavController().popBackStack()
-                    }
-                }
-
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     @Suppress("ComplexMethod")

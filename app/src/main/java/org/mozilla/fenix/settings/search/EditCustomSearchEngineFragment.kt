@@ -9,7 +9,9 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -43,7 +45,6 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
 
         searchEngine = requireNotNull(
             requireComponents.core.store.state.search.customSearchEngines.find { engine ->
@@ -73,6 +74,24 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
                 from = BrowserDirection.FromEditCustomSearchEngineFragment
             )
         }
+
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.edit_custom_searchengine_menu, menu)
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem) = when (menuItem.itemId) {
+                    R.id.save_button -> {
+                        saveCustomEngine()
+                        true
+                    }
+                    else -> false
+                }
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
     }
 
     override fun onResume() {
@@ -83,20 +102,6 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.edit_custom_searchengine_menu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.save_button -> {
-                saveCustomEngine()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     @Suppress("LongMethod")

@@ -17,7 +17,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
@@ -158,8 +160,6 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         historyProvider = DefaultPagedHistoryProvider(requireComponents.core.historyStorage)
 
         GleanHistory.opened.record(NoExtras())
-
-        setHasOptionsMenu(true)
     }
 
     private fun deleteSnackbar(
@@ -208,98 +208,104 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
                 historyView.historyAdapter.submitData(it)
             }
         }
+
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    if (historyStore.state.mode is HistoryFragmentState.Mode.Editing) {
+                        menuInflater.inflate(R.menu.history_select_multi, menu)
+                        menu.findItem(R.id.share_history_multi_select)?.isVisible = true
+                        menu.findItem(R.id.delete_history_multi_select)?.title =
+                            SpannableString(getString(R.string.bookmark_menu_delete_button)).apply {
+                                setTextColor(requireContext(), R.attr.textWarning)
+                            }
+                    } else {
+                        menuInflater.inflate(R.menu.history_menu, menu)
+                    }
+
+                    if (!FeatureFlags.historyImprovementFeatures) {
+                        menu.findItem(R.id.history_search)?.isVisible = false
+                    }
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem) = when (menuItem.itemId) {
+                    R.id.share_history_multi_select -> {
+                        val selectedHistory = historyStore.state.mode.selectedItems
+                        val shareTabs = mutableListOf<ShareData>()
+
+                        for (history in selectedHistory) {
+                            when (history) {
+                                is History.Regular -> {
+                                    shareTabs.add(ShareData(url = history.url, title = history.title))
+                                }
+                                is History.Group -> {
+                                    shareTabs.addAll(
+                                        history.items.map { metadata ->
+                                            ShareData(url = metadata.url, title = metadata.title)
+                                        }
+                                    )
+                                }
+                                else -> {
+                                    // no-op, There is no [History.Metadata] in the HistoryFragment.
+                                }
+                            }
+                        }
+
+                        share(shareTabs)
+                        historyStore.dispatch(HistoryFragmentAction.ExitEditMode)
+                        true
+                    }
+                    R.id.delete_history_multi_select -> {
+                        historyInteractor.onDeleteSome(historyStore.state.mode.selectedItems)
+                        historyStore.dispatch(HistoryFragmentAction.ExitEditMode)
+                        true
+                    }
+                    R.id.open_history_in_new_tabs_multi_select -> {
+                        openItemsInNewTab { selectedItem ->
+                            GleanHistory.openedItemsInNewTabs.record(NoExtras())
+                            (selectedItem as? History.Regular)?.url ?: (selectedItem as? History.Metadata)?.url
+                        }
+
+                        showTabTray()
+                        historyStore.dispatch(HistoryFragmentAction.ExitEditMode)
+                        true
+                    }
+                    R.id.open_history_in_private_tabs_multi_select -> {
+                        openItemsInNewTab(private = true) { selectedItem ->
+                            GleanHistory.openedItemsInNewTabs.record(NoExtras())
+                            (selectedItem as? History.Regular)?.url ?: (selectedItem as? History.Metadata)?.url
+                        }
+
+                        (activity as HomeActivity).apply {
+                            browsingModeManager.mode = BrowsingMode.Private
+                            supportActionBar?.hide()
+                        }
+
+                        showTabTray()
+                        historyStore.dispatch(HistoryFragmentAction.ExitEditMode)
+                        true
+                    }
+                    R.id.history_search -> {
+                        GleanHistory.searchIconTapped.record(NoExtras())
+                        historyInteractor.onSearch()
+                        true
+                    }
+                    R.id.history_delete -> {
+                        historyInteractor.onDeleteTimeRange()
+                        true
+                    }
+                    else -> false
+                }
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
     }
 
     override fun onResume() {
         super.onResume()
 
         (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary().show()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if (historyStore.state.mode is HistoryFragmentState.Mode.Editing) {
-            inflater.inflate(R.menu.history_select_multi, menu)
-            menu.findItem(R.id.share_history_multi_select)?.isVisible = true
-            menu.findItem(R.id.delete_history_multi_select)?.title =
-                SpannableString(getString(R.string.bookmark_menu_delete_button)).apply {
-                    setTextColor(requireContext(), R.attr.textWarning)
-                }
-        } else {
-            inflater.inflate(R.menu.history_menu, menu)
-        }
-
-        if (!FeatureFlags.historyImprovementFeatures) {
-            menu.findItem(R.id.history_search)?.isVisible = false
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.share_history_multi_select -> {
-            val selectedHistory = historyStore.state.mode.selectedItems
-            val shareTabs = mutableListOf<ShareData>()
-
-            for (history in selectedHistory) {
-                when (history) {
-                    is History.Regular -> {
-                        shareTabs.add(ShareData(url = history.url, title = history.title))
-                    }
-                    is History.Group -> {
-                        shareTabs.addAll(
-                            history.items.map { metadata ->
-                                ShareData(url = metadata.url, title = metadata.title)
-                            }
-                        )
-                    }
-                    else -> {
-                        // no-op, There is no [History.Metadata] in the HistoryFragment.
-                    }
-                }
-            }
-
-            share(shareTabs)
-            historyStore.dispatch(HistoryFragmentAction.ExitEditMode)
-            true
-        }
-        R.id.delete_history_multi_select -> {
-            historyInteractor.onDeleteSome(historyStore.state.mode.selectedItems)
-            historyStore.dispatch(HistoryFragmentAction.ExitEditMode)
-            true
-        }
-        R.id.open_history_in_new_tabs_multi_select -> {
-            openItemsInNewTab { selectedItem ->
-                GleanHistory.openedItemsInNewTabs.record(NoExtras())
-                (selectedItem as? History.Regular)?.url ?: (selectedItem as? History.Metadata)?.url
-            }
-
-            showTabTray()
-            historyStore.dispatch(HistoryFragmentAction.ExitEditMode)
-            true
-        }
-        R.id.open_history_in_private_tabs_multi_select -> {
-            openItemsInNewTab(private = true) { selectedItem ->
-                GleanHistory.openedItemsInNewTabs.record(NoExtras())
-                (selectedItem as? History.Regular)?.url ?: (selectedItem as? History.Metadata)?.url
-            }
-
-            (activity as HomeActivity).apply {
-                browsingModeManager.mode = BrowsingMode.Private
-                supportActionBar?.hide()
-            }
-
-            showTabTray()
-            historyStore.dispatch(HistoryFragmentAction.ExitEditMode)
-            true
-        }
-        R.id.history_search -> {
-            GleanHistory.searchIconTapped.record(NoExtras())
-            historyInteractor.onSearch()
-            true
-        }
-        R.id.history_delete -> {
-            historyInteractor.onDeleteTimeRange()
-            true
-        }
-        else -> super.onOptionsItemSelected(item)
     }
 
     private fun showTabTray() {

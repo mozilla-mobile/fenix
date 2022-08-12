@@ -9,6 +9,8 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -40,8 +42,6 @@ class AddressEditorFragment : SecureFragment(R.layout.fragment_address_editor) {
     private val isEditing: Boolean
         get() = args.address != null
 
-    private lateinit var menu: Menu
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -56,16 +56,35 @@ class AddressEditorFragment : SecureFragment(R.layout.fragment_address_editor) {
         )
 
         val binding = FragmentAddressEditorBinding.bind(view)
-        setHasOptionsMenu(true)
-
         val searchRegion = requireComponents.core.store.state.search.region
+
         addressEditorView = AddressEditorView(binding, interactor, searchRegion, args.address)
         addressEditorView.bind()
-    }
 
-    override fun onPause() {
-        super.onPause()
-        menu.close()
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.address_editor, menu)
+                    menu.findItem(R.id.delete_address_button).isVisible = isEditing
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem) = when (menuItem.itemId) {
+                    R.id.delete_address_button -> {
+                        args.address?.let {
+                            addressEditorView.showConfirmDeleteAddressDialog(requireContext(), it.guid)
+                        }
+                        true
+                    }
+                    R.id.save_address_button -> {
+                        addressEditorView.saveAddress()
+                        true
+                    }
+                    else -> false
+                }
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
     }
 
     override fun onResume() {
@@ -80,26 +99,5 @@ class AddressEditorFragment : SecureFragment(R.layout.fragment_address_editor) {
     override fun onStop() {
         super.onStop()
         this.view?.hideKeyboard()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.address_editor, menu)
-        this.menu = menu
-
-        menu.findItem(R.id.delete_address_button).isVisible = isEditing
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.delete_address_button -> {
-            args.address?.let {
-                addressEditorView.showConfirmDeleteAddressDialog(requireContext(), it.guid)
-            }
-            true
-        }
-        R.id.save_address_button -> {
-            addressEditorView.saveAddress()
-            true
-        }
-        else -> false
     }
 }

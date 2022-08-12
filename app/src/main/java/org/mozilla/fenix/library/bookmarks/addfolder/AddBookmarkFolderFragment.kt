@@ -10,8 +10,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import kotlinx.coroutines.Dispatchers.IO
@@ -40,11 +42,6 @@ class AddBookmarkFolderFragment : Fragment(R.layout.fragment_edit_bookmark) {
 
     private val sharedViewModel: BookmarksSharedViewModel by activityViewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     /**
      * Hides fields for bookmark items present in the shared layout file.
      */
@@ -55,6 +52,47 @@ class AddBookmarkFolderFragment : Fragment(R.layout.fragment_edit_bookmark) {
         binding.bookmarkUrlEdit.visibility = GONE
         binding.inputLayoutBookmarkUrl.visibility = GONE
         binding.bookmarkNameEdit.showKeyboard()
+
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.bookmarks_add_folder, menu)
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                    return when (menuItem.itemId) {
+                        R.id.confirm_add_folder_button -> {
+                            if (binding.bookmarkNameEdit.text.isNullOrBlank()) {
+                                binding.bookmarkNameEdit.error =
+                                    getString(R.string.bookmark_empty_title_error)
+                                return true
+                            }
+
+                            view.hideKeyboard()
+
+                            viewLifecycleOwner.lifecycleScope.launch(IO) {
+                                val newGuid = requireComponents.core.bookmarksStorage.addFolder(
+                                    sharedViewModel.selectedFolder!!.guid,
+                                    binding.bookmarkNameEdit.text.toString(),
+                                    null
+                                )
+                                sharedViewModel.selectedFolder =
+                                    requireComponents.core.bookmarksStorage.getTree(newGuid)
+                                BookmarksManagement.folderAdd.record(NoExtras())
+                                withContext(Main) {
+                                    Navigation.findNavController(requireActivity(), R.id.container)
+                                        .popBackStack()
+                                }
+                            }
+                            true
+                        }
+                        else -> false
+                    }
+                }
+            },
+            viewLifecycleOwner,
+            Lifecycle.State.RESUMED
+        )
     }
 
     override fun onResume() {
@@ -85,39 +123,6 @@ class AddBookmarkFolderFragment : Fragment(R.layout.fragment_edit_bookmark) {
     override fun onPause() {
         super.onPause()
         binding.bookmarkNameEdit.hideKeyboard()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.bookmarks_add_folder, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.confirm_add_folder_button -> {
-                if (binding.bookmarkNameEdit.text.isNullOrBlank()) {
-                    binding.bookmarkNameEdit.error =
-                        getString(R.string.bookmark_empty_title_error)
-                    return true
-                }
-                this.view?.hideKeyboard()
-                viewLifecycleOwner.lifecycleScope.launch(IO) {
-                    val newGuid = requireComponents.core.bookmarksStorage.addFolder(
-                        sharedViewModel.selectedFolder!!.guid,
-                        binding.bookmarkNameEdit.text.toString(),
-                        null
-                    )
-                    sharedViewModel.selectedFolder =
-                        requireComponents.core.bookmarksStorage.getTree(newGuid)
-                    BookmarksManagement.folderAdd.record(NoExtras())
-                    withContext(Main) {
-                        Navigation.findNavController(requireActivity(), R.id.container)
-                            .popBackStack()
-                    }
-                }
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     override fun onDestroyView() {
