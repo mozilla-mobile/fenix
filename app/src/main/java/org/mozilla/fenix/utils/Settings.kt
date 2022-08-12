@@ -51,7 +51,7 @@ import org.mozilla.fenix.settings.logins.SortingStrategy
 import org.mozilla.fenix.settings.registerOnSharedPreferenceChangeListener
 import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_ALL
 import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_AUDIBLE
-import org.mozilla.fenix.wallpapers.WallpaperManager
+import org.mozilla.fenix.wallpapers.Wallpaper
 import java.security.InvalidParameterException
 import java.util.UUID
 
@@ -187,7 +187,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var currentWallpaper by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_current_wallpaper),
-        default = WallpaperManager.defaultWallpaper.name
+        default = Wallpaper.Default.name
     )
 
     var wallpapersSwitchedByLogoTap by booleanPreference(
@@ -347,18 +347,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
-    val isFirstRun: Boolean =
-        if (!preferences.contains(appContext.getPreferenceKey(R.string.pref_key_is_first_run))) {
-            preferences.edit()
-                .putBoolean(
-                    appContext.getPreferenceKey(R.string.pref_key_is_first_run),
-                    false
-                )
-                .apply()
-            true
-        } else {
-            false
-        }
+    var isFirstNimbusRun: Boolean by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_is_first_run),
+        default = true
+    )
 
     /**
      * Indicates the last time when the user was interacting with the [BrowserFragment],
