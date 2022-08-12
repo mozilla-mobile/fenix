@@ -80,7 +80,7 @@ fun createNimbus(context: Context, url: String?): NimbusApi {
             // and would mostly produce the value `Beta` and rarely would produce `beta`.
             channel = BuildConfig.BUILD_TYPE,
             customTargetingAttributes = mapOf(
-                "isFirstRun" to context.settings().isFirstRun.toString()
+                "isFirstRun" to context.settings().isFirstNimbusRun.toString()
             )
         )
         Nimbus(context, appInfo, serverSettings, errorReporter).apply {
@@ -101,8 +101,9 @@ fun createNimbus(context: Context, url: String?): NimbusApi {
                 globalUserParticipation = enabled
             }
 
-            if (url.isNullOrBlank()) {
+            if (context.settings().isFirstNimbusRun || url.isNullOrBlank()) {
                 setExperimentsLocally(R.raw.initial_experiments)
+                context.settings().isFirstNimbusRun = false
             }
 
             // We may have downloaded experiments on a previous run, so let's start using them
