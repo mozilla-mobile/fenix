@@ -29,7 +29,6 @@ import androidx.constraintlayout.widget.ConstraintProperties.TOP
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.components.browser.toolbar.BrowserToolbar
@@ -314,6 +313,6 @@ class BookmarkSearchDialogFragment : AppCompatDialogFragment(), UserInteractionH
     private fun isSpeechAvailable(): Boolean = speechIntent.resolveActivity(requireContext().packageManager) != null
 
     companion object {
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "bookmark_search_dialog")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "bookmark_search_dialog")
     }
 }

@@ -641,7 +641,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         const val ARG_PAGE = "page"
         const val ARG_ACCESS_POINT = "accessPoint"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "tabs_tray_dialog",
+            baseRoute = "tabs_tray_dialog",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_ENTER_MULTI_SELECT, NavType.BoolType, false),
                 ScreenArgsInfo(ARG_FOCUS_GROUP_TAB_ID, NavType.StringType, null),

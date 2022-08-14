@@ -47,7 +47,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -120,6 +119,7 @@ import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
+import org.mozilla.fenix.search.SearchDialogFragment
 import org.mozilla.fenix.tabstray.TabsTrayAccessPoint
 import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
 import org.mozilla.fenix.utils.ToolbarPopupWindow
@@ -906,7 +906,7 @@ class HomeFragment : Fragment() {
                 sessionId = null
             )
 
-        nav(R.id.homeFragment, directions, getToolbarNavOptions(requireContext()))
+        findNavController().navigate(SearchDialogFragment.getNavRoute(), getToolbarNavOptions(requireContext()))
 
         Events.searchBarTapped.record(Events.SearchBarTappedExtra("HOME"))
     }
@@ -1025,11 +1025,15 @@ class HomeFragment : Fragment() {
 
         const val ARG_FOCUS_ON_ADDRESS_BAR = "focusOnAddressBar"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "home",
+            baseRoute = "home",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_FOCUS_ON_ADDRESS_BAR, NavType.BoolType, false)
             )
         )
+
+        fun getNavRoute(focusOnAddressBar: Boolean = false): String {
+            return "${NAV_ROUTE_INFO.baseRoute}/$focusOnAddressBar"
+        }
 
     }
 }

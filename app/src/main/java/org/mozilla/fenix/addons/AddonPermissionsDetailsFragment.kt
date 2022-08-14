@@ -53,7 +53,7 @@ class AddonPermissionsDetailsFragment :
     companion object {
         const val ARG_ADD_ON = "addOn"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "add_on_permissions_details",
+            baseRoute = "add_on_permissions_details",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_ADD_ON, NavType.ParcelableType(type = Addon::class.java))
             )

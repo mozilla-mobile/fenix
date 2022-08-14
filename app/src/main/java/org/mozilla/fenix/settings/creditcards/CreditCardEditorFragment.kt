@@ -152,7 +152,7 @@ class CreditCardEditorFragment : SecureFragment(R.layout.fragment_credit_card_ed
         const val NUMBER_OF_YEARS_TO_SHOW = 10
         const val ARG_CREDIT_CARD = "creditCard"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "credit_card_editor",
+            baseRoute = "credit_card_editor",
             destinationLabelId = R.string.credit_cards_add_card,
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_CREDIT_CARD, NavType.ParcelableType(type = CreditCard::class.java))

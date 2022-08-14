@@ -305,7 +305,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login) {
     companion object {
         const val ARG_SAVED_LOGIN_ITEM = "savedLoginItem"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "edit_login",
+            baseRoute = "edit_login",
             destinationLabelId = R.string.edit,
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_SAVED_LOGIN_ITEM, NavType.ParcelableType(type = SavedLogin::class.java))

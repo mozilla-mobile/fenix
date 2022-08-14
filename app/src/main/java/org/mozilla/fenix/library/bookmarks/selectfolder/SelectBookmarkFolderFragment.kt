@@ -103,7 +103,7 @@ class SelectBookmarkFolderFragment : Fragment() {
         private const val ARG_HIDE_FOLDER_GUID = "hideFolderGuid"
 
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "bookmark_select_folder",
+            baseRoute = "bookmark_select_folder",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_ALLOW_CREATING_NEW_FOLDER, NavType.BoolType, false),
                 ScreenArgsInfo(ARG_HIDE_FOLDER_GUID, NavType.StringType)

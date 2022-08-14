@@ -183,7 +183,7 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
     companion object {
         const val ARG_PAD_SNACKBAR = "padSnackbar"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "turn_on_sync",
+            baseRoute = "turn_on_sync",
             destinationLabelId = R.string.preferences_sync,
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_PAD_SNACKBAR, NavType.BoolType, false)

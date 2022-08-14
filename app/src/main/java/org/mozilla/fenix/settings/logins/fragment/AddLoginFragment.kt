@@ -350,7 +350,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login) {
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "add_login",
+            baseRoute = "add_login",
             destinationLabelId = R.string.add_login
         )
     }

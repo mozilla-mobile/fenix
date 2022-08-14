@@ -319,7 +319,7 @@ class AutofillSettingFragment : BiometricPromptPreferenceFragment() {
     companion object {
         const val SHORT_DELAY_MS = 100L
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "autofill_settings",
+            baseRoute = "autofill_settings",
             destinationLabelId = R.string.preferences_credit_cards
         )
     }

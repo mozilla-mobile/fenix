@@ -70,7 +70,7 @@ class TabHistoryDialogFragment : BottomSheetDialogFragment() {
     companion object {
         const val ARG_SESSION_ID = "activeSessionId"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "tab_history_dialog",
+            baseRoute = "tab_history_dialog",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_SESSION_ID, NavType.StringType)
             )

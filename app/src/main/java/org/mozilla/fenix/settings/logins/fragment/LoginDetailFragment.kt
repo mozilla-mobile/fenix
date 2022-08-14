@@ -247,7 +247,7 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail) {
         private const val BUTTON_INCREASE_DPS = 24
         private const val ARG_SAVED_LOGIN_ID = "savedLoginId"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "login_detail",
+            baseRoute = "login_detail",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_SAVED_LOGIN_ID, NavType.StringType)
             )

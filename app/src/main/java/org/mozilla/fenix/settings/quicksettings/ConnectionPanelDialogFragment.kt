@@ -14,7 +14,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.state.SessionState
-import mozilla.components.browser.state.state.content.PermissionHighlightsState
 import mozilla.components.concept.engine.permission.SitePermissions
 import org.mozilla.fenix.R
 import org.mozilla.fenix.android.FenixDialogFragment
@@ -94,12 +93,12 @@ class ConnectionPanelDialogFragment : FenixDialogFragment() {
         const val ARG_CERTIFICATE_NAME = "certificateName"
 
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "connection_panel_dialog",
+            baseRoute = "connection_panel_dialog",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_SESSION_ID, NavType.StringType),
                 ScreenArgsInfo(ARG_TITLE, NavType.StringType),
                 ScreenArgsInfo(ARG_URL, NavType.StringType),
-                ScreenArgsInfo(ARG_IS_SECURED, NavType.BoolType),
+                ScreenArgsInfo(ARG_IS_SECURED, NavType.BoolType, true),
                 ScreenArgsInfo(ARG_SITE_PERMISSIONS, NavType.ParcelableType(type = SitePermissions::class.java)),
                 ScreenArgsInfo(ARG_GRAVITY, NavType.IntType, 80),
                 ScreenArgsInfo(ARG_CERTIFICATE_NAME, NavType.StringType)

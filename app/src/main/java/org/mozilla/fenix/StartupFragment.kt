@@ -19,6 +19,6 @@ import org.mozilla.fenix.navigation.NavRouteInfo
  */
 class StartupFragment : Fragment() {
     companion object {
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "startup")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "startup")
     }
 }

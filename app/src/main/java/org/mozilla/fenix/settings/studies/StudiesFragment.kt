@@ -56,7 +56,7 @@ class StudiesFragment : Fragment() {
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "studies",
+            baseRoute = "studies",
             destinationLabelId = R.string.preference_experiments_2
         )
     }

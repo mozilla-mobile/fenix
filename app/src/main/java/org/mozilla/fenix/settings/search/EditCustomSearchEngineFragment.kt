@@ -177,7 +177,7 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
     }
 
     companion object {
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "edit_custom_search_engine")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "edit_custom_search_engine")
     }
 }
 

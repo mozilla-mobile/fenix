@@ -110,7 +110,7 @@ class AddressEditorFragment : SecureFragment(R.layout.fragment_address_editor) {
     companion object {
         const val ARG_ADDRESS = "address"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "address_editor",
+            baseRoute = "address_editor",
             destinationLabelId = R.string.addresses_add_address,
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_ADDRESS, NavType.ParcelableType(type = Address::class.java))

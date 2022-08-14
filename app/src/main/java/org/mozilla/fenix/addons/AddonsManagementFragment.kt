@@ -357,7 +357,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
 
         const val ARG_INSTALL_ADD_ON_ID = "installAddOnId"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "add_ons_management",
+            baseRoute = "add_ons_management",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_INSTALL_ADD_ON_ID, NavType.StringType)
             )

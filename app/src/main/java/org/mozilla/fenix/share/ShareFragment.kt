@@ -168,7 +168,7 @@ class ShareFragment : AppCompatDialogFragment() {
         const val ARG_SHARE_SUBJECT = "shareSubject"
 
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "share",
+            baseRoute = "share",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_SHARE_DATA, NavType.ParcelableArrayType(type = ShareData::class.java)),
                 ScreenArgsInfo(ARG_SHOW_PAGE, NavType.BoolType, false),

@@ -109,7 +109,7 @@ class CreditCardsManagementFragment : SecureFragment() {
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "credit_cards_management",
+            baseRoute = "credit_cards_management",
             destinationLabelId = R.string.credit_cards_saved_cards
         )
     }

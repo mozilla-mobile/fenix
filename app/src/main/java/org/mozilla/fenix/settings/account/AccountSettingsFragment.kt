@@ -474,7 +474,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
     companion object {
         private const val DEVICE_NAME_MAX_LENGTH = 128
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "account_settings",
+            baseRoute = "account_settings",
             destinationLabelId = R.string.preferences_account_settings
         )
     }

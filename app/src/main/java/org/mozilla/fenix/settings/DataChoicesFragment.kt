@@ -91,7 +91,7 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "data_choices",
+            baseRoute = "data_choices",
             destinationLabelId = R.string.preferences_data_choices
         )
     }

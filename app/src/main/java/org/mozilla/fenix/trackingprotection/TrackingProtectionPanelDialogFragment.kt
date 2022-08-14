@@ -24,12 +24,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.state.SessionState
-import mozilla.components.browser.state.state.content.PermissionHighlightsState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.session.TrackingProtectionUseCases
@@ -257,14 +255,14 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
         const val ARG_TRACKING_PROTECTION_ENABLED = "trackingProtectionEnabled"
 
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "tracking_protection_panel_dialog",
+            baseRoute = "tracking_protection_panel_dialog",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_SESSION_ID, NavType.StringType),
                 ScreenArgsInfo(ARG_TITLE, NavType.StringType),
                 ScreenArgsInfo(ARG_URL, NavType.StringType),
                 ScreenArgsInfo(ARG_SITE_PERMISSIONS, NavType.ParcelableType(type = SitePermissions::class.java)),
                 ScreenArgsInfo(ARG_GRAVITY, NavType.IntType, 80),
-                ScreenArgsInfo(ARG_TRACKING_PROTECTION_ENABLED, NavType.BoolType)
+                ScreenArgsInfo(ARG_TRACKING_PROTECTION_ENABLED, NavType.BoolType, true)
             )
         )
     }

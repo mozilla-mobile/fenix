@@ -81,6 +81,6 @@ class CreateShortcutFragment : DialogFragment() {
         private const val ENABLED_ALPHA = 1.0f
         private const val DISABLED_ALPHA = 0.4f
 
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "create_shortcut")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "create_shortcut")
     }
 }

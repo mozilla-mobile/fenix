@@ -245,7 +245,7 @@ class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
         const val ARG_SITE_PERMISSIONS = "sitePermissions"
 
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "site_permissions_manage_phone_feature",
+            baseRoute = "site_permissions_manage_phone_feature",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_PHONE_FEATURE, NavType.ParcelableType(type = PhoneFeature::class.java)),
                 ScreenArgsInfo(ARG_SITE_PERMISSIONS, NavType.ParcelableType(type = SitePermissions::class.java))

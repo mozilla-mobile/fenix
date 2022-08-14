@@ -287,7 +287,7 @@ class HistoryMetadataGroupFragment :
         private const val ARG_TITLE = "title"
         private const val ARG_HISTORY_META_DATA_ITEMS = "historyMetaDataItems"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "history_metadata_group",
+            baseRoute = "history_metadata_group",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_TITLE, NavType.StringType),
                 ScreenArgsInfo(ARG_HISTORY_META_DATA_ITEMS, NavType.ParcelableArrayType(type = History::class.java))

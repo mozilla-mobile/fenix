@@ -219,6 +219,6 @@ class SavedLoginsFragment : SecureFragment() {
     }
 
     companion object {
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "saved_logins")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "saved_logins")
     }
 }

@@ -31,7 +31,9 @@ import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.navOptions
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import kotlinx.coroutines.CoroutineScope
@@ -87,6 +89,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.setNavigationIcon
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.intent.CrashReporterIntentProcessor
 import org.mozilla.fenix.home.intent.DefaultBrowserIntentProcessor
@@ -100,6 +103,7 @@ import org.mozilla.fenix.library.bookmarks.DesktopFolders
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
+import org.mozilla.fenix.navigation.NavigationManager
 import org.mozilla.fenix.onboarding.DefaultBrowserNotificationWorker
 import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
@@ -225,6 +229,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         setContentView(binding.root)
         ProfilerMarkers.addListenerForOnGlobalLayout(components.core.engine, this, binding.root)
 
+        NavigationManager().createNavGraph(this, navHost.navController)
         // Must be after we set the content view
         if (isVisuallyComplete) {
             components.performance.visualCompletenessQueue
@@ -686,8 +691,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     protected open fun getBreadcrumbMessage(destination: NavDestination): String {
-        val fragmentName = resources.getResourceEntryName(destination.id)
-        return "Changing to fragment $fragmentName, isCustomTab: false"
+        return "Changing to fragment ${destination.id}, isCustomTab: false"
     }
 
     @VisibleForTesting(otherwise = PROTECTED)
@@ -944,9 +948,16 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     open fun navigateToHome() {
-        navHost.navController.navigate(NavGraphDirections.actionStartupHome())
+        navHost.navController.navigate(HomeFragment.getNavRoute(), getNavOptions())
     }
 
+    private fun getNavOptions(): NavOptions {
+        return navOptions {
+            popUpTo(StartupFragment.NAV_ROUTE_INFO.getGraphBuildRoute()) {
+                inclusive = true
+            }
+        }
+    }
     override fun attachBaseContext(base: Context) {
         base.components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             super.attachBaseContext(base)

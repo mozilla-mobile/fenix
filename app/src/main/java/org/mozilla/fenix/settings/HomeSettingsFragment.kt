@@ -183,7 +183,7 @@ class HomeSettingsFragment : PreferenceFragmentCompat() {
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "home_settings",
+            baseRoute = "home_settings",
             destinationLabelId = R.string.preferences_home_2
         )
     }

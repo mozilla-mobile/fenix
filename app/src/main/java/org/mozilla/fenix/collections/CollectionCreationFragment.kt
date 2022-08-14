@@ -106,12 +106,12 @@ class CollectionCreationFragment : DialogFragment() {
         const val ARG_SAVE_COLLECTION_STEP = "saveCollectionStep"
 
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "collection_creation",
+            baseRoute = "collection_creation",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_TAB_IDS, NavType.StringArrayType),
                 ScreenArgsInfo(ARG_SELECTED_TAB_IDS, NavType.StringArrayType),
                 ScreenArgsInfo(ARG_SELECTED_TAB_COLLECTION_ID, NavType.LongType, -1),
-                ScreenArgsInfo(ARG_SAVE_COLLECTION_STEP, NavType.EnumType(type = SaveCollectionStep::class.java))
+                ScreenArgsInfo(ARG_SAVE_COLLECTION_STEP, NavType.EnumType(type = SaveCollectionStep::class.java), SaveCollectionStep.NameCollection)
             )
         )
     }

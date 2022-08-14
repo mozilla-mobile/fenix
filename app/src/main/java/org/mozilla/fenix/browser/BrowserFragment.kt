@@ -402,7 +402,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     companion object {
         private const val ARG_ACTIVE_SESSION_ID = "activeSessionId"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "browser",
+            baseRoute = "browser",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_ACTIVE_SESSION_ID, NavType.StringType)
             )

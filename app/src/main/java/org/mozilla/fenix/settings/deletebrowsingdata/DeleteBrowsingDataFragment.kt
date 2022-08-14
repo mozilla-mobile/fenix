@@ -15,7 +15,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -287,7 +286,7 @@ class DeleteBrowsingDataFragment : Fragment(R.layout.fragment_delete_browsing_da
         private const val DOWNLOADS_INDEX = 5
 
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "delete_browsing_data",
+            baseRoute = "delete_browsing_data",
             destinationLabelId = R.string.preferences_delete_browsing_data
         )
     }

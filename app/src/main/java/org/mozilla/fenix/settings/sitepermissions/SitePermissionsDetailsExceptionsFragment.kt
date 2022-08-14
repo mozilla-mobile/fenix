@@ -174,7 +174,7 @@ class SitePermissionsDetailsExceptionsFragment : PreferenceFragmentCompat() {
         const val ARG_SITE_PERMISSIONS = "sitePermissions"
 
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "site_permissions_details_exceptions",
+            baseRoute = "site_permissions_details_exceptions",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_SITE_PERMISSIONS, NavType.ParcelableType(type = SitePermissions::class.java))
             )

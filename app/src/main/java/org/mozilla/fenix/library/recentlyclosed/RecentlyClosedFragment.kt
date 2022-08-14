@@ -14,7 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import mozilla.components.browser.state.state.recover.RecoverableTab
 import mozilla.components.lib.state.ext.consumeFrom
@@ -168,7 +167,7 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
     }
 
     companion object {
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "recently_closed")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "recently_closed")
     }
 
 }

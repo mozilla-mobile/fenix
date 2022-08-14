@@ -284,7 +284,7 @@ class AddSearchEngineFragment :
         private const val CUSTOM_INDEX = -1
         private const val FIRST_INDEX = 0
 
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "add_search_engine")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "add_search_engine")
     }
 }
 

@@ -232,6 +232,6 @@ class TrackingProtectionFragment : PreferenceFragmentCompat() {
     }
 
     companion object {
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "tracking_protection")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "tracking_protection")
     }
 }

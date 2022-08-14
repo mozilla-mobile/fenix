@@ -293,7 +293,7 @@ class SitePermissionsManagePhoneFeatureFragment : Fragment() {
     companion object {
         const val ARG_PHONE_FEATURE = "phoneFeature"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "site_permissions_manage_phone_feature",
+            baseRoute = "site_permissions_manage_phone_feature",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_PHONE_FEATURE, NavType.ParcelableType(type = PhoneFeature::class.java))
             )

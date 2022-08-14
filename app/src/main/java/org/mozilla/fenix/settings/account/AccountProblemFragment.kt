@@ -83,6 +83,6 @@ class AccountProblemFragment : PreferenceFragmentCompat(), AccountObserver {
     }
 
     companion object {
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "account_problem")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "account_problem")
     }
 }

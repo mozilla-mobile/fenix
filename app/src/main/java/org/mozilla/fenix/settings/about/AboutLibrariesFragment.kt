@@ -110,7 +110,7 @@ class AboutLibrariesFragment : Fragment(R.layout.fragment_about_libraries) {
 
     companion object {
         private const val LICENSE_TEXT_SIZE = 10F
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "about_libraries")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "about_libraries")
     }
 }
 

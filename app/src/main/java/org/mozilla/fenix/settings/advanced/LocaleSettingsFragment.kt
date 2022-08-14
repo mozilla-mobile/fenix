@@ -109,6 +109,6 @@ class LocaleSettingsFragment : Fragment() {
     }
 
     companion object {
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "locale")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "locale")
     }
 }

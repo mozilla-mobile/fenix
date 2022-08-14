@@ -176,6 +176,6 @@ class ProfilerStopDialogFragment : DialogFragment() {
     }
 
     companion object {
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "profiler_stop_dialog")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "profiler_stop_dialog")
     }
 }

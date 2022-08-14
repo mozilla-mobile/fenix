@@ -81,7 +81,7 @@ class NotYetSupportedAddonFragment :
     companion object {
         const val ARG_ADD_ONS = "addOns"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "not_yet_supported_addon",
+            baseRoute = "not_yet_supported_addon",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_ADD_ONS, NavType.ParcelableArrayType(type = Addon::class.java))
             )

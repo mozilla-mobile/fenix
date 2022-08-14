@@ -160,7 +160,7 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         enum class Position { TOP, BOTTOM }
 
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "customization",
+            baseRoute = "customization",
             destinationLabelId = R.string.preferences_customize
         )
     }

@@ -303,7 +303,7 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
         private const val ARG_GUID_TO_EDIT = "guidToEdit"
         private const val ARG_REQUIRES_SNACKBAR_PADDING_FOR_TOOLBAR = "requiresSnackbarPaddingFOrToolbar"
         val NAV_ROUTE_INFO  = NavRouteInfo(
-            navRoute = "bookmark_edit",
+            baseRoute = "bookmark_edit",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_GUID_TO_EDIT, NavType.StringType),
                 ScreenArgsInfo(ARG_REQUIRES_SNACKBAR_PADDING_FOR_TOOLBAR, NavType.BoolType, false)

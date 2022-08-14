@@ -256,7 +256,7 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "downloads",
+            baseRoute = "downloads",
             destinationLabelId = R.string.downloads
         )
     }

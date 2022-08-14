@@ -79,6 +79,6 @@ class DeleteBrowsingDataOnQuitFragment : PreferenceFragmentCompat() {
     }
 
     companion object {
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "delete_browsing_data_on_quit")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "delete_browsing_data_on_quit")
     }
 }

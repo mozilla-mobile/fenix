@@ -205,6 +205,6 @@ class ProfilerStartDialogFragment : AppCompatDialogFragment() {
     }
 
     companion object {
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "profiler_start_dialog")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "profiler_start_dialog")
     }
 }

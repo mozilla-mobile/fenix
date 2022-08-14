@@ -38,7 +38,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
@@ -915,12 +914,20 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         const val ARG_SEARCH_ACCESS_POINT = "search_access_point"
 
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "search_dialog",
+            baseRoute = "search_dialog",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_SESSION_ID, NavType.StringType),
                 ScreenArgsInfo(ARG_PASTED_TEXT, NavType.StringType),
                 ScreenArgsInfo(ARG_SEARCH_ACCESS_POINT, NavType.EnumType(type = MetricsUtils.Source::class.java), MetricsUtils.Source.NONE)
             )
         )
+
+        fun getNavRoute(
+            sessionId: String = "",
+            pastedText:String = "",
+            searchAccessPoint: MetricsUtils.Source = MetricsUtils.Source.NONE
+        ): String {
+            return "${NAV_ROUTE_INFO.baseRoute}/$searchAccessPoint?${ARG_SESSION_ID}=$sessionId&$ARG_PASTED_TEXT=$pastedText"
+        }
     }
 }

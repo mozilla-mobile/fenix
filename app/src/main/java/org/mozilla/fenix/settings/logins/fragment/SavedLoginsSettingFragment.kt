@@ -72,6 +72,6 @@ class SavedLoginsSettingFragment : PreferenceFragmentCompat() {
         // Setting describing the approach of saving logins, used for telemetry
         enum class Setting { NEVER_SAVE, ASK_TO_SAVE }
 
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "save_login_setting")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "save_login_setting")
     }
 }

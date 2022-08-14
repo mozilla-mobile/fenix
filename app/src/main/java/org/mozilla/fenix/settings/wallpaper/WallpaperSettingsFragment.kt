@@ -86,7 +86,7 @@ class WallpaperSettingsFragment : Fragment() {
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "wallpaper_settings",
+            baseRoute = "wallpaper_settings",
             destinationLabelId = R.string.customize_wallpapers
         )
     }

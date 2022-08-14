@@ -29,7 +29,6 @@ import androidx.constraintlayout.widget.ConstraintProperties.TOP
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.components.browser.toolbar.BrowserToolbar
@@ -48,7 +47,6 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.library.history.awesomebar.AwesomeBarView
 import org.mozilla.fenix.library.history.toolbar.ToolbarView
 import org.mozilla.fenix.navigation.NavRouteInfo
-import org.mozilla.fenix.navigation.ScreenArgsInfo
 import org.mozilla.fenix.settings.SupportUtils
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -315,6 +313,6 @@ class HistorySearchDialogFragment : AppCompatDialogFragment(), UserInteractionHa
     private fun isSpeechAvailable(): Boolean = speechIntent.resolveActivity(requireContext().packageManager) != null
 
     companion object {
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "history_search_dialog")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "history_search_dialog")
     }
 }

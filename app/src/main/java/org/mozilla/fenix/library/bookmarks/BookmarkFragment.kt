@@ -434,7 +434,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
     companion object {
         private const val ARG_CURRENT_ROOT = "currentRoot"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "bookmarks",
+            baseRoute = "bookmarks",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_CURRENT_ROOT, NavType.StringType)
             )

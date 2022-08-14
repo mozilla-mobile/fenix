@@ -68,7 +68,7 @@ class AddonDetailsFragment : Fragment(R.layout.fragment_add_on_details), AddonDe
     companion object {
         const val ARG_ADD_ON = "addOn"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "add_on_details",
+            baseRoute = "add_on_details",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_ADD_ON, NavType.ParcelableType(type = Addon::class.java))
             )

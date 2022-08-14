@@ -121,7 +121,7 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "tab_settings",
+            baseRoute = "tab_settings",
             destinationLabelId = R.string.preferences_tabs
         )
     }

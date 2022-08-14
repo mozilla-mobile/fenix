@@ -648,7 +648,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         const val ARG_PREF_TO_SCROLL_TO = "preference_to_scroll_to"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "settings",
+            baseRoute = "settings",
             destinationLabelId = R.string.settings_title,
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_PREF_TO_SCROLL_TO, NavType.StringType)

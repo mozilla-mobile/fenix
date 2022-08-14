@@ -18,7 +18,6 @@ import androidx.navigation.NavType
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.plus
 import mozilla.components.browser.state.selector.findTabOrCustomTab
@@ -238,17 +237,17 @@ class QuickSettingsSheetDialogFragment : FenixDialogFragment() {
         const val ARG_IS_TRACKING_PROTECTION_ENABLED = "isTrackingProtectionEnabled"
 
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "quick_settings_sheet_dialog",
+            baseRoute = "quick_settings_sheet_dialog",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_SESSION_ID, NavType.StringType),
                 ScreenArgsInfo(ARG_TITLE, NavType.StringType),
                 ScreenArgsInfo(ARG_URL, NavType.StringType),
-                ScreenArgsInfo(ARG_IS_SECURED, NavType.BoolType),
+                ScreenArgsInfo(ARG_IS_SECURED, NavType.BoolType, true),
                 ScreenArgsInfo(ARG_SITE_PERMISSIONS, NavType.ParcelableType(type = SitePermissions::class.java)),
                 ScreenArgsInfo(ARG_GRAVITY, NavType.IntType, 80),
                 ScreenArgsInfo(ARG_CERTIFICATE_NAME, NavType.StringType),
                 ScreenArgsInfo(ARG_PERMISSION_HIGHLIGHTS, NavType.ParcelableType(type = PermissionHighlightsState::class.java)),
-                ScreenArgsInfo(ARG_IS_TRACKING_PROTECTION_ENABLED, NavType.BoolType)
+                ScreenArgsInfo(ARG_IS_TRACKING_PROTECTION_ENABLED, NavType.BoolType, true)
             )
         )
     }

@@ -59,7 +59,7 @@ nimbus-validation:
       type: string
       description: The title of displayed in the Settings screen and app menu.
 onboarding:
-  description: The onboarding features displayed on homescreen.
+  description: The homescreen that the user goes to when they press home or new tab.
   hasExposure: true
   exposureDescription: ""
   variables:

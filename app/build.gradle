@@ -87,7 +87,7 @@ android {
 
         // Changing the build config can cause files that depend on BuildConfig.java to recompile
         // so we only set the git hash in release builds to avoid possible recompilation in debug builds.
-        buildConfigField "String", "GIT_HASH", "\"${Config.getGitHash()}\""
+//        buildConfigField "String", "GIT_HASH", "\"${Config.getGitHash()}\""
 
         if (gradle.hasProperty("localProperties.autosignReleaseWithDebugKey")) {
             signingConfig signingConfigs.debug

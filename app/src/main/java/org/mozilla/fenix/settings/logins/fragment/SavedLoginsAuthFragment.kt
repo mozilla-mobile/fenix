@@ -247,7 +247,7 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
         const val SHORT_DELAY_MS = 100L
         const val PIN_REQUEST = 303
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "saved_logins_auth",
+            baseRoute = "saved_logins_auth",
             destinationLabelId = R.string.preferences_passwords_logins_and_passwords
         )
     }

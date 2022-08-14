@@ -126,7 +126,7 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
         private const val VIBRATE_LENGTH = 200L
 
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "pair",
+            baseRoute = "pair",
             destinationLabelId = R.string.preferences_sync
         )
     }

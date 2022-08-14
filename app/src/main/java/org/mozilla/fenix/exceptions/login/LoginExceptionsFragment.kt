@@ -77,7 +77,7 @@ class LoginExceptionsFragment : Fragment() {
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "login_exceptions",
+            baseRoute = "login_exceptions",
             destinationLabelId = R.string.preferences_passwords_exceptions
         )
     }

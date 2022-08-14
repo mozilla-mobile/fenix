@@ -51,6 +51,6 @@ class AddNewDeviceFragment : Fragment(R.layout.fragment_add_new_device) {
     }
 
     companion object {
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "add_new_device")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "add_new_device")
     }
 }

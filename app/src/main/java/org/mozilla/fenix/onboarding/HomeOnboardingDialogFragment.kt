@@ -51,6 +51,6 @@ class HomeOnboardingDialogFragment : DialogFragment() {
     }
 
     companion object {
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "home_on_boarding_dialog")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "home_on_boarding_dialog")
     }
 }

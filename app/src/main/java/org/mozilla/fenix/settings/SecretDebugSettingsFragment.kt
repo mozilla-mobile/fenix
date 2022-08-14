@@ -48,7 +48,7 @@ class SecretDebugSettingsFragment : Fragment() {
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "secret_debug_settings",
+            baseRoute = "secret_debug_settings",
             destinationLabelId = R.string.preferences_debug_info
         )
     }

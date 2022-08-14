@@ -58,7 +58,7 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "secret_settings",
+            baseRoute = "secret_settings",
             destinationLabelId = R.string.preferences_debug_settings
         )
     }

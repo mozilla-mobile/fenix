@@ -217,6 +217,6 @@ class AboutFragment : Fragment(), AboutPageListener {
 
     companion object {
         private const val ABOUT_LICENSE_URL = "about:license"
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "about")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "about")
     }
 }

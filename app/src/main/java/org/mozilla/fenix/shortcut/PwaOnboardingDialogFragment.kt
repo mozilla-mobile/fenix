@@ -47,6 +47,6 @@ class PwaOnboardingDialogFragment : DialogFragment() {
     }
 
     companion object {
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "pwa_on_boarding")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "pwa_on_boarding")
     }
 }

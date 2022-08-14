@@ -94,7 +94,7 @@ class AccessibilityFragment : PreferenceFragmentCompat() {
         const val PERCENT_TO_DECIMAL = 100f
 
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "accessibility",
+            baseRoute = "accessibility",
             destinationLabelId = R.string.preferences_accessibility
         )
     }

@@ -408,6 +408,6 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     @Suppress("UnusedPrivateMember")
     companion object {
         private const val PAGE_SIZE = 25
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "history")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "history")
     }
 }

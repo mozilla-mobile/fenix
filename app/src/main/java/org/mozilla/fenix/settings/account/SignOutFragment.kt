@@ -90,6 +90,6 @@ class SignOutFragment : AppCompatDialogFragment() {
     }
 
     companion object {
-        val NAV_ROUTE_INFO = NavRouteInfo(navRoute = "sign_out")
+        val NAV_ROUTE_INFO = NavRouteInfo(baseRoute = "sign_out")
     }
 }

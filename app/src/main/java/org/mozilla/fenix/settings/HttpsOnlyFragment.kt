@@ -118,7 +118,7 @@ class HttpsOnlyFragment : Fragment() {
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "https_only",
+            baseRoute = "https_only",
             destinationLabelId = R.string.preferences_https_only_title
         )
     }

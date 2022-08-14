@@ -57,7 +57,7 @@ class TrackingProtectionBlockingFragment :
     companion object {
         const val ARG_PROTECTION_MODE = "protectionMode"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "tracking_protection_blocking",
+            baseRoute = "tracking_protection_blocking",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_PROTECTION_MODE, NavType.ParcelableType(type = TrackingProtectionMode::class.java))
             )

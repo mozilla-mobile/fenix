@@ -87,7 +87,7 @@ class NimbusExperimentsFragment : Fragment(R.layout.mozac_service_nimbus_experim
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "nimbus_experiments",
+            baseRoute = "nimbus_experiments",
             destinationLabelId = R.string.preferences_nimbus_experiments
         )
     }

@@ -102,7 +102,7 @@ class AddressManagementFragment : Fragment() {
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "address_management",
+            baseRoute = "address_management",
             destinationLabelId = R.string.addresses_manage_addresses
         )
     }

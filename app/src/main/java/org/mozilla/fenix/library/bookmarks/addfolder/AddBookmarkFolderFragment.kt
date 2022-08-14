@@ -129,7 +129,7 @@ class AddBookmarkFolderFragment : Fragment(R.layout.fragment_edit_bookmark) {
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "bookmark_add_folder",
+            baseRoute = "bookmark_add_folder",
             destinationLabelId = R.string.bookmark_add_folder_fragment_label
         )
     }

@@ -101,7 +101,7 @@ class NimbusBranchesFragment : Fragment() {
         const val ARG_EXPERIMENT_NAME = "experimentName"
 
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "nimbus_branches",
+            baseRoute = "nimbus_branches",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_EXPERIMENT_ID, NavType.StringType),
                 ScreenArgsInfo(ARG_EXPERIMENT_NAME, NavType.StringType)

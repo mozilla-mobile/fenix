@@ -61,7 +61,7 @@ class PrivateBrowsingFragment : PreferenceFragmentCompat() {
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "private_browsing",
+            baseRoute = "private_browsing",
             destinationLabelId = R.string.preferences_private_browsing_options
         )
     }

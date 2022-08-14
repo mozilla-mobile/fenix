@@ -1,12 +1,10 @@
 package org.mozilla.fenix.navigation
 
 import android.content.Context
+import android.util.Log
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.createGraph
+import androidx.navigation.*
 import androidx.navigation.fragment.fragment
-import androidx.navigation.navigation
 import org.mozilla.fenix.StartupFragment
 import org.mozilla.fenix.addons.*
 import org.mozilla.fenix.browser.BrowserFragment
@@ -25,7 +23,6 @@ import org.mozilla.fenix.library.history.HistoryFragment
 import org.mozilla.fenix.library.history.HistorySearchDialogFragment
 import org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragment
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragment
-import org.mozilla.fenix.library.syncedhistory.SyncedHistoryFragment
 import org.mozilla.fenix.nimbus.NimbusBranchesFragment
 import org.mozilla.fenix.nimbus.NimbusExperimentsFragment
 import org.mozilla.fenix.onboarding.HomeOnboardingDialogFragment
@@ -71,13 +68,17 @@ import org.mozilla.fenix.trackingprotection.TrackingProtectionPanelDialogFragmen
 class NavigationManager {
 
     private inline fun <reified F: Fragment> NavGraphBuilder.buildFragmentDestination(context: Context, navRouteInfo: NavRouteInfo) {
-        fragment<F>(navRouteInfo.navRoute) {
+        Log.d("CHUI", "navRoute ${navRouteInfo.getGraphBuildRoute()}")
+        fragment<F>(navRouteInfo.getGraphBuildRoute()) {
             with(navRouteInfo) {
                 destinationLabelId?.let { label = context.getString(it) }
                 screenArgs.forEach {
                     argument(name = it.argName) {
                         type = it.argType
                         defaultValue = it.defaultValue
+                        if (type != NavType.BoolType && it.defaultValue == null) {
+                            nullable = true
+                        }
                     }
                 }
             }
@@ -85,7 +86,7 @@ class NavigationManager {
     }
 
     private fun NavGraphBuilder.buildSitePermissionExceptionsGraph(context: Context) {
-        navigation(startDestination = SitePermissionsExceptionsFragment.NAV_ROUTE_INFO.navRoute, route = "site_permissions_exceptions_graph") {
+        navigation(startDestination = SitePermissionsExceptionsFragment.NAV_ROUTE_INFO.baseRoute, route = "site_permissions_exceptions_graph") {
             buildFragmentDestination<SitePermissionsExceptionsFragment>(context, SitePermissionsExceptionsFragment.NAV_ROUTE_INFO)
             buildFragmentDestination<SitePermissionsManageExceptionsPhoneFeatureFragment>(context, SitePermissionsManageExceptionsPhoneFeatureFragment.NAV_ROUTE_INFO)
             buildFragmentDestination<SitePermissionsDetailsExceptionsFragment>(context, SitePermissionsDetailsExceptionsFragment.NAV_ROUTE_INFO)
@@ -93,7 +94,7 @@ class NavigationManager {
     }
 
     private fun NavGraphBuilder.buildAddOnsManagementGraph(context: Context) {
-        navigation(startDestination = AddonsManagementFragment.NAV_ROUTE_INFO.navRoute, route = "add_ons_management_graph") {
+        navigation(startDestination = AddonsManagementFragment.NAV_ROUTE_INFO.baseRoute, route = "add_ons_management_graph") {
             buildFragmentDestination<AddonsManagementFragment>(context, AddonsManagementFragment.NAV_ROUTE_INFO)
             buildFragmentDestination<InstalledAddonDetailsFragment>(context, InstalledAddonDetailsFragment.NAV_ROUTE_INFO)
             buildFragmentDestination<NotYetSupportedAddonFragment>(context, NotYetSupportedAddonFragment.NAV_ROUTE_INFO)
@@ -104,7 +105,7 @@ class NavigationManager {
     }
 
     private fun NavGraphBuilder.buildSearchEngineGraph(context: Context) {
-        navigation(startDestination = SearchEngineFragment.NAV_ROUTE_INFO.navRoute, route = "search_engine_graph") {
+        navigation(startDestination = SearchEngineFragment.NAV_ROUTE_INFO.baseRoute, route = "search_engine_graph") {
             buildFragmentDestination<SearchEngineFragment>(context, SearchEngineFragment.NAV_ROUTE_INFO)
             buildFragmentDestination<AddSearchEngineFragment>(context, AddSearchEngineFragment.NAV_ROUTE_INFO)
             buildFragmentDestination<EditCustomSearchEngineFragment>(context, EditCustomSearchEngineFragment.NAV_ROUTE_INFO)
@@ -112,7 +113,7 @@ class NavigationManager {
     }
 
     private fun NavGraphBuilder.buildAutoFillGraph(context: Context) {
-        navigation(startDestination = AutofillSettingFragment.NAV_ROUTE_INFO.navRoute, route = "autofill_graph") {
+        navigation(startDestination = AutofillSettingFragment.NAV_ROUTE_INFO.baseRoute, route = "autofill_graph") {
             buildFragmentDestination<AutofillSettingFragment>(context, AutofillSettingFragment.NAV_ROUTE_INFO)
             buildFragmentDestination<CreditCardEditorFragment>(context, CreditCardEditorFragment.NAV_ROUTE_INFO)
             buildFragmentDestination<CreditCardsManagementFragment>(context, CreditCardsManagementFragment.NAV_ROUTE_INFO)
@@ -122,14 +123,14 @@ class NavigationManager {
     }
 
     private fun NavGraphBuilder.buildNimbusExperimentGraph(context: Context) {
-        navigation(startDestination = NimbusExperimentsFragment.NAV_ROUTE_INFO.navRoute, route = "nimbus_experiment_graph") {
+        navigation(startDestination = NimbusExperimentsFragment.NAV_ROUTE_INFO.baseRoute, route = "nimbus_experiment_graph") {
             buildFragmentDestination<NimbusExperimentsFragment>(context, NimbusExperimentsFragment.NAV_ROUTE_INFO)
             buildFragmentDestination<NimbusBranchesFragment>(context, NimbusBranchesFragment.NAV_ROUTE_INFO)
         }
     }
 
     fun createNavGraph(context: Context, navController: NavController) {
-        navController.createGraph(startDestination = StartupFragment.NAV_ROUTE_INFO.navRoute) {
+        navController.graph = navController.createGraph(startDestination = StartupFragment.NAV_ROUTE_INFO.getGraphBuildRoute()) {
             buildFragmentDestination<StartupFragment>(context, StartupFragment.NAV_ROUTE_INFO)
             buildFragmentDestination<HomeFragment>(context, HomeFragment.NAV_ROUTE_INFO)
             buildFragmentDestination<TabsTrayFragment>(context, TabsTrayFragment.NAV_ROUTE_INFO)
@@ -142,7 +143,6 @@ class NavigationManager {
             buildFragmentDestination<HistoryFragment>(context, HistoryFragment.NAV_ROUTE_INFO)
             buildFragmentDestination<HistorySearchDialogFragment>(context, HistorySearchDialogFragment.NAV_ROUTE_INFO)
             buildFragmentDestination<HistoryMetadataGroupFragment>(context, HistoryMetadataGroupFragment.NAV_ROUTE_INFO)
-            buildFragmentDestination<SyncedHistoryFragment>(context, SyncedHistoryFragment.NAV_ROUTE_INFO)
             buildFragmentDestination<DownloadFragment>(context, DownloadFragment.NAV_ROUTE_INFO)
             buildFragmentDestination<BookmarkFragment>(context, BookmarkFragment.NAV_ROUTE_INFO)
             buildFragmentDestination<BookmarkSearchDialogFragment>(context, BookmarkSearchDialogFragment.NAV_ROUTE_INFO)

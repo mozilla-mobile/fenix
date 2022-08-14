@@ -56,7 +56,7 @@ class AddonInternalSettingsFragment : AddonPopupBaseFragment() {
     companion object {
         const val ARG_ADD_ON = "addOn"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "add_on_internal_settings",
+            baseRoute = "add_on_internal_settings",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_ADD_ON, NavType.ParcelableType(type = Addon::class.java))
             )

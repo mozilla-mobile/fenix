@@ -82,7 +82,7 @@ class SitePermissionsFragment : PreferenceFragmentCompat() {
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "site_permissions",
+            baseRoute = "site_permissions",
             destinationLabelId = R.string.preferences_site_permissions
         )
     }

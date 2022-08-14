@@ -120,7 +120,7 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "search_engine",
+            baseRoute = "search_engine",
             destinationLabelId = R.string.preferences_search
         )
     }

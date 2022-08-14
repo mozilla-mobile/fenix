@@ -97,7 +97,7 @@ class WebExtensionActionPopupFragment : AddonPopupBaseFragment(), EngineSession.
         const val ARG_WEB_EXTENSION_TITLE = "webExtensionTitle"
 
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "web_extension_action_popup",
+            baseRoute = "web_extension_action_popup",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_WEB_EXTENSION_ID, NavType.StringType),
                 ScreenArgsInfo(ARG_WEB_EXTENSION_TITLE, NavType.StringType)

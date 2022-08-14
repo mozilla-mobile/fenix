@@ -198,7 +198,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
         private const val ARG_WEB_APP_MANIFEST = "webAppManifest"
 
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "external_app_browser",
+            baseRoute = "external_app_browser",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_ACTIVE_SESSION_ID, NavType.StringType),
                 ScreenArgsInfo(ARG_WEB_APP_MANIFEST, NavType.StringType)

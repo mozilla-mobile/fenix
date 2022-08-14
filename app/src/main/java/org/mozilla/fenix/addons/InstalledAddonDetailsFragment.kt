@@ -344,7 +344,7 @@ class InstalledAddonDetailsFragment : Fragment() {
     companion object {
         const val ARG_ADD_ON = "addOn"
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "installed_add_on_details",
+            baseRoute = "installed_add_on_details",
             screenArgs = listOf(
                 ScreenArgsInfo(ARG_ADD_ON, NavType.ParcelableType(type = Addon::class.java))
             )

@@ -69,7 +69,7 @@ class TrackingProtectionExceptionsFragment : Fragment() {
 
     companion object {
         val NAV_ROUTE_INFO = NavRouteInfo(
-            navRoute = "tracking_protection_exceptions",
+            baseRoute = "tracking_protection_exceptions",
             destinationLabelId = R.string.preference_exceptions
         )
     }
