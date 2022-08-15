@@ -4,11 +4,6 @@
 
 package org.mozilla.fenix.wallpapers
 
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
-import android.os.Handler
-import android.os.Looper
-import android.view.View
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.utils.Settings
