@@ -28,7 +28,6 @@ import mozilla.components.support.ktx.android.content.longPreference
 import mozilla.components.support.ktx.android.content.stringPreference
 import mozilla.components.support.ktx.android.content.stringSetPreference
 import mozilla.components.support.locale.LocaleManager
-import org.mozilla.experiments.nimbus.internal.NimbusFeatureException
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -44,6 +43,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.nimbus.HomeScreenSection
+import org.mozilla.fenix.nimbus.OnboardingSection
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
 import org.mozilla.fenix.settings.logins.SavedLoginsSortingStrategyMenu
@@ -51,7 +51,7 @@ import org.mozilla.fenix.settings.logins.SortingStrategy
 import org.mozilla.fenix.settings.registerOnSharedPreferenceChangeListener
 import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_ALL
 import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_AUDIBLE
-import org.mozilla.fenix.wallpapers.WallpaperManager
+import org.mozilla.fenix.wallpapers.Wallpaper
 import java.security.InvalidParameterException
 import java.util.UUID
 
@@ -187,7 +187,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var currentWallpaper by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_current_wallpaper),
-        default = WallpaperManager.defaultWallpaper.name
+        default = Wallpaper.Default.name
     )
 
     var openLinksInAPrivateTab by booleanPreference(
@@ -342,18 +342,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
-    val isFirstRun: Boolean =
-        if (!preferences.contains(appContext.getPreferenceKey(R.string.pref_key_is_first_run))) {
-            preferences.edit()
-                .putBoolean(
-                    appContext.getPreferenceKey(R.string.pref_key_is_first_run),
-                    false
-                )
-                .apply()
-            true
-        } else {
-            false
-        }
+    var isFirstNimbusRun: Boolean by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_is_first_run),
+        default = true
+    )
 
     /**
      * Indicates the last time when the user was interacting with the [BrowserFragment],
@@ -1194,16 +1186,26 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
-    private val homescreenSections: Map<HomeScreenSection, Boolean> get() = try {
+    private val onboardScreenSection: Map<OnboardingSection, Boolean> get() =
+        FxNimbus.features.onboarding.value().sectionsEnabled
+
+    private val homescreenSections: Map<HomeScreenSection, Boolean> get() =
         FxNimbus.features.homescreen.value().sectionsEnabled
-    } catch (e: NimbusFeatureException) {
-        emptyMap()
-    }
 
     var historyMetadataUIFeature by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_history_metadata_feature),
         default = { homescreenSections[HomeScreenSection.RECENT_EXPLORATIONS] == true },
         featureFlag = FeatureFlags.historyMetadataUIFeature || isHistoryMetadataEnabled
+    )
+
+    /**
+     * Indicates if sync on-boarding CFR should be shown
+     * Returns true if the [FeatureFlags.showSynCFR] and [R.string.pref_key_should_show_sync_cfr] are true.
+     */
+    var showSyncCFR by lazyFeatureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_sync_cfr),
+        featureFlag = FeatureFlags.showSynCFR,
+        default = { onboardScreenSection[OnboardingSection.SYNC_CFR] == true },
     )
 
     /**
