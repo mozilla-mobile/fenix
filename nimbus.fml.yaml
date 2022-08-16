@@ -19,6 +19,7 @@ features:
             "recently-saved": true,
             "recent-explorations": true,
             "pocket": true,
+            "pocket-sponsored-stories": false,
             "contile-top-sites": false,
           }
     defaults:
@@ -33,21 +34,36 @@ features:
             "contile-top-sites": false,
           }
         }
+      - channel: developer
+        value: {
+          "sections-enabled": {
+            "pocket-sponsored-stories": true,
+          }
+        }
   onboarding:
-    description: The homescreen that the user goes to when they press home or new tab.
+    description: The onboarding features displayed on homescreen.
     variables:
       sections-enabled:
         description: "This property provides a lookup table of whether or not the given section should be enabled."
         type: Map<OnboardingSection, Boolean>
         default:
           {
-            "sync-cfr": false
+            "sync-cfr": false,
+            "wallpapers": false
           }
     defaults:
       - channel: nightly
         value: {
           "sections-enabled": {
-            "sync-cfr": false
+            "sync-cfr": false,
+            "wallpapers": false
+          }
+        }
+      - channel: developer
+        value: {
+          "sections-enabled": {
+            "sync-cfr": false,
+            "wallpapers": true
           }
         }
   nimbus-validation:
@@ -201,18 +217,6 @@ features:
         value:
           enabled: false
 
-  pocket-sponsored-stories:
-    description: A feature showing sponsored stories in between the other Pocket recommended stories on homescreen.
-    variables:
-      enabled:
-        description:  If true, the Pocket stories shown on homescreen should contain sponsored stories also.
-        type: Boolean
-        default: false
-    defaults:
-      - channel: developer
-        value:
-          enabled: true
-
   engine-settings:
     description: Contains a set of settings for controlling the web engine configurations.
     variables:
@@ -311,6 +315,8 @@ types:
           description: The tab groups
         pocket:
           description: The pocket section. This should only be available in the US.
+        pocket-sponsored-stories:
+          description: Subsection of the Pocket homescreen section which shows sponsored stories.
         contile-top-sites:
           description: The sponsored shortcuts in the homescreen.
     MessageSurfaceId:
@@ -327,4 +333,5 @@ types:
       variants:
         sync-cfr:
           description: Sync onboarding CFR.
-
+        wallpapers:
+          description: Wallpapers onboarding dialog.
