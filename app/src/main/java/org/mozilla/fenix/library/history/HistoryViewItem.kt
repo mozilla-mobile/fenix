@@ -67,16 +67,6 @@ sealed class HistoryViewItem : Parcelable {
     ) : HistoryViewItem()
 
     /**
-     * A class representing a synced history button in the history list.
-     *
-     * @param title of a recently closed button inside History screen.
-     */
-    @Parcelize
-    data class SyncedHistoryItem(
-        val title: String
-    ) : HistoryViewItem()
-
-    /**
      * A class representing empty state in history and synced history screens.
      *
      * @param emptyMessage of an emptyView inside History screen.
