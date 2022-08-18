@@ -11,6 +11,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.FenixApplication
+import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
@@ -26,6 +27,8 @@ class SettingsBasicsTest {
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
     private lateinit var mockWebServer: MockWebServer
     private val featureSettingsHelper = FeatureSettingsHelper()
+    private val creditCardNumber = "2720994326581252"
+    private val nameOnCard = "mastercard"
 
     @get:Rule
     val activityIntentTestRule = HomeActivityIntentTestRule()
@@ -120,6 +123,24 @@ class SettingsBasicsTest {
         }.openAccessibilitySubMenu {
             clickFontSizingSwitch()
             verifyMenuItemsAreDisabled()
+        }
+    }
+
+    @SmokeTest
+    @Test
+    fun deleteSavedCreditCardTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openAutofillSubMenu {
+            clickAddCreditCardButton()
+            fillAndSaveCreditCard(creditCardNumber, nameOnCard)
+            clickManageSavedCardsButton()
+            clickSecuredCreditCardsLaterButton()
+            clickSavedCreditCard()
+            clickDeleteCreditCardButton()
+            clickConfirmDeleteCreditCardButton()
+            verifyAddCreditCardsButton()
         }
     }
 }
