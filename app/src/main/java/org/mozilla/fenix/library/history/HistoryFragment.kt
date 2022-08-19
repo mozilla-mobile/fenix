@@ -67,8 +67,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
         null
     ) {
         HistoryDataSource(
-            historyProvider = historyProvider,
-            isRemote = if (FeatureFlags.showSyncedHistory) false else null
+            historyProvider = historyProvider
         )
     }.flow
 
@@ -334,7 +333,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler {
     }
 
     private fun openItem(item: History.Regular) {
-        GleanHistory.openedItem.record(NoExtras())
+        GleanHistory.openedItem.record(GleanHistory.OpenedItemExtra(item.isRemote))
 
         (activity as HomeActivity).openToBrowserAndLoad(
             searchTermOrURL = item.url,
