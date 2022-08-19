@@ -28,7 +28,6 @@ import mozilla.components.support.ktx.android.content.longPreference
 import mozilla.components.support.ktx.android.content.stringPreference
 import mozilla.components.support.ktx.android.content.stringSetPreference
 import mozilla.components.support.locale.LocaleManager
-import org.mozilla.experiments.nimbus.internal.NimbusFeatureException
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -44,6 +43,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.nimbus.HomeScreenSection
+import org.mozilla.fenix.nimbus.OnboardingSection
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
 import org.mozilla.fenix.settings.logins.SavedLoginsSortingStrategyMenu
@@ -51,7 +51,7 @@ import org.mozilla.fenix.settings.logins.SortingStrategy
 import org.mozilla.fenix.settings.registerOnSharedPreferenceChangeListener
 import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_ALL
 import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_AUDIBLE
-import org.mozilla.fenix.wallpapers.WallpaperManager
+import org.mozilla.fenix.wallpapers.Wallpaper
 import java.security.InvalidParameterException
 import java.util.UUID
 
@@ -187,12 +187,16 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var currentWallpaper by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_current_wallpaper),
-        default = WallpaperManager.defaultWallpaper.name
+        default = Wallpaper.Default.name
     )
 
-    var wallpapersSwitchedByLogoTap by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_wallpapers_switched_by_logo_tap),
-        default = true
+    /**
+     * Indicates if the wallpaper onboarding dialog should be shown.
+     */
+    val showWallpaperOnboarding by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_wallpapers_onboarding),
+        featureFlag = FeatureFlags.wallpaperOnboardingEnabled,
+        default = { onboardScreenSection[OnboardingSection.WALLPAPERS] == true },
     )
 
     var openLinksInAPrivateTab by booleanPreference(
@@ -347,18 +351,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
-    val isFirstRun: Boolean =
-        if (!preferences.contains(appContext.getPreferenceKey(R.string.pref_key_is_first_run))) {
-            preferences.edit()
-                .putBoolean(
-                    appContext.getPreferenceKey(R.string.pref_key_is_first_run),
-                    false
-                )
-                .apply()
-            true
-        } else {
-            false
-        }
+    var isFirstNimbusRun: Boolean by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_is_first_run),
+        default = true
+    )
 
     /**
      * Indicates the last time when the user was interacting with the [BrowserFragment],
@@ -415,15 +411,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_inactive_tabs),
         default = FeatureFlags.inactiveTabs,
         featureFlag = FeatureFlags.inactiveTabs
-    )
-
-    /**
-     * Indicates if the Firefox logo on the home screen should be animated,
-     * to show users that they can change the wallpaper by tapping on the Firefox logo.
-     */
-    var shouldAnimateFirefoxLogo by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_show_logo_animation),
-        default = true,
     )
 
     @VisibleForTesting
@@ -1208,16 +1195,35 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
-    private val homescreenSections: Map<HomeScreenSection, Boolean> get() = try {
+    private val onboardScreenSection: Map<OnboardingSection, Boolean> get() =
+        FxNimbus.features.onboarding.value().sectionsEnabled
+
+    private val homescreenSections: Map<HomeScreenSection, Boolean> get() =
         FxNimbus.features.homescreen.value().sectionsEnabled
-    } catch (e: NimbusFeatureException) {
-        emptyMap()
-    }
 
     var historyMetadataUIFeature by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_history_metadata_feature),
         default = { homescreenSections[HomeScreenSection.RECENT_EXPLORATIONS] == true },
         featureFlag = FeatureFlags.historyMetadataUIFeature || isHistoryMetadataEnabled
+    )
+
+    /**
+     * Indicates if sync onboarding CFR should be shown.
+     * Returns true if the [FeatureFlags.showSynCFR] and [R.string.pref_key_should_show_sync_cfr] are true.
+     */
+    var showSyncCFR by lazyFeatureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_sync_cfr),
+        featureFlag = FeatureFlags.showSynCFR,
+        default = { onboardScreenSection[OnboardingSection.SYNC_CFR] == true },
+    )
+
+    /**
+     * Indicates if home onboarding dialog should be shown.
+     */
+    var showHomeOnboardingDialog by lazyFeatureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_home_onboarding_dialog),
+        featureFlag = FeatureFlags.showHomeOnboarding,
+        default = { onboardScreenSection[OnboardingSection.HOME_ONBOARDING_DIALOG] == true },
     )
 
     /**
@@ -1290,7 +1296,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     val showPocketSponsoredStories by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_pocket_sponsored_stories),
-        default = { FxNimbus.features.pocketSponsoredStories.value(appContext).enabled },
+        default = { homescreenSections[HomeScreenSection.POCKET_SPONSORED_STORIES] == true },
         featureFlag = FeatureFlags.isPocketSponsoredStoriesFeatureEnabled(appContext)
     )
 
@@ -1306,10 +1312,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     /**
      * Indicates if the Contile functionality should be visible.
      */
-    var showContileFeature by lazyFeatureFlagPreference(
+    var showContileFeature by booleanPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_enable_contile),
-        default = { homescreenSections[HomeScreenSection.CONTILE_TOP_SITES] == true },
-        featureFlag = true,
+        default = true,
     )
 
     /**

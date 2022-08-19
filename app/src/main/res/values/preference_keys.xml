@@ -202,8 +202,7 @@
     <!-- Wallpaper Settings -->
     <string name="pref_key_wallpapers" translatable="false">pref_key_wallpapers</string>
     <string name="pref_key_current_wallpaper" translatable="false">pref_key_current_wallpaper</string>
-    <string name="pref_key_wallpapers_switched_by_logo_tap">pref_key_wallpapers_switched_by_logo_tap</string>
-    <string name="pref_key_show_logo_animation" translatable="false">pref_key_show_logo_animation</string>
+    <string name="pref_key_wallpapers_onboarding" translatable="false">pref_key_wallpapers_onboarding</string>
 
     <string name="pref_key_encryption_key_generated" translatable="false">pref_key_encryption_key_generated</string>
 
@@ -236,6 +235,10 @@
     <string name="pref_key_has_inactive_tabs_auto_close_dialog_dismissed" translatable="false">pref_key_has_inactive_tabs_auto_close_dialog_dismissed</string>
     <!-- A value  of `true` means the jump back in onboarding popup has not been shown yet -->
     <string name="pref_key_should_show_jump_back_in_tabs_popup" translatable="false">pref_key_should_show_jump_back_in_tabs_popup</string>
+    <!-- A value  of `true` means the onboarding sync CFR have not been shown yet -->
+    <string name="pref_key_should_show_sync_cfr" translatable="false">pref_key_should_show_sync_cfr</string>
+    <!-- A value  of `true` means the home onboarding dialog have not been shown yet -->
+    <string name="pref_key_should_show_home_onboarding_dialog" translatable="false">pref_key_should_show_home_onboarding_dialog</string>
 
     <string name="pref_key_debug_settings" translatable="false">pref_key_debug_settings</string>
 

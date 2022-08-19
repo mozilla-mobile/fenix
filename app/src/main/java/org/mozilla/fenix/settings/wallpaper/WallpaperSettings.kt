@@ -10,7 +10,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,12 +27,10 @@ import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Surface
-import androidx.compose.material.Switch
-import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,21 +40,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.button.TextButton
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.theme.Theme
 import org.mozilla.fenix.wallpapers.Wallpaper
-import org.mozilla.fenix.wallpapers.WallpaperManager
 
 /**
  * The screen for controlling settings around Wallpapers. When a new wallpaper is selected,
@@ -69,20 +62,16 @@ import org.mozilla.fenix.wallpapers.WallpaperManager
  * @param loadWallpaperResource Callback to handle loading a wallpaper bitmap. Only optional in the default case.
  * @param onSelectWallpaper Callback for when a new wallpaper is selected.
  * @param onViewWallpaper Callback for when the view action is clicked from snackbar.
- * @param tapLogoSwitchChecked Enabled state for switch controlling taps to change wallpaper.
- * @param onTapLogoSwitchCheckedChange Callback for when state of above switch is updated.
  */
 @Composable
 @Suppress("LongParameterList")
 fun WallpaperSettings(
     wallpapers: List<Wallpaper>,
     defaultWallpaper: Wallpaper,
-    loadWallpaperResource: (Wallpaper) -> Bitmap?,
+    loadWallpaperResource: suspend (Wallpaper) -> Bitmap?,
     selectedWallpaper: Wallpaper,
     onSelectWallpaper: (Wallpaper) -> Unit,
     onViewWallpaper: () -> Unit,
-    tapLogoSwitchChecked: Boolean,
-    onTapLogoSwitchCheckedChange: (Boolean) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
@@ -112,7 +101,6 @@ fun WallpaperSettings(
                     onSelectWallpaper(updatedWallpaper)
                 },
             )
-            WallpaperLogoSwitch(tapLogoSwitchChecked, onCheckedChange = onTapLogoSwitchCheckedChange)
         }
     }
 }
@@ -164,7 +152,7 @@ private fun WallpaperSnackbar(
 private fun WallpaperThumbnails(
     wallpapers: List<Wallpaper>,
     defaultWallpaper: Wallpaper,
-    loadWallpaperResource: (Wallpaper) -> Bitmap?,
+    loadWallpaperResource: suspend (Wallpaper) -> Bitmap?,
     selectedWallpaper: Wallpaper,
     numColumns: Int = 3,
     onSelectWallpaper: (Wallpaper) -> Unit,
@@ -211,14 +199,14 @@ private fun WallpaperThumbnails(
 private fun WallpaperThumbnailItem(
     wallpaper: Wallpaper,
     defaultWallpaper: Wallpaper,
-    loadWallpaperResource: (Wallpaper) -> Bitmap?,
+    loadWallpaperResource: suspend (Wallpaper) -> Bitmap?,
     isSelected: Boolean,
     aspectRatio: Float = 1.1f,
     onSelect: (Wallpaper) -> Unit
 ) {
-    var bitmap by remember { mutableStateOf(loadWallpaperResource(wallpaper)) }
-    DisposableEffect(LocalConfiguration.current.orientation) {
-        onDispose { bitmap = loadWallpaperResource(wallpaper) }
+    var bitmap: Bitmap? by remember { mutableStateOf(null) }
+    LaunchedEffect(LocalConfiguration.current.orientation) {
+        bitmap = loadWallpaperResource(wallpaper)
     }
     val thumbnailShape = RoundedCornerShape(8.dp)
     val border = if (isSelected) {
@@ -256,56 +244,18 @@ private fun WallpaperThumbnailItem(
     }
 }
 
-@Composable
-@Suppress("MagicNumber")
-private fun WallpaperLogoSwitch(
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 16.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = stringResource(R.string.wallpaper_tap_to_change_switch_label_1),
-            color = FirefoxTheme.colors.textPrimary,
-            fontSize = 18.sp,
-            modifier = Modifier
-                .weight(0.8f)
-        )
-
-        Switch(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = FirefoxTheme.colors.formSelected,
-                checkedTrackColor = FirefoxTheme.colors.formSurface,
-                uncheckedTrackColor = FirefoxTheme.colors.formSurface
-            )
-        )
-    }
-}
-
 @Preview
 @Composable
 private fun WallpaperThumbnailsPreview() {
     FirefoxTheme(theme = Theme.getTheme()) {
-        val context = LocalContext.current
-        val wallpaperManager = context.components.wallpaperManager
 
         WallpaperSettings(
-            defaultWallpaper = WallpaperManager.defaultWallpaper,
-            loadWallpaperResource = { wallpaper ->
-                with(wallpaperManager) { wallpaper.load(context) }
-            },
-            wallpapers = wallpaperManager.wallpapers,
-            selectedWallpaper = wallpaperManager.currentWallpaper,
+            defaultWallpaper = Wallpaper.Default,
+            loadWallpaperResource = { null },
+            wallpapers = listOf(Wallpaper.Default),
+            selectedWallpaper = Wallpaper.Default,
             onSelectWallpaper = {},
             onViewWallpaper = {},
-            tapLogoSwitchChecked = false,
-            onTapLogoSwitchCheckedChange = {}
         )
     }
 }

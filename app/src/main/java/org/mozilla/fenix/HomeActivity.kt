@@ -127,6 +127,7 @@ import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.trackingprotection.TrackingProtectionPanelDialogFragmentDirections
 import org.mozilla.fenix.utils.BrowsersCache
+import org.mozilla.fenix.utils.ManufacturerCodes
 import org.mozilla.fenix.utils.Settings
 import java.lang.ref.WeakReference
 
@@ -300,6 +301,15 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
         }
 
+        components.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
+            lifecycleScope.launch(IO) {
+                // If we're authenticated, kick-off a sync and a device state refresh.
+                components.backgroundServices.accountManager.authenticatedAccount()?.let {
+                    components.backgroundServices.accountManager.syncNow(reason = SyncReason.Startup)
+                }
+            }
+        }
+
         components.core.engine.profiler?.addMarker(
             MarkersActivityLifecycleCallbacks.MARKER_NAME, startTimeProfiler, "HomeActivity.onCreate"
         )
@@ -335,23 +345,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         breadcrumb(
             message = "onResume()"
         )
-
-        components.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
-            lifecycleScope.launch {
-                // If we're authenticated, kick-off a sync and a device state refresh.
-                components.backgroundServices.accountManager.authenticatedAccount()?.let {
-                    val syncReason = when (isVisuallyComplete) {
-                        true -> SyncReason.User
-                        false -> SyncReason.Startup
-                    }
-
-                    components.backgroundServices.accountManager.syncNow(
-                        reason = syncReason,
-                        debounce = true
-                    )
-                }
-            }
-        }
 
         lifecycleScope.launch(IO) {
             try {
@@ -625,8 +618,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             Build.VERSION.SDK_INT == Build.VERSION_CODES.N || Build.VERSION.SDK_INT == Build.VERSION_CODES.N_MR1
         // Huawei devices seem to have problems with onKeyLongPress
         // See https://github.com/mozilla-mobile/fenix/issues/13498
-        val isHuawei = Build.MANUFACTURER.equals("huawei", ignoreCase = true)
-        return isAndroidN || isHuawei
+        return isAndroidN || ManufacturerCodes.isHuawei
     }
 
     private fun handleBackLongPress(): Boolean {

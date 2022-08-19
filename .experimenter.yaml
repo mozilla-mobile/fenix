@@ -58,14 +58,14 @@ nimbus-validation:
     settings-title:
       type: string
       description: The title of displayed in the Settings screen and app menu.
-pocket-sponsored-stories:
-  description: A feature showing sponsored stories in between the other Pocket recommended stories on homescreen.
+onboarding:
+  description: The onboarding features displayed on homescreen.
   hasExposure: true
   exposureDescription: ""
   variables:
-    enabled:
-      type: boolean
-      description: "If true, the Pocket stories shown on homescreen should contain sponsored stories also."
+    sections-enabled:
+      type: json
+      description: This property provides a lookup table of whether or not the given section should be enabled.
 search-term-groups:
   description: A feature allowing the grouping of URLs around the search term that it came from.
   hasExposure: true

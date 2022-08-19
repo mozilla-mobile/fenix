@@ -14,7 +14,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
@@ -77,7 +76,6 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.HomeScreen
-import org.mozilla.fenix.GleanMetrics.Wallpapers
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
@@ -94,6 +92,7 @@ import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
+import org.mozilla.fenix.ext.scaleToBottomOfView
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.gleanplumb.DefaultMessageController
 import org.mozilla.fenix.gleanplumb.MessagingFeature
@@ -280,10 +279,12 @@ class HomeFragment : Fragment() {
             if (requireContext().settings().enableTaskContinuityEnhancements) {
                 recentSyncedTabFeature.set(
                     feature = RecentSyncedTabFeature(
+                        context = requireContext(),
                         appStore = requireComponents.appStore,
                         syncStore = requireComponents.backgroundServices.syncStore,
                         storage = requireComponents.backgroundServices.syncedTabsStorage,
                         accountManager = requireComponents.backgroundServices.accountManager,
+                        historyStorage = requireComponents.core.historyStorage,
                         coroutineScope = viewLifecycleOwner.lifecycleScope,
                     ),
                     owner = viewLifecycleOwner,
@@ -741,21 +742,6 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch(IO) {
             requireComponents.reviewPromptController.promptReview(requireActivity())
         }
-
-        if (shouldEnableWallpaper() && context.settings().wallpapersSwitchedByLogoTap) {
-            binding.wordmark.contentDescription =
-                context.getString(R.string.wallpaper_logo_content_description)
-            binding.wordmark.setOnClickListener {
-                val manager = requireComponents.wallpaperManager
-                val newWallpaper = manager.switchToNextWallpaper()
-                Wallpapers.wallpaperSwitched.record(
-                    Wallpapers.WallpaperSwitchedExtra(
-                        name = newWallpaper.name,
-                        themeCollection = newWallpaper::class.simpleName
-                    )
-                )
-            }
-        }
     }
 
     private fun dispatchModeChanges(mode: Mode) {
@@ -799,25 +785,6 @@ class HomeFragment : Fragment() {
         // triggered to cause an automatic update on warm start (no tab selection occurs). So we
         // update it manually here.
         requireComponents.useCases.sessionUseCases.updateLastAccess()
-        if (shouldAnimateLogoForWallpaper()) {
-            _binding?.sessionControlRecyclerView?.viewTreeObserver?.addOnGlobalLayoutListener(
-                homeLayoutListenerForLogoAnimation
-            )
-        }
-    }
-
-    // To try to find a good time to show the logo animation, we are waiting until all
-    // the sub-recyclerviews (recentBookmarks, collections, recentTabs,recentVisits
-    // and pocketStories) on the home screen have been layout.
-    private val homeLayoutListenerForLogoAnimation = object : ViewTreeObserver.OnGlobalLayoutListener {
-        override fun onGlobalLayout() {
-            _binding?.let { safeBindings ->
-                requireComponents.wallpaperManager.animateLogoIfNeeded(safeBindings.wordmark)
-                safeBindings.sessionControlRecyclerView.viewTreeObserver.removeOnGlobalLayoutListener(
-                    this
-                )
-            }
-        }
     }
 
     override fun onPause() {
@@ -964,36 +931,20 @@ class HomeFragment : Fragment() {
                     // We only want to update the wallpaper when it's different from the default one
                     // as the default is applied already on xml by default.
                     when (val currentWallpaper = state.wallpaperState.currentWallpaper) {
-                        is Wallpaper.Default -> {
+                        Wallpaper.Default -> {
                             binding.wallpaperImageView.visibility = View.GONE
                         }
                         else -> {
-                            with(requireComponents.wallpaperManager) {
-                                val bitmap = currentWallpaper.load(requireContext()) ?: return@onEach
-                                bitmap.scaleBitmapToBottomOfView(binding.wallpaperImageView)
+                            val bitmap = requireComponents.useCases.wallpaperUseCases.loadBitmap(currentWallpaper)
+                            bitmap?.let {
+                                it.scaleToBottomOfView(binding.wallpaperImageView)
+                                binding.wallpaperImageView.visibility = View.VISIBLE
                             }
-                            binding.wallpaperImageView.visibility = View.VISIBLE
                         }
                     }
                 }
                 .launchIn(viewLifecycleOwner.lifecycleScope)
         }
-    }
-
-    // We want to show the animation in a time when the user less distracted
-    // The Heuristics are:
-    // 1) The animation hasn't shown before.
-    // 2) The user has onboarded.
-    // 3) It's the third time the user enters the app.
-    // 4) The user is part of the right audience.
-    @Suppress("MagicNumber")
-    private fun shouldAnimateLogoForWallpaper(): Boolean {
-        val localContext = context ?: return false
-        val settings = localContext.settings()
-
-        return shouldEnableWallpaper() && settings.shouldAnimateFirefoxLogo &&
-            onboarding.userHasBeenOnboarded() &&
-            settings.numberOfAppLaunches >= 3
     }
 
     private fun shouldEnableWallpaper() =

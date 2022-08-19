@@ -24,6 +24,11 @@ object FeatureFlags {
     const val syncAddressesFeature = false
 
     /**
+     * Enables the on-boarding sync cfr on the home screen.
+     */
+    val showSynCFR = Config.channel.isDebug
+
+    /**
      * Enables the "recent" tabs feature in the home screen.
      */
     const val showRecentTabsFeature = true
@@ -75,11 +80,6 @@ object FeatureFlags {
     const val historyImprovementFeatures = true
 
     /**
-     * Separates history into local and synced from other sources.
-     */
-    val showSyncedHistory = Config.channel.isDebug
-
-    /**
      * Enables the Task Continuity enhancements.
      */
     val taskContinuityFeature = Config.channel.isNightlyOrDebug
@@ -97,4 +97,14 @@ object FeatureFlags {
      * Enables compose on the tabs tray items.
      */
     val composeTabsTray = Config.channel.isDebug
+
+    /**
+     * Enables the wallpaper onboarding.
+     */
+    val wallpaperOnboardingEnabled = Config.channel.isDebug
+
+    /**
+     * Enables the wallpaper v2 enhancements.
+     */
+    val wallpaperV2Enabled = Config.channel.isDebug
 }

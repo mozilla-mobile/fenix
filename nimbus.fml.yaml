@@ -19,7 +19,7 @@ features:
             "recently-saved": true,
             "recent-explorations": true,
             "pocket": true,
-            "contile-top-sites": false,
+            "pocket-sponsored-stories": false,
           }
     defaults:
       - channel: nightly
@@ -30,7 +30,41 @@ features:
             "recently-saved": true,
             "recent-explorations": true,
             "pocket": true,
-            "contile-top-sites": false,
+          }
+        }
+      - channel: developer
+        value: {
+          "sections-enabled": {
+            "pocket-sponsored-stories": true,
+          }
+        }
+  onboarding:
+    description: The onboarding features displayed on homescreen.
+    variables:
+      sections-enabled:
+        description: "This property provides a lookup table of whether or not the given section should be enabled."
+        type: Map<OnboardingSection, Boolean>
+        default:
+          {
+            "sync-cfr": false,
+            "wallpapers": false,
+            "home-onboarding-dialog": false,
+          }
+    defaults:
+      - channel: nightly
+        value: {
+          "sections-enabled": {
+            "sync-cfr": false,
+            "wallpapers": false,
+            "home-onboarding-dialog": false,
+          }
+        }
+      - channel: developer
+        value: {
+          "sections-enabled": {
+            "sync-cfr": false,
+            "wallpapers": true,
+            "home-onboarding-dialog": false,
           }
         }
   nimbus-validation:
@@ -184,18 +218,6 @@ features:
         value:
           enabled: false
 
-  pocket-sponsored-stories:
-    description: A feature showing sponsored stories in between the other Pocket recommended stories on homescreen.
-    variables:
-      enabled:
-        description:  If true, the Pocket stories shown on homescreen should contain sponsored stories also.
-        type: Boolean
-        default: false
-    defaults:
-      - channel: developer
-        value:
-          enabled: true
-
   engine-settings:
     description: Contains a set of settings for controlling the web engine configurations.
     variables:
@@ -294,8 +316,8 @@ types:
           description: The tab groups
         pocket:
           description: The pocket section. This should only be available in the US.
-        contile-top-sites:
-          description: The sponsored shortcuts in the homescreen.
+        pocket-sponsored-stories:
+          description: Subsection of the Pocket homescreen section which shows sponsored stories.
     MessageSurfaceId:
       description: The identity of a message surface, used in the default browser experiments
       variants:
@@ -305,4 +327,12 @@ types:
           description: A setting in the settings screen.
         homescreen-banner:
           description: A banner in the homescreen.
-
+    OnboardingSection:
+      description: The identifiers for the sections of the onboarding.
+      variants:
+        sync-cfr:
+          description: Sync onboarding CFR.
+        wallpapers:
+          description: Wallpapers onboarding dialog.
+        home-onboarding-dialog:
+          description: Home onboarding dialog for upgraded users.

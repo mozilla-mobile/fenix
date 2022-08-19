@@ -35,7 +35,8 @@ sealed class HistoryDB {
         override val title: String,
         val url: String,
         override val visitedAt: Long,
-        override val selected: Boolean = false
+        override val selected: Boolean = false,
+        val isRemote: Boolean = false,
     ) : HistoryDB()
 
     data class Metadata(
@@ -75,10 +76,9 @@ interface PagedHistoryProvider {
      *
      * @param offset How much to offset the list by
      * @param numberOfItems How many items to fetch
-     * @param isRemote Are items local or synced from other devices
      * @return list of [HistoryDB]
      */
-    suspend fun getHistory(offset: Int, numberOfItems: Int, isRemote: Boolean? = null): List<HistoryDB>
+    suspend fun getHistory(offset: Int, numberOfItems: Int): List<HistoryDB>
 }
 
 /**
@@ -110,13 +110,11 @@ class DefaultPagedHistoryProvider(
         it == VisitType.REDIRECT_PERMANENT || it == VisitType.REDIRECT_TEMPORARY
     }
 
-    @Volatile
-    private var historyGroups: List<HistoryDB.Group>? = null
+    @Volatile private var historyGroups: List<HistoryDB.Group>? = null
 
     override suspend fun getHistory(
         offset: Int,
-        numberOfItems: Int,
-        isRemote: Boolean?
+        numberOfItems: Int
     ): List<HistoryDB> {
         // We need to re-fetch all the history metadata if the offset resets back at 0
         // in the case of a pull to refresh.
@@ -143,7 +141,7 @@ class DefaultPagedHistoryProvider(
                 .toList()
         }
 
-        return getHistoryAndSearchGroups(offset, numberOfItems, isRemote)
+        return getHistoryAndSearchGroups(offset, numberOfItems)
     }
 
     /**
@@ -165,7 +163,6 @@ class DefaultPagedHistoryProvider(
     private suspend fun getHistoryAndSearchGroups(
         offset: Int,
         numberOfItems: Int,
-        isRemote: Boolean?
     ): List<HistoryDB> {
         val result = mutableListOf<HistoryDB>()
         var history: List<HistoryDB.Regular> = historyStorage
@@ -174,11 +171,6 @@ class DefaultPagedHistoryProvider(
                 numberOfItems.toLong(),
                 excludeTypes = excludedVisitTypes
             )
-            .filter { item ->
-                isRemote?.let {
-                    item.isRemote == it
-                } ?: true
-            }
             .map { transformVisitInfoToHistoryItem(it) }
 
         // We'll use this list to filter out redirects from metadata groups below.
@@ -250,7 +242,8 @@ class DefaultPagedHistoryProvider(
         return HistoryDB.Regular(
             title = title,
             url = visit.url,
-            visitedAt = visit.visitTime
+            visitedAt = visit.visitTime,
+            isRemote = visit.isRemote
         )
     }
 }

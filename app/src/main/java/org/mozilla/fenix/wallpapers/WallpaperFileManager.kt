@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class WallpaperFileManager(
@@ -23,9 +24,14 @@ class WallpaperFileManager(
      * files for each of the following orientation and theme combinations:
      * light/portrait - light/landscape - dark/portrait - dark/landscape
      */
-    fun lookupExpiredWallpaper(name: String): Wallpaper.Expired? {
-        return if (getAllLocalWallpaperPaths(name).all { File(rootDirectory, it).exists() }) {
-            Wallpaper.Expired(name)
+    suspend fun lookupExpiredWallpaper(name: String): Wallpaper? = withContext(Dispatchers.IO) {
+        if (getAllLocalWallpaperPaths(name).all { File(rootDirectory, it).exists() }) {
+            Wallpaper(
+                name = name,
+                collection = Wallpaper.DefaultCollection,
+                textColor = null,
+                cardColor = null,
+            )
         } else null
     }
 
@@ -39,7 +45,7 @@ class WallpaperFileManager(
     /**
      * Remove all wallpapers that are not the [currentWallpaper] or in [availableWallpapers].
      */
-    fun clean(currentWallpaper: Wallpaper, availableWallpapers: List<Wallpaper.Remote>) {
+    fun clean(currentWallpaper: Wallpaper, availableWallpapers: List<Wallpaper>) {
         scope.launch {
             val wallpapersToKeep = (listOf(currentWallpaper) + availableWallpapers).map { it.name }
             cleanChildren(portraitDirectory, wallpapersToKeep)

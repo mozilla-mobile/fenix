@@ -5,6 +5,7 @@
 package org.mozilla.fenix.wallpapers
 
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -39,29 +40,33 @@ class WallpaperFileManagerTest {
     }
 
     @Test
-    fun `GIVEN files exist in all directories WHEN expired wallpaper looked up THEN expired wallpaper returned`() {
+    fun `GIVEN files exist in all directories WHEN expired wallpaper looked up THEN expired wallpaper returned`() = runTest {
         val wallpaperName = "name"
         createAllFiles(wallpaperName)
 
-        val expected = Wallpaper.Expired(name = wallpaperName)
-        assertEquals(expected, fileManager.lookupExpiredWallpaper(wallpaperName))
+        val result = fileManager.lookupExpiredWallpaper(wallpaperName)
+
+        val expected = generateWallpaper(name = wallpaperName)
+        assertEquals(expected, result)
     }
 
     @Test
-    fun `GIVEN any missing file in directories WHEN expired wallpaper looked up THEN null returned`() {
+    fun `GIVEN any missing file in directories WHEN expired wallpaper looked up THEN null returned`() = runTest {
         val wallpaperName = "name"
         File(landscapeLightFolder, "$wallpaperName.png").createNewFile()
         File(landscapeDarkFolder, "$wallpaperName.png").createNewFile()
 
-        assertEquals(null, fileManager.lookupExpiredWallpaper(wallpaperName))
+        val result = fileManager.lookupExpiredWallpaper(wallpaperName)
+
+        assertEquals(null, result)
     }
 
     @Test
     fun `WHEN cleaned THEN current wallpaper and available wallpapers kept`() {
         val currentName = "current"
-        val currentWallpaper = Wallpaper.Expired(currentName)
+        val currentWallpaper = generateWallpaper(name = currentName)
         val availableName = "available"
-        val available = Wallpaper.Remote.House(name = availableName)
+        val available = generateWallpaper(name = availableName)
         val unavailableName = "unavailable"
         createAllFiles(currentName)
         createAllFiles(availableName)
@@ -88,4 +93,19 @@ class WallpaperFileManagerTest {
             File(landscapeDarkFolder, "$name.png"),
         )
     }
+
+    private fun generateWallpaper(name: String) = Wallpaper(
+        name = name,
+        textColor = null,
+        cardColor = null,
+        collection = Wallpaper.Collection(
+            name = Wallpaper.defaultName,
+            heading = null,
+            description = null,
+            availableLocales = null,
+            startDate = null,
+            endDate = null,
+            learnMoreUrl = null
+        ),
+    )
 }
