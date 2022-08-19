@@ -15,9 +15,12 @@ import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.getLoremIpsumAsset
 import org.mozilla.fenix.ui.robots.checkTextSizeOnWebsite
 import org.mozilla.fenix.ui.robots.homeScreen
+import org.mozilla.fenix.ui.robots.navigationToolbar
+import java.time.LocalDate
 
 /**
  *  Tests for verifying the General section of the Settings menu
@@ -28,7 +31,11 @@ class SettingsBasicsTest {
     private lateinit var mockWebServer: MockWebServer
     private val featureSettingsHelper = FeatureSettingsHelper()
     private val creditCardNumber = "2720994326581252"
+    private val lastDigitsCreditCardNumber = "1252"
     private val nameOnCard = "mastercard"
+    private val expirationMonth = "February"
+    private val currentDate = LocalDate.now()
+    private val nextYear: String = (currentDate.year + 1).toString()
 
     @get:Rule
     val activityIntentTestRule = HomeActivityIntentTestRule()
@@ -128,13 +135,40 @@ class SettingsBasicsTest {
 
     @SmokeTest
     @Test
+    fun verifyCreditCardAutofillTest() {
+        val creditCardFormPage = TestAssetHelper.getCreditCardFormAsset(mockWebServer)
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openAutofillSubMenu {
+            clickAddCreditCardButton()
+            fillAndSaveCreditCard(creditCardNumber, nameOnCard, expirationMonth, nextYear)
+            // Opening Manage saved cards to dismiss here the Secure your credit prompt
+            clickManageSavedCardsButton()
+            clickSecuredCreditCardsLaterButton()
+        }.goBackToAutofillSettings {
+        }.goBack {
+        }.goBack {
+        }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
+            clickCardNumberTextBox()
+            clickSelectCreditCardButton()
+            clickCreditCardSuggestion(lastDigitsCreditCardNumber)
+            verifyAutofilledCreditCard(creditCardNumber)
+        }
+    }
+
+    @SmokeTest
+    @Test
     fun deleteSavedCreditCardTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openAutofillSubMenu {
             clickAddCreditCardButton()
-            fillAndSaveCreditCard(creditCardNumber, nameOnCard)
+            fillAndSaveCreditCard(creditCardNumber, nameOnCard, expirationMonth, nextYear)
             clickManageSavedCardsButton()
             clickSecuredCreditCardsLaterButton()
             clickSavedCreditCard()

@@ -599,6 +599,16 @@ class BrowserRobot {
         }
     }
 
+    fun clickCardNumberTextBox() {
+        creditCardNumberTextBox().waitForExists(waitingTime)
+        creditCardNumberTextBox().click()
+    }
+
+    fun clickSelectCreditCardButton() {
+        selectCreditCardButton.waitForExists(waitingTime)
+        selectCreditCardButton.clickAndWaitForNewWindow(waitingTime)
+    }
+
     fun clickLoginSuggestion(userName: String) {
         val loginSuggestion =
             mDevice.findObject(
@@ -608,6 +618,11 @@ class BrowserRobot {
             )
 
         loginSuggestion.click()
+    }
+
+    fun clickCreditCardSuggestion(creditCardNumber: String) {
+        creditCardSuggestion(creditCardNumber).waitForExists(waitingTime)
+        creditCardSuggestion(creditCardNumber).click()
     }
 
     fun verifySuggestedUserName(userName: String) {
@@ -643,6 +658,11 @@ class BrowserRobot {
         }
         mDevice.waitForObjects(userNameTextBox)
         assertTrue(userNameTextBox.text.equals(userName))
+    }
+
+    fun verifyAutofilledCreditCard(creditCardNumber: String) {
+        mDevice.waitForObjects(creditCardNumberTextBox(creditCardNumber))
+        assertTrue(creditCardNumberTextBox(creditCardNumber).waitForExists(waitingTime))
     }
 
     fun verifyPrefilledPWALoginCredentials(userName: String, shortcutTitle: String) {
@@ -906,6 +926,23 @@ private var progressBar =
     )
 
 private val suggestedLogins = mDevice.findObject(UiSelector().resourceId("$packageName:id/loginSelectBar"))
+private val selectCreditCardButton = mDevice.findObject(UiSelector().resourceId("$packageName:id/select_credit_card_header"))
+
+private fun creditCardNumberTextBox(creditCardNumber: String = "") =
+    mDevice.findObject(
+        UiSelector()
+            .resourceId("cardNumber")
+            .textContains(creditCardNumber)
+            .className("android.widget.EditText")
+            .packageName("$packageName")
+    )
+
+private fun creditCardSuggestion(creditCardNumber: String) =
+    mDevice.findObject(
+        UiSelector()
+            .resourceId("$packageName:id/credit_card_number")
+            .textContains(creditCardNumber)
+    )
 
 // Permissions test page elements & prompts
 // Test page used located at https://mozilla-mobile.github.io/testapp/permissions
