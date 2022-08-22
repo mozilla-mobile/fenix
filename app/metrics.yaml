@@ -1708,7 +1708,7 @@ customize_home:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <1> require renewal */
 
 preferences:
   studies_enabled:
@@ -1726,7 +1726,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <2> require renewal */
   studies_preference_enabled:
     type: event
     description: >
@@ -1739,7 +1739,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <3> require renewal */
   search_suggestions_enabled:
     type: boolean
     description: |
@@ -2122,7 +2122,7 @@ preferences:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <4> require renewal */
 
 search.default_engine:
   code:
@@ -3157,7 +3157,7 @@ history:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <5> require renewal */
   search_term_group_tapped:
     type: event
     description: |
@@ -3170,7 +3170,7 @@ history:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <6> require renewal */
   search_term_group_open_tab:
     type: event
     description: |
@@ -3183,7 +3183,7 @@ history:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <7> require renewal */
   search_term_group_remove_tab:
     type: event
     description: |
@@ -3196,7 +3196,7 @@ history:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <8> require renewal */
   search_term_group_remove_all:
     type: event
     description: |
@@ -3209,7 +3209,7 @@ history:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <9> require renewal */
   search_icon_tapped:
     type: event
     description: |
@@ -3825,7 +3825,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <10> require renewal */
   close_all_inactive_tabs:
     type: event
     description: |
@@ -3838,7 +3838,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <11> require renewal */
   auto_close_seen:
     type: event
     description: |
@@ -3851,7 +3851,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <12> require renewal */
   auto_close_turn_on_clicked:
     type: event
     description: |
@@ -3864,7 +3864,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <13> require renewal */
   auto_close_dimissed:
     type: event
     description: |
@@ -3877,7 +3877,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <14> require renewal */
   close_inactive_tab:
     type: counter
     description: |
@@ -3890,7 +3890,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <15> require renewal */
   open_inactive_tab:
     type: counter
     description: |
@@ -3903,7 +3903,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <16> require renewal */
   inactive_tabs_cfr_settings:
     type: event
     description: |
@@ -3916,7 +3916,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <17> require renewal */
   inactive_tabs_cfr_dismissed:
     type: event
     description: |
@@ -3929,7 +3929,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <18> require renewal */
   inactive_tabs_cfr_visible:
     type: event
     description: |
@@ -3942,7 +3942,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <19> require renewal */
   enter_multiselect_mode:
     type: event
     description: |
@@ -3955,7 +3955,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <20> require renewal */
     metadata:
       tags:
         - Tabs
@@ -3975,7 +3975,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <21> require renewal */
     metadata:
       tags:
         - Tabs
@@ -3995,7 +3995,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <22> require renewal */
     metadata:
       tags:
         - Tabs
@@ -4015,7 +4015,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <23> require renewal */
     metadata:
       tags:
         - Tabs
@@ -4035,7 +4035,7 @@ tabs_tray:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <24> require renewal */
     metadata:
       tags:
         - Tabs
@@ -6175,7 +6175,7 @@ perf.awesomebar:
     notification_emails:
       - android-probes@mozilla.com
       - gkruglov@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <25> require renewal */
   bookmark_suggestions:
     send_in_pings:
       - metrics
@@ -6195,7 +6195,7 @@ perf.awesomebar:
     notification_emails:
       - android-probes@mozilla.com
       - gkruglov@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <26> require renewal */
   search_engine_suggestions:
     send_in_pings:
       - metrics
@@ -6215,7 +6215,7 @@ perf.awesomebar:
     notification_emails:
       - android-probes@mozilla.com
       - gkruglov@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <27> require renewal */
   session_suggestions:
     send_in_pings:
       - metrics
@@ -6235,7 +6235,7 @@ perf.awesomebar:
     notification_emails:
       - android-probes@mozilla.com
       - gkruglov@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <28> require renewal */
   synced_tabs_suggestions:
     send_in_pings:
       - metrics
@@ -6255,7 +6255,7 @@ perf.awesomebar:
     notification_emails:
       - android-probes@mozilla.com
       - gkruglov@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <29> require renewal */
   clipboard_suggestions:
     send_in_pings:
       - metrics
@@ -6275,7 +6275,7 @@ perf.awesomebar:
     notification_emails:
       - android-probes@mozilla.com
       - gkruglov@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <30> require renewal */
   shortcuts_suggestions:
     send_in_pings:
       - metrics
@@ -6295,7 +6295,7 @@ perf.awesomebar:
     notification_emails:
       - android-probes@mozilla.com
       - gkruglov@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <31> require renewal */
 
 autoplay:
   visited_setting:
@@ -7134,7 +7134,7 @@ home_screen:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <32> require renewal */
   customize_home_clicked:
     type: event
     description: A user clicked on Customize home from the home screen menu.
@@ -7251,7 +7251,7 @@ recent_tabs:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <33> require renewal */
 
 recent_bookmarks:
   shown:
@@ -7266,7 +7266,7 @@ recent_bookmarks:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <34> require renewal */
   bookmark_clicked:
     type: counter
     lifetime: application
@@ -7318,7 +7318,7 @@ recent_bookmarks:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <35> require renewal */
     unit: integer
 
 recent_searches:
@@ -7958,7 +7958,7 @@ downloads:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <36> require renewal */
     metadata:
       tags:
         - Download
@@ -7978,7 +7978,7 @@ downloads:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 107
+    expires: 107 /* TODO <37> require renewal */
     metadata:
       tags:
         - Download
