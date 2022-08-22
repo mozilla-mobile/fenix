@@ -859,9 +859,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     /**
      * Indicates if the jump back in CRF should be shown.
      */
-    var shouldShowJumpBackInCFR by booleanPreference(
+    var shouldShowJumpBackInCFR by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_should_show_jump_back_in_tabs_popup),
-        default = true
+        featureFlag = FeatureFlags.showJumpBackInCFR,
+        default = { onboardScreenSection[OnboardingSection.JUMP_BACK_IN_CFR] == true },
     )
 
     fun getSitePermissionsPhoneFeatureAction(
@@ -1208,13 +1209,31 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Indicates if sync on-boarding CFR should be shown
+     * Indicates if sync onboarding CFR should be shown.
      * Returns true if the [FeatureFlags.showSynCFR] and [R.string.pref_key_should_show_sync_cfr] are true.
      */
     var showSyncCFR by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_should_show_sync_cfr),
         featureFlag = FeatureFlags.showSynCFR,
         default = { onboardScreenSection[OnboardingSection.SYNC_CFR] == true },
+    )
+
+    /**
+     * Indicates if home onboarding dialog should be shown.
+     */
+    var showHomeOnboardingDialog by lazyFeatureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_home_onboarding_dialog),
+        featureFlag = FeatureFlags.showHomeOnboarding,
+        default = { onboardScreenSection[OnboardingSection.HOME_ONBOARDING_DIALOG] == true },
+    )
+
+    /**
+     * Indicates if home onboarding dialog should be shown.
+     */
+    var showFirstRunOnboardingUpdate by lazyFeatureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_first_run_onboarding_update),
+        featureFlag = FeatureFlags.showFirstRunOnboardingUpdates,
+        default = { onboardScreenSection[OnboardingSection.FIRST_RUN_ONBOARDING] == true },
     )
 
     /**

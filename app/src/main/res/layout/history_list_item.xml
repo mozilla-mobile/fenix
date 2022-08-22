@@ -20,10 +20,6 @@
         android:id="@+id/recently_closed_nav_empty"
         layout="@layout/recently_closed_nav_item" />
 
-    <include
-        android:id="@+id/synced_history_nav_empty"
-        layout="@layout/synced_history_nav_item" />
-
     <View
         android:id="@+id/bottom_spacer"
         android:layout_width="match_parent"

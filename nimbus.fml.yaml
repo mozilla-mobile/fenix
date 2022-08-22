@@ -1,4 +1,9 @@
 ---
+about:
+  description: Nimbus Feature Manifest for Fenix (Firefox Android)
+  kotlin:
+    package: org.mozilla.fenix
+    class: .nimbus.FxNimbus
 channels:
   - release
   - beta
@@ -47,21 +52,30 @@ features:
         default:
           {
             "sync-cfr": false,
-            "wallpapers": false
+            "wallpapers": false,
+            "home-onboarding-dialog": false,
+            "jump-back-in-cfr": false,
+            "first-run-onboarding": false,
           }
     defaults:
       - channel: nightly
         value: {
           "sections-enabled": {
             "sync-cfr": false,
-            "wallpapers": false
+            "wallpapers": false,
+            "home-onboarding-dialog": false,
+            "jump-back-in-cfr": false,
+            "first-run-onboarding": false,
           }
         }
       - channel: developer
         value: {
           "sections-enabled": {
             "sync-cfr": false,
-            "wallpapers": true
+            "wallpapers": true,
+            "home-onboarding-dialog": false,
+            "jump-back-in-cfr": false,
+            "first-run-onboarding": false,
           }
         }
   nimbus-validation:
@@ -331,3 +345,9 @@ types:
           description: Sync onboarding CFR.
         wallpapers:
           description: Wallpapers onboarding dialog.
+        home-onboarding-dialog:
+          description: Home onboarding dialog for upgraded users.
+        jump-back-in-cfr:
+          description: Jump back in onboarding CFR.
+        first-run-onboarding:
+          description: First run onboarding page updates.
