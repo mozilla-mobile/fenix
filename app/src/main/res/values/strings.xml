@@ -418,6 +418,8 @@
     <string name="customize_wallpapers">Wallpapers</string>
     <!-- Title for the customize home screen section with sponsored shortcuts. -->
     <string name="customize_toggle_contile">Sponsored shortcuts</string>
+    <!-- Title for the customize home screen section with history shortcuts. -->
+    <string name="customize_toggle_history_shortcuts">History shortcuts</string>
 
     <!-- Wallpapers -->
     <!-- Content description for various wallpapers. The first parameter is the name of the wallpaper -->

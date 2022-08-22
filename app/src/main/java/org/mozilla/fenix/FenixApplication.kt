@@ -274,7 +274,11 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                         components.core.topSitesStorage.getTopSites(
                             totalSites = components.settings.topSitesMaxLimit,
                             frecencyConfig = TopSitesFrecencyConfig(
-                                FrecencyThresholdOption.SKIP_ONE_TIME_PAGES
+                                frecencyTresholdOption = if (components.settings.showHistoryShortcuts) {
+                                    FrecencyThresholdOption.SKIP_ONE_TIME_PAGES
+                                } else {
+                                    null
+                                },
                             ) { !it.containsQueryParameters(components.settings.frecencyFilterQuery) },
                             providerConfig = TopSitesProviderConfig(
                                 showProviderTopSites = components.settings.showContileFeature,

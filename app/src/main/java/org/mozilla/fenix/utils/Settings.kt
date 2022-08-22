@@ -1328,6 +1328,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
+     * Indicates if the history shortcuts should be visible.
+     */
+    var showHistoryShortcuts by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_history_shortcuts),
+        default = true,
+    )
+
+    /**
      * Indicates if the Task Continuity enhancements are enabled.
      */
     var enableTaskContinuityEnhancements by featureFlagPreference(

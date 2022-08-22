@@ -419,7 +419,11 @@ class HomeFragment : Fragment() {
         return TopSitesConfig(
             totalSites = settings.topSitesMaxLimit,
             frecencyConfig = TopSitesFrecencyConfig(
-                FrecencyThresholdOption.SKIP_ONE_TIME_PAGES
+                frecencyTresholdOption = if (settings.showHistoryShortcuts) {
+                    FrecencyThresholdOption.SKIP_ONE_TIME_PAGES
+                } else {
+                    null
+                },
             ) { !it.containsQueryParameters(settings.frecencyFilterQuery) },
             providerConfig = TopSitesProviderConfig(
                 showProviderTopSites = settings.showContileFeature,

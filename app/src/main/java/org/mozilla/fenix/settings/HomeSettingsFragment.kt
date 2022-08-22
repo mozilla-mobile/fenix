@@ -67,6 +67,22 @@ class HomeSettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
+        requirePreference<CheckBoxPreference>(R.string.pref_key_enable_history_shortcuts).apply {
+            isChecked = context.settings().showHistoryShortcuts
+            onPreferenceChangeListener = object : SharedPreferenceUpdater() {
+                override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
+                    CustomizeHome.preferenceToggled.record(
+                        CustomizeHome.PreferenceToggledExtra(
+                            newValue as Boolean,
+                            "history_shortcuts"
+                        )
+                    )
+
+                    return super.onPreferenceChange(preference, newValue)
+                }
+            }
+        }
+
         requirePreference<SwitchPreference>(R.string.pref_key_recent_tabs).apply {
             isVisible = FeatureFlags.showRecentTabsFeature
             isChecked = context.settings().showRecentTabsFeature

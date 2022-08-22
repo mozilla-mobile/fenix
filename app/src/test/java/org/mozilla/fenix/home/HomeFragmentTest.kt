@@ -17,6 +17,7 @@ import mozilla.components.feature.top.sites.TopSite
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -54,10 +55,23 @@ class HomeFragmentTest {
     @Test
     fun `WHEN getTopSitesConfig is called THEN it returns TopSitesConfig with non-null frecencyConfig`() {
         every { settings.topSitesMaxLimit } returns 10
+        every { settings.showHistoryShortcuts } returns true
 
         val topSitesConfig = homeFragment.getTopSitesConfig()
 
         assertNotNull(topSitesConfig.frecencyConfig)
+        assertNotNull(topSitesConfig.frecencyConfig?.frecencyTresholdOption)
+    }
+
+    @Test
+    fun `WHEN getTopSitesConfig is called with history shortcuts disabled THEN it returns TopSitesConfig with null frecencyTresholdOption`() {
+        every { settings.topSitesMaxLimit } returns 10
+        every { settings.showHistoryShortcuts } returns false
+
+        val topSitesConfig = homeFragment.getTopSitesConfig()
+
+        assertNotNull(topSitesConfig.frecencyConfig)
+        assertNull(topSitesConfig.frecencyConfig?.frecencyTresholdOption)
     }
 
     @Test
