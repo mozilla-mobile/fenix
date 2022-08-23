@@ -6,6 +6,7 @@
 
 package org.mozilla.fenix.home.recenttabs.view
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -43,15 +44,19 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mozilla.components.browser.icons.compose.Loader
 import mozilla.components.browser.icons.compose.Placeholder
 import mozilla.components.browser.icons.compose.WithIcon
+import mozilla.components.browser.state.state.ContentState
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.Image
 import org.mozilla.fenix.compose.ThumbnailCard
+import org.mozilla.fenix.compose.inComposePreview
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.theme.FirefoxTheme
 
@@ -141,7 +146,9 @@ private fun RecentTabItem(
                 Row {
                     RecentTabIcon(
                         url = tab.state.content.url,
-                        modifier = Modifier.size(18.dp).clip(RoundedCornerShape(2.dp)),
+                        modifier = Modifier
+                            .size(18.dp)
+                            .clip(RoundedCornerShape(2.dp)),
                         contentScale = ContentScale.Crop,
                         icon = tab.state.content.icon,
                     )
@@ -287,7 +294,7 @@ private fun RecentTabIcon(
                 alignment = alignment
             )
         }
-        else -> {
+        !inComposePreview -> {
             components.core.icons.Loader(url) {
                 Placeholder {
                     Box(
@@ -310,5 +317,34 @@ private fun RecentTabIcon(
                 }
             }
         }
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+private fun RecentTabsPreview() {
+    val tab = RecentTab.Tab(
+        TabSessionState(
+            id = "tabId",
+            content = ContentState(
+                url = "www.mozilla.com",
+            )
+        )
+    )
+
+    FirefoxTheme {
+        RecentTabs(
+            recentTabs = listOf(
+                tab
+            ),
+            menuItems = listOf(
+                RecentTabMenuItem(
+                    title = "Menu item",
+                    onClick = {},
+                )
+            ),
+            onRecentTabClick = {},
+        )
     }
 }
