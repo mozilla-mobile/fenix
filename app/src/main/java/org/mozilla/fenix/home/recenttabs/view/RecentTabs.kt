@@ -300,7 +300,7 @@ private fun RecentTabIcon(
                     Box(
                         modifier = Modifier.background(
                             color = when (isSystemInDarkTheme()) {
-                                true -> PhotonColors.DarkGrey30
+                                true -> PhotonColors.DarkGrey60
                                 false -> PhotonColors.LightGrey30
                             }
                         )

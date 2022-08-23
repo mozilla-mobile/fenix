@@ -124,7 +124,7 @@ private fun RecentBookmarkItem(
                 modifier = imageModifier.then(
                     Modifier.background(
                         color = when (isSystemInDarkTheme()) {
-                            true -> PhotonColors.DarkGrey30
+                            true -> PhotonColors.DarkGrey60
                             false -> PhotonColors.LightGrey30
                         },
                     )
@@ -173,7 +173,7 @@ private fun RecentBookmarkImage(bookmark: RecentBookmark) {
                     Box(
                         modifier = Modifier.background(
                             color = when (isSystemInDarkTheme()) {
-                                true -> PhotonColors.DarkGrey30
+                                true -> PhotonColors.DarkGrey60
                                 false -> PhotonColors.LightGrey30
                             }
                         )
