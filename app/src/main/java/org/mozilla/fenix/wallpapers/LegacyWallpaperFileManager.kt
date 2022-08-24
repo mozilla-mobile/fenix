@@ -9,29 +9,30 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.mozilla.fenix.wallpapers.Wallpaper.Companion.getLocalPath
 import java.io.File
 
 /**
  * Manages various functions related to the locally-stored wallpaper assets.
  *
- * @property storageRootDirectory The top level app-local storage directory.
+ * @property rootDirectory The top level app-local storage directory.
  * @param coroutineDispatcher Dispatcher used to execute suspending functions. Default parameter
  * should be likely be used except for when under test.
  */
-class WallpaperFileManager(
-    private val storageRootDirectory: File,
+class LegacyWallpaperFileManager(
+    private val rootDirectory: File,
     coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     private val scope = CoroutineScope(coroutineDispatcher)
-    private val wallpapersDirectory = File(storageRootDirectory, "wallpapers")
+    private val portraitDirectory = File(rootDirectory, "wallpapers/portrait")
+    private val landscapeDirectory = File(rootDirectory, "wallpapers/landscape")
 
     /**
      * Lookup all the files for a wallpaper name. This lookup will fail if there are not
-     * files for each of a portrait and landscape orientation as well as a thumbnail.
+     * files for each of the following orientation and theme combinations:
+     * light/portrait - light/landscape - dark/portrait - dark/landscape
      */
     suspend fun lookupExpiredWallpaper(name: String): Wallpaper? = withContext(Dispatchers.IO) {
-        if (getAllLocalWallpaperPaths(name).all { File(storageRootDirectory, it).exists() }) {
+        if (getAllLocalWallpaperPaths(name).all { File(rootDirectory, it).exists() }) {
             Wallpaper(
                 name = name,
                 collection = Wallpaper.DefaultCollection,
@@ -42,21 +43,27 @@ class WallpaperFileManager(
     }
 
     private fun getAllLocalWallpaperPaths(name: String): List<String> =
-        Wallpaper.ImageType.values().map { orientation ->
-            getLocalPath(name, orientation)
+        listOf("landscape", "portrait").flatMap { orientation ->
+            listOf("light", "dark").map { theme ->
+                Wallpaper.legacyGetLocalPath(orientation, theme, name)
+            }
         }
 
     /**
      * Remove all wallpapers that are not the [currentWallpaper] or in [availableWallpapers].
      */
-    suspend fun clean(currentWallpaper: Wallpaper, availableWallpapers: List<Wallpaper>) = withContext(Dispatchers.IO) {
+    fun clean(currentWallpaper: Wallpaper, availableWallpapers: List<Wallpaper>) {
         scope.launch {
             val wallpapersToKeep = (listOf(currentWallpaper) + availableWallpapers).map { it.name }
-            wallpapersDirectory.listFiles()?.forEach { file ->
-                if (file.isDirectory && !wallpapersToKeep.contains(file.name)) {
-                    file.deleteRecursively()
-                }
-            }
+            cleanChildren(portraitDirectory, wallpapersToKeep)
+            cleanChildren(landscapeDirectory, wallpapersToKeep)
+        }
+    }
+
+    private fun cleanChildren(dir: File, wallpapersToKeep: List<String>) {
+        for (file in dir.walkTopDown()) {
+            if (file.isDirectory || file.nameWithoutExtension in wallpapersToKeep) continue
+            file.delete()
         }
     }
 }

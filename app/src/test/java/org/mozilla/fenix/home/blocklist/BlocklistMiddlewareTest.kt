@@ -10,6 +10,7 @@ import io.mockk.slot
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.middleware.CaptureActionsMiddleware
+import mozilla.components.support.test.mock
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -17,6 +18,8 @@ import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
+import org.mozilla.fenix.home.recentsyncedtabs.RecentSyncedTab
+import org.mozilla.fenix.home.recentsyncedtabs.RecentSyncedTabState
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.utils.Settings
 
@@ -44,6 +47,7 @@ class BlocklistMiddlewareTest {
                 recentTabs = store.state.recentTabs,
                 recentBookmarks = listOf(updatedBookmark),
                 recentHistory = store.state.recentHistory,
+                recentSyncedTabState = store.state.recentSyncedTabState,
             )
         ).joinBlocking()
 
@@ -70,6 +74,7 @@ class BlocklistMiddlewareTest {
                 recentTabs = store.state.recentTabs,
                 recentBookmarks = listOf(updatedBookmark),
                 recentHistory = store.state.recentHistory,
+                recentSyncedTabState = store.state.recentSyncedTabState,
             )
         ).joinBlocking()
 
@@ -96,6 +101,7 @@ class BlocklistMiddlewareTest {
                 recentTabs = store.state.recentTabs,
                 recentBookmarks = listOf(updatedBookmark),
                 recentHistory = store.state.recentHistory,
+                recentSyncedTabState = store.state.recentSyncedTabState,
             )
         ).joinBlocking()
 
@@ -122,6 +128,7 @@ class BlocklistMiddlewareTest {
                 recentTabs = store.state.recentTabs,
                 recentBookmarks = listOf(updatedBookmark),
                 recentHistory = store.state.recentHistory,
+                recentSyncedTabState = store.state.recentSyncedTabState
             )
         ).joinBlocking()
 
@@ -150,6 +157,7 @@ class BlocklistMiddlewareTest {
                 recentTabs = updatedRecentTabs,
                 recentBookmarks = updatedBookmarks,
                 recentHistory = store.state.recentHistory,
+                recentSyncedTabState = store.state.recentSyncedTabState
             )
         ).joinBlocking()
 
@@ -185,6 +193,7 @@ class BlocklistMiddlewareTest {
                 recentTabs = updatedRecentTabs,
                 recentBookmarks = updatedBookmarks,
                 recentHistory = store.state.recentHistory,
+                recentSyncedTabState = store.state.recentSyncedTabState
             )
         ).joinBlocking()
 
@@ -237,6 +246,7 @@ class BlocklistMiddlewareTest {
                 recentTabs = store.state.recentTabs,
                 recentBookmarks = listOf(updatedBookmark),
                 recentHistory = store.state.recentHistory,
+                recentSyncedTabState = store.state.recentSyncedTabState
             )
         ).joinBlocking()
 
@@ -264,6 +274,7 @@ class BlocklistMiddlewareTest {
                 recentTabs = store.state.recentTabs,
                 recentBookmarks = listOf(updatedBookmark),
                 recentHistory = store.state.recentHistory,
+                recentSyncedTabState = store.state.recentSyncedTabState
             )
         ).joinBlocking()
 
@@ -291,9 +302,153 @@ class BlocklistMiddlewareTest {
                 recentTabs = store.state.recentTabs,
                 recentBookmarks = listOf(updatedBookmark),
                 recentHistory = store.state.recentHistory,
+                recentSyncedTabState = store.state.recentSyncedTabState
             )
         ).joinBlocking()
 
         assertTrue(store.state.recentBookmarks.isEmpty())
+    }
+
+    @Test
+    fun `WHEN new recently synced tabs are submitted THEN urls matching the blocklist should be removed`() {
+        val blockedHost = "https://www.mozilla.org"
+        val blockedTab = RecentSyncedTab(
+            deviceDisplayName = "",
+            deviceType = mock(),
+            title = "",
+            url = "https://www.mozilla.org",
+            previewImageUrl = null
+        )
+        val allowedTab = RecentSyncedTab(
+            deviceDisplayName = "",
+            deviceType = mock(),
+            title = "",
+            url = "https://github.com",
+            previewImageUrl = null
+        )
+
+        every { mockSettings.homescreenBlocklist } returns setOf(blockedHost.stripAndHash())
+        val middleware = BlocklistMiddleware(blocklistHandler)
+        val store = AppStore(
+            AppState(),
+            middlewares = listOf(middleware)
+        )
+
+        store.dispatch(
+            AppAction.RecentSyncedTabStateChange(
+                RecentSyncedTabState.Success(
+                    listOf(
+                        blockedTab,
+                        allowedTab
+                    )
+                )
+            )
+        ).joinBlocking()
+
+        assertEquals(
+            allowedTab,
+            (store.state.recentSyncedTabState as RecentSyncedTabState.Success).tabs.single()
+        )
+    }
+
+    @Test
+    fun `WHEN the recent synced tab state is changed to None or Loading THEN the middleware does not change the state`() {
+        val blockedHost = "https://www.mozilla.org"
+        every { mockSettings.homescreenBlocklist } returns setOf(blockedHost.stripAndHash())
+        val middleware = BlocklistMiddleware(blocklistHandler)
+        val store = AppStore(
+            AppState(),
+            middlewares = listOf(middleware)
+        )
+
+        store.dispatch(
+            AppAction.RecentSyncedTabStateChange(
+                RecentSyncedTabState.None
+            )
+        ).joinBlocking()
+
+        assertEquals(RecentSyncedTabState.None, store.state.recentSyncedTabState)
+    }
+
+    @Test
+    fun `WHEN all recently synced submitted tabs are blocked THEN the recent synced tab state should be set to None`() {
+        val blockedHost = "https://www.mozilla.org"
+        val blockedTab = RecentSyncedTab(
+            deviceDisplayName = "",
+            deviceType = mock(),
+            title = "",
+            url = "https://www.mozilla.org",
+            previewImageUrl = null
+        )
+
+        every { mockSettings.homescreenBlocklist } returns setOf(blockedHost.stripAndHash())
+        val middleware = BlocklistMiddleware(blocklistHandler)
+        val store = AppStore(
+            AppState(),
+            middlewares = listOf(middleware)
+        )
+
+        store.dispatch(
+            AppAction.RecentSyncedTabStateChange(
+                RecentSyncedTabState.Success(
+                    listOf(blockedTab)
+                )
+            )
+        ).joinBlocking()
+
+        assertEquals(
+            RecentSyncedTabState.None,
+            store.state.recentSyncedTabState
+        )
+    }
+
+    @Test
+    fun `WHEN the most recent used synced tab is blocked THEN the following recent synced tabs remain ordered`() {
+        val tabUrls = listOf("link1", "link2", "link3")
+        val currentTabs = listOf(
+            RecentSyncedTab(
+                deviceDisplayName = "device1",
+                deviceType = mock(),
+                title = "",
+                url = tabUrls[0],
+                previewImageUrl = null
+            ),
+            RecentSyncedTab(
+                deviceDisplayName = "",
+                deviceType = mock(),
+                title = "",
+                url = tabUrls[1],
+                previewImageUrl = null
+            ),
+            RecentSyncedTab(
+                deviceDisplayName = "",
+                deviceType = mock(),
+                title = "",
+                url = tabUrls[2],
+                previewImageUrl = null
+            )
+        )
+        val store = AppStore(
+            AppState(recentSyncedTabState = RecentSyncedTabState.Success(currentTabs)),
+            middlewares = listOf(BlocklistMiddleware(blocklistHandler))
+        )
+        val updateSlot = slot<Set<String>>()
+        every { mockSettings.homescreenBlocklist = capture(updateSlot) } returns Unit
+        every { mockSettings.homescreenBlocklist } returns setOf(tabUrls[0].stripAndHash())
+
+        store.dispatch(
+            AppAction.RemoveRecentSyncedTab(
+                currentTabs.first()
+            )
+        ).joinBlocking()
+
+        assertEquals(
+            2, (store.state.recentSyncedTabState as RecentSyncedTabState.Success).tabs.size
+        )
+        assertEquals(setOf(tabUrls[0].stripAndHash()), updateSlot.captured)
+        assertEquals(
+            currentTabs[1],
+            (store.state.recentSyncedTabState as RecentSyncedTabState.Success).tabs.firstOrNull()
+        )
     }
 }

@@ -22,17 +22,15 @@ pull_request_rules:
       - and:
         - files=buildSrc/src/main/java/AndroidComponents.kt
         - -files~=^(?!buildSrc/src/main/java/AndroidComponents.kt).+$
+        - author=github-actions[bot]
+        - status-success=complete-push
         - or:
           - and:
-            - author=MickeyMoz
             - base=main
-            - head=ac-update
-            - status-success=complete-pr
+            - head~=^relbot/AC-Nightly-.+
           - and:
-            - author=github-actions[bot]
             - base~=^releases[_/].*
             - head~=^relbot/fenix-\d+
-            - status-success=complete-push
     actions:
       review:
         type: APPROVE
@@ -69,7 +67,7 @@ pull_request_rules:
         type: APPROVE
         message: LGTM 😎
       queue:
-        method: rebase
+        method: squash
         name: default
         rebase_fallback: none
   - name: Needs landing - Rebase

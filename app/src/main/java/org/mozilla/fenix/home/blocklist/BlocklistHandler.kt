@@ -7,6 +7,7 @@ package org.mozilla.fenix.home.blocklist
 import androidx.annotation.VisibleForTesting
 import mozilla.components.support.ktx.kotlin.sha1
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
+import org.mozilla.fenix.home.recentsyncedtabs.RecentSyncedTabState
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
 import org.mozilla.fenix.utils.Settings
@@ -49,6 +50,28 @@ class BlocklistHandler(private val settings: Settings) {
             filterNot {
                 it is RecentTab.Tab && blocklistContainsUrl(blocklist, it.state.content.url)
             }
+        }
+
+    /**
+     * If the state is set to [RecentSyncedTabState.Success], filter the list of recently synced
+     * tabs by the blocklist. If the filtered list of tabs is empty, change the state to
+     * [RecentSyncedTabState.None]
+     */
+    @JvmName("filterRecentSyncedTabState")
+    fun RecentSyncedTabState.filteredByBlocklist() =
+        if (this is RecentSyncedTabState.Success) {
+            val filteredTabs = settings.homescreenBlocklist.let { blocklist ->
+                this.tabs.filterNot {
+                    blocklistContainsUrl(blocklist, it.url)
+                }
+            }
+            if (filteredTabs.isEmpty()) {
+                RecentSyncedTabState.None
+            } else {
+                RecentSyncedTabState.Success(filteredTabs)
+            }
+        } else {
+            this
         }
 
     /**
