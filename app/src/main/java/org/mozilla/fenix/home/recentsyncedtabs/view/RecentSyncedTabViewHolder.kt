@@ -48,12 +48,13 @@ class RecentSyncedTabViewHolder(
             val syncedTab = when (it) {
                 RecentSyncedTabState.None,
                 RecentSyncedTabState.Loading -> null
-                is RecentSyncedTabState.Success -> it.tab
+                is RecentSyncedTabState.Success -> it.tabs.firstOrNull()
             }
             RecentSyncedTab(
                 tab = syncedTab,
                 onRecentSyncedTabClick = recentSyncedTabInteractor::onRecentSyncedTabClicked,
                 onSeeAllSyncedTabsButtonClick = recentSyncedTabInteractor::onSyncedTabShowAllClicked,
+                onRemoveSyncedTab = recentSyncedTabInteractor::onRemovedRecentSyncedTab
             )
         }
     }
