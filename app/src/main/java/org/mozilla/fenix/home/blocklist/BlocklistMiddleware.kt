@@ -32,6 +32,7 @@ class BlocklistMiddleware(
         next(getUpdatedAction(context.state, action))
     }
 
+    @Suppress("ComplexMethod")
     private fun getUpdatedAction(
         state: AppState,
         action: AppAction
@@ -41,7 +42,8 @@ class BlocklistMiddleware(
                 action.copy(
                     recentBookmarks = action.recentBookmarks.filteredByBlocklist(),
                     recentTabs = action.recentTabs.filteredByBlocklist(),
-                    recentHistory = action.recentHistory.filteredByBlocklist()
+                    recentHistory = action.recentHistory.filteredByBlocklist(),
+                    recentSyncedTabState = action.recentSyncedTabState.filteredByBlocklist()
                 )
             }
             is AppAction.RecentTabsChange -> {
@@ -56,6 +58,11 @@ class BlocklistMiddleware(
             }
             is AppAction.RecentHistoryChange -> {
                 action.copy(recentHistory = action.recentHistory.filteredByBlocklist())
+            }
+            is AppAction.RecentSyncedTabStateChange -> {
+                action.copy(
+                    state = action.state.filteredByBlocklist()
+                )
             }
             is AppAction.RemoveRecentTab -> {
                 if (action.recentTab is RecentTab.Tab) {
@@ -75,6 +82,10 @@ class BlocklistMiddleware(
                 addUrlToBlocklist(action.highlightUrl)
                 state.toActionFilteringAllState(this)
             }
+            is AppAction.RemoveRecentSyncedTab -> {
+                addUrlToBlocklist(action.syncedTab.url)
+                state.toActionFilteringAllState(this)
+            }
             else -> action
         }
     }
@@ -92,7 +103,8 @@ class BlocklistMiddleware(
                 topSites = topSites,
                 mode = mode,
                 collections = collections,
-                showCollectionPlaceholder = showCollectionPlaceholder
+                showCollectionPlaceholder = showCollectionPlaceholder,
+                recentSyncedTabState = recentSyncedTabState.filteredByBlocklist()
             )
         }
 }
