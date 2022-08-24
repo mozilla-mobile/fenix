@@ -9,12 +9,14 @@ import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.mozilla.fenix.compose.cfr.CFRPopup.PopupAlignment
 import java.lang.ref.WeakReference
 
 /**
  * Properties used to customize the behavior of a [CFRPopup].
  *
  * @property popupWidth Width of the popup. Defaults to [CFRPopup.DEFAULT_WIDTH].
+ * @property popupAlignment Where in relation to it's anchor should the popup be placed.
  * @property indicatorDirection The direction the indicator arrow is pointing.
  * @property dismissOnBackPress Whether the popup can be dismissed by pressing the back button.
  * If true, pressing the back button will also call onDismiss().
@@ -23,16 +25,20 @@ import java.lang.ref.WeakReference
  * @property overlapAnchor How the popup's indicator will be shown in relation to the anchor:
  *   - true - indicator will be shown exactly in the middle horizontally and vertically
  *   - false - indicator will be shown horizontally in the middle of the anchor but immediately below or above it
+ * @property popupVerticalOffset Vertical distance between the indicator arrow and the anchor.
+ * This only applies if [overlapAnchor] is `false`.
  * @property indicatorArrowStartOffset Maximum distance between the popup start and the indicator arrow.
  * If there isn't enough space this could automatically be overridden up to 0 such that
  * the indicator arrow will be pointing to the middle of the anchor.
  */
 data class CFRPopupProperties(
     val popupWidth: Dp = CFRPopup.DEFAULT_WIDTH.dp,
+    val popupAlignment: PopupAlignment = PopupAlignment.BODY_TO_ANCHOR_CENTER,
     val indicatorDirection: CFRPopup.IndicatorDirection = CFRPopup.IndicatorDirection.UP,
     val dismissOnBackPress: Boolean = true,
     val dismissOnClickOutside: Boolean = true,
     val overlapAnchor: Boolean = false,
+    val popupVerticalOffset: Dp = CFRPopup.DEFAULT_VERTICAL_OFFSET.dp,
     val indicatorArrowStartOffset: Dp = CFRPopup.DEFAULT_INDICATOR_START_OFFSET.dp,
 )
 
@@ -90,6 +96,29 @@ class CFRPopup(
         DOWN
     }
 
+    /**
+     * Possible alignments of the popup in relation to it's anchor.
+     */
+    enum class PopupAlignment {
+        /**
+         * The popup body will be centered in the space occupied by the anchor.
+         * Recommended to be used when the anchor is wider than the popup.
+         */
+        BODY_TO_ANCHOR_CENTER,
+
+        /**
+         * The popup body will be shown aligned to exactly the anchor start.
+         */
+        BODY_TO_ANCHOR_START,
+
+        /**
+         * The popup will be aligned such that the indicator arrow will point to exactly the middle of the anchor.
+         * Recommended to be used when there are multiple widgets displayed horizontally so that this will allow
+         * to indicate exactly which widget the popup refers to.
+         */
+        INDICATOR_CENTERED_IN_ANCHOR
+    }
+
     companion object {
         /**
          * Default width for all CFRs.
@@ -119,5 +148,10 @@ class CFRPopup(
          * Corner radius for the popup body.
          */
         internal const val DEFAULT_CORNER_RADIUS = 12
+
+        /**
+         * Vertical distance between the indicator arrow and the anchor.
+         */
+        internal const val DEFAULT_VERTICAL_OFFSET = 9
     }
 }
