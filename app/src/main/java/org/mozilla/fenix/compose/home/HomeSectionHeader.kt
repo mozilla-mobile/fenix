@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mozilla.components.lib.state.ext.observeAsComposableState
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.SectionHeader
 import org.mozilla.fenix.compose.inComposePreview
@@ -41,16 +42,18 @@ import org.mozilla.fenix.wallpapers.Wallpaper
 fun HomeSectionHeader(
     headerText: String,
     description: String,
+    appStore: AppStore = components.appStore,
     onShowAllClick: () -> Unit
 ) {
     if (inComposePreview) {
         HomeSectionHeaderContent(
             headerText = headerText,
             description = description,
-            onShowAllClick = onShowAllClick
+            onShowAllClick = onShowAllClick,
+            appStore = appStore
         )
     } else {
-        val wallpaperState = components.appStore
+        val wallpaperState = appStore
             .observeAsComposableState { state -> state.wallpaperState }.value
 
         val isWallpaperDefault =
@@ -64,6 +67,7 @@ fun HomeSectionHeader(
             } else {
                 FirefoxTheme.colors.textPrimary
             },
+            appStore = appStore,
             onShowAllClick = onShowAllClick,
         )
     }
@@ -82,6 +86,7 @@ private fun HomeSectionHeaderContent(
     headerText: String,
     description: String,
     showAllTextColor: Color = FirefoxTheme.colors.textAccent,
+    appStore: AppStore,
     onShowAllClick: () -> Unit,
 ) {
     Row(
@@ -94,6 +99,11 @@ private fun HomeSectionHeaderContent(
                 .wrapContentHeight(align = Alignment.Top)
         )
 
+        val wallpaperState = appStore
+            .observeAsComposableState { state -> state.wallpaperState }.value
+
+        val wallpaperAdaptedTextColor = wallpaperState?.currentWallpaper?.textColor?.let { Color(it) }
+
         ClickableText(
             text = AnnotatedString(text = stringResource(id = R.string.recent_tabs_show_all)),
             modifier = Modifier.padding(start = 16.dp)
@@ -101,7 +111,7 @@ private fun HomeSectionHeaderContent(
                     contentDescription = description
                 },
             style = TextStyle(
-                color = showAllTextColor,
+                color = wallpaperAdaptedTextColor ?: showAllTextColor,
                 fontSize = 14.sp
             ),
             onClick = { onShowAllClick() }
@@ -116,6 +126,7 @@ private fun HomeSectionsHeaderPreview() {
         HomeSectionHeader(
             headerText = stringResource(R.string.recently_saved_title),
             description = stringResource(R.string.recently_saved_show_all_content_description_2),
+            appStore = AppStore(),
             onShowAllClick = {}
         )
     }
