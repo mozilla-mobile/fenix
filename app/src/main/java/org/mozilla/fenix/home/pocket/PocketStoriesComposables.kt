@@ -53,12 +53,15 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.components.service.pocket.PocketStory
 import mozilla.components.service.pocket.PocketStory.PocketRecommendedStory
 import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
 import mozilla.components.service.pocket.PocketStory.PocketSponsoredStoryCaps
 import mozilla.components.service.pocket.PocketStory.PocketSponsoredStoryShim
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.ClickableSubstringLink
 import org.mozilla.fenix.compose.EagerFlingBehavior
 import org.mozilla.fenix.compose.ListItemTabLarge
@@ -396,12 +399,18 @@ fun PocketStoriesCategories(
 @Composable
 fun PoweredByPocketHeader(
     onLearnMoreClicked: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    appStore: AppStore = components.appStore,
 ) {
     val link = stringResource(R.string.pocket_stories_feature_learn_more)
     val text = stringResource(R.string.pocket_stories_feature_caption, link)
     val linkStartIndex = text.indexOf(link)
     val linkEndIndex = linkStartIndex + link.length
+
+    val wallpaperState = appStore
+        .observeAsComposableState { state -> state.wallpaperState }.value
+
+    val wallpaperAdaptedTextColor = wallpaperState?.currentWallpaper?.textColor?.let { Color(it) }
 
     Column(
         modifier = modifier,
@@ -425,14 +434,14 @@ fun PoweredByPocketHeader(
             Column {
                 Text(
                     text = stringResource(R.string.pocket_stories_feature_title),
-                    color = FirefoxTheme.colors.textPrimary,
+                    color = wallpaperAdaptedTextColor ?: FirefoxTheme.colors.textPrimary,
                     fontSize = 12.sp,
                     lineHeight = 16.sp
                 )
 
                 ClickableSubstringLink(
                     text = text,
-                    textColor = FirefoxTheme.colors.textPrimary,
+                    textColor = wallpaperAdaptedTextColor ?: FirefoxTheme.colors.textPrimary,
                     clickableStartIndex = linkStartIndex,
                     clickableEndIndex = linkEndIndex
                 ) {
@@ -468,6 +477,7 @@ private fun PocketStoriesComposablesPreview() {
                 Spacer(Modifier.height(10.dp))
 
                 PoweredByPocketHeader(
+                    appStore = AppStore(),
                     onLearnMoreClicked = {}
                 )
             }
