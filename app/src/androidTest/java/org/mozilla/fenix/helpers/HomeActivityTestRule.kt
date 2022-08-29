@@ -21,7 +21,6 @@ import org.mozilla.fenix.onboarding.FenixOnboarding
  * @param initialTouchMode See [ActivityTestRule]
  * @param launchActivity See [ActivityTestRule]
  */
-
 class HomeActivityTestRule(
     initialTouchMode: Boolean = false,
     launchActivity: Boolean = true,
@@ -29,11 +28,15 @@ class HomeActivityTestRule(
 ) :
     ActivityTestRule<HomeActivity>(HomeActivity::class.java, initialTouchMode, launchActivity) {
     private val longTapUserPreference = getLongPressTimeout()
+    private val featureSettingsHelper = FeatureSettingsHelper()
 
     override fun beforeActivityLaunched() {
         super.beforeActivityLaunched()
         setLongTapTimeout(3000)
-        if (skipOnboarding) { skipOnboardingBeforeLaunch() }
+        if (skipOnboarding) {
+            featureSettingsHelper.setShowHomeOnboarding(false)
+            skipOnboardingBeforeLaunch()
+        }
     }
 
     override fun afterActivityFinished() {

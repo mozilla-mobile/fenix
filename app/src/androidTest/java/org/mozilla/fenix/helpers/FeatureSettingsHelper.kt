@@ -19,6 +19,7 @@ class FeatureSettingsHelper {
     private var isRecentlyVisitedFeatureEnabled: Boolean = settings.historyMetadataUIFeature
     private var isUserKnowsAboutPwasTrue: Boolean = settings.userKnowsAboutPwas
     private var isTCPCFREnabled: Boolean = settings.shouldShowTotalCookieProtectionCFR
+    private var isShowHomeOnboarding: Boolean = settings.showHomeOnboardingDialog
 
     fun setPocketEnabled(enabled: Boolean) {
         settings.showPocketRecommendationsFeature = enabled
@@ -55,6 +56,16 @@ class FeatureSettingsHelper {
         settings.shouldShowTotalCookieProtectionCFR = shouldShowCFR
     }
 
+    /**
+     * Sets the preference for whether or not the home onboarding dialog for existing users
+     * is shown.
+     *
+     * @param enabled Whether or not the home onboarding dialog should be shown.
+     */
+    fun setShowHomeOnboarding(enabled: Boolean) {
+        settings.showHomeOnboardingDialog = enabled
+    }
+
     // Important:
     // Use this after each test if you have modified these feature settings
     // to make sure the app goes back to the default state
@@ -65,5 +76,6 @@ class FeatureSettingsHelper {
         settings.historyMetadataUIFeature = isRecentlyVisitedFeatureEnabled
         settings.userKnowsAboutPwas = isUserKnowsAboutPwasTrue
         settings.shouldShowTotalCookieProtectionCFR = isTCPCFREnabled
+        settings.showHomeOnboardingDialog = isShowHomeOnboarding
     }
 }
