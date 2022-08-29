@@ -7,7 +7,6 @@ package org.mozilla.fenix.library.history.viewholders
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.HistoryListItemBinding
 import org.mozilla.fenix.ext.components
@@ -32,10 +31,6 @@ class HistoryListItemViewHolder(
     init {
         binding.recentlyClosedNavEmpty.recentlyClosedNav.setOnClickListener {
             historyInteractor.onRecentlyClosedClicked()
-        }
-
-        binding.syncedHistoryNavEmpty.syncedHistoryNav.setOnClickListener {
-            historyInteractor.onSyncedHistoryClicked()
         }
 
         binding.historyLayout.overflowView.apply {
@@ -118,17 +113,15 @@ class HistoryListItemViewHolder(
         } else {
             binding.headerTitle.visibility = View.GONE
         }
+        binding.bottomSpacer.isVisible = headerText != null
     }
 
-    @Suppress("NestedBlockDepth")
     private fun toggleTopContent(
         showTopContent: Boolean,
         isNormalMode: Boolean,
     ) {
         binding.recentlyClosedNavEmpty.recentlyClosedNav.isVisible = showTopContent
         binding.topSpacer.isVisible = showTopContent
-        binding.bottomSpacer.isVisible = showTopContent
-        binding.syncedHistoryNavEmpty.syncedHistoryNav.isVisible = showTopContent && FeatureFlags.showSyncedHistory
 
         if (showTopContent) {
             val numRecentTabs = itemView.context.components.core.store.state.closedTabs.size
@@ -142,7 +135,6 @@ class HistoryListItemViewHolder(
                 ),
                 numRecentTabs
             )
-
             binding.recentlyClosedNavEmpty.recentlyClosedNav.run {
                 if (isNormalMode) {
                     isEnabled = true
@@ -150,18 +142,6 @@ class HistoryListItemViewHolder(
                 } else {
                     isEnabled = false
                     alpha = DISABLED_BUTTON_ALPHA
-                }
-            }
-
-            if (FeatureFlags.showSyncedHistory) {
-                binding.syncedHistoryNavEmpty.syncedHistoryNav.run {
-                    if (isNormalMode) {
-                        isEnabled = true
-                        alpha = 1f
-                    } else {
-                        isEnabled = false
-                        alpha = DISABLED_BUTTON_ALPHA
-                    }
                 }
             }
         }

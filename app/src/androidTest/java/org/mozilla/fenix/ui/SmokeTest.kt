@@ -36,6 +36,7 @@ import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
+import org.mozilla.fenix.helpers.TestHelper.generateRandomString
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.browserScreen
@@ -95,6 +96,7 @@ class SmokeTest {
 
         // disabling the new homepage pop-up that interferes with the tests.
         featureSettingsHelper.setJumpBackCFREnabled(false)
+        featureSettingsHelper.setTCPCFREnabled(false)
 
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         mockWebServer = MockWebServer().apply {
@@ -322,6 +324,7 @@ class SmokeTest {
     // Verifies the Add to home screen option in a tab's 3 dot menu
     fun mainMenuAddToHomeScreenTest() {
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val shortcutTitle = generateRandomString(5)
 
         homeScreen {
         }.openNavigationToolbar {
@@ -337,10 +340,10 @@ class SmokeTest {
             expandMenu()
         }.openAddToHomeScreen {
             verifyShortcutNameField("Test_Page_1")
-            addShortcutName("Test Page")
+            addShortcutName(shortcutTitle)
             clickAddShortcutButton()
             clickAddAutomaticallyButton()
-        }.openHomeScreenShortcut("Test Page") {
+        }.openHomeScreenShortcut(shortcutTitle) {
             verifyUrl(website.url.toString())
             verifyTabCounter("1")
         }
@@ -706,6 +709,7 @@ class SmokeTest {
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
     fun noHistoryInPrivateBrowsingTest() {
+        FeatureSettingsHelper().setTCPCFREnabled(false)
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         homeScreen {

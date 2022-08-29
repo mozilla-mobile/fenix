@@ -171,6 +171,15 @@ class SettingsRobot {
             return SettingsSubMenuHomepageRobot.Transition()
         }
 
+        fun openAutofillSubMenu(interact: SettingsSubMenuAutofillRobot.() -> Unit): SettingsSubMenuAutofillRobot.Transition {
+
+            mDevice.findObject(UiSelector().textContains(getStringResource(R.string.preferences_autofill))).waitForExists(waitingTime)
+            onView(withText(R.string.preferences_autofill)).click()
+
+            SettingsSubMenuAutofillRobot().interact()
+            return SettingsSubMenuAutofillRobot.Transition()
+        }
+
         fun openAccessibilitySubMenu(interact: SettingsSubMenuAccessibilityRobot.() -> Unit): SettingsSubMenuAccessibilityRobot.Transition {
             scrollToElementByText("Accessibility")
 
@@ -227,7 +236,7 @@ class SettingsRobot {
         }
 
         fun openTurnOnSyncMenu(interact: SettingsTurnOnSyncRobot.() -> Unit): SettingsTurnOnSyncRobot.Transition {
-            fun turnOnSyncButton() = onView(withText("Turn on Sync"))
+            fun turnOnSyncButton() = onView(withText("Sync and save your data"))
             turnOnSyncButton().click()
 
             SettingsTurnOnSyncRobot().interact()

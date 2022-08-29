@@ -171,7 +171,8 @@ fun AppState.filterState(blocklistHandler: BlocklistHandler): AppState =
         copy(
             recentBookmarks = recentBookmarks.filteredByBlocklist(),
             recentTabs = recentTabs.filteredByBlocklist(),
-            recentHistory = recentHistory.filteredByBlocklist()
+            recentHistory = recentHistory.filteredByBlocklist(),
+            recentSyncedTabState = recentSyncedTabState.filteredByBlocklist()
         )
     }
 
@@ -182,4 +183,12 @@ fun AppState.filterState(blocklistHandler: BlocklistHandler): AppState =
 fun AppState.shouldShowRecentTabs(settings: Settings): Boolean {
     val hasTab = recentTabs.isNotEmpty() || recentSyncedTabState is RecentSyncedTabState.Success
     return settings.showRecentTabsFeature && hasTab
+}
+
+/**
+ * Determines whether a recent synced tab section should be shown, based on user preference
+ * and the availability of Synced tabs.
+ */
+fun AppState.shouldShowRecentSyncedTabs(settings: Settings): Boolean {
+    return (settings.enableTaskContinuityEnhancements && recentSyncedTabState is RecentSyncedTabState.Success)
 }

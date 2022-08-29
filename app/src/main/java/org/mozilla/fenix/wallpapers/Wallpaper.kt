@@ -4,88 +4,69 @@
 
 package org.mozilla.fenix.wallpapers
 
-import androidx.annotation.DrawableRes
-import java.util.Calendar
 import java.util.Date
 
 /**
- * Type hierarchy defining the various wallpapers that are available as home screen backgrounds.
+ * Type that represents wallpapers.
+ *
  * @property name The name of the wallpaper.
+ * @property collection The name of the collection the wallpaper belongs to.
+ * is not restricted.
+ * @property textColor The 8 digit hex code color that should be used for text overlaying the wallpaper.
+ * @property cardColor The 8 digit hex code color that should be used for cards overlaying the wallpaper.
  */
-sealed class Wallpaper {
-    abstract val name: String
-
+data class Wallpaper(
+    val name: String,
+    val collection: Collection,
+    val textColor: Long?,
+    val cardColor: Long?,
+) {
     /**
-     * The default wallpaper. This uses the standard color resource to as a background, instead of
-     * loading a bitmap.
-     */
-    object Default : Wallpaper() {
-        override val name = "default"
-    }
-
-    /**
-     * If a user had previously selected a wallpaper, they are allowed to retain it even if
-     * the wallpaper is otherwise expired. This type exists as a wrapper around that current
-     * wallpaper.
-     */
-    data class Expired(override val name: String) : Wallpaper()
-
-    /**
-     * Wallpapers that are included directly in the shipped APK.
+     * Type that represents a collection that a [Wallpaper] belongs to.
      *
-     * @property drawableId The drawable bitmap used as the background.
+     * @property name The name of the collection the wallpaper belongs to.
+     * @property learnMoreUrl The URL that can be visited to learn more about a collection, if any.
+     * @property availableLocales The locales that this wallpaper is restricted to. If null, the wallpaper
+     * is not restricted.
+     * @property startDate The date the wallpaper becomes available in a promotion. If null, it is available
+     * from any date.
+     * @property endDate The date the wallpaper stops being available in a promotion. If null,
+     * the wallpaper will be available to any date.
      */
-    sealed class Local : Wallpaper() {
-        abstract val drawableId: Int
-        data class Firefox(override val name: String, @DrawableRes override val drawableId: Int) : Local()
-    }
-
-    /**
-     * Wallpapers that need to be fetched from a network resource.
-     *
-     * @property expirationDate Optional date at which this wallpaper should no longer be available.
-     */
-    sealed class Remote : Wallpaper() {
-        abstract val expirationDate: Date?
-        abstract val remoteParentDirName: String
-        @Suppress("MagicNumber")
-        /**
-         * A promotional partnered wallpaper.
-         */
-        data class House(
-            override val name: String,
-            override val expirationDate: Date? = Calendar.getInstance().run {
-                set(2022, Calendar.APRIL, 30)
-                time
-            }
-        ) : Remote(), Promotional {
-            override val remoteParentDirName: String = "house"
-            override fun isAvailableInLocale(locale: String): Boolean =
-                listOf("en-US", "es-US").contains(locale)
-        }
-
-        /**
-         * Wallpapers that are original Firefox creations.
-         */
-        data class Firefox(
-            override val name: String,
-        ) : Remote() {
-            override val expirationDate: Date? = null
-            override val remoteParentDirName: String = "firefox"
-        }
-    }
-
-    /**
-     * Designates whether a wallpaper is part of a promotion that is locale-restricted.
-     */
-    interface Promotional {
-        /**
-         * Returns whether the wallpaper is available in [locale] or not.
-         */
-        fun isAvailableInLocale(locale: String): Boolean
-    }
+    data class Collection(
+        val name: String,
+        val heading: String?,
+        val description: String?,
+        val learnMoreUrl: String?,
+        val availableLocales: List<String>?,
+        val startDate: Date?,
+        val endDate: Date?,
+    )
 
     companion object {
+        const val amethystName = "amethyst"
+        const val ceruleanName = "cerulean"
+        const val sunriseName = "sunrise"
+        const val twilightHillsName = "twilight-hills"
+        const val beachVibeName = "beach-vibe"
+        const val firefoxCollectionName = "firefox"
+        const val defaultName = "default"
+        val DefaultCollection = Collection(
+            name = defaultName,
+            heading = null,
+            description = null,
+            learnMoreUrl = null,
+            availableLocales = null,
+            startDate = null,
+            endDate = null,
+        )
+        val Default = Wallpaper(
+            name = defaultName,
+            collection = DefaultCollection,
+            textColor = null,
+            cardColor = null,
+        )
+
         /**
          * Defines the standard path at which a wallpaper resource is kept on disk.
          *
@@ -93,7 +74,29 @@ sealed class Wallpaper {
          * @param theme One of dark/light.
          * @param name The name of the wallpaper.
          */
-        fun getBaseLocalPath(orientation: String, theme: String, name: String): String =
+        fun legacyGetLocalPath(orientation: String, theme: String, name: String): String =
             "wallpapers/$orientation/$theme/$name.png"
+
+        /**
+         * Defines the standard path at which a wallpaper resource is kept on disk.
+         *
+         * @param type The type of image that should be retrieved.
+         * @param name The name of the wallpaper.
+         */
+        fun getLocalPath(name: String, type: ImageType) = "wallpapers/$name/${type.lowercase()}.png"
+    }
+
+    /**
+     * Defines various image asset types that can be downloaded for each wallpaper.
+     */
+    enum class ImageType {
+        Portrait,
+        Landscape,
+        Thumbnail;
+
+        /**
+         * Get a lowercase string representation of the [ImageType.name] for use in path segments.
+         */
+        fun lowercase(): String = this.name.lowercase()
     }
 }

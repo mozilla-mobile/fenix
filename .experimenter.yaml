@@ -44,6 +44,14 @@ messaging:
     triggers:
       type: json
       description: "A collection of out the box trigger expressions. Each entry maps to a valid JEXL expression.\n"
+mr2022:
+  description: Features for MR 2022.
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    sections-enabled:
+      type: json
+      description: This property provides a lookup table of whether or not the given section should be enabled.
 nimbus-validation:
   description: A feature that does not correspond to an application feature suitable for showing that Nimbus is working. This should never be used in production.
   hasExposure: true
@@ -58,14 +66,6 @@ nimbus-validation:
     settings-title:
       type: string
       description: The title of displayed in the Settings screen and app menu.
-pocket-sponsored-stories:
-  description: A feature showing sponsored stories in between the other Pocket recommended stories on homescreen.
-  hasExposure: true
-  exposureDescription: ""
-  variables:
-    enabled:
-      type: boolean
-      description: "If true, the Pocket stories shown on homescreen should contain sponsored stories also."
 search-term-groups:
   description: A feature allowing the grouping of URLs around the search term that it came from.
   hasExposure: true

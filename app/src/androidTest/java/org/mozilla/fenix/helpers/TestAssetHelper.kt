@@ -87,6 +87,18 @@ object TestAssetHelper {
         return TestAsset(url, "", "")
     }
 
+    fun getAddressFormAsset(server: MockWebServer): TestAsset {
+        val url = server.url("pages/addressForm.html").toString().toUri()!!
+
+        return TestAsset(url, "", "")
+    }
+
+    fun getCreditCardFormAsset(server: MockWebServer): TestAsset {
+        val url = server.url("pages/creditCardForm.html").toString().toUri()!!
+
+        return TestAsset(url, "", "")
+    }
+
     fun getAudioPageAsset(server: MockWebServer): TestAsset {
         val url = server.url("pages/audioMediaPage.html").toString().toUri()!!
         val title = "Audio_Test_Page"
@@ -101,5 +113,11 @@ object TestAssetHelper {
         val content = "Page content: video player"
 
         return TestAsset(url, content, title)
+    }
+
+    fun getStorageTestAsset(server: MockWebServer, pageAsset: String): TestAsset {
+        val url = server.url("pages/$pageAsset").toString().toUri()!!
+
+        return TestAsset(url, "", "")
     }
 }

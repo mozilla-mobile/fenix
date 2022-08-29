@@ -106,6 +106,44 @@ class BrowserRobot {
         }
     }
 
+    /* Verifies the information displayed on the about:cache page */
+    fun verifyNetworkCacheIsEmpty(storage: String) {
+        val memorySection = mDevice.findObject(UiSelector().description(storage))
+
+        val gridView =
+            if (storage == "memory") {
+                memorySection.getFromParent(
+                    UiSelector()
+                        .className("android.widget.GridView")
+                        .index(2)
+                )
+            } else {
+                memorySection.getFromParent(
+                    UiSelector()
+                        .className("android.widget.GridView")
+                        .index(4)
+                )
+            }
+
+        val cacheSizeInfo =
+            gridView.getChild(
+                UiSelector().text("Number of entries:")
+            ).getFromParent(
+                UiSelector().text("0")
+            )
+
+        for (i in 1..RETRY_COUNT) {
+            try {
+                assertTrue(cacheSizeInfo.waitForExists(waitingTime))
+                break
+            } catch (e: AssertionError) {
+                browserScreen {
+                }.openThreeDotMenu {
+                }.refreshPage { }
+            }
+        }
+    }
+
     fun verifyTabCounter(expectedText: String) {
         val counter =
             mDevice.findObject(
@@ -599,6 +637,26 @@ class BrowserRobot {
         }
     }
 
+    fun clickStreetAddressTextBox() {
+        streetAddressTextBox().waitForExists(waitingTime)
+        streetAddressTextBox().click()
+    }
+
+    fun clickSelectAddressButton() {
+        selectAddressButton.waitForExists(waitingTime)
+        selectAddressButton.clickAndWaitForNewWindow(waitingTime)
+    }
+
+    fun clickCardNumberTextBox() {
+        creditCardNumberTextBox().waitForExists(waitingTime)
+        creditCardNumberTextBox().click()
+    }
+
+    fun clickSelectCreditCardButton() {
+        selectCreditCardButton.waitForExists(waitingTime)
+        selectCreditCardButton.clickAndWaitForNewWindow(waitingTime)
+    }
+
     fun clickLoginSuggestion(userName: String) {
         val loginSuggestion =
             mDevice.findObject(
@@ -608,6 +666,16 @@ class BrowserRobot {
             )
 
         loginSuggestion.click()
+    }
+
+    fun clickAddressSuggestion(streetName: String) {
+        addressSuggestion(streetName).waitForExists(waitingTime)
+        addressSuggestion(streetName).click()
+    }
+
+    fun clickCreditCardSuggestion(creditCardNumber: String) {
+        creditCardSuggestion(creditCardNumber).waitForExists(waitingTime)
+        creditCardSuggestion(creditCardNumber).click()
     }
 
     fun verifySuggestedUserName(userName: String) {
@@ -643,6 +711,16 @@ class BrowserRobot {
         }
         mDevice.waitForObjects(userNameTextBox)
         assertTrue(userNameTextBox.text.equals(userName))
+    }
+
+    fun verifyAutofilledAddress(streetAddress: String) {
+        mDevice.waitForObjects(streetAddressTextBox(streetAddress))
+        assertTrue(streetAddressTextBox(streetAddress).waitForExists(waitingTime))
+    }
+
+    fun verifyAutofilledCreditCard(creditCardNumber: String) {
+        mDevice.waitForObjects(creditCardNumberTextBox(creditCardNumber))
+        assertTrue(creditCardNumberTextBox(creditCardNumber).waitForExists(waitingTime))
     }
 
     fun verifyPrefilledPWALoginCredentials(userName: String, shortcutTitle: String) {
@@ -694,6 +772,12 @@ class BrowserRobot {
                 }
             }
         }
+    }
+
+    fun clickSetCookiesButton() {
+        val setCookiesButton = mDevice.findObject(UiSelector().resourceId("setCookies"))
+        setCookiesButton.waitForExists(waitingTimeLong)
+        setCookiesButton.click()
     }
 
     class Transition {
@@ -906,6 +990,40 @@ private var progressBar =
     )
 
 private val suggestedLogins = mDevice.findObject(UiSelector().resourceId("$packageName:id/loginSelectBar"))
+private val selectAddressButton = mDevice.findObject(UiSelector().resourceId("$packageName:id/select_address_header"))
+private val selectCreditCardButton = mDevice.findObject(UiSelector().resourceId("$packageName:id/select_credit_card_header"))
+
+private fun addressSuggestion(streetName: String) =
+    mDevice.findObject(
+        UiSelector()
+            .resourceId("$packageName:id/address_name")
+            .textContains(streetName)
+    )
+
+private fun streetAddressTextBox(streetAddress: String = "") =
+    mDevice.findObject(
+        UiSelector()
+            .resourceId("streetAddress")
+            .textContains(streetAddress)
+            .className("android.widget.EditText")
+            .packageName("$packageName")
+    )
+
+private fun creditCardNumberTextBox(creditCardNumber: String = "") =
+    mDevice.findObject(
+        UiSelector()
+            .resourceId("cardNumber")
+            .textContains(creditCardNumber)
+            .className("android.widget.EditText")
+            .packageName("$packageName")
+    )
+
+private fun creditCardSuggestion(creditCardNumber: String) =
+    mDevice.findObject(
+        UiSelector()
+            .resourceId("$packageName:id/credit_card_number")
+            .textContains(creditCardNumber)
+    )
 
 // Permissions test page elements & prompts
 // Test page used located at https://mozilla-mobile.github.io/testapp/permissions

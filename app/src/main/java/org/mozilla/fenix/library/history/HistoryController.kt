@@ -22,6 +22,7 @@ import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.history.DefaultPagedHistoryProvider
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.library.history.HistoryFragment.DeleteConfirmationDialogFragment
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
@@ -49,11 +50,6 @@ interface HistoryController {
     fun handleDeleteTimeRangeConfirmed(timeFrame: RemoveTimeFrame?)
     fun handleRequestSync()
     fun handleEnterRecentlyClosed()
-
-    /**
-     * Navigates to [HistoryFragment] that would display history synced from other devices.
-     */
-    fun handleEnterSyncedHistory()
 }
 
 @Suppress("TooManyFunctions", "LongParameterList")
@@ -127,7 +123,7 @@ class DefaultHistoryController(
             HistoryFragmentDirections.actionGlobalHistorySearchDialog()
         }
 
-        navController.navigate(directions)
+        navController.navigateSafe(R.id.historyFragment, directions)
     }
 
     override fun handleDeleteTimeRange() {
@@ -214,9 +210,5 @@ class DefaultHistoryController(
             NavOptions.Builder().setPopUpTo(R.id.recentlyClosedFragment, true).build()
         )
         Events.recentlyClosedTabsOpened.record(NoExtras())
-    }
-
-    override fun handleEnterSyncedHistory() {
-        navController.navigate(HistoryFragmentDirections.actionSyncedHistoryFragment())
     }
 }

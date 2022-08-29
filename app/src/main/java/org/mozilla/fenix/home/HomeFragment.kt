@@ -14,7 +14,6 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
@@ -27,8 +26,8 @@ import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.constraintlayout.widget.ConstraintSet.TOP
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.core.view.doOnPreDraw
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -46,7 +45,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -77,7 +75,6 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.HomeScreen
-import org.mozilla.fenix.GleanMetrics.Wallpapers
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
@@ -281,10 +278,12 @@ class HomeFragment : Fragment() {
             if (requireContext().settings().enableTaskContinuityEnhancements) {
                 recentSyncedTabFeature.set(
                     feature = RecentSyncedTabFeature(
+                        context = requireContext(),
                         appStore = requireComponents.appStore,
                         syncStore = requireComponents.backgroundServices.syncStore,
                         storage = requireComponents.backgroundServices.syncedTabsStorage,
                         accountManager = requireComponents.backgroundServices.accountManager,
+                        historyStorage = requireComponents.core.historyStorage,
                         coroutineScope = viewLifecycleOwner.lifecycleScope,
                     ),
                     owner = viewLifecycleOwner,
@@ -354,6 +353,7 @@ class HomeFragment : Fragment() {
                 tabsUseCase = requireComponents.useCases.tabsUseCases,
                 navController = findNavController(),
                 accessPoint = TabsTrayAccessPoint.HomeRecentSyncedTab,
+                appStore = components.appStore,
             ),
             recentBookmarksController = DefaultRecentBookmarksController(
                 activity = activity,
@@ -742,21 +742,6 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch(IO) {
             requireComponents.reviewPromptController.promptReview(requireActivity())
         }
-
-        if (shouldEnableWallpaper() && context.settings().wallpapersSwitchedByLogoTap) {
-            binding.wordmark.contentDescription =
-                context.getString(R.string.wallpaper_logo_content_description)
-            binding.wordmark.setOnClickListener {
-                val manager = requireComponents.wallpaperManager
-                val newWallpaper = manager.switchToNextWallpaper()
-                Wallpapers.wallpaperSwitched.record(
-                    Wallpapers.WallpaperSwitchedExtra(
-                        name = newWallpaper.name,
-                        themeCollection = newWallpaper::class.simpleName
-                    )
-                )
-            }
-        }
     }
 
     private fun dispatchModeChanges(mode: Mode) {
@@ -800,25 +785,6 @@ class HomeFragment : Fragment() {
         // triggered to cause an automatic update on warm start (no tab selection occurs). So we
         // update it manually here.
         requireComponents.useCases.sessionUseCases.updateLastAccess()
-        if (shouldAnimateLogoForWallpaper()) {
-            _binding?.sessionControlRecyclerView?.viewTreeObserver?.addOnGlobalLayoutListener(
-                homeLayoutListenerForLogoAnimation
-            )
-        }
-    }
-
-    // To try to find a good time to show the logo animation, we are waiting until all
-    // the sub-recyclerviews (recentBookmarks, collections, recentTabs,recentVisits
-    // and pocketStories) on the home screen have been layout.
-    private val homeLayoutListenerForLogoAnimation = object : ViewTreeObserver.OnGlobalLayoutListener {
-        override fun onGlobalLayout() {
-            _binding?.let { safeBindings ->
-                requireComponents.wallpaperManager.animateLogoIfNeeded(safeBindings.wordmark)
-                safeBindings.sessionControlRecyclerView.viewTreeObserver.removeOnGlobalLayoutListener(
-                    this
-                )
-            }
-        }
     }
 
     override fun onPause() {
@@ -965,7 +931,7 @@ class HomeFragment : Fragment() {
                     // We only want to update the wallpaper when it's different from the default one
                     // as the default is applied already on xml by default.
                     when (val currentWallpaper = state.wallpaperState.currentWallpaper) {
-                        is Wallpaper.Default -> {
+                        Wallpaper.Default -> {
                             binding.wallpaperImageView.visibility = View.GONE
                         }
                         else -> {
@@ -979,22 +945,6 @@ class HomeFragment : Fragment() {
                 }
                 .launchIn(viewLifecycleOwner.lifecycleScope)
         }
-    }
-
-    // We want to show the animation in a time when the user less distracted
-    // The Heuristics are:
-    // 1) The animation hasn't shown before.
-    // 2) The user has onboarded.
-    // 3) It's the third time the user enters the app.
-    // 4) The user is part of the right audience.
-    @Suppress("MagicNumber")
-    private fun shouldAnimateLogoForWallpaper(): Boolean {
-        val localContext = context ?: return false
-        val settings = localContext.settings()
-
-        return shouldEnableWallpaper() && settings.shouldAnimateFirefoxLogo &&
-            onboarding.userHasBeenOnboarded() &&
-            settings.numberOfAppLaunches >= 3
     }
 
     private fun shouldEnableWallpaper() =

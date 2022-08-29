@@ -39,7 +39,9 @@
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recent_bookmarks_title">Resinte blêdwizers</string>
+    <string moz:RemovedIn="106" name="recent_bookmarks_title" tools:ignore="UnusedResources">Resinte blêdwizers</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_title">Koartlyn bewarre</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description_2">Alle bewarre blêdwizers toane</string>
 
@@ -74,6 +76,15 @@
     <string name="open_in_app_cfr_positive_button_text">Nei ynstellingen</string>
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">Slute</string>
+
+    <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
+    <string name="cfr_dismiss_button_default_content_description">Slute</string>
+
+    <!-- Total cookie protection "contextual feature recommendation" (CFR) -->
+    <!-- Text for the message displayed in the contextual feature recommendation popup promoting the total cookie protection feature. -->
+    <string name="tcp_cfr_message">Us meast krêftige privacyfunksje oant no ta isolearret cross-sitetrackers.</string>
+    <!-- Text displayed that links to website containing documentation about the "Total cookie protection" feature. -->
+    <string name="tcp_cfr_learn_more">Mear ynfo oer Totale cookiebeskerming</string>
 
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">Kameratagong fereaske. Gean nei jo Android-ynstellingen, tik op machtigingen en tik op toestaan.</string>
@@ -122,16 +133,18 @@
     <string name="recent_tabs_show_all_content_description_2">Knop Alle resinte ljepblêden toane</string>
     <!-- Title for showing a group item in the 'Jump back in' section of the new tab
         The first parameter is the search term that the user used. (for example: your search for "cat")-->
-    <string name="recent_tabs_search_term">Jo sykopdracht nei ‘%1$s’</string>
+    <string moz:RemovedIn="105" name="recent_tabs_search_term" tools:ignore="UnusedResources">Jo sykopdracht nei ‘%1$s’</string>
 
     <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
         %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
-    <string name="recent_tabs_search_term_count_2">%d websites</string>
+    <string moz:RemovedIn="105" name="recent_tabs_search_term_count_2" tools:ignore="UnusedResources">%d websites</string>
 
     <!-- Text for button in synced tab card that opens synced tabs tray -->
     <string name="recent_tabs_see_all_synced_tabs_button_text">Alle syngronisearre ljepblêden besjen</string>
     <!-- Accessibility description for device icon used for recent synced tab -->
     <string name="recent_tabs_synced_device_icon_content_description">Syngronisearre apparaat</string>
+    <!-- Text for the dropdown menu to remove a recent synced tab from the homescreen -->
+    <string name="recent_synced_tab_menu_item_remove">Fuortsmite</string>
     <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
          in the Recently visited section -->
     <string name="recent_tab_menu_item_remove">Fuortsmite</string>
@@ -249,24 +262,39 @@
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
-    <string name="onboarding_home_screen_title_3">Wat is der nij yn %1$s</string>
+    <string moz:RemovedIn="106" name="onboarding_home_screen_title_3" tools:ignore="UnusedResources">Wat is der nij yn %1$s</string>
     <!-- Onboarding home screen dialog description text. -->
-    <string name="onboarding_home_screen_description_2">It is no ienfâldiger fierder te gean wêr’t jo bleaun wiene.</string>
+    <string moz:RemovedIn="106" name="onboarding_home_screen_description_2" tools:ignore="UnusedResources">It is no ienfâldiger fierder te gean wêr’t jo bleaun wiene.</string>
     <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
-    <string name="onboarding_home_screen_section_home_title_3">Personalisearre %1$s-startside</string>
+    <string moz:RemovedIn="106" name="onboarding_home_screen_section_home_title_3" tools:ignore="UnusedResources">Personalisearre %1$s-startside</string>
     <!-- Onboarding home screen dialog description text for the home section. -->
-    <string name="onboarding_home_screen_section_home_description_2">Spring nei jo iepen ljepblêden, blêdwizers en navigaasjeskiednis.</string>
+    <string moz:RemovedIn="106" name="onboarding_home_screen_section_home_description_2" tools:ignore="UnusedResources">Spring nei jo iepen ljepblêden, blêdwizers en navigaasjeskiednis.</string>
     <!-- Onboarding home screen dialog description text for the tab tray section. -->
-    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">Kreaze, oardere ljepblêden</string>
+    <string moz:RemovedIn="106" name="onboarding_home_screen_section_cleaner_tab_tray_title_2" tools:ignore="UnusedResources">Kreaze, oardere ljepblêden</string>
     <!-- Onboarding home screen dialog description text for the tab tray section. -->
-    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">Smyt ljepblêdrommel fuort mei in ferbettere opmaak en automatysk slutende ljepblêden.</string>
+    <string moz:RemovedIn="106" name="onboarding_home_screen_section_cleaner_tab_tray_description_2" tools:ignore="UnusedResources">Smyt ljepblêdrommel fuort mei in ferbettere opmaak en automatysk slutende ljepblêden.</string>
     <!-- Onboarding home screen dialog description text for the history section. -->
-    <string name="onboarding_home_screen_section_useful_history_title_2">Resinte sykopdrachten</string>
+    <string moz:RemovedIn="106" name="onboarding_home_screen_section_useful_history_title_2" tools:ignore="UnusedResources">Resinte sykopdrachten</string>
     <!-- Onboarding home screen dialog description text for the history section. -->
-    <string name="onboarding_home_screen_section_useful_history_description_2">Besjoch jo lêste sykopdrachten opnij fan jo startside en ljepblêden ôf.</string>
+    <string moz:RemovedIn="106" name="onboarding_home_screen_section_useful_history_description_2" tools:ignore="UnusedResources">Besjoch jo lêste sykopdrachten opnij fan jo startside en ljepblêden ôf.</string>
 
     <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
-    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Jo personalisearre Firefox-startside makket it no ienfâldiger om fierder te gean wêr’t jo bleaun wiene. Fyn jo resinte ljepblêden, blêdwizers, en sykresultaten.</string>
+    <string name="onboarding_home_screen_jump_back_contextual_hint">Jo personalisearre Firefox-startside makket it no ienfâldiger om fierder te gean wêr’t jo bleaun wiene. Fyn jo resinte ljepblêden, blêdwizers, en sykresultaten.</string>
+
+    <!-- Home onboarding dialog welcome screen title text. -->
+    <string name="onboarding_home_welcome_title">Wolkom by in ûnôfhinklik ynternet</string>
+    <!-- Home onboarding dialog welcome screen description text. -->
+    <string name="onboarding_home_welcome_description">Mear kleuren. Bettere privacy. Deselde ynset foar minsken boppe winst.</string>
+    <!-- Home onboarding dialog sign into sync screen title text. -->
+    <string name="onboarding_home_sync_title">It wikseljen fan skermen is makliker as ea</string>
+    <!-- Home onboarding dialog sign into sync screen description text. -->
+    <string name="onboarding_home_sync_description">Gean fan jo startside ôf fierder wêr’t jo stoppe binne mei ljepblêden fan oare apparaten.</string>
+    <!-- Text for the button to continue the onboarding on the home onboarding dialog. -->
+    <string name="onboarding_home_get_started_button">Begjinne</string>
+    <!-- Text for the button to navigate to the sync sign in screen on the home onboarding dialog. -->
+    <string name="onboarding_home_sign_in_button">Oanmelde</string>
+    <!-- Text for the button to skip the onboarding on the home onboarding dialog. -->
+    <string name="onboarding_home_skip_button">Oerslaan</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -443,11 +471,11 @@
     <!-- Snackbar label for action to view selected wallpaper -->
     <string name="wallpaper_updated_snackbar_action">Werjaan</string>
     <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string name="wallpaper_tap_to_change_switch_label_1">Wizigje jo eftergrûn troch op it Firefox-startsidelogo te tikken</string>
+    <string moz:removedIn="105" name="wallpaper_tap_to_change_switch_label_1" tools:ignore="UnusedResources">Wizigje jo eftergrûn troch op it Firefox-startsidelogo te tikken</string>
 
     <!-- This is the accessibility content description for the wallpapers functionality. Users are
     able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
-    <string name="wallpaper_logo_content_description">Firefox-logo – de eftergrûn, de knop wizigje</string>
+    <string moz:removedIn="105" name="wallpaper_logo_content_description" tools:ignore="UnusedResources">Firefox-logo – de eftergrûn, de knop wizigje</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -620,9 +648,9 @@
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Roaster</string>
     <!-- Option for search term tab groups -->
-    <string name="tab_view_search_term_tab_groups">Groepen sykje</string>
+    <string moz:RemovedIn="105" name="tab_view_search_term_tab_groups" tools:ignore="UnusedResources">Groepen sykje</string>
     <!-- Summary text for search term tab groups -->
-    <string name="tab_view_search_term_tab_groups_summary">Relatearre websites groepearje</string>
+    <string moz:RemovedIn="105" name="tab_view_search_term_tab_groups_summary" tools:ignore="UnusedResources">Relatearre websites groepearje</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Ljepblêden slute</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -726,8 +754,6 @@
     <string name="open_tabs_menu">Menu Iepen ljepblêden</string>
     <!-- Open tabs menu item to save tabs to collection -->
     <string name="tabs_menu_save_to_collection1">Ljepblêden yn kolleksje bewarje</string>
-    <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
-    <string moz:RemovedIn="103" name="tab_menu" tools:ignore="UnusedResources">Ljepblêdmenu</string>
     <!-- Text for the menu button to delete a collection -->
     <string name="collection_delete">Kolleksje fuortsmite</string>
     <!-- Text for the menu button to rename a collection -->
@@ -778,16 +804,16 @@
     <string name="history_empty_message">Gjin skiednis hjir</string>
 
     <!-- Text for the button inside History screen that opens Synced History screen. History that is coming from other devices -->
-    <string name="history_synced_from_other_devices">Syngronisearre fan oare apparaten ôf</string>
+    <string moz:removedIn="105" name="history_synced_from_other_devices" tools:ignore="UnusedResources">Syngronisearre fan oare apparaten ôf</string>
     <!-- The page title for browsing history coming from other devices. -->
-    <string name="history_from_other_devices">Fan oare apparaten ôf</string>
+    <string moz:removedIn="105" name="history_from_other_devices" tools:ignore="UnusedResources">Fan oare apparaten ôf</string>
 
     <!-- The synced history sign in dialog message -->
-    <string name="history_sign_in_message">Meld jo oan om fan jo oare apparaten syngronisearre skiednis te besjen.</string>
+    <string moz:removedIn="105" name="history_sign_in_message" tools:ignore="UnusedResources">Meld jo oan om fan jo oare apparaten syngronisearre skiednis te besjen.</string>
     <!-- The synced history sign in dialog button text -->
-    <string name="history_sign_in_button">Oanmelde</string>
+    <string moz:removedIn="105" name="history_sign_in_button" tools:ignore="UnusedResources">Oanmelde</string>
     <!-- The synced history sign in dialog create a new account link -->
-    <string name="history_sign_in_create_account"><![CDATA[<u>Of meitsje in Firefox-account om te begjinnen mei syngronisaasje</u>]]></string>
+    <string moz:removedIn="105" name="history_sign_in_create_account" tools:ignore="UnusedResources"><![CDATA[<u>Of meitsje in Firefox-account om te begjinnen mei syngronisaasje</u>]]></string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1155,7 +1181,18 @@
     <string name="delete_browsing_data_on_quit_action">Ofslute</string>
 
     <!-- Dialog message to the user asking to delete browsing data. -->
-    <string name="delete_browsing_data_prompt_message">Hjirtroch wurde al jo navigaasjegegevens fuortsmiten.</string>
+    <string moz:removedIn="104" name="delete_browsing_data_prompt_message" tools:ignore="UnusedResources">Hjirtroch wurde al jo navigaasjegegevens fuortsmiten.</string>
+    <!-- Title text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_title">Te wiskjen tiidrek</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body">Smyt skiednis (ynklusyf fan oare apparaten syngronisearre skiednis ôf), cookies en oare navigaasjegegevens fuort.</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
+    <string name="delete_history_prompt_button_last_hour">Lêste oere</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
+    <string name="delete_history_prompt_button_today_and_yesterday">Hjoed en juster</string>
+    <!-- Radio button in the delete browsing data dialog to delete all history. -->
+    <string name="delete_history_prompt_button_everything">Alles</string>
+
     <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
     <string name="delete_browsing_data_prompt_message_3">%s smyt de selektearre navigaasjegegevens fuort.</string>
     <!-- Text for the cancel button for the data deletion dialog -->
@@ -1167,8 +1204,8 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">Navigaasjegegevens fuortsmite…</string>
 
-    <!-- Dialog message to the user asking to delete all history items inside the opened group. -->
-    <string name="delete_history_group_prompt_message">Hjirmei wurde alle items fuortsmiten.</string>
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. Parameter will be replaced by a history group name. -->
+    <string name="delete_all_history_group_prompt_message">Alle websites yn ‘%s’ fuortsmite</string>
     <!-- Text for the cancel button for the history group deletion dialog -->
     <string name="delete_history_group_prompt_cancel">Annulearje</string>
     <!-- Text for the allow button for the history group dialog -->
@@ -1300,6 +1337,8 @@
     <string name="preference_enhanced_tracking_protection_custom_cookies_3">Alle cookies fan tredden (kin derfoar soargje dat websites net goed wurkje)</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies_4">Alle cookies (sil derfoar soargje dat websites net goed wurkje)</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_5">Cross-sitecookies isolearje</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings for tracking content -->
     <string name="preference_enhanced_tracking_protection_custom_tracking_content">Folchynhâld</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
@@ -1322,8 +1361,12 @@
     <string name="etp_social_media_trackers_description">Behein de mooglikheid fan sosjale netwurken om jo sneupaktiviteit op ynternet te folgjen.</string>
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_title">Cross-site-trackingcookies</string>
+    <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_title_2">Cross-sitecookies</string>
     <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_description">Blokkearret cookies dy’t advertinsjenetwurken en analysebedriuwen brûke om jo sneupgegevens op in protte websites te sammeljen.</string>
+    <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_description_2">Totale cookiebeskerming isolearret cookies yn op de website dy’t jo besykje, sadat trackers lykas advertinsjenetwurken se net brûke kinne om jo oer websites hinne te folgjen.</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_title">Cryptominers</string>
     <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
@@ -1586,8 +1629,6 @@
     <string name="addresses_edit_address">Adres bewurkje</string>
     <!-- Title of the "Manage addresses" screen -->
     <string name="addresses_manage_addresses">Adressen beheare</string>
-    <!-- The header for the full name of an address -->
-    <string moz:removedIn="102" name="addresses_full_name" tools:ignore="UnusedResources">Folsleine namme</string>
     <!-- The header for the first name of an address -->
     <string name="addresses_first_name">Foarnamme</string>
     <!-- The header for the middle name of an address -->
