@@ -46,7 +46,7 @@ def add_variants(config, tasks):
 
     tests = list(tasks)
 
-    for dep_task in config.kind_dependencies_tasks:
+    for dep_task in config.kind_dependencies_tasks.values():
         build_type = dep_task.attributes.get("build-type", "")
         if build_type not in only_types:
             continue
@@ -142,6 +142,28 @@ def build_browsertime_task(config, tasks):
         task["name"] = (
             task["name"].replace("tp6m-", "tp6m-{}-".format(symbol)).replace("-hv", "")
         )
+        yield task
+
+
+@transforms.add
+def setup_nofis(config, tasks):
+    for task in tasks:
+        if task.pop("run-with-fission", False):
+            # Don't continue after this since this flag says
+            # that a fission and a non-fission variant should
+            # run
+            fission_task = copy.deepcopy(task)
+            yield fission_task
+
+        # Disable fission
+        task["run"]["command"].append("--disable-fission")
+
+        # Build taskcluster group and symol
+        task["treeherder"]["symbol"] = (
+            task["treeherder"]["symbol"].replace("Btime", "Btime-nofis")
+        )
+        task["name"] += "-nofis"
+
         yield task
 
 

@@ -23,6 +23,7 @@ import org.mozilla.fenix.home.OnboardingState
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
 import org.mozilla.fenix.onboarding.JumpBackInCFRDialog
+import org.mozilla.fenix.onboarding.SyncCFRPresenter
 import org.mozilla.fenix.utils.Settings
 
 // This method got a little complex with the addition of the tab tray feature flag
@@ -171,13 +172,6 @@ private fun AppState.toAdapterList(settings: Settings): List<AdapterItem> = when
     is Mode.Onboarding -> onboardingAdapterItems(mode.state)
 }
 
-@VisibleForTesting
-internal fun AppState.shouldShowHomeOnboardingDialog(settings: Settings): Boolean {
-    val isAnySectionsVisible = recentTabs.isNotEmpty() || recentBookmarks.isNotEmpty() ||
-        recentHistory.isNotEmpty() || pocketStories.isNotEmpty()
-    return isAnySectionsVisible && !settings.hasShownHomeOnboardingDialog
-}
-
 private fun collectionTabItems(collection: TabCollection) =
     collection.tabs.mapIndexed { index, tab ->
         AdapterItem.TabInCollectionItem(collection, tab, index == collection.tabs.lastIndex)
@@ -205,13 +199,21 @@ class SessionControlView(
                     super.onLayoutCompleted(state)
 
                     JumpBackInCFRDialog(view).showIfNeeded()
+
+                    if (context.settings().showSyncCFR) {
+                        SyncCFRPresenter(
+                            context = context,
+                            recyclerView = view,
+                        ).showSyncCFR()
+                        context.settings().showSyncCFR = false
+                    }
                 }
             }
         }
     }
 
     fun update(state: AppState, shouldReportMetrics: Boolean = false) {
-        if (state.shouldShowHomeOnboardingDialog(view.context.settings())) {
+        if (view.context.settings().showHomeOnboardingDialog) {
             interactor.showOnboardingDialog()
         }
 

@@ -43,7 +43,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.nimbus.HomeScreenSection
-import org.mozilla.fenix.nimbus.OnboardingSection
+import org.mozilla.fenix.nimbus.Mr2022Section
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
 import org.mozilla.fenix.settings.logins.SavedLoginsSortingStrategyMenu
@@ -212,7 +212,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val showWallpaperOnboarding by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_wallpapers_onboarding),
         featureFlag = FeatureFlags.wallpaperOnboardingEnabled,
-        default = { onboardScreenSection[OnboardingSection.WALLPAPERS] == true },
+        default = { mr2022Sections[Mr2022Section.WALLPAPERS_SELECTION_TOOL] == true },
     )
 
     var openLinksInAPrivateTab by booleanPreference(
@@ -585,11 +585,26 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     val enabledTotalCookieProtection: Boolean
-        get() = FxNimbus.features.engineSettings.value().totalCookieProtectionEnabled
+        get() = mr2022Sections[Mr2022Section.TCP_FEATURE] == true
+
+    val enabledTotalCookieProtectionSetting: Boolean
+        get() = mr2022Sections[Mr2022Section.TCP_FEATURE] == true
+
+    /**
+     * Indicates if the total cookie protection CRF should be shown.
+     */
+    var shouldShowTotalCookieProtectionCFR by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_total_cookie_protection_popup),
+        default = mr2022Sections[Mr2022Section.TCP_CFR] == true,
+    )
 
     val blockCookiesSelectionInCustomTrackingProtection by stringPreference(
-        appContext.getPreferenceKey(R.string.pref_key_tracking_protection_custom_cookies_select),
-        appContext.getString(R.string.social)
+        key = appContext.getPreferenceKey(R.string.pref_key_tracking_protection_custom_cookies_select),
+        default = if (enabledTotalCookieProtectionSetting) {
+            appContext.getString(R.string.total_protection)
+        } else {
+            appContext.getString(R.string.social)
+        }
     )
 
     val blockTrackingContentInCustomTrackingProtection by booleanPreference(
@@ -792,14 +807,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
-    /**
-     * Indicates if the home onboarding dialog has already shown before.
-     */
-    var hasShownHomeOnboardingDialog by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_has_shown_home_onboarding),
-        default = false
-    )
-
     fun incrementVisitedInstallableCount() = pwaInstallableVisitCount.increment()
 
     @VisibleForTesting(otherwise = PRIVATE)
@@ -878,7 +885,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var shouldShowJumpBackInCFR by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_should_show_jump_back_in_tabs_popup),
         featureFlag = FeatureFlags.showJumpBackInCFR,
-        default = { onboardScreenSection[OnboardingSection.JUMP_BACK_IN_CFR] == true },
+        default = { mr2022Sections[Mr2022Section.JUMP_BACK_IN_CFR] == true },
     )
 
     fun getSitePermissionsPhoneFeatureAction(
@@ -1212,8 +1219,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false
     )
 
-    private val onboardScreenSection: Map<OnboardingSection, Boolean> get() =
-        FxNimbus.features.onboarding.value().sectionsEnabled
+    private val mr2022Sections: Map<Mr2022Section, Boolean> get() =
+        FxNimbus.features.mr2022.value().sectionsEnabled
 
     private val homescreenSections: Map<HomeScreenSection, Boolean> get() =
         FxNimbus.features.homescreen.value().sectionsEnabled
@@ -1231,7 +1238,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var showSyncCFR by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_should_show_sync_cfr),
         featureFlag = FeatureFlags.showSynCFR,
-        default = { onboardScreenSection[OnboardingSection.SYNC_CFR] == true },
+        default = { mr2022Sections[Mr2022Section.SYNC_CFR] == true },
     )
 
     /**
@@ -1240,7 +1247,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var showHomeOnboardingDialog by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_should_show_home_onboarding_dialog),
         featureFlag = FeatureFlags.showHomeOnboarding,
-        default = { onboardScreenSection[OnboardingSection.HOME_ONBOARDING_DIALOG] == true },
+        default = { mr2022Sections[Mr2022Section.HOME_ONBOARDING_DIALOG_EXISTING_USERS] == true },
     )
 
     /**
@@ -1249,7 +1256,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var showFirstRunOnboardingUpdate by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_show_first_run_onboarding_update),
         featureFlag = FeatureFlags.showFirstRunOnboardingUpdates,
-        default = { onboardScreenSection[OnboardingSection.FIRST_RUN_ONBOARDING] == true },
+        default = { mr2022Sections[Mr2022Section.HOME_ONBOARDING_DIALOG_NEW_USERS] == true },
     )
 
     /**
