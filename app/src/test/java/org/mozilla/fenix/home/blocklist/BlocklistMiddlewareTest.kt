@@ -13,13 +13,16 @@ import mozilla.components.support.test.middleware.CaptureActionsMiddleware
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.utils.Settings
 
+@RunWith(FenixRobolectricTestRunner::class)
 class BlocklistMiddlewareTest {
     private val mockSettings: Settings = mockk()
     private val blocklistHandler = BlocklistHandler(mockSettings)
@@ -170,6 +173,7 @@ class BlocklistMiddlewareTest {
             listOf(RecentTab.Tab(createTab(url = blockedUrl)), unblockedRecentTab)
 
         every { mockSettings.homescreenBlocklist } returns setOf(blockedUrl.stripAndHash())
+        every { mockSettings.frecencyFilterQuery } returns ""
         val middleware = BlocklistMiddleware(blocklistHandler)
         val store = AppStore(
             AppState(),
