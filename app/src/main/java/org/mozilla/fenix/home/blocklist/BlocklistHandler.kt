@@ -4,8 +4,10 @@
 
 package org.mozilla.fenix.home.blocklist
 
+import android.net.Uri
 import androidx.annotation.VisibleForTesting
 import mozilla.components.support.ktx.kotlin.sha1
+import org.mozilla.fenix.ext.containsQueryParameters
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
@@ -15,6 +17,8 @@ import org.mozilla.fenix.utils.Settings
  * Class for interacting with the a blocklist stored in [settings].
  * The blocklist is a set of SHA1 hashed URLs, which are stripped
  * of protocols and common subdomains like "www" or "mobile".
+ *
+ * Also used for filtering the sponsored URLs.
  */
 class BlocklistHandler(private val settings: Settings) {
 
@@ -52,6 +56,57 @@ class BlocklistHandler(private val settings: Settings) {
         }
 
     /**
+<<<<<<< HEAD
+=======
+     * Filter a list of recent tabs from sponsored urls.
+     */
+    @JvmName("filterContileRecentTab")
+    fun List<RecentTab>.filterContile(): List<RecentTab> = filterNot {
+        it is RecentTab.Tab &&
+            Uri.parse(it.state.content.url).containsQueryParameters(settings.frecencyFilterQuery)
+    }
+    /**
+     * If the state is set to [RecentSyncedTabState.Success], filter the list of recently synced
+     * tabs by the blocklist. If the filtered list of tabs is empty, change the state to
+     * [RecentSyncedTabState.None]
+     */
+    @JvmName("filterRecentSyncedTabState")
+    fun RecentSyncedTabState.filteredByBlocklist() =
+        if (this is RecentSyncedTabState.Success) {
+            val filteredTabs = settings.homescreenBlocklist.let { blocklist ->
+                this.tabs.filterNot {
+                    blocklistContainsUrl(blocklist, it.url)
+                }
+            }
+            if (filteredTabs.isEmpty()) {
+                RecentSyncedTabState.None
+            } else {
+                RecentSyncedTabState.Success(filteredTabs)
+            }
+        } else {
+            this
+        }
+
+    /**
+     * Filter a list of recently synced tabs of sponsored urls if the state is
+     * [RecentSyncedTabState.Success].
+     */
+    @JvmName("filterContileRecentSyncedTab")
+    fun RecentSyncedTabState.filterContile() = if (this is RecentSyncedTabState.Success) {
+        val filteredTabs = this.tabs.filterNot {
+            Uri.parse(it.url).containsQueryParameters(settings.frecencyFilterQuery)
+        }
+        if (filteredTabs.isEmpty()) {
+            RecentSyncedTabState.None
+        } else {
+            RecentSyncedTabState.Success(filteredTabs)
+        }
+    } else {
+        this
+    }
+
+    /**
+>>>>>>> cedb77765 (For #26706 - Add sponsored urls filter in BlocklistHandler)
      * Filter a list of recent history items by the blocklist. Requires this class to be contextually
      * in a scope.
      */
@@ -63,6 +118,15 @@ class BlocklistHandler(private val settings: Settings) {
                     blocklistContainsUrl(blocklist, it.url)
             }
         }
+
+    /**
+     * Filter a list of recently visited history items of sponsored urls.
+     */
+    @JvmName("filterContileRecentlyVisited")
+    fun List<RecentlyVisitedItem>.filterContile(): List<RecentlyVisitedItem> = filterNot {
+        it is RecentlyVisitedItem.RecentHistoryHighlight &&
+            Uri.parse(it.url).containsQueryParameters(settings.frecencyFilterQuery)
+    }
 
     private fun blocklistContainsUrl(blocklist: Set<String>, url: String): Boolean =
         blocklist.any { it == url.stripAndHash() }

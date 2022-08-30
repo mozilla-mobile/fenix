@@ -170,8 +170,14 @@ fun AppState.filterState(blocklistHandler: BlocklistHandler): AppState =
     with(blocklistHandler) {
         copy(
             recentBookmarks = recentBookmarks.filteredByBlocklist(),
+<<<<<<< HEAD
             recentTabs = recentTabs.filteredByBlocklist(),
             recentHistory = recentHistory.filteredByBlocklist()
+=======
+            recentTabs = recentTabs.filteredByBlocklist().filterContile(),
+            recentHistory = recentHistory.filteredByBlocklist().filterContile(),
+            recentSyncedTabState = recentSyncedTabState.filteredByBlocklist().filterContile()
+>>>>>>> cedb77765 (For #26706 - Add sponsored urls filter in BlocklistHandler)
         )
     }
 
