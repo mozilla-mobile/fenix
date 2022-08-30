@@ -8,12 +8,16 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import mozilla.components.lib.state.ext.observeAsComposableState
 import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.theme.FirefoxTheme
+import org.mozilla.fenix.wallpapers.Wallpaper
+import org.mozilla.fenix.wallpapers.WallpaperState
 
 /**
  * Default layout for the header of a screen section.
@@ -43,9 +47,34 @@ fun SectionHeader(
 }
 
 @Composable
-@Preview
-private fun HeadingTextPreview() {
+@Preview("with default wallpaper")
+private fun DefaultWallpaperHeadingTextPreview() {
     FirefoxTheme {
         SectionHeader(text = "Section title", appStore = AppStore())
     }
+}
+
+@Composable
+@Preview("with custom wallpaper", showBackground = true, backgroundColor = 0xffffff)
+private fun CustomWallpaperHeadingTextPreview() {
+    FirefoxTheme {
+        SectionHeader(text = "Section title", appStore = provideCustomWallpaperAppStore())
+    }
+}
+
+private fun provideCustomWallpaperAppStore(): AppStore {
+    return AppStore(
+        AppState(
+            wallpaperState = WallpaperState(
+                Wallpaper(
+                    "custom",
+                    Wallpaper.DefaultCollection.copy(name = "custom collection"),
+                    @Suppress("MagicNumber") // a color is not a magic number.
+                    Color(0xFFBB86FC).toArgb().toLong(),
+                    0
+                ),
+                emptyList()
+            )
+        )
+    )
 }
