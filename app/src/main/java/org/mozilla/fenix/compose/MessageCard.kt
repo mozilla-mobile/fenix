@@ -72,7 +72,7 @@ fun MessageCard(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    SectionHeader(
+                    SimpleHeader(
                         text = title,
                         modifier = Modifier
                             .weight(1f)

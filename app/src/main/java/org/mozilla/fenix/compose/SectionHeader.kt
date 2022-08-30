@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import mozilla.components.lib.state.ext.observeAsComposableState
 import org.mozilla.fenix.components.AppStore
@@ -36,13 +35,10 @@ fun SectionHeader(
 
     val wallpaperAdaptedTextColor = wallpaperState?.currentWallpaper?.textColor?.let { Color(it) }
 
-    Text(
+    SimpleHeader(
         text = text,
         modifier = modifier,
         color = wallpaperAdaptedTextColor ?: FirefoxTheme.colors.textPrimary,
-        overflow = TextOverflow.Ellipsis,
-        maxLines = 2,
-        style = FirefoxTheme.typography.headline7
     )
 }
 
