@@ -26,7 +26,6 @@ import androidx.constraintlayout.widget.ConstraintSet.PARENT_ID
 import androidx.constraintlayout.widget.ConstraintSet.TOP
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
@@ -45,9 +44,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import mozilla.components.browser.menu.view.MenuButton
 import mozilla.components.browser.state.selector.findTab
@@ -67,7 +64,6 @@ import mozilla.components.feature.top.sites.TopSitesFrecencyConfig
 import mozilla.components.feature.top.sites.TopSitesProviderConfig
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.consumeFrom
-import mozilla.components.lib.state.ext.flow
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
@@ -91,7 +87,6 @@ import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
-import org.mozilla.fenix.ext.scaleToBottomOfView
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.gleanplumb.DefaultMessageController
 import org.mozilla.fenix.gleanplumb.MessagingFeature
@@ -114,11 +109,11 @@ import org.mozilla.fenix.home.topsites.DefaultTopSitesView
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
+import org.mozilla.fenix.perf.runBlockingIncrement
 import org.mozilla.fenix.tabstray.TabsTrayAccessPoint
 import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
 import org.mozilla.fenix.utils.ToolbarPopupWindow
 import org.mozilla.fenix.utils.allowUndo
-import org.mozilla.fenix.wallpapers.Wallpaper
 import java.lang.ref.WeakReference
 import kotlin.math.min
 
@@ -166,6 +161,8 @@ class HomeFragment : Fragment() {
     private var sessionControlView: SessionControlView? = null
     private var appBarLayout: AppBarLayout? = null
     private lateinit var currentMode: CurrentMode
+    @VisibleForTesting
+    internal lateinit var wallpapersObserver: WallpapersObserver
 
     private val topSitesFeature = ViewBoundFeatureWrapper<TopSitesFeature>()
     private val messagingFeature = ViewBoundFeatureWrapper<MessagingFeature>()
@@ -210,6 +207,16 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val activity = activity as HomeActivity
         val components = requireComponents
+
+        if (shouldEnableWallpaper()) {
+            wallpapersObserver = WallpapersObserver(
+                appStore = components.appStore,
+                wallpapersUseCases = components.useCases.wallpaperUseCases,
+                wallpaperImageView = binding.wallpaperImageView,
+            ).also {
+                viewLifecycleOwner.lifecycle.addObserver(it)
+            }
+        }
 
         currentMode = CurrentMode(
             requireContext(),
@@ -390,12 +397,6 @@ class HomeFragment : Fragment() {
 
         FxNimbus.features.homescreen.recordExposure()
 
-        displayWallpaperIfEnabled()
-
-        binding.root.doOnPreDraw {
-            requireComponents.appStore.dispatch(AppAction.UpdateFirstFrameDrawn(drawn = true))
-        }
-
         // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL!
         requireComponents.core.engine.profiler?.addMarker(
             MarkersFragmentLifecycleCallbacks.MARKER_NAME, profilerStartTime, "HomeFragment.onCreateView",
@@ -407,6 +408,17 @@ class HomeFragment : Fragment() {
         super.onConfigurationChanged(newConfig)
 
         getMenuButton()?.dismissMenu()
+
+        if (shouldEnableWallpaper()) {
+            // Setting the wallpaper is a potentially expensive operation - can take 100ms.
+            // Running this on the Main thread helps to ensure that the just updated configuration
+            // will be used when the wallpaper is scaled to match.
+            // Otherwise the portrait wallpaper may remain shown on landscape,
+            // see https://github.com/mozilla-mobile/fenix/issues/26638
+            runBlockingIncrement {
+                wallpapersObserver.applyCurrentWallpaper()
+            }
+        }
     }
 
     /**
@@ -923,31 +935,8 @@ class HomeFragment : Fragment() {
             ?.isVisible = tabCount > 0
     }
 
-    private fun displayWallpaperIfEnabled() {
-        if (shouldEnableWallpaper()) {
-            requireComponents.appStore.flow()
-                .ifChanged { state -> state.wallpaperState.currentWallpaper }
-                .onEach { state ->
-                    // We only want to update the wallpaper when it's different from the default one
-                    // as the default is applied already on xml by default.
-                    when (val currentWallpaper = state.wallpaperState.currentWallpaper) {
-                        Wallpaper.Default -> {
-                            binding.wallpaperImageView.visibility = View.GONE
-                        }
-                        else -> {
-                            val bitmap = requireComponents.useCases.wallpaperUseCases.loadBitmap(currentWallpaper)
-                            bitmap?.let {
-                                it.scaleToBottomOfView(binding.wallpaperImageView)
-                                binding.wallpaperImageView.visibility = View.VISIBLE
-                            }
-                        }
-                    }
-                }
-                .launchIn(viewLifecycleOwner.lifecycleScope)
-        }
-    }
-
-    private fun shouldEnableWallpaper() =
+    @VisibleForTesting
+    internal fun shouldEnableWallpaper() =
         (activity as? HomeActivity)?.themeManager?.currentTheme?.isPrivate?.not() ?: false
 
     companion object {
