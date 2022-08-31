@@ -14,8 +14,8 @@ class OnboardingHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     init {
         val binding = OnboardingHeaderBinding.bind(view)
 
-        val appName = view.context.getString(R.string.app_name)
-        binding.headerText.text = view.context.getString(R.string.onboarding_header, appName)
+        binding.headerText.text = view.context.getString(R.string.new_onboarding_header)
+        binding.subheaderText.text = view.context.getString(R.string.onboarding_message)
     }
 
     companion object {

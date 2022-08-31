@@ -19,6 +19,7 @@ class OnboardingFinishViewHolder(
 
     init {
         val binding = OnboardingFinishBinding.bind(view)
+        binding.headerText.text = view.context.getString(R.string.onboarding_conclusion_header)
         binding.finishButton.setOnClickListener {
             interactor.onStartBrowsingClicked()
             Onboarding.finish.record(NoExtras())

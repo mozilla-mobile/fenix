@@ -19,10 +19,10 @@ class OnboardingPrivacyNoticeViewHolder(
 
     init {
         val binding = OnboardingPrivacyNoticeBinding.bind(view)
-        binding.headerText.setOnboardingIcon(R.drawable.ic_info)
 
-        val appName = view.context.getString(R.string.app_name)
-        binding.descriptionText.text = view.context.getString(R.string.onboarding_privacy_notice_description2, appName)
+        binding.headerText.text = view.context.getString(R.string.onboarding_privacy_notice_header_1)
+
+        binding.descriptionText.text = view.context.getString(R.string.onboarding_privacy_notice_description)
 
         binding.readButton.setOnClickListener {
             Onboarding.privacyNotice.record(NoExtras())

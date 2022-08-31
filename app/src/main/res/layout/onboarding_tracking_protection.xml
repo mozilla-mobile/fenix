@@ -19,8 +19,9 @@
         android:drawablePadding="12dp"
         android:gravity="center_vertical"
         android:lines="1"
-        android:text="@string/onboarding_tracking_protection_header_3"
+        android:text="@string/onboarding_tracking_protection_header"
         android:textAppearance="@style/HeaderTextStyle"
+        android:letterSpacing="0.05"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,12 +31,12 @@
         android:id="@+id/description_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:textAppearance="@style/Body14TextStyle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header_text"
-        tools:text="@string/onboarding_tracking_protection_description_4" />
+        tools:text="@string/onboarding_tracking_protection_description" />
 
 
     <org.mozilla.fenix.onboarding.OnboardingRadioButton
@@ -48,7 +49,7 @@
         android:background="@android:color/transparent"
         android:checked="true"
         android:foreground="@drawable/rounded_ripple"
-        android:gravity="top"
+        android:gravity="center_vertical"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:theme="@style/Checkable.Colored"
@@ -69,7 +70,7 @@
         android:background="@android:color/transparent"
         android:checked="false"
         android:foreground="@drawable/rounded_ripple"
-        android:gravity="top"
+        android:gravity="center_vertical"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:textColor="@color/primary_state_list_text_color"
