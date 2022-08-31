@@ -13,6 +13,7 @@ import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.cfr.CFRPopup
 import org.mozilla.fenix.compose.cfr.CFRPopupProperties
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.recentsyncedtabs.view.RecentSyncedTabViewHolder
 
 /**
@@ -57,6 +58,7 @@ class SyncCFRPresenter(
                 show()
                 Onboarding.synCfrShown.record(NoExtras())
             }
+            context.settings().showSyncCFR = false
         }
     }
 

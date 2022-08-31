@@ -224,7 +224,6 @@ class SessionControlView(
                             context = context,
                             recyclerView = view,
                         ).showSyncCFR()
-                        context.settings().showSyncCFR = false
                     }
 
                     // We want some parts of the home screen UI to be rendered first if they are
