@@ -217,14 +217,15 @@ class SessionControlView(
                 override fun onLayoutCompleted(state: RecyclerView.State?) {
                     super.onLayoutCompleted(state)
 
-                    JumpBackInCFRDialog(view).showIfNeeded()
-
-                    if (context.settings().showSyncCFR) {
-                        SyncCFRPresenter(
-                            context = context,
-                            recyclerView = view,
-                        ).showSyncCFR()
-                        context.settings().showSyncCFR = false
+                    if (!context.settings().showHomeOnboardingDialog) {
+                        if (context.settings().shouldShowJumpBackInCFR) {
+                            JumpBackInCFRDialog(view).showIfNeeded()
+                        } else if (context.settings().showSyncCFR) {
+                            SyncCFRPresenter(
+                                context = context,
+                                recyclerView = view,
+                            ).showSyncCFR()
+                        }
                     }
 
                     // We want some parts of the home screen UI to be rendered first if they are
