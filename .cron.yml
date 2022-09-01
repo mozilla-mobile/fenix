@@ -17,8 +17,7 @@ jobs:
           type: decision-task
           treeherder-symbol: Nt
           target-tasks-method: nightly-test
-      when:
-          - {hour: 5, minute: 0}
+      when: []
     - name: fennec-production
       job:
           type: decision-task
