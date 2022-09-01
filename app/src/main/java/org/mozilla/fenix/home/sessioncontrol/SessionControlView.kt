@@ -23,6 +23,7 @@ import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
+import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.onboarding.JumpBackInCFRDialog
 import org.mozilla.fenix.onboarding.SyncCFRPresenter
 import org.mozilla.fenix.utils.Settings
@@ -184,10 +185,21 @@ private fun collectionTabItems(collection: TabCollection) =
         AdapterItem.TabInCollectionItem(collection, tab, index == collection.tabs.lastIndex)
     }
 
+/**
+ * Shows a list of Home screen views.
+ *
+ * @param containerView The [View] that is used to initialize the Home recycler view.
+ * @param viewLifecycleOwner [LifecycleOwner] for the view.
+ * @property interactor [SessionControlInteractor] which will have delegated to all user
+ * interactions.
+ * @property onboarding [FenixOnboarding] that is used to determine whether or not the user has
+ * been onboarded.
+ */
 class SessionControlView(
-    val containerView: View,
+    containerView: View,
     viewLifecycleOwner: LifecycleOwner,
-    internal val interactor: SessionControlInteractor
+    private val interactor: SessionControlInteractor,
+    private val onboarding: FenixOnboarding,
 ) {
 
     val view: RecyclerView = containerView as RecyclerView
@@ -205,14 +217,15 @@ class SessionControlView(
                 override fun onLayoutCompleted(state: RecyclerView.State?) {
                     super.onLayoutCompleted(state)
 
-                    JumpBackInCFRDialog(view).showIfNeeded()
-
-                    if (context.settings().showSyncCFR) {
-                        SyncCFRPresenter(
-                            context = context,
-                            recyclerView = view,
-                        ).showSyncCFR()
-                        context.settings().showSyncCFR = false
+                    if (!context.settings().showHomeOnboardingDialog) {
+                        if (context.settings().shouldShowJumpBackInCFR) {
+                            JumpBackInCFRDialog(view).showIfNeeded()
+                        } else if (context.settings().showSyncCFR) {
+                            SyncCFRPresenter(
+                                context = context,
+                                recyclerView = view,
+                            ).showSyncCFR()
+                        }
                     }
 
                     // We want some parts of the home screen UI to be rendered first if they are
@@ -229,7 +242,7 @@ class SessionControlView(
     }
 
     fun update(state: AppState, shouldReportMetrics: Boolean = false) {
-        if (view.context.settings().showHomeOnboardingDialog) {
+        if (view.context.settings().showHomeOnboardingDialog && onboarding.userHasBeenOnboarded()) {
             interactor.showOnboardingDialog()
         }
 
