@@ -26,14 +26,11 @@ class JumpBackInCFRDialog(val recyclerView: RecyclerView) {
      * Try to show the crf dialog if it hasn't been shown before.
      */
     fun showIfNeeded() {
-        val jumpBackInView = findJumpBackInView()
-        jumpBackInView?.let {
-            val crfDialog = createJumpCRF(anchor = jumpBackInView)
-            crfDialog?.let {
-                val context = jumpBackInView.context
-                context.settings().shouldShowJumpBackInCFR = false
-                it.show()
-            }
+        findJumpBackInView()?.let { view ->
+            createJumpCRF(anchor = view)?.show()
+
+            view.context.settings().showSyncCFR = false
+            view.context.settings().shouldShowJumpBackInCFR = false
         }
     }
 
