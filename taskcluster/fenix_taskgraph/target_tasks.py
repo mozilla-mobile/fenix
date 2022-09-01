@@ -78,7 +78,7 @@ def target_tasks_nightly(full_task_graph, parameters, graph_config):
 
 
 @_target_task("nightly-test")
-def target_tasks_nightly(full_task_graph, parameters, graph_config):
+def target_tasks_nightly_test(full_task_graph, parameters, graph_config):
     """Select the set of tasks required for a nightly build."""
     def filter(task, parameters):
         return task.attributes.get("nightly-test", False)
