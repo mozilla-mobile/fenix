@@ -13,7 +13,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,7 +47,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -176,23 +174,13 @@ fun PocketSponsoredStory(
 
         Spacer(Modifier.height(9.dp))
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                painter = painterResource(id = R.drawable.pocket_star_stroke),
-                contentDescription = null,
-                tint = FirefoxTheme.colors.iconSecondary,
-            )
-
-            Spacer(Modifier.width(8.dp))
-
-            Text(
-                text = stringResource(R.string.pocket_stories_sponsor_indication),
-                color = FirefoxTheme.colors.textSecondary,
-                fontSize = 12.sp,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-            )
-        }
+        Text(
+            text = stringResource(R.string.pocket_stories_sponsor_indication),
+            color = FirefoxTheme.colors.textSecondary,
+            fontSize = 12.sp,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+        )
 
         Spacer(Modifier.height(7.dp))
 
@@ -221,7 +209,6 @@ fun PocketSponsoredStory(
 @Composable
 fun PocketStories(
     @PreviewParameter(PocketStoryProvider::class) stories: List<PocketStory>,
-    contentPadding: Dp,
     onStoryShown: (PocketStory, Pair<Int, Int>) -> Unit,
     onStoryClicked: (PocketStory, Pair<Int, Int>) -> Unit,
     onDiscoverMoreClicked: (String) -> Unit
@@ -234,7 +221,6 @@ fun PocketStories(
     val flingBehavior = EagerFlingBehavior(lazyRowState = listState)
 
     LazyRow(
-        contentPadding = PaddingValues(horizontal = contentPadding),
         state = listState,
         flingBehavior = flingBehavior,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -392,11 +378,13 @@ fun PocketStoriesCategories(
  * @param onLearnMoreClicked Callback invoked when the user clicks the "Learn more" link.
  * Contains the full URL for where the user should be navigated to.
  * @param modifier [Modifier] to be applied to the layout.
+ * @param textColor [Color] to be applied to the text.
  */
 @Composable
 fun PoweredByPocketHeader(
     onLearnMoreClicked: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    textColor: Color = FirefoxTheme.colors.textPrimary,
 ) {
     val link = stringResource(R.string.pocket_stories_feature_learn_more)
     val text = stringResource(R.string.pocket_stories_feature_caption, link)
@@ -425,14 +413,14 @@ fun PoweredByPocketHeader(
             Column {
                 Text(
                     text = stringResource(R.string.pocket_stories_feature_title),
-                    color = FirefoxTheme.colors.textPrimary,
+                    color = textColor,
                     fontSize = 12.sp,
                     lineHeight = 16.sp
                 )
 
                 ClickableSubstringLink(
                     text = text,
-                    textColor = FirefoxTheme.colors.textPrimary,
+                    textColor = textColor,
                     clickableStartIndex = linkStartIndex,
                     clickableEndIndex = linkEndIndex
                 ) {
@@ -451,7 +439,6 @@ private fun PocketStoriesComposablesPreview() {
             Column {
                 PocketStories(
                     stories = getFakePocketStories(8),
-                    contentPadding = 0.dp,
                     onStoryShown = { _, _ -> },
                     onStoryClicked = { _, _ -> },
                     onDiscoverMoreClicked = {}

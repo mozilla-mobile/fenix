@@ -32,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -40,10 +39,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
+import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.button.PrimaryButton
 import org.mozilla.fenix.compose.button.SecondaryButton
 import org.mozilla.fenix.theme.FirefoxTheme
+import org.mozilla.fenix.GleanMetrics.Onboarding as OnboardingMetrics
 
 /**
  * Enum that represents the onboarding screen that is displayed.
@@ -83,7 +84,16 @@ fun Onboarding(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End,
         ) {
-            IconButton(onClick = onDismiss) {
+            IconButton(
+                onClick = {
+                    if (onboardingState == OnboardingState.Welcome) {
+                        OnboardingMetrics.welcomeCloseClicked.record(NoExtras())
+                    } else {
+                        OnboardingMetrics.syncCloseClicked.record(NoExtras())
+                    }
+                    onDismiss()
+                }
+            ) {
                 Icon(
                     painter = painterResource(id = R.drawable.mozac_ic_close),
                     contentDescription = null,
@@ -99,6 +109,7 @@ fun Onboarding(
                 onboardingState = onboardingState,
                 isSyncSignIn = isSyncSignIn,
                 onGetStartedButtonClick = {
+                    OnboardingMetrics.welcomeGetStartedClicked.record(NoExtras())
                     if (isSyncSignIn) {
                         onDismiss()
                     } else {
@@ -106,14 +117,24 @@ fun Onboarding(
                     }
                 },
             )
+
+            OnboardingMetrics.welcomeCardImpression.record(NoExtras())
         } else if (onboardingState == OnboardingState.SyncSignIn) {
             OnboardingSyncSignInContent()
 
             OnboardingSyncSignInBottomContent(
                 onboardingState = onboardingState,
-                onSignInButtonClick = onSignInButtonClick,
-                onSkipButtonClick = onDismiss,
+                onSignInButtonClick = {
+                    OnboardingMetrics.syncSignInClicked.record(NoExtras())
+                    onSignInButtonClick()
+                },
+                onSkipButtonClick = {
+                    OnboardingMetrics.syncSkipClicked.record(NoExtras())
+                    onDismiss()
+                }
             )
+
+            OnboardingMetrics.syncCardImpression.record(NoExtras())
         }
     }
 }
@@ -147,9 +168,8 @@ private fun OnboardingWelcomeContent() {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_firefox),
+            painter = painterResource(id = R.drawable.ic_onboarding_welcome),
             contentDescription = null,
-            modifier = Modifier.size(109.dp),
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -179,16 +199,14 @@ private fun OnboardingSyncSignInContent() {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_scan),
+            painter = painterResource(id = R.drawable.ic_onboarding_sync),
             contentDescription = null,
-            modifier = Modifier.size(320.dp, 166.dp),
-            contentScale = ContentScale.FillBounds,
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = stringResource(id = R.string.onboarding_home_sync_title),
+            text = stringResource(id = R.string.onboarding_home_sync_title_2),
             color = FirefoxTheme.colors.textPrimary,
             textAlign = TextAlign.Center,
             style = FirefoxTheme.typography.headline5,

@@ -13,6 +13,7 @@ import mozilla.components.concept.fetch.isSuccess
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.wallpapers.Wallpaper.Companion.getLocalPath
 import java.io.File
+import java.lang.IllegalStateException
 
 /**
  * Can download wallpapers from a remote host.
@@ -36,41 +37,62 @@ class WallpaperDownloader(
      * and will be stored in the local path:
      * wallpapers/<wallpaper name>/<orientation>.png
      */
-    suspend fun downloadWallpaper(wallpaper: Wallpaper) = withContext(dispatcher) {
-        for (metadata in wallpaper.toMetadata()) {
-            val localFile = File(storageRootDirectory.absolutePath, metadata.localPath)
-            // Don't overwrite an asset if it exists
-            if (localFile.exists()) continue
-            val request = Request(
-                url = "$remoteHost/${metadata.remotePath}",
-                method = Request.Method.GET
-            )
-            Result.runCatching {
-                val response = client.fetch(request)
-                if (!response.isSuccess) {
-                    return@withContext
-                }
-                File(localFile.path.substringBeforeLast("/")).mkdirs()
-                response.body.useStream { input ->
-                    input.copyTo(localFile.outputStream())
-                }
-            }.onFailure {
-                // This should clean up any partial downloads
-                Result.runCatching {
-                    if (localFile.exists()) {
-                        localFile.delete()
-                    }
-                }
-            }
+    suspend fun downloadWallpaper(wallpaper: Wallpaper): Wallpaper.ImageFileState = withContext(dispatcher) {
+        val portraitResult = downloadAsset(wallpaper, Wallpaper.ImageType.Portrait)
+        val landscapeResult = downloadAsset(wallpaper, Wallpaper.ImageType.Landscape)
+        return@withContext if (portraitResult == Wallpaper.ImageFileState.Downloaded &&
+            landscapeResult == Wallpaper.ImageFileState.Downloaded
+        ) {
+            Wallpaper.ImageFileState.Downloaded
+        } else {
+            Wallpaper.ImageFileState.Error
         }
     }
 
-    private data class WallpaperMetadata(val remotePath: String, val localPath: String)
+    /**
+     * Downloads a thumbnail for a wallpaper from the network. This is expected to be found remotely
+     * at:
+     * <WALLPAPER_URL>/<collection name>/<wallpaper name>/thumbnail.png
+     * and stored locally at:
+     * wallpapers/<wallpaper name>/thumbnail.png
+     */
+    suspend fun downloadThumbnail(wallpaper: Wallpaper): Wallpaper.ImageFileState = withContext(dispatcher) {
+        downloadAsset(wallpaper, Wallpaper.ImageType.Thumbnail)
+    }
 
-    private fun Wallpaper.toMetadata(): List<WallpaperMetadata> =
-        listOf(Wallpaper.ImageType.Portrait, Wallpaper.ImageType.Landscape).map { orientation ->
-            val localPath = getLocalPath(this.name, orientation)
-            val remotePath = "${collection.name}/${this.name}/${orientation.lowercase()}.png"
-            WallpaperMetadata(remotePath, localPath)
+    private suspend fun downloadAsset(
+        wallpaper: Wallpaper,
+        imageType: Wallpaper.ImageType
+    ): Wallpaper.ImageFileState = withContext(dispatcher) {
+        val localFile = File(storageRootDirectory, getLocalPath(wallpaper.name, imageType))
+        if (localFile.exists()) {
+            return@withContext Wallpaper.ImageFileState.Downloaded
         }
+
+        val remotePath = "${wallpaper.collection.name}/${wallpaper.name}/${imageType.lowercase()}.png"
+        val request = Request(
+            url = "$remoteHost/$remotePath",
+            method = Request.Method.GET
+        )
+
+        return@withContext Result.runCatching {
+            val response = client.fetch(request)
+            if (!response.isSuccess) {
+                throw IllegalStateException()
+            }
+            File(localFile.path.substringBeforeLast("/")).mkdirs()
+            response.body.useStream { input ->
+                input.copyTo(localFile.outputStream())
+            }
+            Wallpaper.ImageFileState.Downloaded
+        }.getOrElse {
+            // This should clean up any partial downloads
+            Result.runCatching {
+                if (localFile.exists()) {
+                    localFile.delete()
+                }
+            }
+            Wallpaper.ImageFileState.Error
+        }
+    }
 }

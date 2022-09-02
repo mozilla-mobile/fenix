@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.pocket.PocketStory
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
@@ -23,6 +24,7 @@ import org.mozilla.fenix.home.OnboardingState
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
 import org.mozilla.fenix.onboarding.JumpBackInCFRDialog
+import org.mozilla.fenix.onboarding.SyncCFRPresenter
 import org.mozilla.fenix.utils.Settings
 
 // This method got a little complex with the addition of the tab tray feature flag
@@ -40,7 +42,8 @@ internal fun normalModeAdapterItems(
     showRecentTab: Boolean,
     showRecentSyncedTab: Boolean,
     recentVisits: List<RecentlyVisitedItem>,
-    pocketStories: List<PocketStory>
+    pocketStories: List<PocketStory>,
+    firstFrameDrawn: Boolean = false,
 ): List<AdapterItem> {
     val items = mutableListOf<AdapterItem>()
     var shouldShowCustomizeHome = false
@@ -85,7 +88,11 @@ internal fun normalModeAdapterItems(
         showCollections(collections, expandedCollections, items)
     }
 
-    if (settings.showPocketRecommendationsFeature && pocketStories.isNotEmpty()) {
+    // When Pocket is enabled and the initial layout of the app is done, then we can add these items
+    // to render to the home screen.
+    // This is only useful while we have a RecyclerView + Compose implementation. We can remove this
+    // when we switch to a Compose-only home screen.
+    if (firstFrameDrawn && settings.showPocketRecommendationsFeature && pocketStories.isNotEmpty()) {
         shouldShowCustomizeHome = true
         items.add(AdapterItem.PocketStoriesItem)
         items.add(AdapterItem.PocketCategoriesItem)
@@ -165,7 +172,8 @@ private fun AppState.toAdapterList(settings: Settings): List<AdapterItem> = when
         shouldShowRecentTabs(settings),
         shouldShowRecentSyncedTabs(settings),
         recentHistory,
-        pocketStories
+        pocketStories,
+        firstFrameDrawn
     )
     is Mode.Private -> privateModeAdapterItems()
     is Mode.Onboarding -> onboardingAdapterItems(mode.state)
@@ -176,10 +184,18 @@ private fun collectionTabItems(collection: TabCollection) =
         AdapterItem.TabInCollectionItem(collection, tab, index == collection.tabs.lastIndex)
     }
 
+/**
+ * Shows a list of Home screen views.
+ *
+ * @param containerView The [View] that is used to initialize the Home recycler view.
+ * @param viewLifecycleOwner [LifecycleOwner] for the view.
+ * @property interactor [SessionControlInteractor] which will have delegated to all user
+ * interactions.
+ */
 class SessionControlView(
-    val containerView: View,
+    containerView: View,
     viewLifecycleOwner: LifecycleOwner,
-    internal val interactor: SessionControlInteractor
+    private val interactor: SessionControlInteractor,
 ) {
 
     val view: RecyclerView = containerView as RecyclerView
@@ -197,17 +213,33 @@ class SessionControlView(
                 override fun onLayoutCompleted(state: RecyclerView.State?) {
                     super.onLayoutCompleted(state)
 
-                    JumpBackInCFRDialog(view).showIfNeeded()
+                    if (!context.settings().showHomeOnboardingDialog) {
+                        if (context.settings().showSyncCFR) {
+                            SyncCFRPresenter(
+                                context = context,
+                                recyclerView = view,
+                            ).showSyncCFR()
+                        }
+
+                        if (context.settings().shouldShowJumpBackInCFR) {
+                            JumpBackInCFRDialog(view).showIfNeeded()
+                        }
+                    }
+
+                    // We want some parts of the home screen UI to be rendered first if they are
+                    // the most prominent parts of the visible part of the screen.
+                    // For this reason, we wait for the home screen recycler view to finish it's
+                    // layout and post an update for when it's best for non-visible parts of the
+                    // home screen to render itself.
+                    containerView.context.components.appStore.dispatch(
+                        AppAction.UpdateFirstFrameDrawn(true)
+                    )
                 }
             }
         }
     }
 
     fun update(state: AppState, shouldReportMetrics: Boolean = false) {
-        if (view.context.settings().showHomeOnboardingDialog) {
-            interactor.showOnboardingDialog()
-        }
-
         if (shouldReportMetrics) interactor.reportSessionMetrics(state)
 
         sessionControlAdapter.submitList(state.toAdapterList(view.context.settings()))

@@ -40,8 +40,8 @@ import org.mozilla.fenix.wallpapers.Wallpaper
 @Composable
 fun HomeSectionHeader(
     headerText: String,
-    description: String,
-    onShowAllClick: () -> Unit
+    description: String = "",
+    onShowAllClick: (() -> Unit)? = null
 ) {
     if (inComposePreview) {
         HomeSectionHeaderContent(
@@ -53,16 +53,19 @@ fun HomeSectionHeader(
         val wallpaperState = components.appStore
             .observeAsComposableState { state -> state.wallpaperState }.value
 
+        val wallpaperAdaptedTextColor = wallpaperState?.currentWallpaper?.textColor?.let { Color(it) }
+
         val isWallpaperDefault =
             (wallpaperState?.currentWallpaper ?: Wallpaper.Default) == Wallpaper.Default
 
         HomeSectionHeaderContent(
             headerText = headerText,
+            textColor = wallpaperAdaptedTextColor ?: FirefoxTheme.colors.textPrimary,
             description = description,
             showAllTextColor = if (isWallpaperDefault) {
                 FirefoxTheme.colors.textAccent
             } else {
-                FirefoxTheme.colors.textPrimary
+                wallpaperAdaptedTextColor ?: FirefoxTheme.colors.textAccent
             },
             onShowAllClick = onShowAllClick,
         )
@@ -80,32 +83,36 @@ fun HomeSectionHeader(
 @Composable
 private fun HomeSectionHeaderContent(
     headerText: String,
-    description: String,
+    textColor: Color = FirefoxTheme.colors.textPrimary,
+    description: String = "",
     showAllTextColor: Color = FirefoxTheme.colors.textAccent,
-    onShowAllClick: () -> Unit,
+    onShowAllClick: (() -> Unit)? = null,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
     ) {
         SectionHeader(
             text = headerText,
+            textColor = textColor,
             modifier = Modifier
                 .weight(1f)
                 .wrapContentHeight(align = Alignment.Top)
         )
 
-        ClickableText(
-            text = AnnotatedString(text = stringResource(id = R.string.recent_tabs_show_all)),
-            modifier = Modifier.padding(start = 16.dp)
-                .semantics {
-                    contentDescription = description
-                },
-            style = TextStyle(
-                color = showAllTextColor,
-                fontSize = 14.sp
-            ),
-            onClick = { onShowAllClick() }
-        )
+        onShowAllClick?.let {
+            ClickableText(
+                text = AnnotatedString(text = stringResource(id = R.string.recent_tabs_show_all)),
+                modifier = Modifier.padding(start = 16.dp)
+                    .semantics {
+                        contentDescription = description
+                    },
+                style = TextStyle(
+                    color = showAllTextColor,
+                    fontSize = 14.sp
+                ),
+                onClick = { onShowAllClick() }
+            )
+        }
     }
 }
 
@@ -116,7 +123,6 @@ private fun HomeSectionsHeaderPreview() {
         HomeSectionHeader(
             headerText = stringResource(R.string.recently_saved_title),
             description = stringResource(R.string.recently_saved_show_all_content_description_2),
-            onShowAllClick = {}
         )
     }
 }
