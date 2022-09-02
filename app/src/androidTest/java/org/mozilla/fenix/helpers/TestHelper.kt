@@ -115,6 +115,12 @@ object TestHelper {
         )
     }
 
+    fun waitUntilSnackbarGone() {
+        mDevice.findObject(
+            UiSelector().resourceId("$packageName:id/snackbar_layout")
+        ).waitUntilGone(waitingTime)
+    }
+
     fun verifyUrl(urlSubstring: String, resourceName: String, resId: Int) {
         waitUntilObjectIsFound(resourceName)
         mDevice.findObject(UiSelector().text(urlSubstring)).waitForExists(waitingTime)
