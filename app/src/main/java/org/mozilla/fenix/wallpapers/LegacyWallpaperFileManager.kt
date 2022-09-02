@@ -38,6 +38,8 @@ class LegacyWallpaperFileManager(
                 collection = Wallpaper.DefaultCollection,
                 textColor = null,
                 cardColor = null,
+                thumbnailFileState = Wallpaper.ImageFileState.Unavailable,
+                assetsFileState = Wallpaper.ImageFileState.Downloaded,
             )
         } else null
     }

@@ -191,6 +191,22 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
+     * A cache of the text color to use on text overlaying the current wallpaper.
+     */
+    var currentWallpaperTextColor by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_current_wallpaper_text_color),
+        default = 0
+    )
+
+    /**
+     * A cache of the background color to use on cards overlaying the current wallpaper.
+     */
+    var currentWallpaperCardColor by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_current_wallpaper_card_color),
+        default = 0
+    )
+
+    /**
      * Indicates if the wallpaper onboarding dialog should be shown.
      */
     val showWallpaperOnboarding by lazyFeatureFlagPreference(
@@ -1112,8 +1128,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = ""
     )
     /**
-     *  URLs from the user's history that contain this search param will be hidden
-     * from the top sites. The value is a string with one of the following forms:
+     *  URLs from the user's history that contain this search param will be hidden.
+     *  The value is a string with one of the following forms:
      * - "" (empty) - Disable this feature
      * - "key" - Search param named "key" with any or no value
      * - "key=" - Search param named "key" with no value
@@ -1121,7 +1137,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     val frecencyFilterQuery by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_frecency_filter_query),
-        default = "mfadid=adm"
+        default = "mfadid=adm" // Parameter provided by adM
     )
 
     /**
