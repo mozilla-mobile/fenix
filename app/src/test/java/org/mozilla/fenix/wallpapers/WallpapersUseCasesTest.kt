@@ -43,10 +43,15 @@ class WallpapersUseCasesTest {
         every { currentWallpaperTextColor = any() } just Runs
         every { currentWallpaperCardColor } returns 0L
         every { currentWallpaperCardColor = any() } just Runs
+        every { shouldMigrateLegacyWallpaper } returns false
+        every { shouldMigrateLegacyWallpaper = any() } just Runs
     }
     private val mockLegacyDownloader = mockk<LegacyWallpaperDownloader>(relaxed = true)
     private val mockLegacyFileManager = mockk<LegacyWallpaperFileManager> {
         every { clean(any(), any()) } just runs
+    }
+    private val mockMigrationHelper = mockk<LegacyWallpaperMigration> {
+        coEvery { migrateLegacyWallpaper(any()) } just runs
     }
 
     private val mockMetadataFetcher = mockk<WallpaperMetadataFetcher>()
@@ -253,6 +258,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -276,6 +282,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -303,6 +310,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -330,6 +338,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -357,6 +366,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             locale,
         ).invoke()
@@ -381,6 +391,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -405,6 +416,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -437,6 +449,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -461,6 +474,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -486,6 +500,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
