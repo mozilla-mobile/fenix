@@ -33,6 +33,7 @@ class SettingsSearchTest {
             dispatcher = AndroidAssetDispatcher()
             start()
         }
+        featureSettingsHelper.setTCPCFREnabled(false)
         featureSettingsHelper.setJumpBackCFREnabled(false)
     }
 

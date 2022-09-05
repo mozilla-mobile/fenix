@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ui
 
+import android.content.pm.PackageManager
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
@@ -16,7 +17,6 @@ import org.junit.Test
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
-import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.ui.robots.clickRateButtonGooglePlay
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -35,9 +35,9 @@ class SettingsAboutTest {
     @get:Rule
     val activityIntentTestRule = HomeActivityIntentTestRule()
 
-    @Rule
-    @JvmField
-    val retryTestRule = RetryTestRule(3)
+    // @Rule
+    // @JvmField
+    // val retryTestRule = RetryTestRule(3)
 
     @Before
     fun setUp() {
@@ -70,7 +70,10 @@ class SettingsAboutTest {
     // ABOUT
     @Test
     fun verifyRateOnGooglePlayRedirect() {
+        var context = InstrumentationRegistry.getInstrumentation().targetContext
+
         homeScreen {
+            println("Installed apps:" + context.packageManager.getInstalledApplications(PackageManager.GET_META_DATA))
         }.openThreeDotMenu {
         }.openSettings {
             clickRateButtonGooglePlay()

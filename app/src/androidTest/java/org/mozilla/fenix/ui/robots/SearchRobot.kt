@@ -7,6 +7,7 @@
 package org.mozilla.fenix.ui.robots
 
 import android.os.Build
+import android.util.Log
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.assertHasClickAction
@@ -121,8 +122,11 @@ class SearchRobot {
             UiSelector()
                 .resourceId("$packageName:id/search_engines_shortcut_button")
         )
+        Log.i("Andi", "Waiting for shortcuts button")
         searchEnginesShortcutButton.waitForExists(waitingTime)
+        Log.i("Andi", "Waited for shortcuts button")
         searchEnginesShortcutButton.click()
+        Log.i("Andi", "Clicked shortcuts button")
     }
 
     fun clickScanButton() {
@@ -260,16 +264,23 @@ class SearchRobot {
 
         fun submitQuery(query: String, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
+            Log.i("Andi", "Waiting for search wrapper")
             searchWrapper().waitForExists(waitingTime)
+            Log.i("Andi", "Waited for search wrapper")
             browserToolbarEditView().setText(query)
+            Log.i("Andi", "Set toolbar text to: $query")
             mDevice.pressEnter()
+            Log.i("Andi", "Press enter")
 
             runWithIdleRes(sessionLoadedIdlingResource) {
+                Log.i("Andi", "In runWithIdleRes")
+                Log.i("Andi", "Waiting to assert browser layout")
                 assertTrue(
                     mDevice.findObject(
                         UiSelector().resourceId("$packageName:id/browserLayout")
                     ).waitForExists(waitingTime)
                 )
+                Log.i("Andi", "Assert browser layout")
             }
 
             BrowserRobot().interact()
@@ -442,6 +453,7 @@ private fun assertEngineListShortcutContains(rule: ComposeTestRule, searchEngine
             .assertIsDisplayed()
             .assertHasClickAction()
     }
+    Log.i("Andi", "Asserted $searchEngineName is in the shortcut list")
 }
 
 private fun ComposeTestRule.selectDefaultSearchEngine(searchEngine: String) {
@@ -451,6 +463,8 @@ private fun ComposeTestRule.selectDefaultSearchEngine(searchEngine: String) {
         .assertExists()
         .assertIsDisplayed()
         .performClick()
+
+    Log.i("Andi", "Selected $searchEngine from the shortcut list")
 }
 
 private fun assertDefaultSearchEngine(expectedText: String) =

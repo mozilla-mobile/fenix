@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ui
 
+import android.content.pm.PackageManager
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
@@ -77,8 +78,10 @@ class SettingsAdvancedTest {
     fun openLinkInAppTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 3)
         val playStoreUrl = "play.google.com/store/apps/details?id=org.mozilla.fenix"
+        var context = InstrumentationRegistry.getInstrumentation().targetContext
 
         homeScreen {
+            println("Installed apps:" + context.packageManager.getInstalledApplications(PackageManager.GET_META_DATA))
         }.openThreeDotMenu {
         }.openSettings {
             verifyOpenLinksInAppsSwitchState(false)
