@@ -258,6 +258,18 @@ object TestHelper {
         }
     }
 
+    fun assertPlayStoreOpens() {
+        if (isPackageInstalled(Constants.PackageName.GOOGLE_PLAY_SERVICES)) {
+            try {
+                intended(toPackage(Constants.PackageName.GOOGLE_PLAY_SERVICES))
+            } catch (e: AssertionFailedError) {
+                BrowserRobot().verifyRateOnGooglePlayURL()
+            }
+        } else {
+            BrowserRobot().verifyRateOnGooglePlayURL()
+        }
+    }
+
     /**
      * Checks whether the latest activity of the application is used for custom tabs or PWAs.
      *
