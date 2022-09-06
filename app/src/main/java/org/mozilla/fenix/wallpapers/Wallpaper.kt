@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.wallpapers
 
+import org.mozilla.fenix.utils.Settings
 import java.util.Date
 
 /**
@@ -20,6 +21,8 @@ data class Wallpaper(
     val collection: Collection,
     val textColor: Long?,
     val cardColor: Long?,
+    val thumbnailFileState: ImageFileState,
+    val assetsFileState: ImageFileState,
 ) {
     /**
      * Type that represents a collection that a [Wallpaper] belongs to.
@@ -65,6 +68,8 @@ data class Wallpaper(
             collection = DefaultCollection,
             textColor = null,
             cardColor = null,
+            thumbnailFileState = ImageFileState.Downloaded,
+            assetsFileState = ImageFileState.Downloaded,
         )
 
         /**
@@ -84,6 +89,27 @@ data class Wallpaper(
          * @param name The name of the wallpaper.
          */
         fun getLocalPath(name: String, type: ImageType) = "wallpapers/$name/${type.lowercase()}.png"
+
+        /**
+         * Generate a wallpaper from metadata cached in Settings.
+         *
+         * @param settings The local cache.
+         */
+        fun getCurrentWallpaperFromSettings(settings: Settings): Wallpaper? {
+            val name = settings.currentWallpaperName
+            val textColor = settings.currentWallpaperTextColor
+            val cardColor = settings.currentWallpaperCardColor
+            return if (name.isNotEmpty() && textColor != 0L && cardColor != 0L) {
+                Wallpaper(
+                    name = name,
+                    textColor = textColor,
+                    cardColor = cardColor,
+                    collection = DefaultCollection,
+                    thumbnailFileState = ImageFileState.Downloaded,
+                    assetsFileState = ImageFileState.Downloaded,
+                )
+            } else null
+        }
     }
 
     /**
@@ -98,5 +124,27 @@ data class Wallpaper(
          * Get a lowercase string representation of the [ImageType.name] for use in path segments.
          */
         fun lowercase(): String = this.name.lowercase()
+    }
+
+    /**
+     * Defines the download state of wallpaper asset.
+     */
+    enum class ImageFileState {
+        Unavailable,
+        Downloading,
+        Downloaded,
+        Error,
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return if (other is Wallpaper) {
+            this.name == other.name
+        } else {
+            false
+        }
     }
 }
