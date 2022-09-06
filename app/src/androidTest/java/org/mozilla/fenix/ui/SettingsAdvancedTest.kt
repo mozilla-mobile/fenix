@@ -14,7 +14,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_PLAY_SERVICES
+import org.mozilla.fenix.helpers.Constants.PackageName.YOUTUBE_APP
 import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
@@ -77,7 +77,7 @@ class SettingsAdvancedTest {
     // Assumes Play Store is installed and enabled
     fun openLinkInAppTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 3)
-        val playStoreUrl = "play.google.com/store/apps/details?id=org.mozilla.fenix"
+        val youtubeUrl = "https://www.youtube.com/user/mozilla"
         var context = InstrumentationRegistry.getInstrumentation().targetContext
 
         homeScreen {
@@ -92,9 +92,9 @@ class SettingsAdvancedTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
             mDevice.waitForIdle()
-            clickLinkMatchingText("Mozilla Playstore link")
+            clickLinkMatchingText("Mozilla Youtube link")
             mDevice.waitForIdle()
-            assertNativeAppOpens(GOOGLE_PLAY_SERVICES, playStoreUrl)
+            assertNativeAppOpens(YOUTUBE_APP, youtubeUrl)
         }
     }
 }

@@ -21,7 +21,7 @@ gcloud:
   test-targets:
     - notPackage org.mozilla.fenix.screenshots
     - notPackage org.mozilla.fenix.syncintegration
-    - class org.mozilla.fenix.ui.SettingsSearchTest#addPredefinedSearchEngineTest
+    - class org.mozilla.fenix.ui.SettingsAdvancedTest#openLinkInAppTest
 
   device:
     - model: Pixel2.arm
