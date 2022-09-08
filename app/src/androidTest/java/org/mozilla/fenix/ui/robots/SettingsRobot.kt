@@ -133,7 +133,6 @@ class SettingsRobot {
         fun openAboutFirefoxPreview(interact: SettingsSubMenuAboutRobot.() -> Unit):
             SettingsSubMenuAboutRobot.Transition {
             aboutFirefoxHeading().click()
-
             SettingsSubMenuAboutRobot().interact()
             return SettingsSubMenuAboutRobot.Transition()
         }
@@ -592,8 +591,8 @@ private fun assertGooglePlayRedirect() {
             intended(
                 allOf(
                     hasAction(Intent.ACTION_VIEW),
-                    hasData(Uri.parse(SupportUtils.RATE_APP_URL))
-                )
+                    hasData(Uri.parse(SupportUtils.RATE_APP_URL)),
+                ),
             )
         } catch (e: AssertionFailedError) {
             BrowserRobot().verifyRateOnGooglePlayURL()

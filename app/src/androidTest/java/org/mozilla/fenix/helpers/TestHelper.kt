@@ -117,7 +117,7 @@ object TestHelper {
 
     fun waitUntilSnackbarGone() {
         mDevice.findObject(
-            UiSelector().resourceId("$packageName:id/snackbar_layout")
+            UiSelector().resourceId("$packageName:id/snackbar_layout"),
         ).waitUntilGone(waitingTime)
     }
 
