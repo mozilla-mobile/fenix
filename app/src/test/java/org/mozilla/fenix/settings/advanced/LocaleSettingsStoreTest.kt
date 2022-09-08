@@ -42,4 +42,12 @@ class LocaleSettingsStoreTest {
         assertEquals(2, (localeSettingsStore.state.searchedLocaleList as ArrayList).size)
         assertEquals(selectedLocale, localeSettingsStore.state.searchedLocaleList[1])
     }
+
+    @Test
+    fun `reset search list upon selection`() = runTest {
+        localeSettingsStore.dispatch(LocaleSettingsAction.Search("fr")).join()
+        localeSettingsStore.dispatch(LocaleSettingsAction.Select(otherLocale)).join()
+
+        assertEquals(localeSettingsStore.state.localeList.size, localeSettingsStore.state.searchedLocaleList.size)
+    }
 }
