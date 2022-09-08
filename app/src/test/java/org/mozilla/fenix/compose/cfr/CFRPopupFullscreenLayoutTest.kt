@@ -12,8 +12,8 @@ import android.view.WindowManager
 import android.view.WindowManager.LayoutParams
 import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
-import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import androidx.savedstate.findViewTreeSavedStateRegistryOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -28,15 +28,15 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
-class CFRPopupFullScreenLayoutTest {
+class CFRPopupFullscreenLayoutTest {
     @Test
     fun `WHEN the popup is constructed THEN setup lifecycle owners`() {
         val anchor = View(testContext).apply {
             ViewTreeLifecycleOwner.set(this, mockk())
-            ViewTreeSavedStateRegistryOwner.set(this, mockk())
+            this.setViewTreeSavedStateRegistryOwner(mockk())
         }
 
-        val popupView = spyk(CFRPopupFullScreenLayout("", anchor, mockk(), mockk()) {})
+        val popupView = spyk(CFRPopupFullscreenLayout("", anchor, mockk(), mockk()) {})
 
         assertNotNull(popupView.findViewTreeLifecycleOwner())
         assertEquals(
@@ -55,11 +55,11 @@ class CFRPopupFullScreenLayoutTest {
         val context = spyk(testContext)
         val anchor = View(context).apply {
             ViewTreeLifecycleOwner.set(this, mockk())
-            ViewTreeSavedStateRegistryOwner.set(this, mockk())
+            this.setViewTreeSavedStateRegistryOwner(mockk())
         }
         val windowManager = spyk(context.getSystemService(Context.WINDOW_SERVICE) as WindowManager)
         every { context.getSystemService(Context.WINDOW_SERVICE) } returns windowManager
-        val popupView = CFRPopupFullScreenLayout("", anchor, mockk(), mockk()) {}
+        val popupView = CFRPopupFullscreenLayout("", anchor, mockk(), mockk()) {}
         popupView.show()
         assertNotNull(popupView.findViewTreeLifecycleOwner())
         assertNotNull(popupView.findViewTreeSavedStateRegistryOwner())
@@ -77,7 +77,7 @@ class CFRPopupFullScreenLayoutTest {
         val anchor = View(context)
         val windowManager = spyk(context.getSystemService(Context.WINDOW_SERVICE))
         every { context.getSystemService(Context.WINDOW_SERVICE) } returns windowManager
-        val popupView = CFRPopupFullScreenLayout("", anchor, mockk(), mockk()) {}
+        val popupView = CFRPopupFullscreenLayout("", anchor, mockk(), mockk()) {}
         val layoutParamsCaptor = slot<LayoutParams>()
 
         popupView.show()
@@ -97,7 +97,7 @@ class CFRPopupFullScreenLayoutTest {
     @Test
     fun `WHEN creating layout params THEN get fullscreen translucent layout params`() {
         val anchor = View(testContext)
-        val popupView = CFRPopupFullScreenLayout("", anchor, mockk(), mockk()) {}
+        val popupView = CFRPopupFullscreenLayout("", anchor, mockk(), mockk()) {}
 
         val result = popupView.createLayoutParams()
 

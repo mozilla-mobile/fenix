@@ -23,8 +23,7 @@ import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.OnboardingState
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
-import org.mozilla.fenix.onboarding.JumpBackInCFRDialog
-import org.mozilla.fenix.onboarding.SyncCFRPresenter
+import org.mozilla.fenix.onboarding.HomeCFRPresenter
 import org.mozilla.fenix.utils.Settings
 
 // This method got a little complex with the addition of the tab tray feature flag
@@ -134,7 +133,6 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
         listOf(
             AdapterItem.OnboardingThemePicker,
             AdapterItem.OnboardingToolbarPositionPicker,
-            AdapterItem.OnboardingTrackingProtection
         )
     )
     // Customize FxA items based on where we are with the account state:
@@ -151,6 +149,7 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
 
     items.addAll(
         listOf(
+            AdapterItem.OnboardingTrackingProtection,
             AdapterItem.OnboardingPrivacyNotice,
             AdapterItem.OnboardingFinish,
             AdapterItem.BottomSpacer
@@ -213,17 +212,15 @@ class SessionControlView(
                 override fun onLayoutCompleted(state: RecyclerView.State?) {
                     super.onLayoutCompleted(state)
 
-                    if (!context.settings().showHomeOnboardingDialog) {
-                        if (context.settings().showSyncCFR) {
-                            SyncCFRPresenter(
-                                context = context,
-                                recyclerView = view,
-                            ).showSyncCFR()
-                        }
-
-                        if (context.settings().shouldShowJumpBackInCFR) {
-                            JumpBackInCFRDialog(view).showIfNeeded()
-                        }
+                    if (!context.settings().showHomeOnboardingDialog && (
+                        context.settings().showSyncCFR ||
+                            context.settings().shouldShowJumpBackInCFR
+                        )
+                    ) {
+                        HomeCFRPresenter(
+                            context = context,
+                            recyclerView = view,
+                        ).show()
                     }
 
                     // We want some parts of the home screen UI to be rendered first if they are
