@@ -7,16 +7,16 @@ package org.mozilla.fenix.wallpapers
 /**
  * Represents all state related to the Wallpapers feature.
  *
- * @property currentWallpaper The currently selected [Wallpaper].
+ * @property currentWallpaper The currently selected [Wallpaper]. `null` if selection is not yet known.
  * @property availableWallpapers The full list of wallpapers that can be selected.
  */
 data class WallpaperState(
-    val currentWallpaper: Wallpaper,
+    val currentWallpaper: Wallpaper?,
     val availableWallpapers: List<Wallpaper>,
 ) {
     companion object {
         val default = WallpaperState(
-            currentWallpaper = Wallpaper.Default,
+            currentWallpaper = null,
             availableWallpapers = listOf(),
         )
     }

@@ -24,7 +24,6 @@ import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.ext.scaleToBottomOfView
-import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.wallpapers.Wallpaper
 import org.mozilla.fenix.wallpapers.WallpapersUseCases
 
@@ -34,7 +33,6 @@ import org.mozilla.fenix.wallpapers.WallpapersUseCases
  * when the [LifecycleOwner] is destroyed.
  *
  * @param appStore Holds the details abut the current wallpaper.
- * @param settings Used for checking user's option for what wallpaper to use.
  * @param wallpapersUseCases Used for interacting with the wallpaper feature.
  * @param wallpaperImageView Serves as the target when applying wallpapers.
  * @param backgroundWorkDispatcher Used for scheduling the wallpaper update when the state is updated
@@ -42,7 +40,6 @@ import org.mozilla.fenix.wallpapers.WallpapersUseCases
  */
 class WallpapersObserver(
     private val appStore: AppStore,
-    private val settings: Settings,
     private val wallpapersUseCases: WallpapersUseCases,
     private val wallpaperImageView: ImageView,
     backgroundWorkDispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -106,14 +103,7 @@ class WallpapersObserver(
     internal fun observeWallpaperUpdates() {
         var lastObservedValue: Wallpaper? = null
         observeWallpapersStoreSubscription = appStore.observeManually { state ->
-            val currentValue = state.wallpaperState.currentWallpaper
-
-            // Use the persisted wallpaper name to wait until a state update
-            // that contains the wallpaper that the user chose.
-            // Avoids setting the AppState default wallpaper if we know that another wallpaper is chosen.
-            if (currentValue.name != settings.currentWallpaperName) {
-                return@observeManually
-            }
+            val currentValue = state.wallpaperState.currentWallpaper ?: return@observeManually
 
             // Use the wallpaper name to differentiate between updates to properly support
             // the restored from settings wallpaper being the same as the one downloaded

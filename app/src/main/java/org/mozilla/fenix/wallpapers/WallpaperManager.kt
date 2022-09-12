@@ -18,7 +18,7 @@ class WallpaperManager(
     val logger = Logger("WallpaperManager")
 
     val wallpapers get() = appStore.state.wallpaperState.availableWallpapers
-    val currentWallpaper: Wallpaper get() = appStore.state.wallpaperState.currentWallpaper
+    val currentWallpaper: Wallpaper? get() = appStore.state.wallpaperState.currentWallpaper
 
     companion object {
         /**

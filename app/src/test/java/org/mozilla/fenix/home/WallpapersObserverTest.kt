@@ -30,7 +30,6 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction.WallpaperAction.UpdateCurrentWallpaper
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
-import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.wallpapers.Wallpaper
 import org.mozilla.fenix.wallpapers.WallpapersUseCases
 
@@ -53,10 +52,9 @@ class WallpapersObserverTest {
     @Test
     fun `GIVEN a certain wallpaper is chosen WHEN the state is updated with that wallpaper THEN load it it`() = runTestOnMain {
         val appStore = AppStore()
-        val settings: Settings = mockk { every { currentWallpaperName } returns "Test" }
         val wallpaper: Wallpaper = mockk { every { name } returns "Test" }
         val observer = spyk(
-            getObserver(appStore, settings, mockk(relaxed = true), mockk(relaxed = true)),
+            getObserver(appStore, mockk(relaxed = true), mockk(relaxed = true)),
         )
 
         // Ignore the call on the real instance and call again "observeWallpaperUpdates"
@@ -65,36 +63,16 @@ class WallpapersObserverTest {
         appStore.dispatch(UpdateCurrentWallpaper(wallpaper)).joinBlocking()
         appStore.waitUntilIdle()
 
-        coVerify { observer.loadWallpaper(any()) }
+        coVerify { observer.loadWallpaper(wallpaper) }
         coVerify { observer.applyCurrentWallpaper() }
-    }
-
-    @Test
-    fun `GIVEN a certain wallpaper is chosen WHEN the state updated with another wallpaper THEN avoid loading it`() = runTestOnMain {
-        val appStore = AppStore()
-        val settings: Settings = mockk { every { currentWallpaperName } returns "Test" }
-        val otherWallpaper: Wallpaper = mockk { every { name } returns "Other" }
-        val observer = spyk(
-            getObserver(appStore, settings, mockk(relaxed = true), mockk(relaxed = true)),
-        )
-
-        // Ignore the call on the real instance and call again "observeWallpaperUpdates"
-        // on the spy to be able to verify the "showWallpaper" call in the spy.
-        observer.observeWallpaperUpdates()
-        appStore.dispatch(UpdateCurrentWallpaper(otherWallpaper)).joinBlocking()
-        appStore.waitUntilIdle()
-
-        coVerify(exactly = 0) { observer.loadWallpaper(any()) }
-        coVerify(exactly = 0) { observer.applyCurrentWallpaper() }
     }
 
     @Test
     fun `GIVEN a wallpaper is SHOWN WHEN the wallpaper is updated to the current one THEN don't try showing the same wallpaper again`() {
         val appStore = AppStore()
-        val settings: Settings = mockk { every { currentWallpaperName } returns "Test" }
         val wallpaper: Wallpaper = mockk { every { name } returns "Test" }
         val wallpapersUseCases: WallpapersUseCases = mockk { coEvery { loadBitmap(any()) } returns null }
-        val observer = spyk(getObserver(appStore, settings, wallpapersUseCases, mockk(relaxed = true))) {
+        val observer = spyk(getObserver(appStore, wallpapersUseCases, mockk(relaxed = true))) {
             coEvery { loadWallpaper(any()) } just Runs
             coEvery { applyCurrentWallpaper() } just Runs
         }
@@ -178,13 +156,11 @@ class WallpapersObserverTest {
 
     private fun getObserver(
         appStore: AppStore = mockk(relaxed = true),
-        settings: Settings = mockk(),
         wallpapersUseCases: WallpapersUseCases = mockk(),
         wallpaperImageView: ImageView = mockk(),
         backgroundWorkDispatcher: CoroutineDispatcher = coroutinesTestRule.testDispatcher,
     ) = WallpapersObserver(
         appStore = appStore,
-        settings = settings,
         wallpapersUseCases = wallpapersUseCases,
         wallpaperImageView = wallpaperImageView,
         backgroundWorkDispatcher = backgroundWorkDispatcher,

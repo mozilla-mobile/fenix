@@ -218,7 +218,6 @@ class HomeFragment : Fragment() {
         if (shouldEnableWallpaper()) {
             wallpapersObserver = WallpapersObserver(
                 appStore = components.appStore,
-                settings = requireContext().settings(),
                 wallpapersUseCases = components.useCases.wallpaperUseCases,
                 wallpaperImageView = binding.wallpaperImageView,
             ).also {
