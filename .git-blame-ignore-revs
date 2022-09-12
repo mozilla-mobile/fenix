@@ -1,0 +1,3 @@
+# .git-blame-ignore-revs
+# 26901: Fix issues from ktlint baseline
+ffcef5ff2e3f78b6972dd16551f3f653b7035ccc
