@@ -22,8 +22,10 @@ import mozilla.components.support.test.libstate.ext.waitUntilIdle
 import mozilla.components.support.test.rule.MainCoroutineRule
 import mozilla.components.support.test.rule.runTestOnMain
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -50,11 +52,11 @@ class WallpapersObserverTest {
     }
 
     @Test
-    fun `GIVEN a certain wallpaper is chosen WHEN the state is updated with that wallpaper THEN load it it`() = runTestOnMain {
+    fun `GIVEN a certain wallpaper is chosen and setting it is not deferred WHEN the state is updated with that wallpaper THEN apply it it`() = runTestOnMain {
         val appStore = AppStore()
         val wallpaper: Wallpaper = mockk { every { name } returns "Test" }
         val observer = spyk(
-            getObserver(appStore, mockk(relaxed = true), mockk(relaxed = true)),
+            getObserver(appStore, mockk(relaxed = true), mockk(relaxed = true), false),
         )
 
         // Ignore the call on the real instance and call again "observeWallpaperUpdates"
@@ -64,6 +66,47 @@ class WallpapersObserverTest {
         appStore.waitUntilIdle()
 
         coVerify { observer.loadWallpaper(wallpaper) }
+        coVerify { observer.applyCurrentWallpaper() }
+    }
+
+    @Test
+    fun `GIVEN a certain wallpaper is chosen and setting it is deferred WHEN the state is updated with that wallpaper THEN just load it it`() = runTestOnMain {
+        val appStore = AppStore()
+        val wallpaper: Wallpaper = mockk { every { name } returns "Test" }
+        val observer = spyk(
+            getObserver(appStore, mockk(relaxed = true), mockk(relaxed = true), true),
+        )
+
+        // Ignore the call on the real instance and call again "observeWallpaperUpdates"
+        // on the spy to be able to verify the "showWallpaper" call in the spy.
+        observer.observeWallpaperUpdates()
+        appStore.dispatch(UpdateCurrentWallpaper(wallpaper)).joinBlocking()
+        appStore.waitUntilIdle()
+
+        coVerify { observer.loadWallpaper(wallpaper) }
+        coVerify(exactly = 0) { observer.applyCurrentWallpaper() }
+    }
+
+    @Test
+    fun `GIVEN setting the initial wallpaper is deferred WHEN the state is updated with next wallpapers THEN just apply them`() = runTestOnMain {
+        val appStore = AppStore()
+        val wallpaper: Wallpaper = mockk { every { name } returns "Test" }
+        val otherWallpaper: Wallpaper = mockk { every { name } returns "Other" }
+        val observer = spyk(
+            getObserver(appStore, mockk(relaxed = true), mockk(relaxed = true), true),
+        )
+
+        // Ignore the call on the real instance and call again "observeWallpaperUpdates"
+        // on the spy to be able to verify the "showWallpaper" call in the spy.
+        observer.observeWallpaperUpdates()
+        appStore.dispatch(UpdateCurrentWallpaper(wallpaper)).joinBlocking()
+        appStore.waitUntilIdle()
+        coVerify(exactly = 1) { observer.loadWallpaper(wallpaper) }
+        coVerify(exactly = 0) { observer.applyCurrentWallpaper() }
+
+        appStore.dispatch(UpdateCurrentWallpaper(otherWallpaper)).joinBlocking()
+        appStore.waitUntilIdle()
+        coVerify(exactly = 1) { observer.loadWallpaper(otherWallpaper) }
         coVerify { observer.applyCurrentWallpaper() }
     }
 
@@ -154,15 +197,51 @@ class WallpapersObserverTest {
         assertEquals(bitmap, observer.currentWallpaperImage)
     }
 
+    @Test
+    fun `GIVEN setting the initial wallpaper is deferred and it was not set WHEN called to maybe apply the wallpaper THEN avoid showing the wallpaper`() = runTestOnMain {
+        val observer = spyk(getObserver(deferApplyingInitialWallpaper = true))
+
+        assertFalse(observer.wasFirstWallpaperApplyDeferred)
+        observer.maybeApplyCurrentWallpaper()
+
+        assertTrue(observer.wasFirstWallpaperApplyDeferred)
+        coVerify(exactly = 0) { observer.applyCurrentWallpaper() }
+    }
+
+    @Test
+    fun `GIVEN setting the initial wallpaper is deferred and it was already set WHEN called to maybe apply the wallpaper THEN show it`() = runTestOnMain {
+        val observer = spyk(getObserver(deferApplyingInitialWallpaper = true)) {
+            coEvery { applyCurrentWallpaper() } just Runs
+        }
+        observer.wasFirstWallpaperApplyDeferred = true
+
+        observer.maybeApplyCurrentWallpaper()
+
+        coVerify { observer.applyCurrentWallpaper() }
+    }
+
+    @Test
+    fun `GIVEN setting the initial wallpaper is not deferred and it was not set WHEN called to maybe apply the wallpaper THEN show it`() = runTestOnMain {
+        val observer = spyk(getObserver(deferApplyingInitialWallpaper = false)) {
+            coEvery { applyCurrentWallpaper() } just Runs
+        }
+
+        observer.maybeApplyCurrentWallpaper()
+
+        coVerify { observer.applyCurrentWallpaper() }
+    }
+
     private fun getObserver(
         appStore: AppStore = mockk(relaxed = true),
         wallpapersUseCases: WallpapersUseCases = mockk(),
         wallpaperImageView: ImageView = mockk(),
+        deferApplyingInitialWallpaper: Boolean = false,
         backgroundWorkDispatcher: CoroutineDispatcher = coroutinesTestRule.testDispatcher,
     ) = WallpapersObserver(
         appStore = appStore,
         wallpapersUseCases = wallpapersUseCases,
         wallpaperImageView = wallpaperImageView,
+        deferApplyingInitialWallpaper = deferApplyingInitialWallpaper,
         backgroundWorkDispatcher = backgroundWorkDispatcher,
     )
 }

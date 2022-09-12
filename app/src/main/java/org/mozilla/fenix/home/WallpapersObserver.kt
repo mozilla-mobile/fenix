@@ -35,6 +35,8 @@ import org.mozilla.fenix.wallpapers.WallpapersUseCases
  * @param appStore Holds the details abut the current wallpaper.
  * @param wallpapersUseCases Used for interacting with the wallpaper feature.
  * @param wallpaperImageView Serves as the target when applying wallpapers.
+ * @param deferApplyingInitialWallpaper Allows skipping automatically set the first observed wallpaper
+ * and allowing it to be set later through [applyCurrentWallpaper].
  * @param backgroundWorkDispatcher Used for scheduling the wallpaper update when the state is updated
  * with a new wallpaper.
  */
@@ -42,6 +44,7 @@ class WallpapersObserver(
     private val appStore: AppStore,
     private val wallpapersUseCases: WallpapersUseCases,
     private val wallpaperImageView: ImageView,
+    private val deferApplyingInitialWallpaper: Boolean = true,
     backgroundWorkDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : DefaultLifecycleObserver {
     @VisibleForTesting
@@ -70,6 +73,10 @@ class WallpapersObserver(
     @VisibleForTesting
     internal val isWallpaperLoaded = CompletableDeferred<Unit>()
 
+    @Volatile
+    @VisibleForTesting
+    internal var wasFirstWallpaperApplyDeferred = false
+
     init {
         observeWallpaperUpdates()
     }
@@ -86,8 +93,8 @@ class WallpapersObserver(
                 when (this) {
                     null -> wallpaperImageView.isVisible = false
                     else -> {
-                        scaleToBottomOfView(wallpaperImageView)
                         wallpaperImageView.isVisible = true
+                        scaleToBottomOfView(wallpaperImageView)
                     }
                 }
             }
@@ -114,7 +121,7 @@ class WallpapersObserver(
 
                 wallpapersScope.launch {
                     loadWallpaper(currentValue)
-                    applyCurrentWallpaper()
+                    maybeApplyCurrentWallpaper()
                 }
             }
         }.also {
@@ -134,5 +141,15 @@ class WallpapersObserver(
         }
 
         isWallpaperLoaded.complete(Unit)
+    }
+
+    @VisibleForTesting
+    internal suspend fun maybeApplyCurrentWallpaper() {
+        if (deferApplyingInitialWallpaper && !wasFirstWallpaperApplyDeferred) {
+            wasFirstWallpaperApplyDeferred = true
+            return
+        } else {
+            applyCurrentWallpaper()
+        }
     }
 }
