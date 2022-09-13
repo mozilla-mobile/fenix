@@ -75,8 +75,7 @@ fun Onboarding(
             .fillMaxSize()
             .padding(bottom = 32.dp)
             .statusBarsPadding()
-            .navigationBarsPadding()
-            .verticalScroll(rememberScrollState()),
+            .navigationBarsPadding(),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
