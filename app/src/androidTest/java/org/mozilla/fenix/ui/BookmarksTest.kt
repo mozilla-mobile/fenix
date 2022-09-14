@@ -50,6 +50,7 @@ class BookmarksTest {
 
     @get:Rule
     val activityTestRule = HomeActivityTestRule()
+    private val featureSettingsHelper = activityTestRule.featureSettingsHelper
 
     @Rule
     @JvmField
@@ -62,8 +63,8 @@ class BookmarksTest {
             dispatcher = AndroidAssetDispatcher()
             start()
         }
-        val settings = activityTestRule.activity.settings()
-        settings.shouldShowJumpBackInCFR = false
+        featureSettingsHelper.setJumpBackCFREnabled(false)
+        featureSettingsHelper.setTCPCFREnabled(false)
     }
 
     @After
