@@ -249,14 +249,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             navigateToHome()
         }
 
-        if (!shouldStartOnHome() && shouldNavigateToBrowserOnColdStart(savedInstanceState)) {
+        if (settings().showHomeOnboardingDialog && onboarding.userHasBeenOnboarded()) {
+            navHost.navController.navigate(NavGraphDirections.actionGlobalHomeOnboardingDialog())
+        } else if (!shouldStartOnHome() && shouldNavigateToBrowserOnColdStart(savedInstanceState)) {
             navigateToBrowserOnColdStart()
         } else {
             StartOnHome.enterHomeScreen.record(NoExtras())
-        }
-
-        if (settings().showHomeOnboardingDialog && onboarding.userHasBeenOnboarded()) {
-            navHost.navController.navigate(NavGraphDirections.actionGlobalHomeOnboardingDialog())
         }
 
         Performance.processIntentIfPerformanceTest(intent, this)
