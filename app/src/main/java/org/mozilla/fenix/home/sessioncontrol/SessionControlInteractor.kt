@@ -380,12 +380,20 @@ class SessionControlInteractor(
         recentTabController.handleRecentTabShowAllClicked()
     }
 
+    override fun onRecentTabLongClicked() {
+        recentTabController.handleRecentTabLongClicked()
+    }
+
     override fun onRemoveRecentTab(tab: RecentTab.Tab) {
         recentTabController.handleRecentTabRemoved(tab)
     }
 
     override fun onRecentSyncedTabClicked(tab: RecentSyncedTab) {
         recentSyncedTabController.handleRecentSyncedTabClick(tab)
+    }
+
+    override fun onRecentSyncedTabLongClick() {
+        recentSyncedTabController.handleRecentSyncedTabLongClick()
     }
 
     override fun onSyncedTabShowAllClicked() {
@@ -408,6 +416,10 @@ class SessionControlInteractor(
         recentBookmarksController.handleBookmarkRemoved(bookmark)
     }
 
+    override fun onRecentBookmarkLongClicked() {
+        recentBookmarksController.handleBookmarkLongClicked()
+    }
+
     override fun onHistoryShowAllClicked() {
         recentVisitsController.handleHistoryShowAllClicked()
     }
@@ -428,6 +440,10 @@ class SessionControlInteractor(
 
     override fun onRemoveRecentHistoryHighlight(highlightUrl: String) {
         recentVisitsController.handleRemoveRecentHistoryHighlight(highlightUrl)
+    }
+
+    override fun onRecentVisitLongClicked() {
+        recentVisitsController.handleRecentVisitLongClicked()
     }
 
     override fun openCustomizeHomePage() {
