@@ -6,7 +6,6 @@ package org.mozilla.fenix.tabstray
 
 import android.app.Dialog
 import android.content.Context
-import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
 
 /**
  * Default tabs tray dialog implementation for overriding the default on back pressed.
@@ -14,7 +13,7 @@ import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
 class TabsTrayDialog(
     context: Context,
     theme: Int,
-    private val interactor: () -> BrowserTrayInteractor,
+    private val interactor: () -> TabsTrayInteractor,
 ) : Dialog(context, theme) {
     override fun onBackPressed() {
         if (interactor.invoke().onBackPressed()) {

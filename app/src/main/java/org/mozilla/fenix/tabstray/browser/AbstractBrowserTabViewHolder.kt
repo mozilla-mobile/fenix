@@ -40,6 +40,7 @@ import org.mozilla.fenix.ext.removeTouchDelegate
 import org.mozilla.fenix.ext.showAndEnable
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.selection.SelectionHolder
+import org.mozilla.fenix.tabstray.TabsTrayInteractor
 import org.mozilla.fenix.tabstray.TabsTrayState
 import org.mozilla.fenix.tabstray.TabsTrayStore
 
@@ -74,7 +75,7 @@ abstract class AbstractBrowserTabViewHolder(
     internal val urlView: TextView? = itemView.findViewById(R.id.mozac_browser_tabstray_url)
     private val playPauseButtonView: ImageButton = itemView.findViewById(R.id.play_pause_button)
 
-    abstract val browserTrayInteractor: BrowserTrayInteractor
+    abstract val interactor: TabsTrayInteractor
     abstract val thumbnailSize: Int
 
     override var tab: TabSessionState? = null
@@ -103,10 +104,10 @@ abstract class AbstractBrowserTabViewHolder(
         updateMediaState(tab)
 
         if (selectionHolder != null) {
-            setSelectionInteractor(tab, selectionHolder, browserTrayInteractor)
+            setSelectionInteractor(tab, selectionHolder, interactor)
         } else {
             itemView.setOnClickListener {
-                browserTrayInteractor.onTabSelected(tab, featureName)
+                interactor.onTabSelected(tab, featureName)
             }
         }
 
@@ -212,14 +213,14 @@ abstract class AbstractBrowserTabViewHolder(
     private fun setSelectionInteractor(
         item: TabSessionState,
         holder: SelectionHolder<TabSessionState>,
-        interactor: BrowserTrayInteractor,
+        interactor: TabsTrayInteractor,
     ) {
         itemView.setOnClickListener {
             interactor.onMultiSelectClicked(item, holder, featureName)
         }
 
         itemView.setOnLongClickListener {
-            interactor.onLongClicked(item, holder)
+            interactor.onTabLongClicked(item, holder)
         }
         setDragInteractor(item, holder, interactor)
     }
@@ -228,7 +229,7 @@ abstract class AbstractBrowserTabViewHolder(
     private fun setDragInteractor(
         item: TabSessionState,
         holder: SelectionHolder<TabSessionState>,
-        interactor: BrowserTrayInteractor,
+        interactor: TabsTrayInteractor,
     ) {
         // Since I immediately pass the event to onTouchEvent if it's not a move
         // The ClickableViewAccessibility warning isn't useful

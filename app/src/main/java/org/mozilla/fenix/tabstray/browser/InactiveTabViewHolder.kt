@@ -70,12 +70,12 @@ class InactiveTabViewHolder(
                     showAutoClosePrompt = !showAutoClosePrompt
                 },
                 onEnableAutoCloseClick = {
-                    inactiveTabsInteractor.onEnabledAutoCloseClicked()
+                    inactiveTabsInteractor.onEnableAutoCloseClicked()
                     showAutoClosePrompt = !showAutoClosePrompt
                     showConfirmationSnackbar()
                 },
-                onTabClick = inactiveTabsInteractor::onTabClicked,
-                onTabCloseClick = inactiveTabsInteractor::onTabClosed,
+                onTabClick = inactiveTabsInteractor::onInactiveTabClicked,
+                onTabCloseClick = inactiveTabsInteractor::onInactiveTabClosed,
             )
         }
     }

@@ -22,12 +22,13 @@ import org.mozilla.fenix.tabstray.TabsTrayStore
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.tabstray.TabsTrayInteractor
 
 @RunWith(FenixRobolectricTestRunner::class)
 class BrowserTabsAdapterTest {
 
     private val context = testContext
-    private val interactor = mockk<BrowserTrayInteractor>(relaxed = true)
+    private val interactor = mockk<TabsTrayInteractor>(relaxed = true)
     private val store = TabsTrayStore()
 
     @Test
@@ -64,7 +65,7 @@ class BrowserTabsAdapterTest {
         val holder = spyk(
             BrowserTabViewHolder.ListViewHolder(
                 imageLoader = mockk(),
-                browserTrayInteractor = interactor,
+                interactor = interactor,
                 store = store,
                 selectionHolder = null,
                 itemView = binding.root,

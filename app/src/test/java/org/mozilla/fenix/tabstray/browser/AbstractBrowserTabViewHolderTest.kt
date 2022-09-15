@@ -32,6 +32,7 @@ import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.mozilla.fenix.GleanMetrics.Tab
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.tabstray.TabsTrayInteractor
 
 @RunWith(FenixRobolectricTestRunner::class)
 class AbstractBrowserTabViewHolderTest {
@@ -40,7 +41,7 @@ class AbstractBrowserTabViewHolderTest {
 
     val store = TabsTrayStore()
     val browserStore = BrowserStore()
-    val interactor = mockk<BrowserTrayInteractor>(relaxed = true)
+    val interactor = mockk<TabsTrayInteractor>(relaxed = true)
 
     @Test
     fun `WHEN itemView is clicked THEN interactor invokes open`() {
@@ -165,7 +166,7 @@ class AbstractBrowserTabViewHolderTest {
         trayStore: TabsTrayStore,
         selectionHolder: SelectionHolder<TabSessionState>?,
         store: BrowserStore,
-        override val browserTrayInteractor: BrowserTrayInteractor,
+        override val interactor: TabsTrayInteractor,
         featureName: String = "Test",
     ) : AbstractBrowserTabViewHolder(itemView, imageLoader, trayStore, selectionHolder, featureName, store) {
         override val thumbnailSize: Int

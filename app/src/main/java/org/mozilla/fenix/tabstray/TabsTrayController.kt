@@ -18,23 +18,70 @@ import mozilla.components.concept.engine.mediasession.MediaSession.PlaybackState
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.lib.state.DelicateAction
 import mozilla.telemetry.glean.private.NoExtras
+import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.GleanMetrics.Collections
+import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Tab
 import org.mozilla.fenix.GleanMetrics.TabsTray
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.DEFAULT_ACTIVE_DAYS
+import org.mozilla.fenix.ext.potentialInactiveTabs
 import org.mozilla.fenix.home.HomeFragment
+import org.mozilla.fenix.selection.SelectionHolder
+import org.mozilla.fenix.tabstray.TrayPagerAdapter.Companion.INACTIVE_TABS_FEATURE_NAME
 import org.mozilla.fenix.tabstray.ext.isActiveDownload
+import org.mozilla.fenix.tabstray.ext.isSelect
+import org.mozilla.fenix.utils.Settings
 import java.util.concurrent.TimeUnit
+import mozilla.components.browser.storage.sync.Tab as SyncTab
 
+/**
+ * Controller contract for handling any and all user interactions in the tabs tray.
+ */
 interface TabsTrayController {
 
     /**
      * Called to open a new tab.
      */
     fun handleOpeningNewTab(isPrivate: Boolean)
+
+    /**
+     * Called to open a tab.
+     */
+    fun handleTabOpen(tabId: String, source: String?)
+
+    /**
+     * Set the current tray item to the clamped [position].
+     *
+     * @param tab The [TabSessionState] long pressed by the user.
+     * @param holder The [SelectionHolder]<[TabSessionState]> used to manage the selection state.
+     */
+    fun handleTabLongClick(tab: TabSessionState, holder: SelectionHolder<TabSessionState>): Boolean
+
+    /**
+     * Called to select a tab.
+     */
+    fun handleTabSelected(tab: TabSessionState)
+
+    /**
+     * Called to unselect a tab.
+     */
+    fun handleTabUnselected(tab: TabSessionState)
+
+    /**
+     * Handles multi-selection tab clicks.
+     */
+    fun handleMultiSelectTabClick(
+        tab: TabSessionState,
+        holder: SelectionHolder<TabSessionState>,
+        source: String?,
+    )
 
     /**
      * Set the current tray item to the clamped [position].
@@ -105,24 +152,67 @@ interface TabsTrayController {
      * Handles when a tab item is click either to play/pause.
      */
     fun handleMediaClicked(tab: SessionState)
+
+    /**
+     * Opens the given inactive tab.
+     */
+    fun openInactiveTab(tab: TabSessionState)
+
+    /**
+     * Closes the given inactive tab.
+     */
+    fun closeInactiveTab(tab: TabSessionState)
+
+    /**
+     * Updates the inactive card to be expanded to display all the tabs, or collapsed with only
+     * the title showing.
+     */
+    fun updateCardExpansion(isExpanded: Boolean)
+
+    /**
+     * Dismiss the auto-close dialog.
+     */
+    fun dismissAutoCloseDialog()
+
+    /**
+     * Enable the auto-close feature with the "after a month" setting.
+     */
+    fun enableInactiveTabsAutoClose()
+
+    /**
+     * Delete all inactive tabs.
+     */
+    fun deleteAllInactiveTabs()
+
+    /**
+     * Opens the clicked synced tab.
+     */
+    fun handleSyncedTabClick(tab: SyncTab)
+
+    /**
+     * Consumes the button press and exits multi-selection when in [TabsTrayState.Mode.Select]
+     */
+    fun handleOnBackPressed(): Boolean
 }
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LongParameterList")
 class DefaultTabsTrayController(
+    private val activity: HomeActivity,
+    private val appStore: AppStore,
     private val trayStore: TabsTrayStore,
     private val browserStore: BrowserStore,
     private val browsingModeManager: BrowsingModeManager,
     private val navController: NavController,
     private val navigateToHomeAndDeleteSession: (String) -> Unit,
     private val profiler: Profiler?,
-    private val navigationInteractor: NavigationInteractor,
     private val tabsUseCases: TabsUseCases,
     private val selectTabPosition: (Int, Boolean) -> Unit,
     private val dismissTray: () -> Unit,
     private val showUndoSnackbarForTab: (Boolean) -> Unit,
-    @VisibleForTesting
+    private val settings: Settings,
+    private val selectTab: TabsUseCases.SelectTabUseCase,
+    @get:VisibleForTesting
     internal val showCancelledDownloadWarning: (downloadCount: Int, tabId: String?, source: String?) -> Unit,
-
 ) : TabsTrayController {
 
     override fun handleOpeningNewTab(isPrivate: Boolean) {
@@ -131,12 +221,55 @@ class DefaultTabsTrayController(
         navController.navigate(
             TabsTrayFragmentDirections.actionGlobalHome(focusOnAddressBar = true),
         )
-        navigationInteractor.onTabTrayDismissed()
+        TabsTray.closed.record(NoExtras())
+        dismissTray()
         profiler?.addMarker(
             "DefaultTabTrayController.onNewTabTapped",
             startTime,
         )
         sendNewTabEvent(isPrivate)
+    }
+
+    override fun handleTabOpen(tabId: String, source: String?) {
+        TabsTray.openedExistingTab.record(TabsTray.OpenedExistingTabExtra(source ?: "unknown"))
+        selectTab.invoke(tabId)
+        handleNavigateToBrowser()
+    }
+
+    override fun handleTabLongClick(
+        tab: TabSessionState,
+        holder: SelectionHolder<TabSessionState>,
+    ): Boolean {
+        return if (holder.selectedItems.isEmpty()) {
+            Collections.longPress.record(NoExtras())
+            handleTabSelected(tab)
+            true
+        } else {
+            false
+        }
+    }
+
+    override fun handleTabSelected(tab: TabSessionState) {
+        trayStore.dispatch(TabsTrayAction.AddSelectTab(tab))
+    }
+
+    override fun handleTabUnselected(tab: TabSessionState) {
+        trayStore.dispatch(TabsTrayAction.RemoveSelectTab(tab))
+    }
+
+    override fun handleMultiSelectTabClick(
+        tab: TabSessionState,
+        holder: SelectionHolder<TabSessionState>,
+        source: String?,
+    ) {
+        val selected = holder.selectedItems
+        when {
+            selected.isEmpty() && trayStore.state.mode.isSelect().not() -> {
+                handleTabOpen(tab.id, source)
+            }
+            tab.id in selected.map { it.id } -> handleTabUnselected(tab)
+            else -> handleTabSelected(tab)
+        }
     }
 
     override fun handleTrayScrollingToPosition(position: Int, smoothScroll: Boolean) {
@@ -292,5 +425,72 @@ class DefaultTabsTrayController(
                 "Play/Pause button clicked without play/pause state.",
             )
         }
+    }
+
+    override fun openInactiveTab(tab: TabSessionState) {
+        TabsTray.openInactiveTab.add()
+        handleNavigateToBrowser()
+    }
+
+    override fun closeInactiveTab(tab: TabSessionState) {
+        TabsTray.closeInactiveTab.add()
+        handleTabDeletion(tab.id, INACTIVE_TABS_FEATURE_NAME)
+    }
+
+    override fun updateCardExpansion(isExpanded: Boolean) {
+        appStore.dispatch(AppAction.UpdateInactiveExpanded(isExpanded))
+
+        when (isExpanded) {
+            true -> TabsTray.inactiveTabsExpanded.record(NoExtras())
+            false -> TabsTray.inactiveTabsCollapsed.record(NoExtras())
+        }
+    }
+
+    override fun dismissAutoCloseDialog() {
+        markDialogAsShown()
+        TabsTray.autoCloseDimissed.record(NoExtras())
+    }
+
+    override fun enableInactiveTabsAutoClose() {
+        markDialogAsShown()
+        settings.closeTabsAfterOneMonth = true
+        settings.closeTabsAfterOneWeek = false
+        settings.closeTabsAfterOneDay = false
+        settings.manuallyCloseTabs = false
+        TabsTray.autoCloseTurnOnClicked.record(NoExtras())
+    }
+
+    override fun deleteAllInactiveTabs() {
+        TabsTray.closeAllInactiveTabs.record(NoExtras())
+        browserStore.state.potentialInactiveTabs.map { it.id }.let {
+            tabsUseCases.removeTabs(it)
+        }
+        showUndoSnackbarForTab(false)
+    }
+
+    override fun handleSyncedTabClick(tab: SyncTab) {
+        Events.syncedTabOpened.record(NoExtras())
+
+        dismissTray()
+        activity.openToBrowserAndLoad(
+            searchTermOrURL = tab.active().url,
+            newTab = true,
+            from = BrowserDirection.FromTabsTray,
+        )
+    }
+
+    override fun handleOnBackPressed(): Boolean {
+        if (trayStore.state.mode is TabsTrayState.Mode.Select) {
+            trayStore.dispatch(TabsTrayAction.ExitSelectMode)
+            return true
+        }
+        return false
+    }
+
+    /**
+     * Marks the dialog as shown and to not be displayed again.
+     */
+    private fun markDialogAsShown() {
+        settings.hasInactiveTabsAutoCloseDialogBeenDismissed = true
     }
 }
