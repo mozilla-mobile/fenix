@@ -62,13 +62,13 @@ class SmokeTest {
     private lateinit var mockWebServer: MockWebServer
     private val customMenuItem = "TestMenuItem"
     private lateinit var browserStore: BrowserStore
-    private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
     val activityTestRule = AndroidComposeTestRule(
         HomeActivityIntentTestRule(),
         { it.activity },
     )
+    private val featureSettingsHelper = activityTestRule.activityRule.featureSettingsHelper
 
     @get: Rule
     val intentReceiverActivityTestRule = ActivityTestRule(
@@ -102,9 +102,6 @@ class SmokeTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
-
-        // resetting modified features enabled setting to default
-        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     // Verifies the first run onboarding screen

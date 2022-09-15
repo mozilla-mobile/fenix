@@ -14,7 +14,6 @@ import org.junit.Test
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
@@ -39,6 +38,7 @@ class CustomTabsTest {
 
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule()
+    private val featureSettingsHelper = activityTestRule.featureSettingsHelper
 
     @get: Rule
     val intentReceiverActivityTestRule = ActivityTestRule(
@@ -46,8 +46,6 @@ class CustomTabsTest {
         true,
         false,
     )
-
-    private val featureSettingsHelper = FeatureSettingsHelper()
 
     @Before
     fun setUp() {
@@ -63,7 +61,6 @@ class CustomTabsTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
-        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     @SmokeTest

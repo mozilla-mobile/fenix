@@ -15,7 +15,6 @@ import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper
@@ -47,7 +46,6 @@ import java.util.Locale
 class SettingsBasicsTest {
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
     private lateinit var mockWebServer: MockWebServer
-    private val featureSettingsHelper = FeatureSettingsHelper()
 
     object CreditCard {
         const val MOCK_CREDIT_CARD_NUMBER = "5555555555554444"
@@ -59,6 +57,7 @@ class SettingsBasicsTest {
 
     @get:Rule
     val activityIntentTestRule = HomeActivityIntentTestRule()
+    private val featureSettingsHelper = activityIntentTestRule.featureSettingsHelper
 
     @Before
     fun setUp() {
@@ -75,9 +74,6 @@ class SettingsBasicsTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
-
-        // resetting modified features enabled setting to default
-        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     private fun getUiTheme(): Boolean {

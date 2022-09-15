@@ -36,7 +36,7 @@ class HomeActivityTestRule(
      * instead of instantiating their own.
      *
      * The main benefit this brings is better ordering of operations with the settings cleanup
-     * automatically happening just before the [Activity] under test finishes which may as opposed to
+     * automatically happening just before the [Activity] under test finishes as opposed to
      * cleanup happening earlier and modifying the app behavior.
      */
     val featureSettingsHelper = FeatureSettingsHelper()
@@ -71,6 +71,18 @@ class HomeActivityIntentTestRule(
     private val skipOnboarding: Boolean = false,
 ) :
     IntentsTestRule<HomeActivity>(HomeActivity::class.java, initialTouchMode, launchActivity) {
+
+    /**
+     * Helper for updating various app settings that could interfere with the tests.
+     * Tests that use [HomeActivityTestRule] are expected to rely on this [FeatureSettingsHelper]
+     * instead of instantiating their own.
+     *
+     * The main benefit this brings is better ordering of operations with the settings cleanup
+     * automatically happening just before the [Activity] under test finishes as opposed to
+     * cleanup happening earlier and modifying the app behavior.
+     */
+    val featureSettingsHelper = FeatureSettingsHelper()
+
     private val longTapUserPreference = getLongPressTimeout()
 
     override fun beforeActivityLaunched() {
@@ -82,6 +94,7 @@ class HomeActivityIntentTestRule(
     override fun afterActivityFinished() {
         super.afterActivityFinished()
         setLongTapTimeout(longTapUserPreference)
+        featureSettingsHelper.resetAllFeatureFlags()
         closeNotificationShade()
     }
 }

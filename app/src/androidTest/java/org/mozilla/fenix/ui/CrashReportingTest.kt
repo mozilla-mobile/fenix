@@ -12,7 +12,6 @@ import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
@@ -22,7 +21,6 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
 class CrashReportingTest {
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
-    private val featureSettingsHelper = FeatureSettingsHelper()
     private val tabCrashMessage = getStringResource(R.string.tab_crash_title_2)
 
     @get:Rule
@@ -30,6 +28,7 @@ class CrashReportingTest {
         HomeActivityIntentTestRule(),
         { it.activity },
     )
+    private val featureSettingsHelper = activityTestRule.activityRule.featureSettingsHelper
 
     @Before
     fun setUp() {
@@ -47,7 +46,6 @@ class CrashReportingTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
-        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     @Test

@@ -19,7 +19,6 @@ import org.junit.rules.TestRule
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestHelper.deleteDownloadFromStorage
 import org.mozilla.fenix.ui.robots.browserScreen
@@ -37,7 +36,6 @@ import org.mozilla.fenix.ui.robots.notificationShade
  **/
 class DownloadTest {
     private lateinit var mDevice: UiDevice
-    private val featureSettingsHelper = FeatureSettingsHelper()
 
     /* Remote test page managed by Mozilla Mobile QA team at https://github.com/mozilla-mobile/testapp */
     private val downloadTestPage = "https://storage.googleapis.com/mobile_test_assets/test_app/downloads.html"
@@ -45,6 +43,7 @@ class DownloadTest {
 
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule()
+    private val featureSettingsHelper = activityTestRule.featureSettingsHelper
 
     // Making sure to grant storage access for this test running on API 28
     @get: Rule
@@ -80,7 +79,6 @@ class DownloadTest {
 
     @After
     fun tearDown() {
-        featureSettingsHelper.resetAllFeatureFlags()
         notificationShade {
             cancelAllShownNotifications()
         }

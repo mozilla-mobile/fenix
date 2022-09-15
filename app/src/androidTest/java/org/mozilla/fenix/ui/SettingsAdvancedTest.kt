@@ -13,7 +13,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
@@ -30,10 +29,10 @@ class SettingsAdvancedTest {
 
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
-    private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
     val activityIntentTestRule = HomeActivityIntentTestRule()
+    private val featureSettingsHelper = activityIntentTestRule.featureSettingsHelper
 
     @Before
     fun setUp() {
@@ -49,8 +48,6 @@ class SettingsAdvancedTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
-
-        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     // Walks through settings menu and sub-menus to ensure all items are present

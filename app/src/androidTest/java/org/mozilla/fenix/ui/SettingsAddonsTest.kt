@@ -14,7 +14,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.getEnhancedTrackingProtectionAsset
@@ -31,10 +30,10 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  */
 class SettingsAddonsTest {
     private lateinit var mockWebServer: MockWebServer
-    private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule()
+    private val featureSettingsHelper = activityTestRule.featureSettingsHelper
 
     @Before
     fun setUp() {
@@ -49,8 +48,6 @@ class SettingsAddonsTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
-
-        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     // Walks through settings add-ons menu to ensure all items are present
