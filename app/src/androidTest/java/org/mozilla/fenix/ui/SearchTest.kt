@@ -23,7 +23,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.Constants.PackageName.ANDROID_SETTINGS
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.SearchDispatcher
 import org.mozilla.fenix.helpers.TestHelper.appContext
@@ -48,7 +47,6 @@ import org.mozilla.fenix.ui.robots.multipleSelectionToolbar
  */
 
 class SearchTest {
-    private val featureSettingsHelper = FeatureSettingsHelper()
     lateinit var searchMockServer: MockWebServer
 
     @get:Rule
@@ -56,6 +54,7 @@ class SearchTest {
         HomeActivityTestRule(),
         { it.activity },
     )
+    private val featureSettingsHelper = activityTestRule.activityRule.featureSettingsHelper
 
     @Before
     fun setUp() {
@@ -66,12 +65,12 @@ class SearchTest {
         featureSettingsHelper.setJumpBackCFREnabled(false)
         featureSettingsHelper.setTCPCFREnabled(false)
         featureSettingsHelper.setPocketEnabled(false)
+        featureSettingsHelper.setShowWallpaperOnboarding(false)
     }
 
     @After
     fun tearDown() {
         searchMockServer.shutdown()
-        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     @Test

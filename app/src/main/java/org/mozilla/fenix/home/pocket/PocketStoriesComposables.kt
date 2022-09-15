@@ -44,6 +44,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -51,7 +52,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import mozilla.components.service.pocket.PocketStory
 import mozilla.components.service.pocket.PocketStory.PocketRecommendedStory
@@ -118,9 +118,9 @@ fun PocketStory(
             Text(
                 text = story.title,
                 color = FirefoxTheme.colors.textPrimary,
-                fontSize = 14.sp,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2,
+                style = FirefoxTheme.typography.body2,
             )
         },
         subtitle = {
@@ -130,17 +130,17 @@ fun PocketStory(
                 Text(
                     text = story.publisher,
                     color = FirefoxTheme.colors.textSecondary,
-                    fontSize = 12.sp,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
+                    style = FirefoxTheme.typography.caption,
                 )
             } else if (isValidTimeToRead) {
                 Text(
                     text = "${story.timeToRead} min",
                     color = FirefoxTheme.colors.textSecondary,
-                    fontSize = 12.sp,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
+                    style = FirefoxTheme.typography.caption,
                 )
             }
         },
@@ -173,9 +173,9 @@ fun PocketSponsoredStory(
         Text(
             text = story.title,
             color = FirefoxTheme.colors.textPrimary,
-            fontSize = 14.sp,
             overflow = TextOverflow.Ellipsis,
             maxLines = 2,
+            style = FirefoxTheme.typography.body2,
         )
 
         Spacer(Modifier.height(9.dp))
@@ -183,9 +183,9 @@ fun PocketSponsoredStory(
         Text(
             text = stringResource(R.string.pocket_stories_sponsor_indication),
             color = FirefoxTheme.colors.textSecondary,
-            fontSize = 12.sp,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
+            style = FirefoxTheme.typography.caption,
         )
 
         Spacer(Modifier.height(7.dp))
@@ -193,9 +193,9 @@ fun PocketSponsoredStory(
         Text(
             text = story.sponsor,
             color = FirefoxTheme.colors.textSecondary,
-            fontSize = 12.sp,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
+            style = FirefoxTheme.typography.caption,
         )
     }
 }
@@ -391,12 +391,14 @@ fun PocketStoriesCategories(
  * Contains the full URL for where the user should be navigated to.
  * @param modifier [Modifier] to be applied to the layout.
  * @param textColor [Color] to be applied to the text.
+ * @param linkTextColor [Color] of the link text.
  */
 @Composable
 fun PoweredByPocketHeader(
     onLearnMoreClicked: (String) -> Unit,
     modifier: Modifier = Modifier,
     textColor: Color = FirefoxTheme.colors.textPrimary,
+    linkTextColor: Color = FirefoxTheme.colors.textAccent,
 ) {
     val link = stringResource(R.string.pocket_stories_feature_learn_more)
     val text = stringResource(R.string.pocket_stories_feature_caption, link)
@@ -426,13 +428,14 @@ fun PoweredByPocketHeader(
                 Text(
                     text = stringResource(R.string.pocket_stories_feature_title),
                     color = textColor,
-                    fontSize = 12.sp,
-                    lineHeight = 16.sp,
+                    style = FirefoxTheme.typography.caption,
                 )
 
                 ClickableSubstringLink(
                     text = text,
                     textColor = textColor,
+                    linkTextColor = linkTextColor,
+                    linkTextDecoration = TextDecoration.Underline,
                     clickableStartIndex = linkStartIndex,
                     clickableEndIndex = linkEndIndex,
                 ) {

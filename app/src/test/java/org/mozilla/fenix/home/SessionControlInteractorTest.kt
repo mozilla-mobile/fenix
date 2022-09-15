@@ -163,6 +163,12 @@ class SessionControlInteractorTest {
     }
 
     @Test
+    fun onRecentTabLongClicked() {
+        interactor.onRecentTabLongClicked()
+        verify { recentTabController.handleRecentTabLongClicked() }
+    }
+
+    @Test
     fun onRecentTabShowAllClicked() {
         interactor.onRecentTabShowAllClicked()
         verify { recentTabController.handleRecentTabShowAllClicked() }
@@ -189,6 +195,12 @@ class SessionControlInteractorTest {
 
         interactor.onRecentBookmarkClicked(bookmark)
         verify { recentBookmarksController.handleBookmarkClicked(bookmark) }
+    }
+
+    @Test
+    fun `WHEN a recent bookmark is long clicked THEN the long click is handled`() {
+        interactor.onRecentBookmarkLongClicked()
+        verify { recentBookmarksController.handleBookmarkLongClicked() }
     }
 
     @Test

@@ -13,7 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mozilla.components.concept.fetch.Client
 import org.mozilla.fenix.FeatureFlags
-import org.mozilla.fenix.GleanMetrics.Wallpapers
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
@@ -423,7 +422,7 @@ class WallpapersUseCases(
          *
          * @param wallpaper The selected wallpaper.
          */
-        suspend operator fun invoke(wallpaper: Wallpaper)
+        suspend operator fun invoke(wallpaper: Wallpaper): Wallpaper.ImageFileState
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -436,17 +435,12 @@ class WallpapersUseCases(
          *
          * @param wallpaper The selected wallpaper.
          */
-        override suspend fun invoke(wallpaper: Wallpaper) {
+        override suspend fun invoke(wallpaper: Wallpaper): Wallpaper.ImageFileState {
             settings.currentWallpaperName = wallpaper.name
             settings.currentWallpaperTextColor = wallpaper.textColor ?: 0
             settings.currentWallpaperCardColor = wallpaper.cardColor ?: 0
             store.dispatch(AppAction.WallpaperAction.UpdateCurrentWallpaper(wallpaper))
-            Wallpapers.wallpaperSelected.record(
-                Wallpapers.WallpaperSelectedExtra(
-                    name = wallpaper.name,
-                    themeCollection = wallpaper.collection.name,
-                ),
-            )
+            return Wallpaper.ImageFileState.Downloaded
         }
     }
 
@@ -462,10 +456,11 @@ class WallpapersUseCases(
          *
          * @param wallpaper The selected wallpaper.
          */
-        override suspend fun invoke(wallpaper: Wallpaper) {
-            if (wallpaper == Wallpaper.Default || fileManager.wallpaperImagesExist(wallpaper)) {
+        override suspend fun invoke(wallpaper: Wallpaper): Wallpaper.ImageFileState {
+            return if (wallpaper == Wallpaper.Default || fileManager.wallpaperImagesExist(wallpaper)) {
                 selectWallpaper(wallpaper)
                 dispatchDownloadState(wallpaper, Wallpaper.ImageFileState.Downloaded)
+                Wallpaper.ImageFileState.Downloaded
             } else {
                 dispatchDownloadState(wallpaper, Wallpaper.ImageFileState.Downloading)
                 val result = downloader.downloadWallpaper(wallpaper)
@@ -473,18 +468,13 @@ class WallpapersUseCases(
                 if (result == Wallpaper.ImageFileState.Downloaded) {
                     selectWallpaper(wallpaper)
                 }
+                result
             }
         }
 
         private fun selectWallpaper(wallpaper: Wallpaper) {
             settings.currentWallpaperName = wallpaper.name
             store.dispatch(AppAction.WallpaperAction.UpdateCurrentWallpaper(wallpaper))
-            Wallpapers.wallpaperSelected.record(
-                Wallpapers.WallpaperSelectedExtra(
-                    name = wallpaper.name,
-                    themeCollection = wallpaper.collection.name,
-                ),
-            )
         }
 
         private fun dispatchDownloadState(wallpaper: Wallpaper, downloadState: Wallpaper.ImageFileState) {

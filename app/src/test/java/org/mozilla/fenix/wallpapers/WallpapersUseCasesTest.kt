@@ -20,7 +20,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.GleanMetrics.Wallpapers
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.utils.Settings
@@ -506,7 +505,7 @@ class WallpapersUseCasesTest {
         every { mockSettings.currentWallpaperName } returns ""
         every { mockSettings.currentWallpaperName = capture(slot) } just runs
 
-        WallpapersUseCases.LegacySelectWallpaperUseCase(
+        val wallpaperFileState = WallpapersUseCases.LegacySelectWallpaperUseCase(
             mockSettings,
             appStore,
         ).invoke(selectedWallpaper)
@@ -514,7 +513,7 @@ class WallpapersUseCasesTest {
         appStore.waitUntilIdle()
         assertEquals(selectedWallpaper.name, slot.captured)
         assertEquals(selectedWallpaper, appStore.state.wallpaperState.currentWallpaper)
-        assertEquals(selectedWallpaper.name, Wallpapers.wallpaperSelected.testGetValue()?.first()?.extra?.get("name")!!)
+        assertEquals(wallpaperFileState, Wallpaper.ImageFileState.Downloaded)
     }
 
     @Test
@@ -526,7 +525,7 @@ class WallpapersUseCasesTest {
         every { mockSettings.currentWallpaperName = capture(slot) } just runs
         coEvery { mockFileManager.wallpaperImagesExist(selectedWallpaper) } returns true
 
-        WallpapersUseCases.DefaultSelectWallpaperUseCase(
+        val wallpaperFileState = WallpapersUseCases.DefaultSelectWallpaperUseCase(
             mockSettings,
             appStore,
             mockFileManager,
@@ -536,7 +535,7 @@ class WallpapersUseCasesTest {
         appStore.waitUntilIdle()
         assertEquals(selectedWallpaper.name, slot.captured)
         assertEquals(selectedWallpaper, appStore.state.wallpaperState.currentWallpaper)
-        assertEquals(selectedWallpaper.name, Wallpapers.wallpaperSelected.testGetValue()?.first()?.extra?.get("name")!!)
+        assertEquals(wallpaperFileState, Wallpaper.ImageFileState.Downloaded)
     }
 
     @Test
@@ -550,7 +549,7 @@ class WallpapersUseCasesTest {
         coEvery { mockFileManager.wallpaperImagesExist(selectedWallpaper) } returns false
         coEvery { mockDownloader.downloadWallpaper(selectedWallpaper) } returns Wallpaper.ImageFileState.Downloaded
 
-        WallpapersUseCases.DefaultSelectWallpaperUseCase(
+        val wallpaperFileState = WallpapersUseCases.DefaultSelectWallpaperUseCase(
             mockSettings,
             mockStore,
             mockFileManager,
@@ -560,6 +559,7 @@ class WallpapersUseCasesTest {
         verify { mockStore.dispatch(AppAction.WallpaperAction.UpdateWallpaperDownloadState(selectedWallpaper, Wallpaper.ImageFileState.Downloading)) }
         verify { mockStore.dispatch(AppAction.WallpaperAction.UpdateWallpaperDownloadState(selectedWallpaper, Wallpaper.ImageFileState.Downloaded)) }
         verify { mockStore.dispatch(AppAction.WallpaperAction.UpdateCurrentWallpaper(selectedWallpaper)) }
+        assertEquals(wallpaperFileState, Wallpaper.ImageFileState.Downloaded)
     }
 
     @Test
@@ -573,7 +573,7 @@ class WallpapersUseCasesTest {
         coEvery { mockFileManager.wallpaperImagesExist(selectedWallpaper) } returns false
         coEvery { mockDownloader.downloadWallpaper(selectedWallpaper) } returns Wallpaper.ImageFileState.Error
 
-        WallpapersUseCases.DefaultSelectWallpaperUseCase(
+        val wallpaperFileState = WallpapersUseCases.DefaultSelectWallpaperUseCase(
             mockSettings,
             mockStore,
             mockFileManager,
@@ -582,6 +582,7 @@ class WallpapersUseCasesTest {
 
         verify { mockStore.dispatch(AppAction.WallpaperAction.UpdateWallpaperDownloadState(selectedWallpaper, Wallpaper.ImageFileState.Downloading)) }
         verify { mockStore.dispatch(AppAction.WallpaperAction.UpdateWallpaperDownloadState(selectedWallpaper, Wallpaper.ImageFileState.Error)) }
+        assertEquals(wallpaperFileState, Wallpaper.ImageFileState.Error)
     }
 
     private enum class TimeRelation {
