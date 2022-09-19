@@ -265,6 +265,98 @@ class BookmarksTest {
     }
 
     @Test
+    @Ignore("Failing after compose migration. See: https://github.com/mozilla-mobile/fenix/issues/26087")
+    fun openAllInTabsTest() {
+        val nbPages = 4
+        val webPages = List(nbPages) {
+            TestAssetHelper.getGenericAsset(mockWebServer, it + 1)
+        }
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openBookmarks {
+            createFolder("root")
+            createFolder("sub", "root")
+            createFolder("empty", "root")
+        }.closeMenu {
+        }
+
+        browserScreen {
+            createBookmark(webPages[0].url, "root")
+            createBookmark(webPages[1].url, "root")
+            createBookmark(webPages[2].url, "sub")
+            // out of folder and should not be opened
+            createBookmark(webPages[3].url)
+        }.openTabDrawer {
+            closeTab()
+        }
+
+        browserScreen {
+        }.openThreeDotMenu {
+        }.openBookmarks {
+        }.openThreeDotMenu("root") {
+        }.clickOpenAllInTabs {
+            verifyTabTrayIsOpened()
+            verifyNormalModeSelected()
+
+            verifyExistingOpenTabs("Test_Page_1")
+            verifyExistingOpenTabs("Test_Page_2")
+            verifyExistingOpenTabs("Test_Page_3")
+            swipeTabRight("Test_Page_1")
+            swipeTabRight("Test_Page_2")
+            swipeTabRight("Test_Page_3")
+            // no more tabs should be presents and auto close tab tray
+            verifyTabTrayIsClosed()
+        }
+    }
+
+    @Test
+    @Ignore("Failing after compose migration. See: https://github.com/mozilla-mobile/fenix/issues/26087")
+    fun openAllInPrivateTabsTest() {
+        val nbPages = 4
+        val webPages = List(nbPages) {
+            TestAssetHelper.getGenericAsset(mockWebServer, it + 1)
+        }
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openBookmarks {
+            createFolder("root")
+            createFolder("sub", "root")
+            createFolder("empty", "root")
+        }.closeMenu {
+        }
+
+        browserScreen {
+            createBookmark(webPages[0].url, "root")
+            createBookmark(webPages[1].url, "root")
+            createBookmark(webPages[2].url, "sub")
+            // out of folder and should not be opened
+            createBookmark(webPages[3].url)
+        }.openTabDrawer {
+            closeTab()
+        }
+
+        browserScreen {
+        }.openThreeDotMenu {
+        }.openBookmarks {
+        }.openThreeDotMenu("root") {
+        }.clickOpenAllInPrivateTabs {
+            verifyTabTrayIsOpened()
+            verifyPrivateModeSelected()
+
+            verifyExistingOpenTabs("Test_Page_1")
+            verifyExistingOpenTabs("Test_Page_2")
+            verifyExistingOpenTabs("Test_Page_3")
+            swipeTabRight("Test_Page_1")
+            swipeTabRight("Test_Page_2")
+            swipeTabRight("Test_Page_3")
+            // no more tabs should be presents and auto close tab tray
+            verifyTabTrayIsClosed()
+        }
+    }
+
+    @Test
     fun openBookmarkInPrivateTabTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
