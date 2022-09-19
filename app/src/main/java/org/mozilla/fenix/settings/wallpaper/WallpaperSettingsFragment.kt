@@ -17,7 +17,10 @@ import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.launch
 import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.components.service.glean.private.NoExtras
+import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.Wallpapers
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.ext.requireComponents
@@ -54,7 +57,11 @@ class WallpaperSettingsFragment : Fragment() {
                     val coroutineScope = rememberCoroutineScope()
 
                     WallpaperSettings(
-                        wallpapers = wallpapers,
+                        wallpaperGroups = if (FeatureFlags.wallpaperV2Enabled) {
+                            wallpapers.groupByDisplayableCollection()
+                        } else {
+                            mapOf(Wallpaper.ClassicFirefoxCollection to wallpapers)
+                        },
                         defaultWallpaper = Wallpaper.Default,
                         selectedWallpaper = currentWallpaper,
                         loadWallpaperResource = {
@@ -65,6 +72,19 @@ class WallpaperSettingsFragment : Fragment() {
                                 val result = wallpaperUseCases.selectWallpaper(it)
                                 onWallpaperSelected(it, result, this@apply)
                             }
+                        },
+                        onLearnMoreClick = { url, collectionName ->
+                            (activity as HomeActivity).openToBrowserAndLoad(
+                                searchTermOrURL = url,
+                                newTab = true,
+                                from = BrowserDirection.FromWallpaper,
+                            )
+                            Wallpapers.learnMoreLinkClick.record(
+                                Wallpapers.LearnMoreLinkClickExtra(
+                                    url = url,
+                                    collectionName = collectionName,
+                                ),
+                            )
                         },
                     )
                 }
@@ -88,6 +108,14 @@ class WallpaperSettingsFragment : Fragment() {
                         findNavController().navigate(R.id.homeFragment)
                     }
                     .show()
+
+                Wallpapers.wallpaperSelected.record(
+                    Wallpapers.WallpaperSelectedExtra(
+                        name = wallpaper.name,
+                        source = "settings",
+                        themeCollection = wallpaper.collection.name,
+                    ),
+                )
             }
             Wallpaper.ImageFileState.Error -> {
                 FenixSnackbar.make(

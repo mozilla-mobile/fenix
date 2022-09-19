@@ -13,7 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mozilla.components.concept.fetch.Client
 import org.mozilla.fenix.FeatureFlags
-import org.mozilla.fenix.GleanMetrics.Wallpapers
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
@@ -48,11 +47,16 @@ class WallpapersUseCases(
     val initialize: InitializeWallpapersUseCase by lazy {
         if (FeatureFlags.wallpaperV2Enabled) {
             val metadataFetcher = WallpaperMetadataFetcher(client)
+            val migrationHelper = LegacyWallpaperMigration(
+                storageRootDirectory = storageRootDirectory,
+                settings = context.settings(),
+            )
             DefaultInitializeWallpaperUseCase(
                 store = store,
                 downloader = downloader,
                 fileManager = fileManager,
                 metadataFetcher = metadataFetcher,
+                migrationHelper = migrationHelper,
                 settings = context.settings(),
                 currentLocale = currentLocale,
             )
@@ -223,12 +227,14 @@ class WallpapersUseCases(
         }
     }
 
+    @Suppress("LongParameterList")
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal class DefaultInitializeWallpaperUseCase(
         private val store: AppStore,
         private val downloader: WallpaperDownloader,
         private val fileManager: WallpaperFileManager,
         private val metadataFetcher: WallpaperMetadataFetcher,
+        private val migrationHelper: LegacyWallpaperMigration,
         private val settings: Settings,
         private val currentLocale: String,
     ) : InitializeWallpapersUseCase {
@@ -237,6 +243,10 @@ class WallpapersUseCases(
                 store.dispatch(AppAction.WallpaperAction.UpdateCurrentWallpaper(it))
             }
             val currentWallpaperName = withContext(Dispatchers.IO) { settings.currentWallpaperName }
+            if (settings.shouldMigrateLegacyWallpaper) {
+                migrationHelper.migrateLegacyWallpaper(currentWallpaperName)
+                settings.shouldMigrateLegacyWallpaper = false
+            }
             val possibleWallpapers = metadataFetcher.downloadWallpaperList().filter {
                 !it.isExpired() && it.isAvailableInLocale()
             }
@@ -441,12 +451,6 @@ class WallpapersUseCases(
             settings.currentWallpaperTextColor = wallpaper.textColor ?: 0
             settings.currentWallpaperCardColor = wallpaper.cardColor ?: 0
             store.dispatch(AppAction.WallpaperAction.UpdateCurrentWallpaper(wallpaper))
-            Wallpapers.wallpaperSelected.record(
-                Wallpapers.WallpaperSelectedExtra(
-                    name = wallpaper.name,
-                    themeCollection = wallpaper.collection.name,
-                ),
-            )
             return Wallpaper.ImageFileState.Downloaded
         }
     }
@@ -482,12 +486,6 @@ class WallpapersUseCases(
         private fun selectWallpaper(wallpaper: Wallpaper) {
             settings.currentWallpaperName = wallpaper.name
             store.dispatch(AppAction.WallpaperAction.UpdateCurrentWallpaper(wallpaper))
-            Wallpapers.wallpaperSelected.record(
-                Wallpapers.WallpaperSelectedExtra(
-                    name = wallpaper.name,
-                    themeCollection = wallpaper.collection.name,
-                ),
-            )
         }
 
         private fun dispatchDownloadState(wallpaper: Wallpaper, downloadState: Wallpaper.ImageFileState) {

@@ -13,8 +13,8 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestHelper.mDevice
@@ -31,6 +31,7 @@ class SettingsAboutTest {
 
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
+    private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
     val activityIntentTestRule = HomeActivityIntentTestRule()
@@ -51,6 +52,7 @@ class SettingsAboutTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
+        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     // Walks through settings menu and sub-menus to ensure all items are present
@@ -70,6 +72,8 @@ class SettingsAboutTest {
     // ABOUT
     @Test
     fun verifyRateOnGooglePlayRedirect() {
+        featureSettingsHelper.setTCPCFREnabled(false)
+
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -84,8 +88,7 @@ class SettingsAboutTest {
     @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/25355")
     @Test
     fun verifyAboutFirefoxPreview() {
-        val settings = activityIntentTestRule.activity.settings()
-        settings.shouldShowJumpBackInCFR = false
+        featureSettingsHelper.setJumpBackCFREnabled(false)
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {

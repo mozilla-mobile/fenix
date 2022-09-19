@@ -6,7 +6,6 @@ package org.mozilla.fenix.ui
 
 import android.content.Context
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
-import androidx.test.espresso.IdlingRegistry
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import kotlinx.coroutines.runBlocking
@@ -21,11 +20,11 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
+import org.mozilla.fenix.helpers.TestHelper.registerAndCleanupIdlingResources
 import org.mozilla.fenix.ui.robots.historyMenu
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.multipleSelectionToolbar
@@ -39,12 +38,10 @@ class HistoryTest {
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
     private lateinit var mockWebServer: MockWebServer
     private lateinit var mDevice: UiDevice
-    private var historyListIdlingResource: RecyclerViewIdlingResource? = null
-    private var recentlyClosedTabsListIdlingResource: RecyclerViewIdlingResource? = null
-    private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
     val activityTestRule = HomeActivityTestRule()
+    private val featureSettingsHelper = activityTestRule.featureSettingsHelper
 
     @Before
     fun setUp() {
@@ -63,21 +60,12 @@ class HistoryTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
-        featureSettingsHelper.resetAllFeatureFlags()
         // Clearing all history data after each test to avoid overlapping data
         val applicationContext: Context = activityTestRule.activity.applicationContext
         val historyStorage = PlacesHistoryStorage(applicationContext)
 
         runBlocking {
             historyStorage.deleteEverything()
-        }
-
-        if (historyListIdlingResource != null) {
-            IdlingRegistry.getInstance().unregister(historyListIdlingResource!!)
-        }
-
-        if (recentlyClosedTabsListIdlingResource != null) {
-            IdlingRegistry.getInstance().unregister(recentlyClosedTabsListIdlingResource!!)
         }
     }
 
@@ -104,13 +92,14 @@ class HistoryTest {
         }.openThreeDotMenu {
         }.openHistory {
             verifyHistoryListExists()
-            historyListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1)
-            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-            verifyHistoryMenuView()
-            verifyVisitedTimeTitle()
-            verifyFirstTestPageTitle("Test_Page_1")
-            verifyTestPageUrl(firstWebPage.url)
+            registerAndCleanupIdlingResources(
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1),
+            ) {
+                verifyHistoryMenuView()
+                verifyVisitedTimeTitle()
+                verifyFirstTestPageTitle("Test_Page_1")
+                verifyTestPageUrl(firstWebPage.url)
+            }
         }
     }
 
@@ -124,11 +113,11 @@ class HistoryTest {
         }.openThreeDotMenu {
         }.openHistory {
             verifyHistoryListExists()
-            historyListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1)
-            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-            clickDeleteHistoryButton(firstWebPage.url.toString())
-            IdlingRegistry.getInstance().unregister(historyListIdlingResource!!)
+            registerAndCleanupIdlingResources(
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1),
+            ) {
+                clickDeleteHistoryButton(firstWebPage.url.toString())
+            }
             verifyDeleteSnackbarText("Deleted")
             verifyEmptyHistoryView()
         }
@@ -144,11 +133,11 @@ class HistoryTest {
         }.openThreeDotMenu {
         }.openHistory {
             verifyHistoryListExists()
-            historyListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1)
-            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-            clickDeleteHistoryButton(firstWebPage.url.toString())
-            IdlingRegistry.getInstance().unregister(historyListIdlingResource!!)
+            registerAndCleanupIdlingResources(
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1),
+            ) {
+                clickDeleteHistoryButton(firstWebPage.url.toString())
+            }
             verifyUndoDeleteSnackBarButton()
             clickUndoDeleteButton()
             verifyHistoryItemExists(true, firstWebPage.url.toString())
@@ -166,11 +155,12 @@ class HistoryTest {
         }.openThreeDotMenu {
         }.openHistory {
             verifyHistoryListExists()
-            historyListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1)
-            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-            clickDeleteAllHistoryButton()
-            IdlingRegistry.getInstance().unregister(historyListIdlingResource!!)
+            registerAndCleanupIdlingResources(
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1),
+            ) {
+                clickDeleteAllHistoryButton()
+
+            }
             verifyDeleteConfirmationMessage()
             selectEverythingOption()
             cancelDeleteHistory()
@@ -189,11 +179,11 @@ class HistoryTest {
         }.openThreeDotMenu {
         }.openHistory {
             verifyHistoryListExists()
-            historyListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1)
-            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-            clickDeleteAllHistoryButton()
-            IdlingRegistry.getInstance().unregister(historyListIdlingResource!!)
+            registerAndCleanupIdlingResources(
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1),
+            ) {
+                clickDeleteAllHistoryButton()
+            }
             verifyDeleteConfirmationMessage()
             selectEverythingOption()
             confirmDeleteAllHistory()
@@ -213,10 +203,11 @@ class HistoryTest {
         }.openThreeDotMenu {
         }.openHistory {
             verifyHistoryListExists()
-            historyListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1)
-            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-            longTapSelectItem(firstWebPage.url)
+            registerAndCleanupIdlingResources(
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1),
+            ) {
+                longTapSelectItem(firstWebPage.url)
+            }
         }
 
         multipleSelectionToolbar {
@@ -244,11 +235,12 @@ class HistoryTest {
         homeScreen { }.openThreeDotMenu {
         }.openHistory {
             verifyHistoryListExists()
-            historyListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1)
-            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-            longTapSelectItem(firstWebPage.url)
-            openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
+            registerAndCleanupIdlingResources(
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1),
+            ) {
+                longTapSelectItem(firstWebPage.url)
+                openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
+            }
         }
 
         multipleSelectionToolbar {
@@ -269,11 +261,12 @@ class HistoryTest {
         }.openThreeDotMenu {
         }.openHistory {
             verifyHistoryListExists()
-            historyListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1)
-            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-            longTapSelectItem(firstWebPage.url)
-            openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
+            registerAndCleanupIdlingResources(
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1),
+            ) {
+                longTapSelectItem(firstWebPage.url)
+                openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
+            }
         }
 
         multipleSelectionToolbar {
@@ -297,15 +290,15 @@ class HistoryTest {
         }.openThreeDotMenu {
         }.openHistory {
             verifyHistoryListExists()
-            historyListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 2)
-            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-            verifyHistoryItemExists(true, firstWebPage.url.toString())
-            verifyHistoryItemExists(true, secondWebPage.url.toString())
-            longTapSelectItem(firstWebPage.url)
-            longTapSelectItem(secondWebPage.url)
-            openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
-            IdlingRegistry.getInstance().unregister(historyListIdlingResource!!)
+            registerAndCleanupIdlingResources(
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 2),
+            ) {
+                verifyHistoryItemExists(true, firstWebPage.url.toString())
+                verifyHistoryItemExists(true, secondWebPage.url.toString())
+                longTapSelectItem(firstWebPage.url)
+                longTapSelectItem(secondWebPage.url)
+                openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
+            }
         }
 
         multipleSelectionToolbar {
@@ -327,10 +320,11 @@ class HistoryTest {
         }.openThreeDotMenu {
         }.openHistory {
             verifyHistoryListExists()
-            historyListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1)
-            IdlingRegistry.getInstance().register(historyListIdlingResource!!)
-            longTapSelectItem(firstWebPage.url)
+            registerAndCleanupIdlingResources(
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1),
+            ) {
+                longTapSelectItem(firstWebPage.url)
+            }
         }
 
         multipleSelectionToolbar {
@@ -357,11 +351,11 @@ class HistoryTest {
         }.openTabDrawer {
         }.openRecentlyClosedTabs {
             waitForListToExist()
-            recentlyClosedTabsListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1)
-            IdlingRegistry.getInstance().register(recentlyClosedTabsListIdlingResource!!)
-            verifyRecentlyClosedTabsMenuView()
-            IdlingRegistry.getInstance().unregister(recentlyClosedTabsListIdlingResource!!)
+            registerAndCleanupIdlingResources(
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1),
+            ) {
+                verifyRecentlyClosedTabsMenuView()
+            }
             verifyRecentlyClosedTabsPageTitle("Test_Page_1")
             verifyRecentlyClosedTabsUrl(website.url)
         }

@@ -5,15 +5,11 @@
 package org.mozilla.fenix.ui
 
 import androidx.core.net.toUri
-import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.setNetworkEnabled
@@ -31,8 +27,7 @@ class NoNetworkAccessStartupTests {
 
     @get:Rule
     val activityTestRule = HomeActivityTestRule(launchActivity = false)
-
-    private val featureSettingsHelper = FeatureSettingsHelper()
+    private val featureSettingsHelper = activityTestRule.featureSettingsHelper
 
     @Before
     fun setUp() {
@@ -44,7 +39,6 @@ class NoNetworkAccessStartupTests {
     fun tearDown() {
         // Restoring network connection
         setNetworkEnabled(true)
-        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     // Test running on beta/release builds in CI:
@@ -66,9 +60,8 @@ class NoNetworkAccessStartupTests {
     // Based on STR from https://github.com/mozilla-mobile/fenix/issues/16886
     @Test
     fun networkInterruptedFromBrowserToHomeTest() {
+        featureSettingsHelper.setJumpBackCFREnabled(false)
         val url = "example.com"
-        val settings = InstrumentationRegistry.getInstrumentation().targetContext.settings()
-        settings.shouldShowJumpBackInCFR = false
 
         activityTestRule.launchActivity(null)
 
@@ -99,7 +92,6 @@ class NoNetworkAccessStartupTests {
         }.refreshPage { }
     }
 
-    @Ignore("Failing with frequent ANR: https://bugzilla.mozilla.org/show_bug.cgi?id=1764605")
     @Test
     fun testSignInPageWithNoNetworkConnection() {
         setNetworkEnabled(false)

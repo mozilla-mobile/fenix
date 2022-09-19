@@ -20,7 +20,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.GleanMetrics.Wallpapers
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.utils.Settings
@@ -43,10 +42,15 @@ class WallpapersUseCasesTest {
         every { currentWallpaperTextColor = any() } just Runs
         every { currentWallpaperCardColor } returns 0L
         every { currentWallpaperCardColor = any() } just Runs
+        every { shouldMigrateLegacyWallpaper } returns false
+        every { shouldMigrateLegacyWallpaper = any() } just Runs
     }
     private val mockLegacyDownloader = mockk<LegacyWallpaperDownloader>(relaxed = true)
     private val mockLegacyFileManager = mockk<LegacyWallpaperFileManager> {
         every { clean(any(), any()) } just runs
+    }
+    private val mockMigrationHelper = mockk<LegacyWallpaperMigration> {
+        coEvery { migrateLegacyWallpaper(any()) } just runs
     }
 
     private val mockMetadataFetcher = mockk<WallpaperMetadataFetcher>()
@@ -253,6 +257,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -276,6 +281,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -303,6 +309,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -330,6 +337,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -357,6 +365,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             locale,
         ).invoke()
@@ -381,6 +390,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -405,6 +415,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -437,6 +448,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -461,6 +473,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -486,6 +499,7 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
+            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -514,7 +528,6 @@ class WallpapersUseCasesTest {
         appStore.waitUntilIdle()
         assertEquals(selectedWallpaper.name, slot.captured)
         assertEquals(selectedWallpaper, appStore.state.wallpaperState.currentWallpaper)
-        assertEquals(selectedWallpaper.name, Wallpapers.wallpaperSelected.testGetValue()?.first()?.extra?.get("name")!!)
         assertEquals(wallpaperFileState, Wallpaper.ImageFileState.Downloaded)
     }
 
@@ -537,7 +550,6 @@ class WallpapersUseCasesTest {
         appStore.waitUntilIdle()
         assertEquals(selectedWallpaper.name, slot.captured)
         assertEquals(selectedWallpaper, appStore.state.wallpaperState.currentWallpaper)
-        assertEquals(selectedWallpaper.name, Wallpapers.wallpaperSelected.testGetValue()?.first()?.extra?.get("name")!!)
         assertEquals(wallpaperFileState, Wallpaper.ImageFileState.Downloaded)
     }
 
