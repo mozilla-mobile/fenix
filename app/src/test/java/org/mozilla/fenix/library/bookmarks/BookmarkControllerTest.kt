@@ -17,9 +17,11 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import io.mockk.runs
 import io.mockk.slot
 import io.mockk.spyk
+import io.mockk.unmockkConstructor
 import io.mockk.verify
 import io.mockk.verifyOrder
 import mozilla.appservices.places.BookmarkRoot
@@ -193,7 +195,7 @@ class BookmarkControllerTest {
     fun `handleBookmarkExpand should refresh and change the active bookmark node`() = runTestOnMain {
         var loadBookmarkNodeInvoked = false
         createController(
-            loadBookmarkNode = {
+            loadBookmarkNode = { _: String, _: Boolean ->
                 loadBookmarkNodeInvoked = true
                 tree
             },
@@ -359,6 +361,95 @@ class BookmarkControllerTest {
     }
 
     @Test
+    fun `handleBookmarkFolderOpening should open all bookmarks in normal tabs`() {
+        var showTabTrayInvoked = false
+        createController(
+            showTabTray = {
+                showTabTrayInvoked = true
+            },
+            loadBookmarkNode = { guid: String, _: Boolean ->
+                fun recurseFind(item: BookmarkNode, guid: String): BookmarkNode? {
+                    if (item.guid == guid) {
+                        return item
+                    } else {
+                        item.children?.iterator()?.forEach {
+                            val res = recurseFind(it, guid)
+                            if (res != null) {
+                                return res
+                            }
+                        }
+                        return null
+                    }
+                }
+                recurseFind(tree, guid)
+            },
+        ).handleBookmarkFolderOpening(tree, BrowsingMode.Normal)
+
+        assertTrue(showTabTrayInvoked)
+        verifyOrder {
+            addNewTabUseCase.invoke(item.url!!, private = false)
+            addNewTabUseCase.invoke(item.url!!, private = false)
+            addNewTabUseCase.invoke(childItem.url!!, private = false)
+            homeActivity.browsingModeManager.mode = BrowsingMode.Normal
+        }
+    }
+
+    @Test
+    fun `handleBookmarkFolderOpening should open all bookmarks in private tabs`() {
+        var showTabTrayInvoked = false
+        createController(
+            showTabTray = {
+                showTabTrayInvoked = true
+            },
+            loadBookmarkNode = { guid: String, _: Boolean ->
+                fun recurseFind(item: BookmarkNode, guid: String): BookmarkNode? {
+                    if (item.guid == guid) {
+                        return item
+                    } else {
+                        item.children?.iterator()?.forEach {
+                            val res = recurseFind(it, guid)
+                            if (res != null) {
+                                return res
+                            }
+                        }
+                        return null
+                    }
+                }
+                recurseFind(tree, guid)
+            },
+        ).handleBookmarkFolderOpening(tree, BrowsingMode.Private)
+
+        assertTrue(showTabTrayInvoked)
+        verifyOrder {
+            addNewTabUseCase.invoke(item.url!!, private = true)
+            addNewTabUseCase.invoke(item.url!!, private = true)
+            addNewTabUseCase.invoke(childItem.url!!, private = true)
+            homeActivity.browsingModeManager.mode = BrowsingMode.Private
+        }
+    }
+
+    @Test
+    fun `handleBookmarkFolderOpening for more than maxOpenBeforeWarn items should show alert`() {
+        var alertHeavyOpenInvoked = false
+
+        mockkConstructor(DefaultBookmarkController::class)
+        every {
+            anyConstructed<DefaultBookmarkController>() getProperty "maxOpenBeforeWarn"
+        } propertyType Int::class returns 1
+
+        createController(
+            alertHeavyOpen = { _: Int, _: () -> Unit -> alertHeavyOpenInvoked = true },
+            loadBookmarkNode = { _: String, _: Boolean ->
+                tree
+            },
+        ).handleBookmarkFolderOpening(tree, BrowsingMode.Normal)
+
+        unmockkConstructor(DefaultBookmarkController::class)
+
+        assertTrue(alertHeavyOpenInvoked)
+    }
+
+    @Test
     fun `handleBookmarkDeletion for an item should properly call a passed in delegate`() {
         var deleteBookmarkNodesInvoked = false
         createController(
@@ -426,8 +517,9 @@ class BookmarkControllerTest {
 
     @Suppress("LongParameterList")
     private fun createController(
-        loadBookmarkNode: suspend (String) -> BookmarkNode? = { _ -> null },
+        loadBookmarkNode: suspend (String, Boolean) -> BookmarkNode? = { _, _ -> null },
         showSnackbar: (String) -> Unit = { _ -> },
+        alertHeavyOpen: (Int, () -> Unit) -> Unit = { _: Int, _: () -> Unit -> },
         deleteBookmarkNodes: (Set<BookmarkNode>, BookmarkRemoveType) -> Unit = { _, _ -> },
         deleteBookmarkFolder: (Set<BookmarkNode>) -> Unit = { _ -> },
         showTabTray: () -> Unit = { },
@@ -442,6 +534,7 @@ class BookmarkControllerTest {
             tabsUseCases = tabsUseCases,
             loadBookmarkNode = loadBookmarkNode,
             showSnackbar = showSnackbar,
+            alertHeavyOpen = alertHeavyOpen,
             deleteBookmarkNodes = deleteBookmarkNodes,
             deleteBookmarkFolder = deleteBookmarkFolder,
             showTabTray = showTabTray,
