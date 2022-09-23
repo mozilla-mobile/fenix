@@ -4,4 +4,9 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <resources>
     <style name="DialogStyleNormal" parent="DialogStyleDark"/>
+
+    <style name="NormalTheme" parent="NormalThemeBase" >
+        <item name="fenixWordmarkText">@drawable/ic_wordmark_text_private</item>
+    </style>
+
 </resources>

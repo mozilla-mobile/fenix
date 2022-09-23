@@ -107,7 +107,7 @@ interface TabsTrayController {
     fun handleMediaClicked(tab: SessionState)
 }
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LongParameterList")
 class DefaultTabsTrayController(
     private val trayStore: TabsTrayStore,
     private val browserStore: BrowserStore,
@@ -120,7 +120,6 @@ class DefaultTabsTrayController(
     private val selectTabPosition: (Int, Boolean) -> Unit,
     private val dismissTray: () -> Unit,
     private val showUndoSnackbarForTab: (Boolean) -> Unit,
-    @VisibleForTesting
     internal val showCancelledDownloadWarning: (downloadCount: Int, tabId: String?, source: String?) -> Unit,
 
 ) : TabsTrayController {
