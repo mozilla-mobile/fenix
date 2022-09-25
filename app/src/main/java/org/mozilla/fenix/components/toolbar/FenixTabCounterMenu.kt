@@ -31,6 +31,8 @@ class FenixTabCounterMenu(
             newTabItem,
             newPrivateTabItem,
             DividerMenuCandidate(),
+            duplicateTabItem,
+            DividerMenuCandidate(),
             closeTabItem,
         )
 

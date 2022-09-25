@@ -161,6 +161,9 @@ class DefaultBrowserToolbarController(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true),
                 )
             }
+            is TabCounterMenu.Item.DuplicateTab -> {
+                tabsUseCases.duplicateTab.invoke(selectNewTab = true)
+            }
         }
     }
 
