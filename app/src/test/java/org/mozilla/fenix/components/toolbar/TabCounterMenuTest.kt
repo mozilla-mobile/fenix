@@ -12,6 +12,7 @@ import mozilla.components.concept.menu.candidate.DividerMenuCandidate
 import mozilla.components.concept.menu.candidate.TextMenuCandidate
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.ui.tabcounter.TabCounterMenu
+import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -59,12 +60,20 @@ class TabCounterMenuTest {
     }
 
     @Test
-    fun `return two new tab items and a close button`() {
-        val (newTab, newPrivateTab, divider, closeTab) = menu.menuItems(ToolbarPosition.TOP)
+    fun `return two new tab items, a duplicate tab item, and a close button`() {
+        val expected = arrayOf(
+            menu.newTabItem,
+            menu.newPrivateTabItem,
+            DividerMenuCandidate(),
+            menu.duplicateTabItem,
+            DividerMenuCandidate(),
+            menu.closeTabItem,
+        )
+        val topItems = menu.menuItems(ToolbarPosition.TOP)
+        val bottomItems = menu.menuItems(ToolbarPosition.BOTTOM)
 
-        assertEquals("New tab", (newTab as TextMenuCandidate).text)
-        assertEquals("New private tab", (newPrivateTab as TextMenuCandidate).text)
-        assertEquals("Close tab", (closeTab as TextMenuCandidate).text)
-        assertEquals(DividerMenuCandidate(), divider)
+        assertArrayEquals(topItems.toTypedArray(), expected)
+        expected.reverse()
+        assertArrayEquals(bottomItems.toTypedArray(), expected)
     }
 }
