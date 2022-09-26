@@ -38,9 +38,9 @@ object ToolbarPopupWindow {
         val clipboard = context.components.clipboardHandler
         val clipboardUrl = clipboard.getUrl()
         val clipboardText = clipboard.text
-        if (!copyVisible && clipboardUrl == null) return
-
         val isCustomTabSession = customTabId != null
+
+        if (!copyVisible && (clipboardText == null || isCustomTabSession)) return
 
         val binding = BrowserToolbarPopupWindowBinding.inflate(LayoutInflater.from(context))
         val popupWindow = PopupWindow(
@@ -57,7 +57,6 @@ object ToolbarPopupWindow {
         popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         binding.copy.isVisible = copyVisible
-
         binding.paste.isVisible = clipboardText != null && !isCustomTabSession
         binding.pasteAndGo.isVisible = clipboardUrl != null && !isCustomTabSession
 
