@@ -69,6 +69,7 @@ class SearchDialogController(
     private val navController: NavController,
     private val settings: Settings,
     private val dismissDialog: () -> Unit,
+    private val onPermissionDialogClosure: () -> Unit,
     private val clearToolbarFocus: () -> Unit,
     private val focusToolbar: () -> Unit,
     private val clearToolbar: () -> Unit,
@@ -296,7 +297,7 @@ class SearchDialogController(
             )
             setMessage(spannableText)
             setNegativeButton(R.string.camera_permissions_needed_negative_button_text) { _, _ ->
-                dismissDialog()
+                onPermissionDialogClosure()
             }
             setPositiveButton(R.string.camera_permissions_needed_positive_button_text) {
                     dialog: DialogInterface, _ ->
@@ -315,6 +316,9 @@ class SearchDialogController(
                 intent.data = uri
                 dialog.cancel()
                 activity.startActivity(intent)
+            }
+            setOnCancelListener { _ ->
+                onPermissionDialogClosure()
             }
             create()
         }

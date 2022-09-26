@@ -552,6 +552,7 @@ class SearchDialogControllerTest {
         focusToolbar: () -> Unit = { },
         clearToolbar: () -> Unit = { },
         dismissDialog: () -> Unit = { },
+        onPermissionDialogClosure: () -> Unit = { },
     ): SearchDialogController {
         return SearchDialogController(
             activity = activity,
@@ -561,6 +562,7 @@ class SearchDialogControllerTest {
             navController = navController,
             settings = settings,
             dismissDialog = dismissDialog,
+            onPermissionDialogClosure = onPermissionDialogClosure,
             clearToolbarFocus = clearToolbarFocus,
             focusToolbar = focusToolbar,
             clearToolbar = clearToolbar,

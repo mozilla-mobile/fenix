@@ -1018,21 +1018,22 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Used in [SearchDialogFragment.kt], [SearchFragment.kt] (deprecated), and [PairFragment.kt]
-     * to see if we need to check for camera permissions before using the QR code scanner.
+     * Used in [SearchDialogFragment.kt] and [TurnOnSyncFragment.kt]
+     * to see if we need to display the Camera permission dialog
+     * to ask the user to change permissions in settings
      */
-    var shouldShowCameraPermissionPrompt by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_camera_permissions_needed),
-        default = true,
+    var shouldShowCameraPermissionDialog by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_camera_permission_denied_forever),
+        default = false,
     )
 
     /**
      * Sets the state of permissions that have been checked, where [false] denotes already checked
      * and [true] denotes needing to check. See [shouldShowCameraPermissionPrompt].
      */
-    var setCameraPermissionNeededState by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_camera_permissions_needed),
-        default = true,
+    var setCameraPermissionDeniedForeverState by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_camera_permission_denied_forever),
+        default = false,
     )
 
     var shouldPromptToSaveLogins by booleanPreference(

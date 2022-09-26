@@ -5,13 +5,13 @@
 package org.mozilla.fenix.search
 
 import android.Manifest
+import android.Manifest.permission.CAMERA
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
@@ -92,12 +92,19 @@ import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.search.toolbar.SearchSelectorToolbarAction
 import org.mozilla.fenix.search.toolbar.ToolbarView
 import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.utils.CameraPermissionHandler
 import org.mozilla.fenix.widget.VoiceSearchActivity
 
 typealias SearchDialogFragmentStore = SearchFragmentStore
 
+/**
+ * Let the user :
+ *  - Open an URL read using the QR code scanner
+ *  - Copy and paste to the url bar
+ *  - Open the search selector menu
+ */
 @SuppressWarnings("LargeClass", "TooManyFunctions")
-class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
+class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler, CameraPermissionHandler {
     private var _binding: FragmentSearchDialogBinding? = null
     private val binding get() = _binding!!
 
@@ -121,6 +128,17 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private var searchSelectorAlreadyAdded = false
     private var qrButtonAction: Toolbar.Action? = null
     private var voiceSearchButtonAction: Toolbar.Action? = null
+
+    private val cameraPermissionLauncher = registerCameraLauncher(
+        permissionGranted = { qrFeature.get()?.onPermissionsResult(arrayOf(CAMERA), intArrayOf(0)) },
+        permissionDenied = { forever: Boolean ->
+            if (forever) {
+                interactor.onCameraPermissionsNeeded()
+            } else {
+                resetFocus()
+            }
+        },
+    )
 
     override fun onStart() {
         super.onStart()
@@ -196,6 +214,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 dismissDialog = {
                     dialogHandledAction = true
                     dismissAllowingStateLoss()
+                },
+                onPermissionDialogClosure = {
+                    resetFocus()
                 },
                 clearToolbarFocus = {
                     dialogHandledAction = true
@@ -356,19 +377,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             view.hideKeyboard()
             toolbarView.view.clearFocus()
 
-            if (requireContext().settings().shouldShowCameraPermissionPrompt) {
-                qrFeature.get()?.scan(binding.searchWrapper.id)
-            } else {
-                if (requireContext().isPermissionGranted(Manifest.permission.CAMERA)) {
-                    qrFeature.get()?.scan(binding.searchWrapper.id)
-                } else {
-                    interactor.onCameraPermissionsNeeded()
-                    resetFocus()
-                    view.hideKeyboard()
-                    toolbarView.view.requestFocus()
-                }
-            }
-            requireContext().settings().setCameraPermissionNeededState = false
+            qrFeature.get()?.scan(binding.searchWrapper.id)
         }
 
         binding.fillLinkFromClipboard.setOnClickListener {
@@ -611,7 +620,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             requireContext(),
             fragmentManager = childFragmentManager,
             onNeedToRequestPermissions = { permissions ->
-                requestPermissions(permissions, REQUEST_CODE_CAMERA_PERMISSIONS)
+                assert(permissions.size == 1 && permissions[0] == CAMERA)
+                cameraPermissionLauncher.launch(CAMERA)
             },
             onScanResult = { result ->
                 val normalizedUrl = result.toNormalizedUrl()
@@ -653,25 +663,6 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 }
             },
         )
-    }
-
-    @Suppress("DEPRECATION")
-    // https://github.com/mozilla-mobile/fenix/issues/19920
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray,
-    ) {
-        when (requestCode) {
-            REQUEST_CODE_CAMERA_PERMISSIONS -> qrFeature.withFeature {
-                it.onPermissionsResult(permissions, grantResults)
-                if (grantResults.contains(PackageManager.PERMISSION_DENIED)) {
-                    resetFocus()
-                }
-                requireContext().settings().setCameraPermissionNeededState = false
-            }
-            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        }
     }
 
     private fun resetFocus() {
@@ -847,8 +838,6 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         toolbarView.view.clearFocus()
 
         when {
-            requireContext().settings().shouldShowCameraPermissionPrompt ->
-                qrFeature.get()?.scan(binding.searchWrapper.id)
             requireContext().isPermissionGranted(Manifest.permission.CAMERA) ->
                 qrFeature.get()?.scan(binding.searchWrapper.id)
             else -> {
@@ -858,8 +847,6 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 toolbarView.view.requestFocus()
             }
         }
-
-        requireContext().settings().setCameraPermissionNeededState = false
     }
 
     private fun isSpeechAvailable(): Boolean = speechIntent.resolveActivity(requireContext().packageManager) != null
@@ -953,6 +940,5 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     companion object {
         private const val TAP_INCREASE_DPS = 8
         private const val QR_FRAGMENT_TAG = "MOZAC_QR_FRAGMENT"
-        private const val REQUEST_CODE_CAMERA_PERMISSIONS = 1
     }
 }

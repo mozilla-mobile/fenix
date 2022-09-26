@@ -4,39 +4,57 @@
 
 package org.mozilla.fenix.settings
 
-import android.content.pm.PackageManager
+import android.Manifest.permission.CAMERA
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import mozilla.components.feature.qr.QrFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.settings.account.DefaultSyncController
+import org.mozilla.fenix.settings.account.DefaultSyncInteractor
+import org.mozilla.fenix.utils.CameraPermissionHandler
 
-class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
+/**
+ * Let the user scan a QRCode to associate a Firefox Account and sync devices
+ */
+class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler, CameraPermissionHandler {
 
     private val qrFeature = ViewBoundFeatureWrapper<QrFeature>()
+    private lateinit var interactor: DefaultSyncInteractor
 
-    @Suppress("DEPRECATION")
-    // https://github.com/mozilla-mobile/fenix/issues/19920
+    private val cameraPermissionLauncher = registerCameraLauncher(
+        permissionGranted = { qrFeature.get()?.onPermissionsResult(arrayOf(CAMERA), intArrayOf(0)) },
+        permissionDenied = { forever: Boolean ->
+            if (forever) interactor.onCameraPermissionsNeeded()
+            findNavController().popBackStack(R.id.turnOnSyncFragment, false)
+        },
+    )
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        interactor = DefaultSyncInteractor(
+            DefaultSyncController(activity = activity as HomeActivity),
+        )
 
         qrFeature.set(
             QrFeature(
                 requireContext(),
                 fragmentManager = parentFragmentManager,
                 onNeedToRequestPermissions = { permissions ->
-                    requestPermissions(permissions, REQUEST_CODE_CAMERA_PERMISSIONS)
+                    assert(permissions.size == 1 && permissions[0] == CAMERA)
+                    cameraPermissionLauncher.launch(CAMERA)
                 },
                 onScanResult = { pairingUrl ->
                     // By the time we get a scan result, we may not be attached to the context anymore.
@@ -99,29 +117,6 @@ class PairFragment : Fragment(R.layout.fragment_pair), UserInteractionHandler {
     }
 
     companion object {
-        private const val REQUEST_CODE_CAMERA_PERMISSIONS = 1
         private const val VIBRATE_LENGTH = 200L
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray,
-    ) {
-        when (requestCode) {
-            REQUEST_CODE_CAMERA_PERMISSIONS -> {
-                if (ContextCompat.checkSelfPermission(
-                        requireContext(),
-                        android.Manifest.permission.CAMERA,
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    qrFeature.withFeature {
-                        it.onPermissionsResult(permissions, grantResults)
-                    }
-                } else {
-                    findNavController().popBackStack(R.id.turnOnSyncFragment, false)
-                }
-            }
-        }
     }
 }

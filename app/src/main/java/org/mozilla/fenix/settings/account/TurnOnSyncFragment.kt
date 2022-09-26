@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.settings.account
 
-import android.Manifest
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,12 +17,10 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.support.ktx.android.content.hasCamera
-import mozilla.components.support.ktx.android.content.isPermissionGranted
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.GleanMetrics.SyncAuth
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.databinding.FragmentTurnOnSyncBinding
@@ -34,7 +31,6 @@ import org.mozilla.fenix.ext.showToolbar
 class TurnOnSyncFragment : Fragment(), AccountObserver {
 
     private val args by navArgs<TurnOnSyncFragmentArgs>()
-    private lateinit var interactor: DefaultSyncInteractor
 
     private var shouldLoginJustWithEmail = false
     private var pairWithEmailStarted = false
@@ -44,18 +40,8 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
     }
 
     private val paringClickListener = View.OnClickListener {
-        if (requireContext().settings().shouldShowCameraPermissionPrompt) {
-            navigateToPairFragment()
-        } else {
-            if (requireContext().isPermissionGranted(Manifest.permission.CAMERA)) {
-                navigateToPairFragment()
-            } else {
-                interactor.onCameraPermissionsNeeded()
-                view?.hideKeyboard()
-            }
-        }
+        navigateToPairFragment()
         view?.hideKeyboard()
-        requireContext().settings().setCameraPermissionNeededState = false
     }
 
     private var _binding: FragmentTurnOnSyncBinding? = null
@@ -125,10 +111,6 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
                 getString(R.string.sign_in_instructions)
             },
             HtmlCompat.FROM_HTML_MODE_LEGACY,
-        )
-
-        interactor = DefaultSyncInteractor(
-            DefaultSyncController(activity = activity as HomeActivity),
         )
 
         binding.createAccount.apply {

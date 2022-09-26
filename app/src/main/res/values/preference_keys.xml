@@ -287,7 +287,7 @@
     <string name="pref_key_start_on_home_after_four_hours" translatable="false">pref_key_start_on_home_after_four_hours</string>
     <string name="pref_key_start_on_home_always" translatable="false">pref_key_start_on_home_always</string>
     <string name="pref_key_start_on_home_never" translatable="false">pref_key_start_on_home_never</string>
-    <string name="pref_key_camera_permissions_needed" translatable="false">pref_key_camera_permissions_needed</string>
+    <string name="pref_key_camera_permission_denied_forever" translatable="false">pref_key_camera_permission_denied_forever</string>
     <string name="pref_key_inactive_tabs_category" translatable="false">pref_key_inactive_tabs_category</string>
     <string name="pref_key_inactive_tabs" translatable="false">pref_key_inactive_tabs</string>
 
