@@ -279,6 +279,8 @@
     <string name="onboarding_home_screen_jump_back_contextual_hint_2">آپݨے ذاتی تھئے مکھ پنّے نال ملو۔ حالیہ ٹیباں، نشانیاں تے ڳولݨ نتیجے اتھ ظاہر تھیسن۔</string>
     <!-- Home onboarding dialog welcome screen title text. -->
     <string moz:RemovedIn="106" name="onboarding_home_welcome_title" tools:ignore="UnusedResources">آزاد انٹرنیٹ وچ ست بسم اللہ</string>
+    <!-- Home onboarding dialog welcome screen title text. -->
+    <string name="onboarding_home_welcome_title_2">ٻئے ذاتی انٹرنیٹ وچ ست بسم اللہ</string>
     <!-- Home onboarding dialog welcome screen description text. -->
     <string name="onboarding_home_welcome_description">ٻئے رنگ۔ چنگی رازداری۔ نفعے کنوں ودھ لوکاں نال پریت پالݨ۔</string>
     <!-- Home onboarding dialog sign into sync screen title text. -->
@@ -385,8 +387,6 @@
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">تخصیص کرو</string>
     <!-- Preference description for banner about signing in -->
-    <string moz:RemovedIn="104" name="preferences_sign_in_description" tools:ignore="UnusedResources">آپݨے فائرفوکس کھاتے نال کتاب نشانیاں، تاریخ تے ٻیا ٻہوں کجھ ہم وقت کرو</string>
-    <!-- Preference description for banner about signing in -->
     <string name="preferences_sign_in_description_2">ٹیباں، نشانیاں، پاس ورڈ تے ٻیا ٻہوں کجھ ہم وقت کرݨ کیتے سائن ان تھیوو۔</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
     <string name="preferences_account_default_name">فائرفوکس کھاتہ</string>
@@ -474,8 +474,12 @@
     <!-- Snackbar label for action to view selected wallpaper -->
     <string name="wallpaper_updated_snackbar_action">نظارہ</string>
 
+    <!-- Snackbar message for when wallpaper couldn't be downloaded -->
+    <string name="wallpaper_download_error_snackbar_message">وال پیپر ڈاؤن لوڈ کائنی سڳا</string>
     <!-- Snackbar label for action to retry downloading the wallpaper -->
     <string name="wallpaper_download_error_snackbar_action">ولدا کوشش کرو</string>
+    <!-- Snackbar message for when wallpaper couldn't be selected because of the disk error -->
+    <string name="wallpaper_select_error_snackbar_message">وال پیپر کائنی وٹا سڳا</string>
     <!-- Text displayed that links to website containing documentation about the "Limited Edition" wallpapers. -->
     <string name="wallpaper_learn_more">ٻیا سِکھو</string>
     <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
@@ -484,8 +488,15 @@
     able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
     <string moz:removedIn="105" name="wallpaper_logo_content_description" tools:ignore="UnusedResources">فائر فوکس لوگو ــ وال پیپر وٹاؤ، بٹݨ</string>
 
+    <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
+    <string name="wallpaper_classic_title">کلاسیکل %s</string>
     <!-- Text for limited edition wallpapers title. -->
     <string name="wallpaper_limited_edition_title">محدود ایڈیشن</string>
+
+    <!-- Description text for the limited edition wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more-->
+    <string name="wallpaper_limited_edition_description_with_learn_more">آزاد آوازاں دا  نواں مجموعہ۔ %s</string>
+    <!-- Description text for the limited edition wallpapers. -->
+    <string name="wallpaper_limited_edition_description">آزاد آوازاں دا نواں مجموعہ۔</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -569,8 +580,6 @@
     <string name="preference_experiments_summary_2">موزلّا کوں پڑھائی انسٹال کرݨ تے چلاوݨ دی اجازت ݙیندے</string>
 
     <!-- Turn On Sync Preferences -->
-    <!-- Header of the Turn on Sync preference view -->
-    <string moz:RemovedIn="104" name="preferences_sync" tools:ignore="UnusedResources">ہم وقت کرݨ چالو کرو</string>
     <!-- Header of the Sync and save your data preference view -->
     <string name="preferences_sync_2">آپݨا ڈیٹا ہم وقت کرو تے محفوظ کرو</string>
     <!-- Preference for reconnecting to FxA sync -->
@@ -791,8 +800,6 @@
     <string name="delete_from_history">تاریخ وچوں مٹاؤ</string>
     <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
     <string name="pwa_site_controls_title_private">%1$s (نجی موڈ)</string>
-    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string moz:removedIn="104" name="tab_tray_header_title_1" tools:ignore="UnusedResources">ٻئے ٹیباں</string>
 
     <!-- History -->
     <!-- Text for the button to search all history -->
@@ -1201,8 +1208,6 @@
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">نکل ون٘ڄو</string>
 
-    <!-- Dialog message to the user asking to delete browsing data. -->
-    <string moz:removedIn="104" name="delete_browsing_data_prompt_message" tools:ignore="UnusedResources">ایہ تہاݙا سارا براؤزنگ ڈیٹا مٹا ݙیسی۔</string>
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">مٹاوݨ کیتے وقت دی حد</string>
     <!-- Body text of a delete browsing data dialog. -->

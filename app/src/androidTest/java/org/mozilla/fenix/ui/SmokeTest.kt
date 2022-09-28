@@ -25,7 +25,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.Constants
+import org.mozilla.fenix.helpers.Constants.PackageName.YOUTUBE_APP
 import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
@@ -36,8 +36,8 @@ import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
 import org.mozilla.fenix.helpers.TestHelper.generateRandomString
-import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.TestHelper.registerAndCleanupIdlingResources
+import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.customTabScreen
@@ -188,13 +188,13 @@ class SmokeTest {
     }
 
     // Verifies the list of items in a tab's 3 dot menu
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/26711")
     @Test
     fun verifyPageMainMenuItemsTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            waitForPageToLoad()
         }.openThreeDotMenu {
             verifyPageThreeDotMainMenuItems()
         }
@@ -345,17 +345,16 @@ class SmokeTest {
 
     // Device or AVD requires a Google Services Android OS installation with Play Store installed
     // Verifies the Open in app button when an app is installed
-    @Ignore("Failing with frequent ANR: https://github.com/mozilla-mobile/fenix/issues/25926")
     @Test
     fun mainMenuOpenInAppTest() {
-        val playStoreUrl = "play.google.com/store/apps/details?id=org.mozilla.fenix"
+        val youtubeURL = "https://m.youtube.com/user/mozilla?cbrd=1"
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(playStoreUrl.toUri()) {
+        }.enterURLAndEnterToBrowser(youtubeURL.toUri()) {
             verifyNotificationDotOnMainMenu()
         }.openThreeDotMenu {
         }.clickOpenInApp {
-            assertNativeAppOpens(Constants.PackageName.GOOGLE_PLAY_SERVICES, playStoreUrl)
+            assertNativeAppOpens(YOUTUBE_APP, youtubeURL)
         }
     }
 
@@ -403,7 +402,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/25345")
     @Test
     fun customTrackingProtectionSettingsTest() {
         val genericWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -816,7 +814,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Failing with frequent ANR: https://bugzilla.mozilla.org/show_bug.cgi?id=1764605")
     @Test
     fun audioPlaybackSystemNotificationTest() {
         val audioTestPage = TestAssetHelper.getAudioPageAsset(mockWebServer)
