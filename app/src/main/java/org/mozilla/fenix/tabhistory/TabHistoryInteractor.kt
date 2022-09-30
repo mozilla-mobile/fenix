@@ -11,4 +11,8 @@ class TabHistoryInteractor(
     override fun goToHistoryItem(item: TabHistoryItem) {
         controller.handleGoToHistoryItem(item)
     }
+
+    override fun goToHistoryItemNewTab(item: TabHistoryItem, onSuccess: () -> Unit): Boolean {
+        return controller.handleGoToHistoryItemNewTab(item, onSuccess)
+    }
 }

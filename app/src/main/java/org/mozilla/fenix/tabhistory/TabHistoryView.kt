@@ -17,6 +17,12 @@ interface TabHistoryViewInteractor {
      * Jump to a specific index in the tab's history.
      */
     fun goToHistoryItem(item: TabHistoryItem)
+
+    /**
+     * Jump to a specific index in the tab's history in a duplicated tab.
+     * [onSuccess] is called on success of the action.
+     */
+    fun goToHistoryItemNewTab(item: TabHistoryItem, onSuccess: () -> Unit): Boolean
 }
 
 class TabHistoryView(

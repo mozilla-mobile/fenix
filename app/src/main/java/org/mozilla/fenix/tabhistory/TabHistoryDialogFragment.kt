@@ -41,9 +41,12 @@ class TabHistoryDialogFragment : BottomSheetDialogFragment() {
 
         customTabSessionId = requireArguments().getString(EXTRA_SESSION_ID)
 
+        val useCases = requireComponents.useCases
+
         val controller = DefaultTabHistoryController(
             navController = findNavController(),
-            goToHistoryIndexUseCase = requireComponents.useCases.sessionUseCases.goToHistoryIndex,
+            goToHistoryIndexUseCase = useCases.sessionUseCases.goToHistoryIndex,
+            duplicateTabUseCase = useCases.tabsUseCases.duplicateTab,
             customTabId = customTabSessionId,
         )
         val tabHistoryView = TabHistoryView(

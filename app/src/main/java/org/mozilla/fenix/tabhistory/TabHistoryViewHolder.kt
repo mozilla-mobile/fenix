@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.tabhistory
 
+import android.view.HapticFeedbackConstants
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.support.ktx.android.content.getColorFromAttr
@@ -22,6 +23,13 @@ class TabHistoryViewHolder(
 
     init {
         view.setOnClickListener { interactor.goToHistoryItem(item) }
+
+        val performFeedback: () -> Unit = {
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+        }
+        view.setOnLongClickListener {
+            interactor.goToHistoryItemNewTab(item, performFeedback)
+        }
     }
 
     fun bind(item: TabHistoryItem) {
