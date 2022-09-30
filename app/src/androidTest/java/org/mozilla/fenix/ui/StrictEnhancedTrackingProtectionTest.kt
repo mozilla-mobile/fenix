@@ -7,7 +7,6 @@ package org.mozilla.fenix.ui
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
@@ -106,7 +105,6 @@ class StrictEnhancedTrackingProtectionTest {
     }
 
     @Test
-    @Ignore("Failing after compose migration. See: https://github.com/mozilla-mobile/fenix/issues/26087")
     fun testStrictVisitProtectionSheet() {
         val genericPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val trackingProtectionTest =
@@ -127,7 +125,6 @@ class StrictEnhancedTrackingProtectionTest {
         }
     }
 
-    @Ignore("Failing with frequent ANR: https://bugzilla.mozilla.org/show_bug.cgi?id=1764605")
     @Test
     fun testStrictVisitDisableExceptionToggle() {
         val genericPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -163,7 +160,6 @@ class StrictEnhancedTrackingProtectionTest {
     }
 
     @Test
-    @Ignore("Failing after compose migration. See: https://github.com/mozilla-mobile/fenix/issues/26087")
     fun testStrictVisitSheetDetails() {
         val genericPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val trackingProtectionTest =

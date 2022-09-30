@@ -26,7 +26,7 @@ object FeatureFlags {
     /**
      * Enables the onboarding sync CFR on the home screen.
      */
-    val showSynCFR = Config.channel.isNightlyOrDebug
+    const val showSynCFR = true
 
     /**
      * Enables the onboarding jump back in CFR on the home screen.
@@ -82,7 +82,7 @@ object FeatureFlags {
     /**
      * Enables showing the homescreen onboarding card.
      */
-    val showHomeOnboarding = Config.channel.isNightlyOrDebug
+    const val showHomeOnboarding = true
 
     /**
      * Enables history improvement features.

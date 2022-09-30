@@ -39,11 +39,11 @@ import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.Matcher
 import org.mozilla.fenix.R
-import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
-import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.clickAtLocationInView
@@ -451,7 +451,7 @@ private fun tabMediaControlButton() =
     mDevice.findObject(UiSelector().resourceId("$packageName:id/play_pause_button"))
 
 private fun closeTabButton() =
-    mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_tabstray_close"))
+    mDevice.findObject(UiSelector().descriptionContains("Close tab"))
 
 private fun assertCloseTabsButton(title: String) =
     assertTrue(
@@ -497,7 +497,7 @@ private fun assertExistingTabList() {
 
     assertTrue(
         mDevice.findObject(
-            UiSelector().resourceId("$packageName:id/tab_item"),
+            UiSelector().resourceId("$packageName:id/tray_list_item"),
         ).waitForExists(waitingTime),
     )
 }
@@ -623,8 +623,7 @@ private fun tab(title: String) =
 private fun tabItem(title: String) =
     mDevice.findObject(
         UiSelector()
-            .resourceId("$packageName:id/tab_item")
-            .childSelector(UiSelector().text(title)),
+            .textContains(title),
     )
 
 private fun tabsCounter() = onView(withId(R.id.tab_button))
