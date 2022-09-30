@@ -596,14 +596,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     val enabledTotalCookieProtection: Boolean
-        get() = mr2022Sections[Mr2022Section.TCP_FEATURE] == true && Config.channel.isNightlyOrDebug
+        get() = mr2022Sections[Mr2022Section.TCP_FEATURE] == true
 
     /**
      * Indicates if the total cookie protection CRF should be shown.
      */
     var shouldShowTotalCookieProtectionCFR by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_should_show_total_cookie_protection_popup),
-        default = mr2022Sections[Mr2022Section.TCP_CFR] == true && Config.channel.isNightlyOrDebug,
+        default = mr2022Sections[Mr2022Section.TCP_CFR] == true,
     )
 
     val blockCookiesSelectionInCustomTrackingProtection by stringPreference(
@@ -1255,7 +1255,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     /**
      * Indicates if sync onboarding CFR should be shown.
-     * Returns true if the [FeatureFlags.showSynCFR] and [R.string.pref_key_should_show_sync_cfr] are true.
      */
     var showSyncCFR by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_should_show_sync_cfr),
