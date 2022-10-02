@@ -12,13 +12,20 @@ class TabHistoryInteractorTest {
 
     val controller: TabHistoryController = mockk(relaxed = true)
     val interactor = TabHistoryInteractor(controller)
+    val item: TabHistoryItem = mockk()
 
     @Test
     fun onGoToHistoryItem() {
-        val item: TabHistoryItem = mockk()
-
         interactor.goToHistoryItem(item)
 
         verify { controller.handleGoToHistoryItem(item) }
+    }
+
+    @Test
+    fun onGoToHistoryItemNewTab() {
+        val onSuccess = mockk<() -> Unit>()
+        interactor.goToHistoryItemNewTab(item, onSuccess)
+
+        verify { controller.handleGoToHistoryItemNewTab(item, onSuccess) }
     }
 }

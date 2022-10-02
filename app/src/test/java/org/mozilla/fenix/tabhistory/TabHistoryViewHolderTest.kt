@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.tabhistory
 
+import android.view.HapticFeedbackConstants
 import android.view.View
 import io.mockk.CapturingSlot
 import io.mockk.MockKAnnotations
@@ -30,6 +31,7 @@ class TabHistoryViewHolderTest {
     @MockK private lateinit var icons: BrowserIcons
     private lateinit var holder: TabHistoryViewHolder
     private lateinit var onClick: CapturingSlot<View.OnClickListener>
+    private lateinit var onLongClick: CapturingSlot<View.OnLongClickListener>
 
     private val selectedItem = TabHistoryItem(
         title = "Mozilla",
@@ -48,8 +50,10 @@ class TabHistoryViewHolderTest {
     fun setup() {
         MockKAnnotations.init(this)
         onClick = slot()
+        onLongClick = slot()
 
         every { view.setOnClickListener(capture(onClick)) } just Runs
+        every { view.setOnLongClickListener(capture(onLongClick)) } just Runs
         every { icons.loadIntoView(view.iconView, any()) } returns mockk()
 
         holder = TabHistoryViewHolder(view, interactor, icons)
@@ -63,6 +67,22 @@ class TabHistoryViewHolderTest {
         holder.bind(item)
         onClick.captured.onClick(mockk())
         verify { interactor.goToHistoryItem(item) }
+    }
+
+    @Test
+    fun `calls interactor and performs haptic feedback on long click`() {
+        every { view.performHapticFeedback(any()) } returns true
+        every { interactor.goToHistoryItemNewTab(any(), captureLambda()) } answers {
+            lambda<() -> Unit>().captured.invoke()
+            true
+        }
+
+        val item = mockk<TabHistoryItem>(relaxed = true)
+        holder.bind(item)
+        onLongClick.captured.onLongClick(view)
+
+        verify { interactor.goToHistoryItemNewTab(any(), any()) }
+        verify { view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS) }
     }
 
     @Test
