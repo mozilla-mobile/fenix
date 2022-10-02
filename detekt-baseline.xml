@@ -921,7 +921,6 @@
     <ID>UndocumentedPublicFunction:TabCollectionStorage.kt$TabCollectionStorage$suspend fun removeTabFromCollection(tabCollection: TabCollection, tab: Tab)</ID>
     <ID>UndocumentedPublicFunction:TabCollectionStorage.kt$TabCollectionStorage$suspend fun renameCollection(tabCollection: TabCollection, title: String)</ID>
     <ID>UndocumentedPublicFunction:TabCollectionStorage.kt$fun TabCollection.description(context: Context): String</ID>
-    <ID>UndocumentedPublicFunction:TabHistoryController.kt$TabHistoryController$fun handleGoToHistoryItem(item: TabHistoryItem)</ID>
     <ID>UndocumentedPublicFunction:TabHistoryView.kt$TabHistoryView$fun updateState(historyState: HistoryState)</ID>
     <ID>UndocumentedPublicFunction:TabHistoryViewHolder.kt$TabHistoryViewHolder$fun bind(item: TabHistoryItem)</ID>
     <ID>UndocumentedPublicFunction:TabLayout.kt$fun TabLayout.isNormalModeSelected(): Boolean</ID>
