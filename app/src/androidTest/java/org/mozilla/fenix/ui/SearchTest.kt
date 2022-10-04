@@ -6,11 +6,9 @@ package org.mozilla.fenix.ui
 
 import android.content.Context
 import android.hardware.camera2.CameraManager
-import android.os.Build
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.core.net.toUri
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
-import androidx.test.filters.SdkSuppress
 import mozilla.components.browser.icons.IconRequest
 import mozilla.components.browser.icons.generator.DefaultIconGenerator
 import mozilla.components.feature.search.ext.createSearchEngine
@@ -51,10 +49,13 @@ class SearchTest {
 
     @get:Rule
     val activityTestRule = AndroidComposeTestRule(
-        HomeActivityTestRule(),
-        { it.activity },
-    )
-    private val featureSettingsHelper = activityTestRule.activityRule.featureSettingsHelper
+        HomeActivityTestRule(
+            isPocketEnabled = false,
+            isJumpBackInCFREnabled = false,
+            isTCPCFREnabled = false,
+            isWallpaperOnboardingEnabled = false,
+        ),
+    ) { it.activity }
 
     @Before
     fun setUp() {
@@ -62,10 +63,6 @@ class SearchTest {
             dispatcher = SearchDispatcher()
             start()
         }
-        featureSettingsHelper.setJumpBackCFREnabled(false)
-        featureSettingsHelper.setTCPCFREnabled(false)
-        featureSettingsHelper.setPocketEnabled(false)
-        featureSettingsHelper.setShowWallpaperOnboarding(false)
     }
 
     @After
@@ -84,7 +81,6 @@ class SearchTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @SmokeTest
     @Test
     fun scanButtonDenyPermissionTest() {
@@ -106,7 +102,6 @@ class SearchTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @SmokeTest
     @Test
     fun scanButtonAllowPermissionTest() {

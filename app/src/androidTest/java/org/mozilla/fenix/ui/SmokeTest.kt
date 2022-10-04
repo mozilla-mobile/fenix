@@ -26,7 +26,7 @@ import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.Constants.PackageName.YOUTUBE_APP
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
+import org.mozilla.fenix.helpers.FeatureSettingsHelperDelegate
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.RetryTestRule
@@ -62,7 +62,7 @@ class SmokeTest {
     private lateinit var mockWebServer: MockWebServer
     private val customMenuItem = "TestMenuItem"
     private lateinit var browserStore: BrowserStore
-    private val featureSettingsHelper = FeatureSettingsHelper()
+    private val featureSettingsHelper = FeatureSettingsHelperDelegate()
 
     @get:Rule(order = 0)
     val activityTestRule = AndroidComposeTestRule(
@@ -88,9 +88,11 @@ class SmokeTest {
         browserStore = activityTestRule.activity.components.core.store
 
         // disabling the new homepage pop-up that interferes with the tests.
-        featureSettingsHelper.setJumpBackCFREnabled(false)
-        featureSettingsHelper.setTCPCFREnabled(false)
-        featureSettingsHelper.setShowWallpaperOnboarding(false)
+        featureSettingsHelper.apply {
+            isJumpBackInCFREnabled = false
+            isTCPCFREnabled = false
+            isWallpaperOnboardingEnabled = false
+        }.applyFlagUpdates()
 
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         mockWebServer = MockWebServer().apply {
@@ -159,7 +161,6 @@ class SmokeTest {
         }
     }
 
-    @Test
     /* Verifies the nav bar:
      - opening a web page
      - the existence of nav bar items
@@ -167,7 +168,7 @@ class SmokeTest {
      - the tab drawer button
      - opening a new search and dismissing the nav bar
     */
-    @Ignore("Failing after compose migration. See: https://github.com/mozilla-mobile/fenix/issues/26087")
+    @Test
     fun verifyBasicNavigationToolbarFunctionality() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -502,9 +503,8 @@ class SmokeTest {
         }
     }
 
-    @Test
     // Verifies that a recently closed item is properly opened
-    @Ignore("Failing after compose migration. See: https://github.com/mozilla-mobile/fenix/issues/26087")
+    @Test
     fun openRecentlyClosedItemTest() {
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -527,9 +527,8 @@ class SmokeTest {
         }
     }
 
-    @Test
     // Verifies that tapping the "x" button removes a recently closed item from the list
-    @Ignore("Failing after compose migration. See: https://github.com/mozilla-mobile/fenix/issues/26087")
+    @Test
     fun deleteRecentlyClosedTabsItemTest() {
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -676,7 +675,6 @@ class SmokeTest {
     // caution when making changes to it, so they don't block the builds
     @Test
     fun noHistoryInPrivateBrowsingTest() {
-        FeatureSettingsHelper().setTCPCFREnabled(false)
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         homeScreen {
@@ -881,7 +879,6 @@ class SmokeTest {
         mDevice.pressBack()
     }
 
-    @Ignore("Failing: https://github.com/mozilla-mobile/fenix/issues/26884")
     @Test
     fun copyTextTest() {
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -901,7 +898,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Failing: https://github.com/mozilla-mobile/fenix/issues/26884")
     @Test
     fun selectAllAndCopyTextTest() {
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
