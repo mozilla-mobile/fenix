@@ -14,11 +14,15 @@ object Versions {
     const val android_gradle_plugin = "7.3.0"
     const val android_lint_api = "30.3.0"
 
-    const val sentry = "5.7.3"
-    const val leakcanary = "2.8.1"
+    const val sentry = "6.4.2"
+    const val leakcanary = "2.9.1"
+
+    // We can't update this past 0.10.4 due to unit test failures:
+    // https://github.com/mozilla-mobile/fenix/issues/27287
     const val osslicenses_plugin = "0.10.4"
+
     const val detekt = "1.19.0"
-    const val jna = "5.8.0"
+    const val jna = "5.12.1"
 
     const val androidx_compose = "1.2.1"
     const val androidx_compose_compiler = "1.1.1"
@@ -45,21 +49,21 @@ object Versions {
 
     const val mozilla_android_components = AndroidComponents.VERSION
 
-    const val adjust = "4.18.3"
-    const val installreferrer = "1.0"
+    const val adjust = "4.32.0"
+    const val installreferrer = "2.2"
 
     const val junit = "5.5.2"
     const val mockk = "1.12.0"
 
-    const val mockwebserver = "4.9.0"
+    const val mockwebserver = "4.10.0"
     const val uiautomator = "2.2.0"
-    const val robolectric = "4.8.1"
+    const val robolectric = "4.9"
 
     const val google_ads_id_version = "16.0.0"
 
-    const val google_play_store_version = "1.8.0"
+    const val google_play_store_version = "1.10.3"
 
-    const val protobuf = "3.21.6" // keep in sync with the version used in AS.
+    const val protobuf = "3.21.7" // keep in sync with the version used in AS.
 }
 
 @Suppress("unused")
