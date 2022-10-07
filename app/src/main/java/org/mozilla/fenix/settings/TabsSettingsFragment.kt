@@ -28,6 +28,7 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
     private lateinit var radioOneDay: RadioButtonPreference
     private lateinit var radioOneWeek: RadioButtonPreference
     private lateinit var radioOneMonth: RadioButtonPreference
+    private lateinit var closeOrphanTabOnBack: SwitchPreference
     private lateinit var inactiveTabsCategory: PreferenceCategory
     private lateinit var inactiveTabs: SwitchPreference
 
@@ -60,6 +61,10 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
         radioOneMonth = requirePreference(R.string.pref_key_close_tabs_after_one_month)
         radioOneWeek = requirePreference(R.string.pref_key_close_tabs_after_one_week)
         radioOneDay = requirePreference(R.string.pref_key_close_tabs_after_one_day)
+
+        closeOrphanTabOnBack = requirePreference<SwitchPreference>(R.string.pref_key_close_orphan_tab_on_back).also {
+            it.onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
 
         inactiveTabs = requirePreference<SwitchPreference>(R.string.pref_key_inactive_tabs).also {
             it.isChecked = requireContext().settings().inactiveTabsAreEnabled

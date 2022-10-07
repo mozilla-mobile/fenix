@@ -644,7 +644,7 @@
     <string name="tab_view_list">List</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Grid</string>
-    <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
+    <!-- Title of preference category for the close behavior of tabs -->
     <string name="preferences_close_tabs">Close tabs</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
     <string name="close_tabs_manually">Never</string>
@@ -656,6 +656,8 @@
     <string name="close_tabs_after_one_month">After one month</string>
     <!-- Title of preference that allows a user to specify the auto-close settings for open tabs -->
     <string name="preference_auto_close_tabs" tools:ignore="UnusedResources">Auto-close open tabs</string>
+    <!-- Option for closing the current tab with no history or parent on a back action -->
+    <string name="preference_close_orphan_tab_on_back">Back action closes tab with no history or parent</string>
 
     <!-- Opening screen -->
     <!-- Title of a preference that allows a user to choose what screen to show after opening the app -->

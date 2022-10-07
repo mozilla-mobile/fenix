@@ -44,6 +44,11 @@
             android:defaultValue="false"
             android:key="@string/pref_key_close_tabs_after_one_month"
             android:title="@string/close_tabs_after_one_month" />
+
+        <androidx.preference.SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key_close_orphan_tab_on_back"
+            android:title="@string/preference_close_orphan_tab_on_back" />
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory

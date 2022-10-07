@@ -357,6 +357,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
+    /**
+     * Indicates if invoking a back action should close a tab with no history or parent.
+     */
+    var closeOrphanTabOnBack by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_close_orphan_tab_on_back),
+        default = false,
+    )
+
     var manuallyCloseTabs by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_close_tabs_manually),
         default = true,
