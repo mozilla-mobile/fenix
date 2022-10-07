@@ -39,6 +39,7 @@ import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.ext.name
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
 import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.view.ViewHolder
 
 @SuppressLint("ClickableViewAccessibility")
@@ -87,7 +88,8 @@ class TopSiteItemViewHolder(
             flow.map { state -> state.wallpaperState }
                 .ifChanged()
                 .collect { currentState ->
-                    var backgroundColor = ContextCompat.getColor(view.context, R.color.fx_mobile_layer_color_2)
+                    val colorResourceId = ThemeManager.resolveAttribute(R.attr.layer2, view.context)
+                    var backgroundColor = ContextCompat.getColor(view.context, colorResourceId)
 
                     currentState.runIfWallpaperCardColorsAreAvailable { cardColorLight, cardColorDark ->
                         backgroundColor = if (view.context.isSystemInDarkTheme()) {

@@ -25,7 +25,7 @@ A FrameLayout here is an efficient way of having a views stack while allowing:
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:importantForAccessibility="yes"
-        app:cardBackgroundColor="@color/fx_mobile_layer_color_2"
+        app:cardBackgroundColor="?attr/layer2"
         app:cardCornerRadius="@dimen/tab_tray_grid_item_border_radius"
         app:cardElevation="0dp"
         app:strokeColor="@color/fx_mobile_border_color_primary"

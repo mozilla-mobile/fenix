@@ -26,6 +26,7 @@ import org.mozilla.fenix.tabstray.TabsTrayState.Mode
 import org.mozilla.fenix.tabstray.TabsTrayState.Mode.Select
 import org.mozilla.fenix.tabstray.TabsTrayStore
 import org.mozilla.fenix.tabstray.ext.showWithTheme
+import org.mozilla.fenix.theme.ThemeManager
 
 /**
  * A binding that shows/hides the multi-select banner of the selected count of tabs.
@@ -56,6 +57,10 @@ class SelectionBannerBinding(
      */
     class VisibilityModifier(vararg val views: View)
 
+    private val nonSelectModeColorId = ThemeManager.resolveAttribute(
+        R.attr.layer1,
+        backgroundView.context,
+    )
     private var isPreviousModeSelect = false
 
     override fun start() {
@@ -120,7 +125,7 @@ class SelectionBannerBinding(
             val colorResource = if (isSelectMode) {
                 R.color.fx_mobile_layer_color_accent
             } else {
-                R.color.fx_mobile_layer_color_1
+                nonSelectModeColorId
             }
 
             val color = ContextCompat.getColor(backgroundView.context, colorResource)

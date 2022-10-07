@@ -12,7 +12,7 @@
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
         <item name="android:progressBarStyleHorizontal">@style/progressBarStyleHorizontal</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowBackground">@color/fx_mobile_layer_color_1</item>
+        <item name="android:windowBackground">?attr/layer1</item>
         <item name="android:colorEdgeEffect">@color/accent_normal_theme</item>
         <item name="android:colorAccent">@color/fx_mobile_text_color_primary</item>
         <item name="android:textColorPrimary">@color/state_list_text_color</item>
@@ -93,9 +93,9 @@
         <item name="neutral">@color/neutral_normal_theme</item>
         <item name="neutralFaded">@color/neutral_faded_normal_theme</item>
         <item name="accentUsedOnDarkBackground">@color/fx_mobile_text_color_accent</item>
-        <item name="toolbarStartGradient">@color/fx_mobile_layer_color_1</item>
-        <item name="toolbarCenterGradient">@color/fx_mobile_layer_color_1</item>
-        <item name="toolbarEndGradient">@color/fx_mobile_layer_color_1</item>
+        <item name="toolbarStartGradient">?attr/layer1</item>
+        <item name="toolbarCenterGradient">?attr/layer1</item>
+        <item name="toolbarEndGradient">?attr/layer1</item>
         <item name="fillLinkFromClipboard">@color/fill_link_from_clipboard_normal_theme</item>
         <item name="syncDisconnected">@color/sync_disconnected_icon_fill_normal_theme</item>
         <item name="syncDisconnectedBackground">@color/sync_disconnected_background_normal_theme</item>
@@ -114,14 +114,14 @@
         <!-- Shared widget colors -->
         <item name="mozac_primary_text_color">@color/fx_mobile_text_color_primary</item>
         <item name="mozac_caption_text_color">@color/fx_mobile_text_color_secondary</item>
-        <item name="mozac_widget_favicon_background_color">@color/fx_mobile_layer_color_2</item>
+        <item name="mozac_widget_favicon_background_color">?attr/layer2</item>
         <item name="mozac_widget_favicon_border_color">@color/fx_mobile_border_color_primary</item>
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_normal</item>
         <item name="fenixWordmarkText">@drawable/ic_wordmark_text_normal</item>
         <item name="fenixWordmarkLogo">@drawable/ic_wordmark_logo</item>
-        <item name="homeBackground">@color/fx_mobile_layer_color_1</item>
+        <item name="homeBackground">?attr/layer1</item>
         <item name="bottomBarBackground">@drawable/home_bottom_bar_background</item>
         <item name="bottomBarBackgroundTop">@drawable/home_bottom_bar_background_top</item>
         <item name="privateBrowsingButtonBackground">@android:color/transparent</item>
@@ -650,8 +650,11 @@
 
     <!-- Tab Tray does not present a private theme, so it needs to be separate from other bottom sheet styles -->
     <style name="TabTrayDialogStyleBase" parent="BottomSheetBase">
+        <item name="layer1">@color/fx_mobile_layer_color_1</item>
+        <item name="layer2">@color/fx_mobile_layer_color_2</item>
+        <item name="layer3">@color/fx_mobile_layer_color_3</item>
         <item name="bottomSheetStyle">@style/BottomSheetModal</item>
-        <item name="android:colorBackground">@color/fx_mobile_layer_color_1</item>
+        <item name="android:colorBackground">?attr/layer1</item>
     </style>
 
     <style name="TabTrayDialogStyle" parent="TabTrayDialogStyleBase" />

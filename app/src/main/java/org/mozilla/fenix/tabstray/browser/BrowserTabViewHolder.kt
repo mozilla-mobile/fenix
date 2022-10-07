@@ -18,6 +18,7 @@ import org.mozilla.fenix.databinding.TabTrayGridItemBinding
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.TabsTrayStore
+import org.mozilla.fenix.theme.ThemeManager
 import kotlin.math.max
 
 sealed class BrowserTabViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -94,6 +95,9 @@ sealed class BrowserTabViewHolder(itemView: View) : RecyclerView.ViewHolder(item
         itemView: View,
         featureName: String,
     ) : AbstractBrowserTabViewHolder(itemView, imageLoader, store, selectionHolder, featureName) {
+
+        private val nonSelectedColorId = ThemeManager.resolveAttribute(R.attr.layer1, itemView.context)
+
         override val thumbnailSize: Int
             get() = max(
                 itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_list_item_thumbnail_height),
@@ -104,7 +108,7 @@ sealed class BrowserTabViewHolder(itemView: View) : RecyclerView.ViewHolder(item
             val color = if (showAsSelected) {
                 R.color.fx_mobile_layer_color_accent_opaque
             } else {
-                R.color.fx_mobile_layer_color_1
+                nonSelectedColorId
             }
             itemView.setBackgroundColor(
                 ContextCompat.getColor(
