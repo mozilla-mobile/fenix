@@ -20,6 +20,11 @@
 
         <org.mozilla.fenix.settings.RadioButtonPreference
             android:defaultValue="false"
+            android:key="@string/pref_key_black_theme"
+            android:title="@string/preference_black_theme" />
+
+        <org.mozilla.fenix.settings.RadioButtonPreference
+            android:defaultValue="false"
             android:key="@string/pref_key_auto_battery_theme"
             android:title="@string/preference_auto_battery_theme"
             app:isPreferenceVisible="@bool/underAPI28" />

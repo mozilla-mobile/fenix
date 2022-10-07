@@ -511,6 +511,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false,
     )
 
+    var shouldUseBlackTheme by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_black_theme),
+        default = false,
+    )
+
     var shouldFollowDeviceTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_follow_device_theme),
         default = false,

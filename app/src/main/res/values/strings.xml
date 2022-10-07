@@ -586,6 +586,8 @@
     <string name="preference_light_theme">Light</string>
     <!-- Preference for using dark theme -->
     <string name="preference_dark_theme">Dark</string>
+    <!-- Preference for using black theme -->
+    <string name="preference_black_theme">Black</string>
     <!-- Preference for using using dark or light theme automatically set by battery -->
     <string name="preference_auto_battery_theme">Set by Battery Saver</string>
     <!-- Preference for using following device theme -->
