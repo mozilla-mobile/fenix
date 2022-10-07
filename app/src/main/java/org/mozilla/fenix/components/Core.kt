@@ -519,7 +519,7 @@ class Core(
             (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
                 Configuration.UI_MODE_NIGHT_YES
         return when {
-            context.settings().shouldUseDarkTheme -> PreferredColorScheme.Dark
+            context.settings().shouldUseDarkTheme || context.settings().shouldUseBlackTheme -> PreferredColorScheme.Dark
             context.settings().shouldUseLightTheme -> PreferredColorScheme.Light
             inDark -> PreferredColorScheme.Dark
             else -> PreferredColorScheme.Light

@@ -101,6 +101,7 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         radioBlackTheme.onClickListener {
             setNewTheme(AppCompatDelegate.MODE_NIGHT_YES)
         }
+        radioBlackTheme.isVisible = FeatureFlags.blackTheme
     }
 
     private fun bindFollowDeviceTheme() {

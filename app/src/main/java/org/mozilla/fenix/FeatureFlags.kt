@@ -128,4 +128,9 @@ object FeatureFlags {
      * Feature flag tracking: https://github.com/mozilla-mobile/fenix/issues/27759
      * */
     val storageMaintenanceFeature = Config.channel.isNightlyOrDebug
+
+    /**
+     * Allows the user to enable an "OLED Black" theme
+     */
+    val blackTheme = Config.channel.isNightlyOrDebug
 }

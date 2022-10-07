@@ -23,9 +23,11 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
+import org.mozilla.fenix.ext.settings
 
 abstract class ThemeManager {
 
+    protected abstract val activity: Activity
     abstract var currentTheme: BrowsingMode
 
     /**
@@ -33,7 +35,11 @@ abstract class ThemeManager {
      */
     @get:StyleRes
     val currentThemeResource get() = when (currentTheme) {
-        BrowsingMode.Normal -> R.style.NormalTheme
+        BrowsingMode.Normal -> if (activity.settings().shouldUseBlackTheme) {
+            R.style.NormalBlackTheme
+        } else {
+            R.style.NormalTheme
+        }
         BrowsingMode.Private -> R.style.PrivateTheme
     }
 
@@ -117,7 +123,7 @@ abstract class ThemeManager {
 
 class DefaultThemeManager(
     currentTheme: BrowsingMode,
-    private val activity: Activity,
+    override val activity: Activity,
 ) : ThemeManager() {
     override var currentTheme: BrowsingMode = currentTheme
         set(value) {
