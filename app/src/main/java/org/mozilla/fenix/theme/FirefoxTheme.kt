@@ -153,6 +153,17 @@ private val darkColorPalette = FirefoxColors(
     borderWarning = PhotonColors.Red40,
 )
 
+private val blackColorPalette = darkColorPalette.copy(
+    layer1 = PhotonColors.Black,
+    layer2 = PhotonColors.DarkGrey90,
+    layer3 = PhotonColors.DarkGrey80,
+    layer4Start = PhotonColors.Black, // maybe these 3?
+    layer4Center = PhotonColors.Black, // maybe these 3?
+    layer4End = PhotonColors.Black, // maybe these 3?
+    actionTertiary = PhotonColors.DarkGrey80,
+    borderPrimary = PhotonColors.DarkGrey70,
+)
+
 private val lightColorPalette = FirefoxColors(
     layer1 = PhotonColors.LightGrey10,
     layer2 = PhotonColors.White,
