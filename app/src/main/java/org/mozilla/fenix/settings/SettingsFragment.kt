@@ -194,14 +194,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun update(shouldUpdateAccountUIState: Boolean) {
         val settings = requireContext().settings()
 
-        val trackingProtectionPreference =
-            requirePreference<Preference>(R.string.pref_key_tracking_protection_settings)
-        trackingProtectionPreference.summary = if (settings.shouldUseTrackingProtection) {
-            getString(R.string.tracking_protection_on)
-        } else {
-            getString(R.string.tracking_protection_off)
-        }
-
         val aboutPreference = requirePreference<Preference>(R.string.pref_key_about)
         val appName = getString(R.string.app_name)
         aboutPreference.title = getString(R.string.preferences_about, appName)
@@ -224,6 +216,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         } else {
             getString(R.string.preferences_credit_cards)
         }
+
+        setupTrackingProtectionPreference()
 
         setupPreferences()
 
@@ -572,6 +566,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 getString(R.string.preferences_https_only_on)
             } else {
                 getString(R.string.preferences_https_only_off)
+            }
+        }
+    }
+
+    @VisibleForTesting
+    internal fun setupTrackingProtectionPreference() {
+        val trackingProtectionPreference =
+            requirePreference<Preference>(R.string.pref_key_tracking_protection_settings)
+
+        trackingProtectionPreference.summary = context?.settings()?.let {
+            if (!it.shouldUseTrackingProtection) {
+                getString(R.string.tracking_protection_off)
+            } else if (it.useStrictTrackingProtection) {
+                getString(R.string.preference_enhanced_tracking_protection_strict)
+            } else if (it.useCustomTrackingProtection) {
+                getString(R.string.preference_enhanced_tracking_protection_custom)
+            } else {
+                getString(R.string.tracking_protection_on)
             }
         }
     }
