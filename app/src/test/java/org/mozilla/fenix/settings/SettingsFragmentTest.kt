@@ -149,14 +149,12 @@ class SettingsFragmentTest {
         assertFalse(preferenceAmoCollectionOverride.isVisible)
     }
 
-    @Test
-    fun `GIVEN the HttpsOnly is enabled THEN set the appropriate preference summary`() {
+    private fun testHttpsOnlySummary(summary: String) {
         val httpsOnlyPreference = settingsFragment.findPreference<Preference>(
             settingsFragment.getPreferenceKey(R.string.pref_key_https_only_settings),
         )!!
-        every { testContext.settings().shouldUseHttpsOnly } returns true
+
         assertTrue(httpsOnlyPreference.summary.isNullOrEmpty())
-        val summary = testContext.getString(R.string.preferences_https_only_on)
 
         settingsFragment.setupHttpsOnlyPreferences()
 
@@ -164,17 +162,82 @@ class SettingsFragmentTest {
     }
 
     @Test
+    fun `GIVEN the HttpsOnly is enabled THEN set the appropriate preference summary`() {
+        every { testContext.settings().shouldUseHttpsOnly } returns true
+        every { testContext.settings().shouldUseHttpsOnlyInPrivateTabsOnly } returns false
+        testHttpsOnlySummary(
+            summary = testContext.getString(R.string.preferences_https_only_on),
+        )
+    }
+
+    @Test
     fun `GIVEN the HttpsOnly is disabled THEN set the appropriate preference summary`() {
-        val httpsOnlyPreference = settingsFragment.findPreference<Preference>(
-            settingsFragment.getPreferenceKey(R.string.pref_key_https_only_settings),
-        )!!
         every { testContext.settings().shouldUseHttpsOnly } returns false
-        assertTrue(httpsOnlyPreference.summary.isNullOrEmpty())
-        val summary = testContext.getString(R.string.preferences_https_only_off)
+        every { testContext.settings().shouldUseHttpsOnlyInPrivateTabsOnly } returns false
+        testHttpsOnlySummary(
+            summary = testContext.getString(R.string.preferences_https_only_off),
+        )
+    }
 
-        settingsFragment.setupHttpsOnlyPreferences()
+    @Test
+    fun `GIVEN the HttpsOnly is enabled in private tabs only THEN set the appropriate preference summary`() {
+        every { testContext.settings().shouldUseHttpsOnly } returns true
+        every { testContext.settings().shouldUseHttpsOnlyInPrivateTabsOnly } returns true
+        testHttpsOnlySummary(
+            summary = testContext.getString(R.string.preferences_https_only_in_private_tabs),
+        )
+    }
 
-        assertEquals(summary, httpsOnlyPreference.summary)
+    private fun testTrackingProtectionSummary(summary: String) {
+        val trackingProtectionPreference = settingsFragment.findPreference<Preference>(
+            settingsFragment.getPreferenceKey(R.string.pref_key_tracking_protection_settings),
+        )!!
+
+        assertTrue(trackingProtectionPreference.summary.isNullOrEmpty())
+
+        settingsFragment.setupTrackingProtectionPreference()
+
+        assertEquals(summary, trackingProtectionPreference.summary)
+    }
+
+    @Test
+    fun `GIVEN TrackingProtection is enabled THEN set the appropriate preference summary`() {
+        every { testContext.settings().shouldUseTrackingProtection } returns true
+        every { testContext.settings().useStrictTrackingProtection } returns false
+        every { testContext.settings().useCustomTrackingProtection } returns false
+        testTrackingProtectionSummary(
+            summary = testContext.getString(R.string.tracking_protection_on),
+        )
+    }
+
+    @Test
+    fun `GIVEN TrackingProtection is disabled THEN set the appropriate preference summary`() {
+        every { testContext.settings().shouldUseTrackingProtection } returns false
+        every { testContext.settings().useStrictTrackingProtection } returns false
+        every { testContext.settings().useCustomTrackingProtection } returns false
+        testTrackingProtectionSummary(
+            summary = testContext.getString(R.string.tracking_protection_off),
+        )
+    }
+
+    @Test
+    fun `GIVEN strict TrackingProtection is enabled THEN set the appropriate preference summary`() {
+        every { testContext.settings().shouldUseTrackingProtection } returns true
+        every { testContext.settings().useStrictTrackingProtection } returns true
+        every { testContext.settings().useCustomTrackingProtection } returns false
+        testTrackingProtectionSummary(
+            summary = testContext.getString(R.string.preference_enhanced_tracking_protection_strict),
+        )
+    }
+
+    @Test
+    fun `GIVEN custom TrackingProtection is enabled THEN set the appropriate preference summary`() {
+        every { testContext.settings().shouldUseTrackingProtection } returns true
+        every { testContext.settings().useStrictTrackingProtection } returns false
+        every { testContext.settings().useCustomTrackingProtection } returns true
+        testTrackingProtectionSummary(
+            summary = testContext.getString(R.string.preference_enhanced_tracking_protection_custom),
+        )
     }
 
     @After
