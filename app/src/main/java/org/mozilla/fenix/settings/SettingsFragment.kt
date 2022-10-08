@@ -561,8 +561,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
     internal fun setupHttpsOnlyPreferences() {
         val httpsOnlyPreference =
             requirePreference<Preference>(R.string.pref_key_https_only_settings)
-        httpsOnlyPreference.summary = context?.let {
-            if (it.settings().shouldUseHttpsOnly) {
+        httpsOnlyPreference.summary = context?.settings()?.let {
+            if (it.shouldUseHttpsOnlyInPrivateTabsOnly) {
+                getString(R.string.preferences_https_only_in_private_tabs)
+            } else if (it.shouldUseHttpsOnly) {
                 getString(R.string.preferences_https_only_on)
             } else {
                 getString(R.string.preferences_https_only_off)
