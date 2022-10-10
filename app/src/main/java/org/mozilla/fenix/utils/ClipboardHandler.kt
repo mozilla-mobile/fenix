@@ -38,10 +38,7 @@ class ClipboardHandler(val context: Context) {
             if (clipboard.isPrimaryClipEmpty()) {
                 return null
             }
-            if (clipboard.isPrimaryClipPlainText() ||
-                clipboard.isPrimaryClipHtmlText() ||
-                clipboard.isPrimaryClipUrlText()
-            ) {
+            if (containsText()) {
                 return firstSafePrimaryClipItemText
             }
             return null
@@ -51,7 +48,6 @@ class ClipboardHandler(val context: Context) {
         }
 
     /**
-     * Returns a possible URL from the actual content of the clipboard, be aware this is a sensitive
      * API as from Android 12 and above, accessing it will trigger a notification letting the user
      * know the app has accessed the clipboard, make sure when you call this API that users are
      * completely aware that we are accessing the clipboard.
@@ -66,6 +62,15 @@ class ClipboardHandler(val context: Context) {
             val finder = WebURLFinder(it)
             finder.bestWebURL()
         }
+    }
+
+    /**
+     * We cannot rely on `isPrimaryClipEmpty()` since it triggers a clipboard access system notification.
+     */
+    fun containsText(): Boolean {
+        return clipboard.isPrimaryClipHtmlText() ||
+            clipboard.isPrimaryClipPlainText() ||
+            clipboard.isPrimaryClipUrlText()
     }
 
     @Suppress("MagicNumber")
@@ -94,6 +99,12 @@ class ClipboardHandler(val context: Context) {
     private fun ClipboardManager.isPrimaryClipUrlText() =
         primaryClipDescription?.hasMimeType(MIME_TYPE_TEXT_URL) ?: false
 
+    /**
+     * Reads the clip data, be aware this is a sensitive API as from Android 12 and above,
+     * accessing it will trigger a notification letting the user know the app has accessed the clipboard,
+     * make sure when you call this API that users are completely aware that we are accessing the clipboard.
+     * See for more details https://github.com/mozilla-mobile/fenix/issues/22271.
+     */
     private fun ClipboardManager.isPrimaryClipEmpty() = primaryClip?.itemCount == 0
 
     /**
