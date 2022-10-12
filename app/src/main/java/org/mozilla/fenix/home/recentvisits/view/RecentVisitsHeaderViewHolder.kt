@@ -40,7 +40,9 @@ class RecentVisitsHeaderViewHolder(
     @Composable
     override fun Content() {
         Column {
-            Spacer(modifier = Modifier.height(40.dp))
+            // Padding reduced by 12dp to compensate for the header height increase
+            // from https://github.com/mozilla-mobile/fenix/pull/26885
+            Spacer(modifier = Modifier.height(28.dp))
 
             HomeSectionHeader(
                 headerText = stringResource(R.string.history_metadata_header_2),
@@ -48,7 +50,9 @@ class RecentVisitsHeaderViewHolder(
                 onShowAllClick = interactor::onHistoryShowAllClicked,
             )
 
-            Spacer(Modifier.height(16.dp))
+            // Padding reduced by 12dp to compensate for the header height increase
+            // from https://github.com/mozilla-mobile/fenix/pull/26885
+            Spacer(Modifier.height(4.dp))
         }
     }
 

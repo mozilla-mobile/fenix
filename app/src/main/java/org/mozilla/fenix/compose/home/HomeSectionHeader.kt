@@ -4,11 +4,11 @@
 
 package org.mozilla.fenix.compose.home
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.ButtonDefaults.textButtonColors
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,15 +17,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import mozilla.components.lib.state.ext.observeAsComposableState
+import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.components
+import org.mozilla.fenix.compose.button.TextButton
 import org.mozilla.fenix.compose.inComposePreview
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.wallpapers.Wallpaper
@@ -104,17 +102,19 @@ private fun HomeSectionHeaderContent(
         )
 
         onShowAllClick?.let {
-            ClickableText(
-                text = AnnotatedString(text = stringResource(id = R.string.recent_tabs_show_all)),
-                modifier = Modifier.padding(start = 16.dp)
-                    .semantics {
-                        contentDescription = description
+            TextButton(
+                text = stringResource(id = R.string.recent_tabs_show_all),
+                buttonColors = textButtonColors(
+                    contentColor = if (isSystemInDarkTheme()) {
+                        PhotonColors.White
+                    } else {
+                        PhotonColors.Black
                     },
-                style = TextStyle(
-                    color = showAllTextColor,
-                    fontSize = 14.sp,
                 ),
                 onClick = { onShowAllClick() },
+                modifier = Modifier
+                    .semantics { contentDescription = description },
+                textColor = showAllTextColor,
             )
         }
     }

@@ -43,6 +43,7 @@ import org.mozilla.fenix.compose.list.FaviconListItem
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.tabstray.ext.toDisplayTitle
 import org.mozilla.fenix.theme.FirefoxTheme
+import java.util.Locale
 
 private val ROUNDED_CORNER_SHAPE = RoundedCornerShape(8.dp)
 
@@ -214,7 +215,8 @@ private fun InactiveTabsAutoClosePrompt(
             )
 
             TextButton(
-                text = stringResource(R.string.tab_tray_inactive_turn_on_auto_close_button_2),
+                text = stringResource(R.string.tab_tray_inactive_turn_on_auto_close_button_2)
+                    .uppercase(Locale.getDefault()),
                 onClick = onEnableAutoCloseClick,
             )
         }

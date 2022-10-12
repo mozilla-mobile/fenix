@@ -7,35 +7,40 @@ package org.mozilla.fenix.compose.button
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.ButtonDefaults.textButtonColors
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import org.mozilla.fenix.theme.FirefoxTheme
-import java.util.Locale
 
 /**
  * Text-only button.
  *
- * @param text The button text to be displayed.
- * @param onClick Invoked when the user clicks on the button.
  * @param modifier [Modifier] Used to shape and position the underlying [androidx.compose.material.TextButton].
+ * @param text The button text to be displayed.
+ * @param buttonColors [ButtonColors] for the button.
+ * @param onClick Invoked when the user clicks on the button.
  * @param textColor [Color] to apply to the button text.
  */
 @Composable
+@Suppress("LongParameterList")
 fun TextButton(
-    text: String,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    text: String,
+    buttonColors: ButtonColors = textButtonColors(),
+    onClick: () -> Unit,
     textColor: Color = FirefoxTheme.colors.textAccent,
 ) {
     androidx.compose.material.TextButton(
         onClick = onClick,
+        colors = buttonColors,
         modifier = modifier,
     ) {
         Text(
-            text = text.uppercase(Locale.getDefault()),
+            text = text,
             color = textColor,
             style = FirefoxTheme.typography.button,
             maxLines = 1,
