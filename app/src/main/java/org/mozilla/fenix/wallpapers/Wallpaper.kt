@@ -14,13 +14,17 @@ import java.util.Date
  * @property collection The name of the collection the wallpaper belongs to.
  * is not restricted.
  * @property textColor The 8 digit hex code color that should be used for text overlaying the wallpaper.
- * @property cardColor The 8 digit hex code color that should be used for cards overlaying the wallpaper.
+ * @property cardColorLight The 8 digit hex code color that should be used for cards overlaying the wallpaper
+ * when the user's theme is set to Light.
+ * @property cardColorDark The 8 digit hex code color that should be used for cards overlaying the wallpaper
+ * when the user's theme is set to Dark.
  */
 data class Wallpaper(
     val name: String,
     val collection: Collection,
     val textColor: Long?,
-    val cardColor: Long?,
+    val cardColorLight: Long?,
+    val cardColorDark: Long?,
     val thumbnailFileState: ImageFileState,
     val assetsFileState: ImageFileState,
 ) {
@@ -84,7 +88,8 @@ data class Wallpaper(
             name = defaultName,
             collection = DefaultCollection,
             textColor = null,
-            cardColor = null,
+            cardColorLight = null,
+            cardColorDark = null,
             thumbnailFileState = ImageFileState.Downloaded,
             assetsFileState = ImageFileState.Downloaded,
         )
@@ -112,15 +117,18 @@ data class Wallpaper(
          *
          * @param settings The local cache.
          */
+        @Suppress("ComplexCondition")
         fun getCurrentWallpaperFromSettings(settings: Settings): Wallpaper? {
             val name = settings.currentWallpaperName
             val textColor = settings.currentWallpaperTextColor
-            val cardColor = settings.currentWallpaperCardColor
-            return if (name.isNotEmpty() && textColor != 0L && cardColor != 0L) {
+            val cardColorLight = settings.currentWallpaperCardColorLight
+            val cardColorDark = settings.currentWallpaperCardColorDark
+            return if (name.isNotEmpty() && textColor != 0L && cardColorLight != 0L && cardColorDark != 0L) {
                 Wallpaper(
                     name = name,
                     textColor = textColor,
-                    cardColor = cardColor,
+                    cardColorLight = cardColorLight,
+                    cardColorDark = cardColorDark,
                     collection = DefaultCollection,
                     thumbnailFileState = ImageFileState.Downloaded,
                     assetsFileState = ImageFileState.Downloaded,
@@ -132,11 +140,14 @@ data class Wallpaper(
 
         /**
          * Check if a wallpaper name matches the default. Considers empty strings to be default
-         * since that likely means a wallpaper has never been set.
+         * since that likely means a wallpaper has never been set. The "none" case here is to deal
+         * with a legacy case where the default wallpaper used to be Wallpaper.NONE. See
+         * commit 7a44412, Wallpaper.NONE and Settings.currentWallpaper (legacy name) for context.
          *
          * @param name The name to check.
          */
-        fun nameIsDefault(name: String): Boolean = name.isEmpty() || name == defaultName
+        fun nameIsDefault(name: String): Boolean =
+            name.isEmpty() || name == defaultName || name.lowercase() == "none"
     }
 
     /**

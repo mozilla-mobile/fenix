@@ -25,8 +25,8 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.Constants
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
+import org.mozilla.fenix.helpers.Constants.PackageName.YOUTUBE_APP
+import org.mozilla.fenix.helpers.FeatureSettingsHelperDelegate
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.RetryTestRule
@@ -36,8 +36,8 @@ import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
 import org.mozilla.fenix.helpers.TestHelper.generateRandomString
-import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.TestHelper.registerAndCleanupIdlingResources
+import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.customTabScreen
@@ -62,7 +62,7 @@ class SmokeTest {
     private lateinit var mockWebServer: MockWebServer
     private val customMenuItem = "TestMenuItem"
     private lateinit var browserStore: BrowserStore
-    private val featureSettingsHelper = FeatureSettingsHelper()
+    private val featureSettingsHelper = FeatureSettingsHelperDelegate()
 
     @get:Rule(order = 0)
     val activityTestRule = AndroidComposeTestRule(
@@ -88,9 +88,11 @@ class SmokeTest {
         browserStore = activityTestRule.activity.components.core.store
 
         // disabling the new homepage pop-up that interferes with the tests.
-        featureSettingsHelper.setJumpBackCFREnabled(false)
-        featureSettingsHelper.setTCPCFREnabled(false)
-        featureSettingsHelper.setShowWallpaperOnboarding(false)
+        featureSettingsHelper.apply {
+            isJumpBackInCFREnabled = false
+            isTCPCFREnabled = false
+            isWallpaperOnboardingEnabled = false
+        }.applyFlagUpdates()
 
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         mockWebServer = MockWebServer().apply {
@@ -159,7 +161,6 @@ class SmokeTest {
         }
     }
 
-    @Test
     /* Verifies the nav bar:
      - opening a web page
      - the existence of nav bar items
@@ -167,7 +168,7 @@ class SmokeTest {
      - the tab drawer button
      - opening a new search and dismissing the nav bar
     */
-    @Ignore("Failing after compose migration. See: https://github.com/mozilla-mobile/fenix/issues/26087")
+    @Test
     fun verifyBasicNavigationToolbarFunctionality() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -188,13 +189,13 @@ class SmokeTest {
     }
 
     // Verifies the list of items in a tab's 3 dot menu
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/26711")
     @Test
     fun verifyPageMainMenuItemsTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            waitForPageToLoad()
         }.openThreeDotMenu {
             verifyPageThreeDotMainMenuItems()
         }
@@ -345,17 +346,16 @@ class SmokeTest {
 
     // Device or AVD requires a Google Services Android OS installation with Play Store installed
     // Verifies the Open in app button when an app is installed
-    @Ignore("Failing with frequent ANR: https://github.com/mozilla-mobile/fenix/issues/25926")
     @Test
     fun mainMenuOpenInAppTest() {
-        val playStoreUrl = "play.google.com/store/apps/details?id=org.mozilla.fenix"
+        val youtubeURL = "https://m.youtube.com/user/mozilla?cbrd=1"
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(playStoreUrl.toUri()) {
+        }.enterURLAndEnterToBrowser(youtubeURL.toUri()) {
             verifyNotificationDotOnMainMenu()
         }.openThreeDotMenu {
         }.clickOpenInApp {
-            assertNativeAppOpens(Constants.PackageName.GOOGLE_PLAY_SERVICES, playStoreUrl)
+            assertNativeAppOpens(YOUTUBE_APP, youtubeURL)
         }
     }
 
@@ -403,7 +403,7 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/25345")
+    @Ignore("Permanent failure: https://github.com/mozilla-mobile/fenix/issues/27312")
     @Test
     fun customTrackingProtectionSettingsTest() {
         val genericWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -504,9 +504,8 @@ class SmokeTest {
         }
     }
 
-    @Test
     // Verifies that a recently closed item is properly opened
-    @Ignore("Failing after compose migration. See: https://github.com/mozilla-mobile/fenix/issues/26087")
+    @Test
     fun openRecentlyClosedItemTest() {
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -529,9 +528,8 @@ class SmokeTest {
         }
     }
 
-    @Test
     // Verifies that tapping the "x" button removes a recently closed item from the list
-    @Ignore("Failing after compose migration. See: https://github.com/mozilla-mobile/fenix/issues/26087")
+    @Test
     fun deleteRecentlyClosedTabsItemTest() {
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -678,7 +676,6 @@ class SmokeTest {
     // caution when making changes to it, so they don't block the builds
     @Test
     fun noHistoryInPrivateBrowsingTest() {
-        FeatureSettingsHelper().setTCPCFREnabled(false)
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         homeScreen {
@@ -816,7 +813,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Failing with frequent ANR: https://bugzilla.mozilla.org/show_bug.cgi?id=1764605")
     @Test
     fun audioPlaybackSystemNotificationTest() {
         val audioTestPage = TestAssetHelper.getAudioPageAsset(mockWebServer)
@@ -884,7 +880,6 @@ class SmokeTest {
         mDevice.pressBack()
     }
 
-    @Ignore("Failing: https://github.com/mozilla-mobile/fenix/issues/26884")
     @Test
     fun copyTextTest() {
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -904,7 +899,6 @@ class SmokeTest {
         }
     }
 
-    @Ignore("Failing: https://github.com/mozilla-mobile/fenix/issues/26884")
     @Test
     fun selectAllAndCopyTextTest() {
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)

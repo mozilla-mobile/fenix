@@ -11,7 +11,6 @@ import mozilla.components.concept.engine.mediasession.MediaSession
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.ext.components
@@ -37,7 +36,7 @@ class MediaNotificationTest {
     private lateinit var mDevice: UiDevice
 
     @get:Rule
-    val activityTestRule = HomeActivityTestRule()
+    val activityTestRule = HomeActivityTestRule.withDefaultSettingsOverrides()
     private lateinit var browserStore: BrowserStore
 
     @Rule
@@ -62,7 +61,6 @@ class MediaNotificationTest {
         mockWebServer.shutdown()
     }
 
-    @Ignore("Failing with ANR: https://github.com/mozilla-mobile/fenix/issues/15754")
     @Test
     fun videoPlaybackSystemNotificationTest() {
         val videoTestPage = TestAssetHelper.getVideoPageAsset(mockWebServer)
@@ -96,7 +94,6 @@ class MediaNotificationTest {
         mDevice.pressBack()
     }
 
-    @Ignore("Failing with frequent ANR: https://bugzilla.mozilla.org/show_bug.cgi?id=1764605")
     @Test
     fun mediaSystemNotificationInPrivateModeTest() {
         val audioTestPage = TestAssetHelper.getAudioPageAsset(mockWebServer)

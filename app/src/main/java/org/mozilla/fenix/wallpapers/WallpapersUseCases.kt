@@ -50,6 +50,7 @@ class WallpapersUseCases(
             val migrationHelper = LegacyWallpaperMigration(
                 storageRootDirectory = storageRootDirectory,
                 settings = context.settings(),
+                selectWallpaper::invoke,
             )
             DefaultInitializeWallpaperUseCase(
                 store = store,
@@ -184,7 +185,8 @@ class WallpapersUseCases(
                     name = Wallpaper.amethystName,
                     collection = firefoxClassicCollection,
                     textColor = null,
-                    cardColor = null,
+                    cardColorLight = null,
+                    cardColorDark = null,
                     thumbnailFileState = Wallpaper.ImageFileState.Unavailable,
                     assetsFileState = Wallpaper.ImageFileState.Downloaded,
                 ),
@@ -192,7 +194,8 @@ class WallpapersUseCases(
                     name = Wallpaper.ceruleanName,
                     collection = firefoxClassicCollection,
                     textColor = null,
-                    cardColor = null,
+                    cardColorLight = null,
+                    cardColorDark = null,
                     thumbnailFileState = Wallpaper.ImageFileState.Unavailable,
                     assetsFileState = Wallpaper.ImageFileState.Downloaded,
                 ),
@@ -200,7 +203,8 @@ class WallpapersUseCases(
                     name = Wallpaper.sunriseName,
                     collection = firefoxClassicCollection,
                     textColor = null,
-                    cardColor = null,
+                    cardColorLight = null,
+                    cardColorDark = null,
                     thumbnailFileState = Wallpaper.ImageFileState.Unavailable,
                     assetsFileState = Wallpaper.ImageFileState.Downloaded,
                 ),
@@ -210,7 +214,8 @@ class WallpapersUseCases(
                     name = Wallpaper.twilightHillsName,
                     collection = firefoxClassicCollection,
                     textColor = null,
-                    cardColor = null,
+                    cardColorLight = null,
+                    cardColorDark = null,
                     thumbnailFileState = Wallpaper.ImageFileState.Unavailable,
                     assetsFileState = Wallpaper.ImageFileState.Downloaded,
                 ),
@@ -218,7 +223,8 @@ class WallpapersUseCases(
                     name = Wallpaper.beachVibeName,
                     collection = firefoxClassicCollection,
                     textColor = null,
-                    cardColor = null,
+                    cardColorLight = null,
+                    cardColorDark = null,
                     thumbnailFileState = Wallpaper.ImageFileState.Unavailable,
                     assetsFileState = Wallpaper.ImageFileState.Downloaded,
                 ),
@@ -242,16 +248,20 @@ class WallpapersUseCases(
             Wallpaper.getCurrentWallpaperFromSettings(settings)?.let {
                 store.dispatch(AppAction.WallpaperAction.UpdateCurrentWallpaper(it))
             }
-            val currentWallpaperName = withContext(Dispatchers.IO) { settings.currentWallpaperName }
-            if (settings.shouldMigrateLegacyWallpaper) {
-                migrationHelper.migrateLegacyWallpaper(currentWallpaperName)
+            val currentWallpaperName = if (settings.shouldMigrateLegacyWallpaper) {
+                val migratedWallpaperName =
+                    migrationHelper.migrateLegacyWallpaper(settings.currentWallpaperName)
+                settings.currentWallpaperName = migratedWallpaperName
                 settings.shouldMigrateLegacyWallpaper = false
+                migratedWallpaperName
+            } else {
+                settings.currentWallpaperName
             }
             val possibleWallpapers = metadataFetcher.downloadWallpaperList().filter {
                 !it.isExpired() && it.isAvailableInLocale()
             }
             val currentWallpaper = possibleWallpapers.find { it.name == currentWallpaperName }
-                ?: fileManager.lookupExpiredWallpaper(currentWallpaperName)
+                ?: fileManager.lookupExpiredWallpaper(settings)
                 ?: Wallpaper.Default
 
             // Dispatching this early will make it accessible to the home screen ASAP. If it has been
@@ -449,7 +459,8 @@ class WallpapersUseCases(
         override suspend fun invoke(wallpaper: Wallpaper): Wallpaper.ImageFileState {
             settings.currentWallpaperName = wallpaper.name
             settings.currentWallpaperTextColor = wallpaper.textColor ?: 0
-            settings.currentWallpaperCardColor = wallpaper.cardColor ?: 0
+            settings.currentWallpaperCardColorLight = wallpaper.cardColorLight ?: 0
+            settings.currentWallpaperCardColorDark = wallpaper.cardColorDark ?: 0
             store.dispatch(AppAction.WallpaperAction.UpdateCurrentWallpaper(wallpaper))
             return Wallpaper.ImageFileState.Downloaded
         }
@@ -487,6 +498,8 @@ class WallpapersUseCases(
         internal fun selectWallpaper(wallpaper: Wallpaper) {
             settings.currentWallpaperName = wallpaper.name
             settings.currentWallpaperTextColor = wallpaper.textColor ?: 0L
+            settings.currentWallpaperCardColorLight = wallpaper.cardColorLight ?: 0L
+            settings.currentWallpaperCardColorDark = wallpaper.cardColorDark ?: 0L
             store.dispatch(AppAction.WallpaperAction.UpdateCurrentWallpaper(wallpaper))
         }
 

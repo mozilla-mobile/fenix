@@ -12,6 +12,14 @@ import mozilla.components.support.locale.LocaleManager.getSystemDefault
  * A single source for setting feature flags that are mostly based on build type.
  */
 object FeatureFlags {
+
+    /**
+     * Enables custom extension collection feature,
+     * This feature does not only depend on this flag. It requires the AMO collection override to
+     * be enabled which is behind the Secret Settings.
+     * */
+    val customExtensionCollectionFeature = Config.channel.isNightlyOrDebug || Config.channel.isBeta
+
     /**
      * Pull-to-refresh allows you to pull the web content down far enough to have the page to
      * reload.
@@ -26,7 +34,7 @@ object FeatureFlags {
     /**
      * Enables the onboarding sync CFR on the home screen.
      */
-    val showSynCFR = Config.channel.isNightlyOrDebug
+    const val showSynCFR = true
 
     /**
      * Enables the onboarding jump back in CFR on the home screen.
@@ -82,7 +90,7 @@ object FeatureFlags {
     /**
      * Enables showing the homescreen onboarding card.
      */
-    val showHomeOnboarding = Config.channel.isNightlyOrDebug
+    const val showHomeOnboarding = true
 
     /**
      * Enables history improvement features.
@@ -118,4 +126,9 @@ object FeatureFlags {
      * Enables the wallpaper v2 enhancements.
      */
     const val wallpaperV2Enabled = true
+
+    /**
+     * Enables the save to PDF feature.
+     */
+    val saveToPDF = Config.channel.isNightlyOrDebug
 }

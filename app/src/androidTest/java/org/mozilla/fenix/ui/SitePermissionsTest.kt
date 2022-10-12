@@ -13,7 +13,6 @@ import androidx.core.net.toUri
 import androidx.test.filters.SdkSuppress
 import androidx.test.rule.GrantPermissionRule
 import org.junit.Assume.assumeTrue
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
@@ -36,8 +35,12 @@ class SitePermissionsTest {
     private val micManager = appContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     @get:Rule
-    val activityTestRule = HomeActivityTestRule()
-    private val featureSettingsHelper = activityTestRule.featureSettingsHelper
+    val activityTestRule = HomeActivityTestRule(
+        isJumpBackInCFREnabled = false,
+        isPWAsPromptEnabled = false,
+        isTCPCFREnabled = false,
+        isDeleteSitePermissionsEnabled = true,
+    )
 
     @get:Rule
     val grantPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(
@@ -51,15 +54,6 @@ class SitePermissionsTest {
 
     @get: Rule
     val retryTestRule = RetryTestRule(3)
-
-    @Before
-    fun setUp() {
-        // disabling the new homepage pop-up that interferes with the tests.
-        featureSettingsHelper.setJumpBackCFREnabled(false)
-        featureSettingsHelper.setTCPCFREnabled(false)
-        featureSettingsHelper.deleteSitePermissions(true)
-        featureSettingsHelper.disablePwaCFR(true)
-    }
 
     @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @SmokeTest
@@ -80,7 +74,6 @@ class SitePermissionsTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @SmokeTest
     @Test
     fun rememberBlockAudioVideoPermissionChoiceTest() {
@@ -104,7 +97,6 @@ class SitePermissionsTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @SmokeTest
     @Test
     fun rememberAllowAudioVideoPermissionChoiceTest() {
@@ -128,7 +120,6 @@ class SitePermissionsTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @Test
     fun microphonePermissionChoiceOnEachRequestTest() {
         assumeTrue(micManager.microphones.isNotEmpty())
@@ -146,7 +137,6 @@ class SitePermissionsTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @Test
     fun rememberBlockMicrophonePermissionChoiceTest() {
         assumeTrue(micManager.microphones.isNotEmpty())
@@ -168,7 +158,6 @@ class SitePermissionsTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @Test
     fun rememberAllowMicrophonePermissionChoiceTest() {
         assumeTrue(micManager.microphones.isNotEmpty())
@@ -190,7 +179,6 @@ class SitePermissionsTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @Test
     fun cameraPermissionChoiceOnEachRequestTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())
@@ -208,7 +196,6 @@ class SitePermissionsTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @Test
     fun rememberBlockCameraPermissionChoiceTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())
@@ -230,7 +217,6 @@ class SitePermissionsTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @Test
     fun rememberAllowCameraPermissionChoiceTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())

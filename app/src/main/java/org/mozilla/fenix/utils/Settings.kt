@@ -201,10 +201,20 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * A cache of the background color to use on cards overlaying the current wallpaper.
+     * A cache of the background color to use on cards overlaying the current wallpaper when the user's
+     * theme is set to Light.
      */
-    var currentWallpaperCardColor by longPreference(
-        appContext.getPreferenceKey(R.string.pref_key_current_wallpaper_card_color),
+    var currentWallpaperCardColorLight by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_current_wallpaper_card_color_light),
+        default = 0,
+    )
+
+    /**
+     * A cache of the background color to use on cards overlaying the current wallpaper when the user's
+     * theme is set to Dark.
+     */
+    var currentWallpaperCardColorDark by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_current_wallpaper_card_color_dark),
         default = 0,
     )
 
@@ -1255,7 +1265,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     /**
      * Indicates if sync onboarding CFR should be shown.
-     * Returns true if the [FeatureFlags.showSynCFR] and [R.string.pref_key_should_show_sync_cfr] are true.
      */
     var showSyncCFR by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_should_show_sync_cfr),

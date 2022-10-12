@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.wallpapers.Wallpaper.Companion.getLocalPath
 import java.io.File
 
@@ -21,22 +22,25 @@ import java.io.File
  */
 class WallpaperFileManager(
     private val storageRootDirectory: File,
-    coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
-    private val scope = CoroutineScope(coroutineDispatcher)
     private val wallpapersDirectory = File(storageRootDirectory, "wallpapers")
 
     /**
      * Lookup all the files for a wallpaper name. This lookup will fail if there are not
      * files for each of a portrait and landscape orientation as well as a thumbnail.
+     *
+     * @param settings The local cache.
      */
-    suspend fun lookupExpiredWallpaper(name: String): Wallpaper? = withContext(Dispatchers.IO) {
+    suspend fun lookupExpiredWallpaper(settings: Settings): Wallpaper? = withContext(coroutineDispatcher) {
+        val name = settings.currentWallpaperName
         if (allAssetsExist(name)) {
             Wallpaper(
                 name = name,
                 collection = Wallpaper.DefaultCollection,
-                textColor = null,
-                cardColor = null,
+                textColor = settings.currentWallpaperTextColor,
+                cardColorLight = settings.currentWallpaperCardColorLight,
+                cardColorDark = settings.currentWallpaperCardColorDark,
                 thumbnailFileState = Wallpaper.ImageFileState.Downloaded,
                 assetsFileState = Wallpaper.ImageFileState.Downloaded,
             )
@@ -53,8 +57,8 @@ class WallpaperFileManager(
     /**
      * Remove all wallpapers that are not the [currentWallpaper] or in [availableWallpapers].
      */
-    suspend fun clean(currentWallpaper: Wallpaper, availableWallpapers: List<Wallpaper>) = withContext(Dispatchers.IO) {
-        scope.launch {
+    fun clean(currentWallpaper: Wallpaper, availableWallpapers: List<Wallpaper>) {
+        CoroutineScope(coroutineDispatcher).launch {
             val wallpapersToKeep = (listOf(currentWallpaper) + availableWallpapers).map { it.name }
             wallpapersDirectory.listFiles()?.forEach { file ->
                 if (file.isDirectory && !wallpapersToKeep.contains(file.name)) {
@@ -67,7 +71,7 @@ class WallpaperFileManager(
     /**
      * Checks whether all the assets for a wallpaper exist on the file system.
      */
-    suspend fun wallpaperImagesExist(wallpaper: Wallpaper): Boolean = withContext(Dispatchers.IO) {
-        return@withContext allAssetsExist(wallpaper.name)
+    suspend fun wallpaperImagesExist(wallpaper: Wallpaper): Boolean = withContext(coroutineDispatcher) {
+        allAssetsExist(wallpaper.name)
     }
 }

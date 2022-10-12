@@ -58,7 +58,7 @@ interface BrowserToolbarMenuController {
     fun handleToolbarItemInteraction(item: ToolbarMenu.Item)
 }
 
-@Suppress("LargeClass", "ForbiddenComment")
+@Suppress("LargeClass", "ForbiddenComment", "LongParameterList")
 class DefaultBrowserToolbarMenuController(
     private val store: BrowserStore,
     private val activity: HomeActivity,
@@ -211,6 +211,7 @@ class DefaultBrowserToolbarMenuController(
             }
             is ToolbarMenu.Item.Share -> {
                 val directions = NavGraphDirections.actionGlobalShareFragment(
+                    sessionId = currentSession?.id,
                     data = arrayOf(
                         ShareData(
                             url = getProperUrl(currentSession),
