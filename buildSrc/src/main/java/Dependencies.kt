@@ -6,8 +6,8 @@
 // FORCE REBUILD 2022-09-16
 
 object Versions {
-    const val kotlin = "1.7.10"
-    const val coroutines = "1.6.1"
+    const val kotlin = "1.7.20"
+    const val coroutines = "1.6.4"
 
     // These versions are linked: lint should be X+23.Y.Z of gradle_plugin version, according to:
     // https://github.com/alexjlockwood/android-lint-checks-demo/blob/0245fc027463137b1b4afb97c5295d60dce998b6/dependencies.gradle#L3
@@ -21,7 +21,7 @@ object Versions {
     const val jna = "5.8.0"
 
     const val androidx_compose = "1.2.1"
-    const val androidx_compose_compiler = "1.3.0"
+    const val androidx_compose_compiler = "1.3.2"
     const val androidx_appcompat = "1.3.0"
     const val androidx_benchmark = "1.0.0"
     const val androidx_biometric = "1.1.0"
@@ -30,11 +30,11 @@ object Versions {
     const val androidx_preference = "1.1.1"
     const val androidx_legacy = "1.0.0"
     const val androidx_annotation = "1.1.0"
-    const val androidx_lifecycle = "2.4.0"
-    const val androidx_fragment = "1.3.4"
-    const val androidx_navigation = "2.3.3"
+    const val androidx_lifecycle = "2.5.1"
+    const val androidx_fragment = "1.5.1"
+    const val androidx_navigation = "2.5.1"
     const val androidx_recyclerview = "1.2.1"
-    const val androidx_core = "1.3.2"
+    const val androidx_core = "1.8.0"
     const val androidx_paging = "3.1.1"
     const val androidx_transition = "1.4.0"
     const val androidx_work = "2.7.1"
@@ -57,7 +57,7 @@ object Versions {
 
     const val google_ads_id_version = "16.0.0"
 
-    const val google_play_store_version = "1.8.0"
+    const val google_play_review_version = "2.0.0"
 
     const val protobuf = "3.21.6" // keep in sync with the version used in AS.
 }
@@ -260,7 +260,8 @@ object Deps {
     const val google_ads_id = "com.google.android.gms:play-services-ads-identifier:${Versions.google_ads_id_version}"
 
     // Required for in-app reviews
-    const val google_play_store = "com.google.android.play:core:${Versions.google_play_store_version}"
+    const val google_play_review = "com.google.android.play:review:${Versions.google_play_review_version}"
+    const val google_play_review_ktx = "com.google.android.play:review-ktx:${Versions.google_play_review_version}"
 
     const val detektApi = "io.gitlab.arturbosch.detekt:detekt-api:${Versions.detekt}"
     const val detektTest = "io.gitlab.arturbosch.detekt:detekt-test:${Versions.detekt}"
