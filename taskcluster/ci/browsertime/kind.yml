@@ -50,7 +50,7 @@ task-defaults:
             armeabi-v7a: t-bitbar-gw-perf-a51
             arm64-v8a: t-bitbar-gw-perf-p2
     worker:
-        max-run-time: 3600
+        max-run-time: 5400
         env:
             GECKO_HEAD_REPOSITORY: "https://hg.mozilla.org/mozilla-central"
             MOZ_AUTOMATION: "1"
