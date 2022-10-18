@@ -853,12 +853,22 @@ class BrowserRobot {
         }
 
         fun openTabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
-            mDevice.findObject(
-                UiSelector().descriptionContains("Tap to switch tabs."),
-            ).waitForExists(waitingTime)
+            mDevice.waitForObjects(
+                mDevice.findObject(
+                    UiSelector()
+                        .resourceId("$packageName:id/mozac_browser_toolbar_browser_actions"),
+                ),
+                waitingTime,
+            )
 
             tabsCounter().click()
-            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/tab_layout")))
+
+            mDevice.waitForObjects(
+                mDevice.findObject(
+                    UiSelector().resourceId("$packageName:id/new_tab_button"),
+                ),
+                waitingTime,
+            )
 
             TabDrawerRobot().interact()
             return TabDrawerRobot.Transition()
@@ -1034,7 +1044,8 @@ private fun assertMenuButton() {
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 }
 
-private fun tabsCounter() = mDevice.findObject(By.res("$packageName:id/counter_root"))
+private fun tabsCounter() =
+    mDevice.findObject(By.res("$packageName:id/mozac_browser_toolbar_browser_actions"))
 
 private fun mediaPlayerPlayButton() =
     mDevice.findObject(
