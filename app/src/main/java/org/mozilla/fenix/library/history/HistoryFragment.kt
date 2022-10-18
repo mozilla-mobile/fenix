@@ -92,7 +92,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                     items = listOf(),
                     mode = HistoryFragmentState.Mode.Normal,
                     pendingDeletionItems = emptySet(),
-                    isEmpty = false,
+                    isEmpty = true,
                     isDeletingItems = false,
                 ),
             )
@@ -124,9 +124,10 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                     HistoryFragmentAction.ChangeEmptyState(isEmpty = true),
                 )
             },
-            onEmptyStateChanged = {
+            onEmptyStateChanged = { empty ->
+                invalidateMenu()
                 historyStore.dispatch(
-                    HistoryFragmentAction.ChangeEmptyState(it),
+                    HistoryFragmentAction.ChangeEmptyState(isEmpty = empty),
                 )
             },
         )
@@ -227,6 +228,15 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
 
         if (!FeatureFlags.historyImprovementFeatures) {
             menu.findItem(R.id.history_search)?.isVisible = false
+        }
+    }
+
+    override fun onPrepareMenu(menu: Menu) {
+        super.onPrepareMenu(menu)
+
+        if (historyStore.state.isEmpty) {
+            menu.findItem(R.id.history_search)?.isEnabled = false
+            menu.findItem(R.id.history_delete)?.isEnabled = false
         }
     }
 
