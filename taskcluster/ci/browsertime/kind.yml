@@ -127,6 +127,7 @@ tasks:
 
     tp6m-hv:
         run-with-fission: True
+        run-on-tasks-for: [github-pull-request]
         page-load-tests:
             - google
             - [amazon-search, amazon-s]
