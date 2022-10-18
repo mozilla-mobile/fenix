@@ -107,7 +107,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
             scope = lifecycleScope,
             openToBrowser = ::openItem,
             displayDeleteTimeRange = ::displayDeleteTimeRange,
-            invalidateOptionsMenu = ::invalidateOptionsMenu,
+            invalidateMenu = ::invalidateMenu,
             deleteSnackbar = ::deleteSnackbar,
             onTimeFrameDeleted = ::onTimeFrameDeleted,
             syncHistory = ::syncHistory,
@@ -146,8 +146,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
             }
         }.toSet()
 
-    private fun invalidateOptionsMenu() {
-        activity?.invalidateOptionsMenu()
+    private fun invalidateMenu() {
+        activity?.invalidateMenu()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

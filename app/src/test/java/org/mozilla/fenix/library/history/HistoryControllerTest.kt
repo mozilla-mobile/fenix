@@ -127,15 +127,15 @@ class HistoryControllerTest {
 
     @Test
     fun onModeSwitched() {
-        var invalidateOptionsMenuInvoked = false
+        var invalidateMenuInvoked = false
         val controller = createController(
-            invalidateOptionsMenu = {
-                invalidateOptionsMenuInvoked = true
+            invalidateMenu = {
+                invalidateMenuInvoked = true
             },
         )
 
         controller.handleModeSwitched()
-        assertTrue(invalidateOptionsMenuInvoked)
+        assertTrue(invalidateMenuInvoked)
     }
 
     @Test
@@ -251,7 +251,7 @@ class HistoryControllerTest {
         openInBrowser: (History) -> Unit = { _ -> },
         displayDeleteTimeRange: () -> Unit = {},
         onTimeFrameDeleted: () -> Unit = {},
-        invalidateOptionsMenu: () -> Unit = {},
+        invalidateMenu: () -> Unit = {},
         deleteHistoryItems: (Set<History>) -> Unit = { _ -> },
         syncHistory: suspend () -> Unit = {},
     ): HistoryController {
@@ -266,7 +266,7 @@ class HistoryControllerTest {
             openInBrowser,
             displayDeleteTimeRange,
             onTimeFrameDeleted,
-            invalidateOptionsMenu,
+            invalidateMenu,
             { items, _, _ -> deleteHistoryItems.invoke(items) },
             syncHistory,
             settings,

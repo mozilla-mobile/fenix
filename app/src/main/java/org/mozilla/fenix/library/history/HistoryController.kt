@@ -64,7 +64,7 @@ class DefaultHistoryController(
     private val openToBrowser: (item: History.Regular) -> Unit,
     private val displayDeleteTimeRange: () -> Unit,
     private val onTimeFrameDeleted: () -> Unit,
-    private val invalidateOptionsMenu: () -> Unit,
+    private val invalidateMenu: () -> Unit,
     private val deleteSnackbar: (
         items: Set<History>,
         undo: suspend (Set<History>) -> Unit,
@@ -113,7 +113,7 @@ class DefaultHistoryController(
     }
 
     override fun handleModeSwitched() {
-        invalidateOptionsMenu.invoke()
+        invalidateMenu.invoke()
     }
 
     override fun handleSearch() {
