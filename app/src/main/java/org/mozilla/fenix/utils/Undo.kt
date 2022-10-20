@@ -6,11 +6,16 @@ package org.mozilla.fenix.utils
 
 import android.content.Context
 import android.view.View
+import androidx.annotation.StringRes
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -93,4 +98,66 @@ fun CoroutineScope.allowUndo(
     }
 
     showUndoSnackbar()
+}
+
+/**
+ * Static object for showing a snackbar to undo the previous tab(s) close action.
+ */
+object UndoCloseTabSnackBar {
+    /**
+     * Show a snackbar that allows the user to undo the previous tab(s) close action.
+     *
+     * @param fragment The [Fragment] to obtain its view's LifecycleOwner and components.
+     * @param isPrivate True if the snackbar message is for private tab(s), otherwise false.
+     * @param multiple True if the snackbar message if for potentially multiple tabs, otherwise false.
+     * @param onCancel block to execute in case of cancellation;
+     * called after the undo tab(s) close action in a suspend block.
+     * @param view A [View] used to determine a parent for the [FenixSnackbar],
+     * defaulting to the view of [fragment].
+     * @param anchorView A [View] to which [FenixSnackbar] should be anchored.
+     * @param elevation Base elevation of the snackbar view.
+     */
+    fun show(
+        fragment: Fragment,
+        isPrivate: Boolean,
+        multiple: Boolean = false,
+        onCancel: () -> Unit = {},
+        view: View = fragment.requireView(),
+        anchorView: View? = null,
+        elevation: Float? = null,
+        paddedForBottomToolbar: Boolean = false,
+    ) {
+        val snackBarMessageId = getSnackBarMessageId(isPrivate, multiple)
+
+        fragment.viewLifecycleOwner.lifecycleScope.allowUndo(
+            view,
+            message = fragment.requireContext().getString(snackBarMessageId),
+            fragment.requireContext().getString(R.string.snackbar_deleted_undo),
+            onCancel = suspend {
+                fragment.requireComponents.useCases.tabsUseCases.undo.invoke()
+                onCancel.invoke()
+            },
+            operation = { },
+            anchorView = anchorView,
+            elevation = elevation,
+            paddedForBottomToolbar = paddedForBottomToolbar,
+        )
+    }
+
+    @StringRes
+    private fun getSnackBarMessageId(isPrivate: Boolean, multiple: Boolean): Int {
+        return if (isPrivate) {
+            if (multiple) {
+                R.string.snackbar_private_tabs_closed
+            } else {
+                R.string.snackbar_private_tab_closed
+            }
+        } else {
+            if (multiple) {
+                R.string.snackbar_tabs_closed
+            } else {
+                R.string.snackbar_tab_closed
+            }
+        }
+    }
 }

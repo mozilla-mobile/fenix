@@ -18,7 +18,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -65,7 +64,7 @@ import org.mozilla.fenix.tabstray.ext.make
 import org.mozilla.fenix.tabstray.ext.showWithTheme
 import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsIntegration
 import org.mozilla.fenix.theme.ThemeManager
-import org.mozilla.fenix.utils.allowUndo
+import org.mozilla.fenix.utils.UndoCloseTabSnackBar
 import kotlin.math.max
 
 /**
@@ -464,27 +463,18 @@ class TabsTrayFragment : AppCompatDialogFragment() {
 
     @VisibleForTesting
     internal fun showUndoSnackbarForTab(isPrivate: Boolean) {
-        val snackbarMessage =
-            when (isPrivate) {
-                true -> getString(R.string.snackbar_private_tab_closed)
-                false -> getString(R.string.snackbar_tab_closed)
-            }
-
-        lifecycleScope.allowUndo(
-            requireView(),
-            snackbarMessage,
-            getString(R.string.snackbar_deleted_undo),
-            {
-                requireComponents.useCases.tabsUseCases.undo.invoke()
+        UndoCloseTabSnackBar.show(
+            fragment = this,
+            isPrivate = isPrivate,
+            onCancel = {
                 tabLayoutMediator.withFeature {
                     it.selectTabAtPosition(
                         if (isPrivate) Page.PrivateTabs.ordinal else Page.NormalTabs.ordinal,
                     )
                 }
             },
-            operation = { },
+            anchorView = fabButtonBinding.newTabButton.let { if (it.isVisible) it else null },
             elevation = ELEVATION,
-            anchorView = if (fabButtonBinding.newTabButton.isVisible) fabButtonBinding.newTabButton else null,
         )
     }
 

@@ -140,7 +140,7 @@ import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
 import org.mozilla.fenix.theme.ThemeManager
-import org.mozilla.fenix.utils.allowUndo
+import org.mozilla.fenix.utils.UndoCloseTabSnackBar
 import org.mozilla.fenix.wifi.SitePermissionsWifiIntegration
 import java.lang.ref.WeakReference
 import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolbarPosition
@@ -345,21 +345,11 @@ abstract class BaseBrowserFragment :
             onCloseTab = { closedSession ->
                 val closedTab = store.state.findTab(closedSession.id) ?: return@DefaultBrowserToolbarController
 
-                val snackbarMessage = if (closedTab.content.private) {
-                    requireContext().getString(R.string.snackbar_private_tab_closed)
-                } else {
-                    requireContext().getString(R.string.snackbar_tab_closed)
-                }
-
-                viewLifecycleOwner.lifecycleScope.allowUndo(
-                    binding.browserLayout,
-                    snackbarMessage,
-                    requireContext().getString(R.string.snackbar_deleted_undo),
-                    {
-                        requireComponents.useCases.tabsUseCases.undo.invoke()
-                    },
+                UndoCloseTabSnackBar.show(
+                    fragment = this,
+                    isPrivate = closedTab.content.private,
+                    view = binding.browserLayout,
                     paddedForBottomToolbar = true,
-                    operation = { },
                 )
             },
         )

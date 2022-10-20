@@ -117,6 +117,7 @@ import org.mozilla.fenix.perf.runBlockingIncrement
 import org.mozilla.fenix.tabstray.TabsTrayAccessPoint
 import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
 import org.mozilla.fenix.utils.ToolbarPopupWindow
+import org.mozilla.fenix.utils.UndoCloseTabSnackBar
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.wallpapers.Wallpaper
 import java.lang.ref.WeakReference
@@ -643,26 +644,17 @@ class HomeFragment : Fragment() {
     }
 
     private fun removeAllTabsAndShowSnackbar(sessionCode: String) {
-        if (sessionCode == ALL_PRIVATE_TABS) {
+        val isPrivate = sessionCode == ALL_PRIVATE_TABS
+        if (isPrivate) {
             requireComponents.useCases.tabsUseCases.removePrivateTabs()
         } else {
             requireComponents.useCases.tabsUseCases.removeNormalTabs()
         }
 
-        val snackbarMessage = if (sessionCode == ALL_PRIVATE_TABS) {
-            getString(R.string.snackbar_private_tabs_closed)
-        } else {
-            getString(R.string.snackbar_tabs_closed)
-        }
-
-        viewLifecycleOwner.lifecycleScope.allowUndo(
-            requireView(),
-            snackbarMessage,
-            requireContext().getString(R.string.snackbar_deleted_undo),
-            {
-                requireComponents.useCases.tabsUseCases.undo.invoke()
-            },
-            operation = { },
+        UndoCloseTabSnackBar.show(
+            fragment = this,
+            isPrivate = isPrivate,
+            multiple = true,
             anchorView = snackbarAnchorView,
         )
     }
@@ -671,24 +663,14 @@ class HomeFragment : Fragment() {
         val tab = store.state.findTab(sessionId) ?: return
 
         requireComponents.useCases.tabsUseCases.removeTab(sessionId)
-
-        val snackbarMessage = if (tab.content.private) {
-            requireContext().getString(R.string.snackbar_private_tab_closed)
-        } else {
-            requireContext().getString(R.string.snackbar_tab_closed)
-        }
-
-        viewLifecycleOwner.lifecycleScope.allowUndo(
-            requireView(),
-            snackbarMessage,
-            requireContext().getString(R.string.snackbar_deleted_undo),
-            {
-                requireComponents.useCases.tabsUseCases.undo.invoke()
+        UndoCloseTabSnackBar.show(
+            fragment = this,
+            isPrivate = tab.content.private,
+            onCancel = {
                 findNavController().navigate(
                     HomeFragmentDirections.actionGlobalBrowser(null),
                 )
             },
-            operation = { },
             anchorView = snackbarAnchorView,
         )
     }
