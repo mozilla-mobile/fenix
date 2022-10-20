@@ -137,7 +137,8 @@ class HomeFragment : Fragment() {
 
     private val homeViewModel: HomeScreenViewModel by activityViewModels()
 
-    private val snackbarAnchorView: View?
+    @VisibleForTesting
+    internal val snackbarAnchorView: View?
         get() = when (requireContext().settings().toolbarPosition) {
             ToolbarPosition.BOTTOM -> binding.toolbarLayout
             ToolbarPosition.TOP -> null
@@ -155,7 +156,8 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private val store: BrowserStore
+    @VisibleForTesting
+    internal val store: BrowserStore
         get() = requireComponents.core.store
 
     private val onboarding by lazy {
@@ -643,7 +645,8 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun removeAllTabsAndShowSnackbar(sessionCode: String) {
+    @VisibleForTesting
+    internal fun removeAllTabsAndShowSnackbar(sessionCode: String) {
         val isPrivate = sessionCode == ALL_PRIVATE_TABS
         if (isPrivate) {
             requireComponents.useCases.tabsUseCases.removePrivateTabs()
@@ -659,7 +662,8 @@ class HomeFragment : Fragment() {
         )
     }
 
-    private fun removeTabAndShowSnackbar(sessionId: String) {
+    @VisibleForTesting
+    internal fun removeTabAndShowSnackbar(sessionId: String) {
         val tab = store.state.findTab(sessionId) ?: return
 
         requireComponents.useCases.tabsUseCases.removeTab(sessionId)

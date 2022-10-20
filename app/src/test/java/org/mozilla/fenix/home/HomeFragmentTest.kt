@@ -5,13 +5,20 @@
 package org.mozilla.fenix.home
 
 import android.content.Context
+import android.view.View
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.browser.menu.view.MenuButton
+import mozilla.components.browser.state.selector.findTab
+import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.SearchState
+import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.feature.top.sites.TopSite
 import org.junit.Assert.assertEquals
@@ -25,9 +32,13 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.home.HomeFragment.Companion.ALL_NORMAL_TABS
+import org.mozilla.fenix.home.HomeFragment.Companion.ALL_PRIVATE_TABS
 import org.mozilla.fenix.home.HomeFragment.Companion.AMAZON_SPONSORED_TITLE
 import org.mozilla.fenix.home.HomeFragment.Companion.EBAY_SPONSORED_TITLE
 import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.utils.UndoCloseTabSnackBar
 
 class HomeFragmentTest {
 
@@ -105,6 +116,7 @@ class HomeFragmentTest {
         verify(exactly = 1) { menuButton.dismissMenu() }
     }
 
+    @Test
     fun `GIVEN the user is in normal mode WHEN checking if should enable wallpaper THEN return true`() {
         val activity: HomeActivity = mockk {
             every { themeManager.currentTheme.isPrivate } returns false
@@ -122,5 +134,104 @@ class HomeFragmentTest {
         every { homeFragment.activity } returns activity
 
         assertFalse(homeFragment.shouldEnableWallpaper())
+    }
+
+    private fun testCloseTabSnackBar(
+        homeFragment: HomeFragment,
+        isPrivate: Boolean,
+        multiple: Boolean,
+        testFun: (String) -> Unit,
+    ) {
+        mockkObject(UndoCloseTabSnackBar)
+
+        val anchorView: View = mockk(relaxed = true)
+        every { homeFragment.snackbarAnchorView } returns anchorView
+
+        every {
+            UndoCloseTabSnackBar.show(
+                fragment = homeFragment,
+                isPrivate = any(),
+                multiple = any(),
+                onCancel = any(),
+                anchorView = anchorView,
+            )
+        } just Runs
+
+        val code = if (isPrivate) {
+            ALL_PRIVATE_TABS
+        } else {
+            ALL_NORMAL_TABS
+        }
+        testFun.invoke(code)
+
+        verify {
+            UndoCloseTabSnackBar.show(
+                fragment = homeFragment,
+                isPrivate = isPrivate,
+                multiple = multiple,
+                onCancel = any(),
+                anchorView = anchorView,
+            )
+        }
+    }
+
+    @Test
+    fun `GIVEN normal tabs to remove WHEN removing tabs THEN tabs are removed and proper snackbar is shown`() {
+        every { homeFragment.requireComponents.useCases.tabsUseCases.removeNormalTabs() } just Runs
+        testCloseTabSnackBar(
+            homeFragment = homeFragment,
+            multiple = true,
+            isPrivate = false,
+        ) { sessionCode ->
+            homeFragment.removeAllTabsAndShowSnackbar(sessionCode)
+            verify { homeFragment.requireComponents.useCases.tabsUseCases.removeNormalTabs() }
+        }
+    }
+
+    @Test
+    fun `GIVEN private tabs to remove WHEN removing tabs THEN tabs are removed and proper snackbar is shown`() {
+        every { homeFragment.requireComponents.useCases.tabsUseCases.removePrivateTabs() } just Runs
+        testCloseTabSnackBar(
+            homeFragment = homeFragment,
+            multiple = true,
+            isPrivate = true,
+        ) { sessionCode ->
+            homeFragment.removeAllTabsAndShowSnackbar(sessionCode)
+            verify { homeFragment.requireComponents.useCases.tabsUseCases.removePrivateTabs() }
+        }
+    }
+
+    private fun setupRemoveTabAndShowSnackbar(homeFragment: HomeFragment, isPrivate: Boolean) {
+        mockkStatic(BrowserState::findTab)
+
+        every { homeFragment.store.state } returns mockk()
+        every { homeFragment.requireComponents.useCases.tabsUseCases.removeTab(any()) } just Runs
+        every { any<BrowserState>().findTab(any()) } returns createTab(url = "", private = isPrivate)
+    }
+
+    @Test
+    fun `GIVEN normal tab to remove WHEN removing tab THEN tab is removed and proper snackbar is shown`() {
+        setupRemoveTabAndShowSnackbar(homeFragment = homeFragment, isPrivate = false)
+        testCloseTabSnackBar(
+            homeFragment = homeFragment,
+            multiple = false,
+            isPrivate = false,
+        ) { sessionId ->
+            homeFragment.removeTabAndShowSnackbar(sessionId)
+            verify { homeFragment.requireComponents.useCases.tabsUseCases.removeTab(sessionId) }
+        }
+    }
+
+    @Test
+    fun `GIVEN private tab to remove WHEN removing tab THEN tab is removed and proper snackbar is shown`() {
+        setupRemoveTabAndShowSnackbar(homeFragment = homeFragment, isPrivate = true)
+        testCloseTabSnackBar(
+            homeFragment = homeFragment,
+            multiple = false,
+            isPrivate = true,
+        ) { sessionId ->
+            homeFragment.removeTabAndShowSnackbar(sessionId)
+            verify { homeFragment.requireComponents.useCases.tabsUseCases.removeTab(sessionId) }
+        }
     }
 }
