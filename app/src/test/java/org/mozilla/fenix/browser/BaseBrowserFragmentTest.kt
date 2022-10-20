@@ -7,8 +7,11 @@ package org.mozilla.fenix.browser
 import android.content.Context
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
@@ -27,8 +30,10 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.utils.UndoCloseTabSnackBar
 
 @RunWith(FenixRobolectricTestRunner::class)
 class BaseBrowserFragmentTest {
@@ -196,6 +201,55 @@ class BaseBrowserFragmentTest {
 
             assertFalse(result)
         }
+    }
+
+    private fun testRemoveSessionIfNeeded(isPrivate: Boolean) {
+        val browserLayout: CoordinatorLayout = mockk()
+        every { fragment.bindingBrowserLayout } returns browserLayout
+
+        val tabSession = createTab(id = "1", url = "", parentId = "0", private = isPrivate)
+        every { fragment.getCurrentTab() } returns tabSession
+        every {
+            fragment.requireComponents.useCases.tabsUseCases.removeTab(any(), any())
+        } just Runs
+
+        mockkObject(UndoCloseTabSnackBar)
+        every {
+            UndoCloseTabSnackBar.show(
+                fragment = fragment,
+                isPrivate = any(),
+                view = any(),
+                paddedForBottomToolbar = any(),
+            )
+        } just Runs
+
+        fragment.removeSessionIfNeeded()
+
+        verify {
+            fragment.requireComponents.useCases.tabsUseCases.removeTab(
+                tabSession.id,
+                selectParentIfExists = true,
+            )
+        }
+
+        verify {
+            UndoCloseTabSnackBar.show(
+                fragment = fragment,
+                isPrivate = tabSession.content.private,
+                view = browserLayout,
+                paddedForBottomToolbar = true,
+            )
+        }
+    }
+
+    @Test
+    fun `GIVEN current tab is non-private WHEN closing the tab THEN an appropriate snackbar is shown`() {
+        testRemoveSessionIfNeeded(isPrivate = false)
+    }
+
+    @Test
+    fun `GIVEN current tab is private WHEN closing the tab THEN an appropriate snackbar is shown`() {
+        testRemoveSessionIfNeeded(isPrivate = true)
     }
 }
 

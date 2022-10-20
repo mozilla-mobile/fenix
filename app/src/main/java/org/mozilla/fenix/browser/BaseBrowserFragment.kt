@@ -161,6 +161,10 @@ abstract class BaseBrowserFragment :
     private var _binding: FragmentBrowserBinding? = null
     protected val binding get() = _binding!!
 
+    // this is a workaround for not being able to compile tests that use binding directly
+    @VisibleForTesting
+    internal val bindingBrowserLayout get() = binding.browserLayout
+
     private lateinit var browserFragmentStore: BrowserFragmentStore
     private lateinit var browserAnimator: BrowserAnimator
 
@@ -1191,7 +1195,8 @@ abstract class BaseBrowserFragment :
      * Removes the session if it was opened by an ACTION_VIEW intent
      * or if it has a parent session and no more history
      */
-    protected open fun removeSessionIfNeeded(): Boolean {
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    internal open fun removeSessionIfNeeded(): Boolean {
         getCurrentTab()?.let { session ->
             return if (session.source is SessionState.Source.External && !session.restored) {
                 activity?.finish()
@@ -1204,7 +1209,7 @@ abstract class BaseBrowserFragment :
                     UndoCloseTabSnackBar.show(
                         fragment = this,
                         isPrivate = session.content.private,
-                        view = binding.browserLayout,
+                        view = bindingBrowserLayout,
                         paddedForBottomToolbar = true,
                     )
                 }
