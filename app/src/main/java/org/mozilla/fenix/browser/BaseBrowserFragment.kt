@@ -1201,6 +1201,12 @@ abstract class BaseBrowserFragment :
                 val hasParentSession = session is TabSessionState && session.parentId != null
                 if (hasParentSession) {
                     requireComponents.useCases.tabsUseCases.removeTab(session.id, selectParentIfExists = true)
+                    UndoCloseTabSnackBar.show(
+                        fragment = this,
+                        isPrivate = session.content.private,
+                        view = binding.browserLayout,
+                        paddedForBottomToolbar = true,
+                    )
                 }
                 // We want to return to home if this session didn't have a parent session to select.
                 val goToOverview = !hasParentSession
