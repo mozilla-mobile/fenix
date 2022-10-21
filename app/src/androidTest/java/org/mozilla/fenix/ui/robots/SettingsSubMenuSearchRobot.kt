@@ -27,6 +27,7 @@ import org.hamcrest.Matchers.allOf
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
@@ -161,6 +162,17 @@ class SettingsSubMenuSearchRobot {
     }
 
     fun clickEdit() = onView(withText("Edit")).click()
+
+    fun clickDeleteSearchEngine() =
+        mDevice.findObject(
+            UiSelector().textContains(getStringResource(R.string.search_engine_delete)),
+        ).click()
+
+    fun clickUndoSnackBarButton() =
+        mDevice.findObject(
+            UiSelector()
+                .resourceId("$packageName:id/snackbar_btn"),
+        ).click()
 
     fun saveEditSearchEngine() {
         onView(withId(R.id.save_button)).click()
