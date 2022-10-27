@@ -130,5 +130,5 @@ object FeatureFlags {
     /**
      * Enables the save to PDF feature.
      */
-    val saveToPDF = Config.channel.isNightlyOrDebug
+    const val saveToPDF = true
 }
