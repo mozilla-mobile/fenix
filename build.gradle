@@ -240,3 +240,4 @@ tasks.register("githubLintDetektDetails", GithubDetailsTask) {
 tasks.register("githubLintAndroidDetails", GithubDetailsTask) {
     text = "### [Android Lint Results]({reportsUrl}/lint-results-debug.html)"
 }
+
