@@ -312,4 +312,62 @@ class SettingsSearchTest {
             verifyClipboardSuggestionsAreDisplayed(link, false)
         }
     }
+
+    // Expected for en-us defaults
+    @Test
+    fun undoDeleteSearchEngineTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            verifyEngineListContains("Bing")
+            openEngineOverflowMenu("Bing")
+            clickDeleteSearchEngine()
+            clickUndoSnackBarButton()
+            verifyEngineListContains("Bing")
+        }
+    }
+
+    // Expected for en-us defaults
+    @Test
+    fun deleteDefaultSearchEngineTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            verifyEngineListContains("Google")
+            verifyDefaultSearchEngine("Google")
+            openEngineOverflowMenu("Google")
+            clickDeleteSearchEngine()
+            verifyEngineListDoesNotContain("Google")
+            verifyDefaultSearchEngine("Bing")
+        }
+    }
+
+    // Expected for en-us defaults
+    @Test
+    fun deleteAllSearchEnginesTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            deleteMultipleSearchEngines(
+                "Google",
+                "Bing",
+                "Amazon.com",
+                "DuckDuckGo",
+                "eBay",
+            )
+            verifyDefaultSearchEngine("Wikipedia")
+            verifyThreeDotButtonIsNotDisplayed("Wikipedia")
+            openAddSearchEngineMenu()
+            verifyAddSearchEngineListContains(
+                "Google",
+                "Bing",
+                "Amazon.com",
+                "DuckDuckGo",
+                "eBay",
+            )
+        }
+    }
 }

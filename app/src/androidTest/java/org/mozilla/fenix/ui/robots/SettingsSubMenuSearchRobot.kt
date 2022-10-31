@@ -24,6 +24,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiSelector
 import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.endsWith
 import org.junit.Assert.assertTrue
@@ -171,6 +172,18 @@ class SettingsSubMenuSearchRobot {
 
     fun verifyEngineListContains(searchEngineName: String) = assertEngineListContains(searchEngineName)
 
+    fun verifyEngineListDoesNotContain(searchEngineName: String) = assertEngineListDoesNotContain(searchEngineName)
+
+    fun verifyDefaultSearchEngine(searchEngineName: String) = assertDefaultSearchEngine(searchEngineName)
+
+    fun verifyThreeDotButtonIsNotDisplayed(searchEngineName: String) = assertThreeDotButtonIsNotDisplayed(searchEngineName)
+
+    fun verifyAddSearchEngineListContains(vararg searchEngines: String) {
+        for (searchEngine in searchEngines) {
+            assertEngineListContains(searchEngine)
+        }
+    }
+
     fun saveNewSearchEngine() {
         addSearchEngineSaveButton().click()
         assertTrue(
@@ -247,7 +260,25 @@ class SettingsSubMenuSearchRobot {
         threeDotMenu(searchEngineName).click()
     }
 
+    fun deleteMultipleSearchEngines(vararg searchEngines: String) {
+        for (searchEngine in searchEngines) {
+            openEngineOverflowMenu(searchEngine)
+            clickDeleteSearchEngine()
+        }
+    }
+
     fun clickEdit() = onView(withText("Edit")).click()
+
+    fun clickDeleteSearchEngine() =
+        mDevice.findObject(
+            UiSelector().textContains(getStringResource(R.string.search_engine_delete)),
+        ).click()
+
+    fun clickUndoSnackBarButton() =
+        mDevice.findObject(
+            UiSelector()
+                .resourceId("$packageName:id/snackbar_btn"),
+        ).click()
 
     fun saveEditSearchEngine() {
         onView(withId(R.id.save_button)).click()
@@ -338,6 +369,21 @@ private fun addSearchEngineSaveButton() = onView(withId(R.id.add_search_engine))
 private fun assertEngineListContains(searchEngineName: String) {
     onView(withId(R.id.search_engine_group)).check(matches(hasDescendant(withText(searchEngineName))))
 }
+
+private fun assertDefaultSearchEngine(searchEngineName: String) =
+    onView(
+        allOf(
+            withId(R.id.radio_button),
+            withParent(withChild(withText(searchEngineName))),
+        ),
+    ).check(matches(isChecked(true)))
+
+private fun assertEngineListDoesNotContain(searchEngineName: String) {
+    onView(withId(R.id.search_engine_group)).check(matches(not(hasDescendant(withText(searchEngineName)))))
+}
+
+private fun assertThreeDotButtonIsNotDisplayed(searchEngineName: String) =
+    threeDotMenu(searchEngineName).check(matches(not(isDisplayed())))
 
 private fun threeDotMenu(searchEngineName: String) =
     onView(
