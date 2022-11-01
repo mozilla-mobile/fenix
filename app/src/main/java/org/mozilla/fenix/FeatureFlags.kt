@@ -93,11 +93,6 @@ object FeatureFlags {
     const val showHomeOnboarding = true
 
     /**
-     * Enables history improvement features.
-     */
-    const val historyImprovementFeatures = true
-
-    /**
      * Enables the Task Continuity enhancements.
      */
     const val taskContinuityFeature = true
@@ -130,5 +125,5 @@ object FeatureFlags {
     /**
      * Enables the save to PDF feature.
      */
-    val saveToPDF = Config.channel.isNightlyOrDebug
+    const val saveToPDF = true
 }
