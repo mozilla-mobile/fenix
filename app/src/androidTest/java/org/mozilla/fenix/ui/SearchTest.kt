@@ -30,7 +30,6 @@ import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.grantPermission
 import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
 import org.mozilla.fenix.helpers.TestHelper.setCustomSearchEngine
-import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.multipleSelectionToolbar
 
@@ -117,32 +116,7 @@ class SearchTest {
     }
 
     @Test
-    fun shortcutButtonTest() {
-        val searchEngineURL = "bing.com/search?q=mozilla%20firefox"
-
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openSearchSubMenu {
-            toggleShowSearchShortcuts()
-        }.goBack {
-        }.goBack {
-        }.openSearch {
-            verifySearchBarEmpty()
-            clickSearchEngineButton(activityTestRule, "Bing")
-            typeSearch("mozilla")
-            verifySearchEngineResults(activityTestRule, "mozilla firefox", "Bing")
-            clickSearchEngineResult(activityTestRule, "mozilla firefox")
-        }
-
-        browserScreen {
-            waitForPageToLoad()
-            verifyUrl(searchEngineURL)
-        }
-    }
-
-    @Test
-    fun shortcutSearchEngineSettingsTest() {
+    fun setDefaultSearchEngineFromShortcutsTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -152,8 +126,16 @@ class SearchTest {
         }.goBack {
         }.openSearch {
             scrollToSearchEngineSettings(activityTestRule)
-            clickSearchEngineSettings(activityTestRule)
-            verifySearchSettings()
+        }.clickSearchEngineSettings(activityTestRule) {
+            changeDefaultSearchEngine("DuckDuckGo")
+        }
+
+        exitMenu()
+
+        homeScreen {
+        }.openSearch {
+        }.submitQuery("firefox") {
+            verifyUrl("duckduckgo.com/?q=firefox")
         }
     }
 

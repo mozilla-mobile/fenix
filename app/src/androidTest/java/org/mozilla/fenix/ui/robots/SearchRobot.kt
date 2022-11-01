@@ -8,13 +8,11 @@ package org.mozilla.fenix.ui.robots
 
 import android.os.Build
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.android.ComposeNotIdleException
-import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -32,7 +30,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiSelector
-import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers.allOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -49,9 +46,7 @@ import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
-import org.mozilla.fenix.helpers.TestHelper.waitForObjects
 import org.mozilla.fenix.helpers.click
-import org.mozilla.fenix.helpers.ext.waitNotNull
 
 /**
  * Implementation of Robot Pattern for the search fragment.
@@ -95,11 +90,6 @@ class SearchRobot {
     }
 
     fun verifySearchEngineButton() = assertSearchButton()
-
-    fun verifySearchEngineResults(rule: ComposeTestRule, searchSuggestion: String, searchEngineName: String) {
-        rule.waitUntil(waitingTime, waitForSearchSuggestions(rule, searchSuggestion, searchEngineName))
-        rule.onNodeWithText(searchSuggestion).assertIsDisplayed()
-    }
 
     fun verifySearchEngineSuggestionResults(rule: ComposeTestRule, searchSuggestion: String) {
         rule.waitForIdle()
@@ -187,7 +177,8 @@ class SearchRobot {
         ).click()
     }
 
-    fun verifySearchSettings() = assertSearchSettings()
+    fun verifySearchEnginePrompt(rule: ComposeTestRule, searchEngineName: String) =
+        assertSearchEnginePrompt(rule, searchEngineName)
     fun verifySearchBarEmpty() = assertSearchBarEmpty()
 
     fun verifyKeyboardVisibility() = assertKeyboardVisibility(isExpectedToBeVisible = true)
@@ -243,33 +234,6 @@ class SearchRobot {
         mDevice.waitForIdle()
     }
 
-    fun clickSearchEngineButton(rule: ComposeTestRule, searchEngineName: String) {
-        rule.waitForIdle()
-
-        mDevice.waitForObjects(
-            mDevice.findObject(
-                UiSelector().textContains(searchEngineName),
-            ),
-        )
-
-        rule.onNodeWithText(searchEngineName)
-            .assertExists()
-            .assertHasClickAction()
-            .performClick()
-    }
-
-    fun clickSearchEngineResult(rule: ComposeTestRule, searchSuggestion: String) {
-        mDevice.waitNotNull(
-            Until.findObjects(By.text(searchSuggestion)),
-            waitingTime,
-        )
-
-        rule.onNodeWithText(searchSuggestion)
-            .assertIsDisplayed()
-            .assertHasClickAction()
-            .performClick()
-    }
-
     @OptIn(ExperimentalTestApi::class)
     fun scrollToSearchEngineSettings(rule: ComposeTestRule) {
         // Soft keyboard is visible on screen on view access; hide it
@@ -282,13 +246,6 @@ class SearchRobot {
 
         rule.onNodeWithTag("mozac.awesomebar.suggestions")
             .performScrollToIndex(5)
-    }
-
-    fun clickSearchEngineSettings(rule: ComposeTestRule) {
-        rule.onNodeWithText("Search engine settings")
-            .assertIsDisplayed()
-            .assertHasClickAction()
-            .performClick()
     }
 
     fun clickClearButton() {
@@ -311,11 +268,39 @@ class SearchRobot {
         pasteText.click()
     }
 
+    fun clickSearchEnginePrompt(rule: ComposeTestRule, searchEngineName: String) =
+        rule.onNodeWithText("Search $searchEngineName").performClick()
+
     fun expandSearchSuggestionsList() {
         onView(allOf(withId(R.id.search_wrapper))).perform(
             closeSoftKeyboard(),
         )
         awesomeBar.swipeUp(2)
+    }
+
+    fun verifyTranslatedFocusedNavigationToolbar(toolbarHintString: String) =
+        assertTranslatedFocusedNavigationToolbar(toolbarHintString)
+
+    fun verifySearchEngineShortcuts(rule: ComposeTestRule, vararg searchEngines: String) {
+        mDevice.findObject(
+            UiSelector().resourceId("$packageName:id/awesome_bar"),
+        ).swipeUp(1)
+
+        for (searchEngine in searchEngines) {
+            rule.waitForIdle()
+            rule.onNodeWithText(searchEngine).assertIsDisplayed()
+        }
+    }
+
+    fun verifySearchEngineShortcutsAreNotDisplayed(rule: ComposeTestRule, vararg searchEngines: String) {
+        mDevice.findObject(
+            UiSelector().resourceId("$packageName:id/pill_wrapper_divider"),
+        ).waitForExists(waitingTime)
+
+        for (searchEngine in searchEngines) {
+            rule.waitForIdle()
+            rule.onNodeWithText(searchEngine).assertDoesNotExist()
+        }
     }
 
     fun verifyTypedToolbarText(expectedText: String) {
@@ -376,9 +361,17 @@ class SearchRobot {
             return BrowserRobot.Transition()
         }
 
-        fun goToSearchEngine(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
-            NavigationToolbarRobot().interact()
-            return NavigationToolbarRobot.Transition()
+        fun clickSearchEngineSettings(
+            rule: ComposeTestRule,
+            interact: SettingsSubMenuSearchRobot.() -> Unit,
+        ): SettingsSubMenuSearchRobot.Transition {
+            rule.onNodeWithText("Search engine settings")
+                .assertIsDisplayed()
+                .assertHasClickAction()
+                .performClick()
+
+            SettingsSubMenuSearchRobot().interact()
+            return SettingsSubMenuSearchRobot.Transition()
         }
     }
 }
@@ -400,13 +393,13 @@ private fun clearButton() =
 
 private fun searchWrapper() = mDevice.findObject(UiSelector().resourceId("$packageName:id/search_wrapper"))
 
-private fun waitForSearchSuggestions(rule: ComposeTestRule, searchSuggestion: String, searchEngineName: String): () -> Boolean =
-    {
-        rule.waitForIdle()
-        mDevice.waitForObjects(mDevice.findObject(UiSelector().textContains(searchSuggestion)))
-        rule.onAllNodesWithTag("mozac.awesomebar.suggestion").assertAny(hasText(searchSuggestion) and hasText(searchEngineName))
-        mDevice.findObject(UiSelector().textContains(searchSuggestion)).waitForExists(waitingTime)
-    }
+private fun assertSearchEnginePrompt(rule: ComposeTestRule, searchEngineName: String) {
+    rule.waitForIdle()
+    rule.onNodeWithText("Search $searchEngineName").assertIsDisplayed()
+    rule.onNodeWithText(
+        getStringResource(R.string.search_engine_suggestions_description),
+    ).assertIsDisplayed()
+}
 
 private fun assertSearchView() =
     assertTrue(
@@ -433,14 +426,6 @@ private fun assertSearchButton() =
             UiSelector().resourceId("$packageName:id/search_engines_shortcut_button"),
         ).waitForExists(waitingTime),
     )
-
-private fun assertSearchWithText() =
-    onView(allOf(withText("THIS TIME, SEARCH WITH:")))
-        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-
-private fun assertSearchSettings() =
-    onView(allOf(withText("Default search engine")))
-        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
 private fun assertSearchBarEmpty() =
     assertTrue(
@@ -536,6 +521,15 @@ private fun assertDefaultSearchEngine(expectedText: String) =
             UiSelector()
                 .resourceId("$packageName:id/mozac_browser_toolbar_edit_icon")
                 .descriptionContains(expectedText),
+        ).waitForExists(waitingTime),
+    )
+
+private fun assertTranslatedFocusedNavigationToolbar(toolbarHintString: String) =
+    assertTrue(
+        mDevice.findObject(
+            UiSelector()
+                .resourceId("$packageName:id/mozac_browser_toolbar_edit_url_view")
+                .textContains(toolbarHintString),
         ).waitForExists(waitingTime),
     )
 
