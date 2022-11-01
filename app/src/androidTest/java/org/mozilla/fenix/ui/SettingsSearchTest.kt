@@ -7,16 +7,20 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.SearchDispatcher
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
+import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.setTextToClipBoard
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
+import org.mozilla.fenix.ui.util.ARABIC_LANGUAGE_HEADER
 
 class SettingsSearchTest {
     private lateinit var mockWebServer: MockWebServer
@@ -367,6 +371,116 @@ class SettingsSearchTest {
                 "Amazon.com",
                 "DuckDuckGo",
                 "eBay",
+            )
+        }
+    }
+
+    // Expected for en-us defaults
+    @Test
+    fun changeSearchEnginesBasedOnTextTest() {
+        homeScreen {
+        }.openSearch {
+            typeSearch("D")
+            verifySearchEnginePrompt(activityTestRule, "DuckDuckGo")
+            clickSearchEnginePrompt(activityTestRule, "DuckDuckGo")
+        }.submitQuery("firefox") {
+            verifyUrl("duckduckgo.com/?q=firefox")
+        }
+    }
+
+    // Expected for app language set to Arabic
+    @Test
+    fun verifySearchEnginesWithRTLLocale() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            toggleShowSearchShortcuts()
+        }.goBack {
+        }.openLanguageSubMenu {
+            TestHelper.registerAndCleanupIdlingResources(
+                RecyclerViewIdlingResource(
+                    activityTestRule.activity.findViewById(R.id.locale_list),
+                    2,
+                ),
+            ) {
+                selectLanguage("Arabic")
+                verifyLanguageHeaderIsTranslated(ARABIC_LANGUAGE_HEADER)
+            }
+        }
+
+        exitMenu()
+
+        homeScreen {
+        }.openSearch {
+            verifyTranslatedFocusedNavigationToolbar("ابحث أو أدخِل عنوانا")
+            verifySearchEngineShortcuts(
+                activityTestRule,
+                "Google",
+                "Bing",
+                "Amazon.com",
+                "DuckDuckGo",
+                "eBay",
+                /* Disabled Arabic Wikipedia verification
+                   until https://github.com/mozilla-mobile/fenix/issues/12236 gets fixed
+                 "ويكيبيديا (ar)"
+                */
+            )
+        }
+    }
+
+    // Expected for en-us defaults
+    @Test
+    fun toggleSearchEnginesShortcutListTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            verifyShowSearchEnginesToggleState(false)
+            toggleShowSearchShortcuts()
+            verifyShowSearchEnginesToggleState(true)
+        }
+
+        exitMenu()
+
+        homeScreen {
+        }.openSearch {
+            verifySearchEngineShortcuts(
+                activityTestRule,
+                "Google",
+                "Bing",
+                "Amazon.com",
+                "DuckDuckGo",
+                "eBay",
+                "Wikipedia",
+            )
+        }.clickSearchEngineSettings(activityTestRule) {
+            toggleShowSearchShortcuts()
+            verifyShowSearchEnginesToggleState(false)
+        }
+
+        exitMenu()
+
+        homeScreen {
+        }.openSearch {
+            verifySearchEngineShortcutsAreNotDisplayed(
+                activityTestRule,
+                "Google",
+                "Bing",
+                "Amazon.com",
+                "DuckDuckGo",
+                "eBay",
+                "Wikipedia",
+            )
+            clickSearchEngineShortcutButton()
+            verifySearchEngineShortcuts(
+                activityTestRule,
+                "Google",
+                "Bing",
+                "Amazon.com",
+                "DuckDuckGo",
+                "eBay",
+                "Wikipedia",
             )
         }
     }
