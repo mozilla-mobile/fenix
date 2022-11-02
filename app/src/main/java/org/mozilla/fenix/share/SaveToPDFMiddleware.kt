@@ -17,7 +17,10 @@ import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
+import mozilla.telemetry.glean.private.NoExtras
+import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.R
+import org.mozilla.gecko.util.ThreadUtils
 
 /**
  * [BrowserAction] middleware reacting in response to Save to PDF related [Action]s.
@@ -37,7 +40,10 @@ class SaveToPDFMiddleware(
             // See https://github.com/mozilla-mobile/fenix/issues/27649 for more details,
             // why a Toast is used here.
             GlobalScope.launch(Dispatchers.Main) {
-                Toast.makeText(context, R.string.unable_to_save_to_pdf_error, LENGTH_LONG).show()
+                ThreadUtils.runOnUiThread {
+                    Toast.makeText(context, R.string.unable_to_save_to_pdf_error, LENGTH_LONG).show()
+                }
+                Events.saveToPdfFailure.record(NoExtras())
             }
         } else {
             next(action)
