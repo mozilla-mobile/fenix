@@ -27,7 +27,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
@@ -39,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mozilla.components.support.ktx.kotlin.trimmed
 import org.mozilla.fenix.R
+import org.mozilla.fenix.compose.Divider
 import org.mozilla.fenix.compose.EagerFlingBehavior
 import org.mozilla.fenix.compose.Favicon
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
@@ -64,6 +65,7 @@ private const val VISITS_PER_COLUMN = 3
  *
  * @param recentVisits List of [RecentlyVisitedItem] to display.
  * @param menuItems List of [RecentVisitMenuItem] shown long clicking a [RecentlyVisitedItem].
+ * @param backgroundColor The background [Color] of each item.
  * @param onRecentVisitClick Invoked when the user clicks on a recent visit.
  * @param onRecentVisitLongClick Invoked when the user long clicks on a recent visit.
  */
@@ -71,13 +73,14 @@ private const val VISITS_PER_COLUMN = 3
 fun RecentlyVisited(
     recentVisits: List<RecentlyVisitedItem>,
     menuItems: List<RecentVisitMenuItem>,
+    backgroundColor: Color = FirefoxTheme.colors.layer2,
     onRecentVisitClick: (RecentlyVisitedItem, Int) -> Unit = { _, _ -> },
     onRecentVisitLongClick: () -> Unit = {},
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
-        backgroundColor = FirefoxTheme.colors.layer2,
+        backgroundColor = backgroundColor,
         elevation = 6.dp,
     ) {
         val listState = rememberLazyListState()
@@ -185,7 +188,7 @@ private fun RecentlyVisitedHistoryGroup(
             )
 
             if (showDividerLine) {
-                RecentlyVisitedDivider()
+                Divider()
             }
         }
 
@@ -245,7 +248,7 @@ private fun RecentlyVisitedHistoryHighlight(
             )
 
             if (showDividerLine) {
-                RecentlyVisitedDivider(modifier = Modifier.align(Alignment.BottomCenter))
+                Divider(modifier = Modifier.align(Alignment.BottomCenter))
             }
         }
 
@@ -354,22 +357,6 @@ private fun RecentlyVisitedMenu(
             }
         }
     }
-}
-
-/**
- * A recent item divider.
- *
- * @param modifier [Modifier] allowing to perfectly place this.
- */
-@Composable
-private fun RecentlyVisitedDivider(
-    modifier: Modifier = Modifier,
-) {
-    Divider(
-        modifier = modifier,
-        color = FirefoxTheme.colors.borderPrimary,
-        thickness = 0.5.dp,
-    )
 }
 
 /**
