@@ -16,6 +16,12 @@
     <string name="content_description_disable_private_browsing_button">Disable private browsing</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="search_hint">Search or enter address</string>
+    <!-- Placeholder text shown in search bar when using history search -->
+    <string name="history_search_hint">Search history</string>
+    <!-- Placeholder text shown in search bar when using bookmarks search -->
+    <string name="bookmark_search_hint">Search bookmarks</string>
+    <!-- Placeholder text shown in search bar when using tabs search -->
+    <string name="tab_search_hint">Search tabs</string>
     <!-- Placeholder text shown in the search bar when using application search engines -->
     <string name="application_search_hint">Enter search terms</string>
     <!-- No Open Tabs Message Description -->
@@ -239,6 +245,8 @@
     <string name="search_engine_suggestions_description">Search directly from the address bar</string>
     <!-- Menu option in the search selector menu to open the search settings -->
     <string name="search_settings_menu_item">Search settings</string>
+    <!-- Header text for the search selector menu -->
+    <string name="search_header_menu_item">This time search:</string>
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
@@ -1026,6 +1034,8 @@
     <string name="share_button_content_description">Share</string>
     <!-- Text for the Save to PDF feature in the share menu -->
     <string name="share_save_to_pdf">Save as PDF</string>
+    <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
+    <string name="unable_to_save_to_pdf_error">Unable to generate PDF</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Send to device</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
