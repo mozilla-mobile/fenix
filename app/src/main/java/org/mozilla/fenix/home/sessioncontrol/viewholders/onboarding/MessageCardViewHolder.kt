@@ -49,9 +49,7 @@ class MessageCardViewHolder(
         val message by remember { mutableStateOf(messageGlobal) }
 
         MessageCard(
-            messageText = message.data.text,
-            titleText = message.data.title,
-            buttonText = message.data.buttonLabel,
+            message = message,
             onClick = { interactor.onMessageClicked(message) },
             onCloseButtonClick = { interactor.onMessageClosedClicked(message) },
         )
