@@ -19,6 +19,20 @@ import org.mozilla.fenix.R
 typealias MozSearchEngine = SearchEngine
 
 /**
+ * Interface for search selector action. This interface is implemented by objects that want
+ * to respond to user interaction with items inside [SearchSelectorMenu].
+ */
+interface SearchSelectorInteractor {
+
+    /**
+     * Called when an user taps on a search selector menu item.
+     *
+     * @param item The [SearchSelectorMenu.Item] that was tapped.
+     */
+    fun onMenuItemTapped(item: SearchSelectorMenu.Item)
+}
+
+/**
  * A popup menu composed of [SearchSelectorMenu.Item] objects.
  *
  * @property context [Context] used for various Android interactions.
@@ -26,12 +40,13 @@ typealias MozSearchEngine = SearchEngine
  */
 class SearchSelectorMenu(
     private val context: Context,
-    private val interactor: ToolbarInteractor,
+    private val interactor: SearchSelectorInteractor,
 ) {
 
     /**
      * Items that will appear in the search selector menu.
      */
+
     sealed class Item {
         /**
          * The menu item to navigate to the search settings.

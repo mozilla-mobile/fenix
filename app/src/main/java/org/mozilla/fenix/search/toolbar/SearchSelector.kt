@@ -8,7 +8,10 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.widget.RelativeLayout
+import androidx.core.content.withStyledAttributes
+import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.SearchSelectorBinding
 
 /**
@@ -21,9 +24,27 @@ internal class SearchSelector @JvmOverloads constructor(
 ) : RelativeLayout(context, attrs, defStyle) {
 
     private val binding = SearchSelectorBinding.inflate(LayoutInflater.from(context), this)
+    private var marginTop: Int = 0
 
-    fun setIcon(icon: Drawable, contentDescription: String) {
+    init {
+        context.withStyledAttributes(attrs, R.styleable.SearchSelector, 0, 0) {
+            marginTop = getDimensionPixelSize(R.styleable.SearchSelector_marginTop, 0)
+        }
+    }
+
+    override fun setLayoutParams(params: ViewGroup.LayoutParams?) {
+        if (params is MarginLayoutParams) {
+            params.topMargin = marginTop
+        }
+        super.setLayoutParams(params)
+    }
+
+    fun setIcon(icon: Drawable?, contentDescription: String?) {
         binding.icon.setImageDrawable(icon)
         binding.icon.contentDescription = contentDescription
+    }
+
+    fun setTopMargin(margin: Int) {
+        marginTop = margin
     }
 }

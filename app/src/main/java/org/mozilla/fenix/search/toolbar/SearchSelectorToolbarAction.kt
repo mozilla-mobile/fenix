@@ -55,6 +55,7 @@ class SearchSelectorToolbarAction(
                 menu.menuController.show(anchor = it, orientation = orientation, forceOrientation = true)
             }
 
+            setTopMargin(resources.getDimensionPixelSize(R.dimen.search_engine_engine_icon_top_margin))
             setBackgroundResource(
                 context.theme.resolveAttribute(android.R.attr.selectableItemBackgroundBorderless),
             )
@@ -87,7 +88,7 @@ class SearchSelectorToolbarAction(
  * Get the search engine icon appropriately scaled to be shown in the selector.
  */
 @VisibleForTesting
-internal fun SearchEngine.getScaledIcon(context: Context): BitmapDrawable {
+fun SearchEngine.getScaledIcon(context: Context): BitmapDrawable {
     val iconSize =
         context.resources.getDimensionPixelSize(R.dimen.preference_icon_drawable_size)
     val scaledIcon = Bitmap.createScaledBitmap(
