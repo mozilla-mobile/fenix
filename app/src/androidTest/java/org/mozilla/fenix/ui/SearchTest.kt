@@ -7,7 +7,6 @@ package org.mozilla.fenix.ui
 import android.content.Context
 import android.hardware.camera2.CameraManager
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
-import androidx.core.net.toUri
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import mozilla.components.browser.icons.IconRequest
 import mozilla.components.browser.icons.generator.DefaultIconGenerator
@@ -21,8 +20,10 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.Constants.PackageName.ANDROID_SETTINGS
+import org.mozilla.fenix.helpers.Constants.searchEngineCodes
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.SearchDispatcher
+import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
 import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.denyPermission
@@ -45,6 +46,7 @@ import org.mozilla.fenix.ui.robots.multipleSelectionToolbar
 
 class SearchTest {
     lateinit var searchMockServer: MockWebServer
+    lateinit var queryString: String
 
     @get:Rule
     val activityTestRule = AndroidComposeTestRule(
@@ -117,6 +119,8 @@ class SearchTest {
 
     @Test
     fun setDefaultSearchEngineFromShortcutsTest() {
+        queryString = "firefox"
+
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -134,16 +138,18 @@ class SearchTest {
 
         homeScreen {
         }.openSearch {
-        }.submitQuery("firefox") {
+        }.submitQuery(queryString) {
             verifyUrl("duckduckgo.com/?q=firefox")
         }
     }
 
     @Test
     fun clearSearchTest() {
+        queryString = "test"
+
         homeScreen {
         }.openSearch {
-            typeSearch("test")
+            typeSearch(queryString)
             clickClearButton()
             verifySearchBarEmpty()
         }
@@ -153,10 +159,12 @@ class SearchTest {
     @SmokeTest
     @Test
     fun searchGroupShowsInRecentlyVisitedTest() {
-        val firstPage = searchMockServer.url("generic1.html").toString()
-        val secondPage = searchMockServer.url("generic2.html").toString()
+        queryString = "test search"
+        val firstPage = getGenericAsset(searchMockServer, 1)
+        val secondPage = getGenericAsset(searchMockServer, 2)
         // setting our custom mockWebServer search URL
-        val searchString = "http://localhost:${searchMockServer.port}/searchResults.html?search={searchTerms}"
+        val searchString =
+            "http://localhost:${searchMockServer.port}/searchResults.html?search={searchTerms}"
         val customSearchEngine = createSearchEngine(
             name = "TestSearchEngine",
             url = searchString,
@@ -167,29 +175,26 @@ class SearchTest {
         // Performs a search and opens 2 dummy search results links to create a search group
         homeScreen {
         }.openSearch {
-        }.submitQuery("test search") {
+        }.submitQuery(queryString) {
             longClickLink("Link 1")
             clickContextOpenLinkInNewTab()
             longClickLink("Link 2")
             clickContextOpenLinkInNewTab()
-        }.goToHomescreen {
-            verifyJumpBackInSectionIsDisplayed()
-            verifyCurrentSearchGroupIsDisplayed(true, "test search", 3)
-            verifyRecentlyVisitedSearchGroupDisplayed(false, "test search", 3)
         }.openTabDrawer {
-        }.openTabFromGroup(firstPage) {
+        }.openTab(firstPage.title) {
         }.openTabDrawer {
-        }.openTabFromGroup(secondPage) {
+        }.openTab(secondPage.title) {
         }.openTabDrawer {
         }.openTabsListThreeDotMenu {
         }.closeAllTabs {
-            verifyRecentlyVisitedSearchGroupDisplayed(true, "test search", 3)
+            verifyRecentlyVisitedSearchGroupDisplayed(true, queryString, 3)
         }
     }
 
     @SmokeTest
     @Test
-    fun noCurrentSearchGroupFromPrivateBrowsingTest() {
+    fun noSearchGroupFromPrivateBrowsingTest() {
+        queryString = "test search"
         // setting our custom mockWebServer search URL
         val searchString = "http://localhost:${searchMockServer.port}/searchResults.html?search={searchTerms}"
         val customSearchEngine = createSearchEngine(
@@ -202,54 +207,24 @@ class SearchTest {
         // Performs a search and opens 2 dummy search results links to create a search group
         homeScreen {
         }.openSearch {
-        }.submitQuery("test search") {
+        }.submitQuery(queryString) {
             longClickLink("Link 1")
             clickContextOpenLinkInPrivateTab()
             longClickLink("Link 2")
             clickContextOpenLinkInPrivateTab()
-        }.goToHomescreen {
-            verifyCurrentSearchGroupIsDisplayed(false, "test search", 3)
+        }.openTabDrawer {
+        }.toggleToPrivateTabs {
+        }.openTabWithIndex(0) {
+        }.openTabDrawer {
+        }.openTabWithIndex(1) {
+        }.openTabDrawer {
+        }.openTabsListThreeDotMenu {
+        }.closeAllTabs {
+            togglePrivateBrowsingModeOnOff()
+            verifyCurrentSearchGroupIsDisplayed(false, queryString, 3)
         }.openThreeDotMenu {
         }.openHistory {
             verifyHistoryItemExists(false, "3 sites")
-        }
-    }
-
-    @SmokeTest
-    @Test
-    @Ignore("Failing after compose migration. See: https://github.com/mozilla-mobile/fenix/issues/26087")
-    fun noRecentlyVisitedSearchGroupInPrivateBrowsingTest() {
-        val firstPage = searchMockServer.url("generic1.html").toString()
-        val secondPage = searchMockServer.url("generic2.html").toString()
-        // setting our custom mockWebServer search URL
-        val searchString = "http://localhost:${searchMockServer.port}/searchResults.html?search={searchTerms}"
-        val customSearchEngine = createSearchEngine(
-            name = "TestSearchEngine",
-            url = searchString,
-            icon = DefaultIconGenerator().generate(appContext, IconRequest(searchString)).bitmap,
-        )
-        setCustomSearchEngine(customSearchEngine)
-
-        // Performs a search and opens 2 dummy search results links to create a search group
-        homeScreen {
-        }.togglePrivateBrowsingMode()
-        homeScreen {
-        }.openSearch {
-        }.submitQuery("test search") {
-            longClickLink("Link 1")
-            clickContextOpenLinkInPrivateTab()
-            longClickLink("Link 2")
-            clickContextOpenLinkInPrivateTab()
-        }.openTabDrawer {
-        }.openTab(firstPage) {
-        }.openTabDrawer {
-        }.openTab(secondPage) {
-        }.openTabDrawer {
-        }.openTabsListThreeDotMenu {
-        }.closeAllTabs {
-            homeScreen {
-            }.togglePrivateBrowsingMode()
-            verifyRecentlyVisitedSearchGroupDisplayed(false, "test search", 3)
         }
     }
 
@@ -257,8 +232,9 @@ class SearchTest {
     @SmokeTest
     @Test
     fun deleteItemsFromSearchGroupsHistoryTest() {
-        val firstPage = searchMockServer.url("generic1.html").toString()
-        val secondPage = searchMockServer.url("generic2.html").toString()
+        queryString = "test search"
+        val firstPage = getGenericAsset(searchMockServer, 1)
+        val secondPage = getGenericAsset(searchMockServer, 2)
         // setting our custom mockWebServer search URL
         val searchString = "http://localhost:${searchMockServer.port}/searchResults.html?search={searchTerms}"
         val customSearchEngine = createSearchEngine(
@@ -271,22 +247,22 @@ class SearchTest {
         // Performs a search and opens 2 dummy search results links to create a search group
         homeScreen {
         }.openSearch {
-        }.submitQuery("test search") {
+        }.submitQuery(queryString) {
             longClickLink("Link 1")
             clickContextOpenLinkInNewTab()
             longClickLink("Link 2")
             clickContextOpenLinkInNewTab()
         }.openTabDrawer {
-        }.openTabFromGroup(firstPage) {
+        }.openTab(firstPage.title) {
         }.openTabDrawer {
-        }.openTabFromGroup(secondPage) {
+        }.openTab(secondPage.title) {
         }.openTabDrawer {
         }.openTabsListThreeDotMenu {
         }.closeAllTabs {
-            verifyRecentlyVisitedSearchGroupDisplayed(true, "test search", 3)
-        }.openRecentlyVisitedSearchGroupHistoryList("test search") {
-            clickDeleteHistoryButton(firstPage)
-            longTapSelectItem(secondPage.toUri())
+            verifyRecentlyVisitedSearchGroupDisplayed(true, queryString, 3)
+        }.openRecentlyVisitedSearchGroupHistoryList(queryString) {
+            clickDeleteHistoryButton(firstPage.url.toString())
+            longTapSelectItem(secondPage.url)
             multipleSelectionToolbar {
                 openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
                 clickMultiSelectionDelete()
@@ -295,7 +271,61 @@ class SearchTest {
         }
         homeScreen {
             // checking that the group is removed when only 1 item is left
-            verifyRecentlyVisitedSearchGroupDisplayed(false, "test search", 1)
+            verifyRecentlyVisitedSearchGroupDisplayed(false, queryString, 1)
+        }
+    }
+
+    // Default search code for Google-US
+    @Test
+    fun defaultSearchCodeGoogleUS() {
+        queryString = "firefox"
+
+        homeScreen {
+        }.openSearch {
+        }.submitQuery(queryString) {
+            verifyUrl(searchEngineCodes["Google"]!!)
+        }
+    }
+
+    // Default search code for Bing-US
+    @Test
+    fun defaultSearchCodeBingUS() {
+        queryString = "firefox"
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            changeDefaultSearchEngine("Bing")
+        }
+
+        exitMenu()
+
+        homeScreen {
+        }.openSearch {
+        }.submitQuery(queryString) {
+            verifyUrl(searchEngineCodes["Bing"]!!)
+        }
+    }
+
+    // Default search code for DuckDuckGo-US
+    @Test
+    fun defaultSearchCodeDuckDuckGoUS() {
+        queryString = "firefox"
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            changeDefaultSearchEngine("DuckDuckGo")
+        }
+
+        exitMenu()
+
+        homeScreen {
+        }.openSearch {
+        }.submitQuery(queryString) {
+            verifyUrl(searchEngineCodes["DuckDuckGo"]!!)
         }
     }
 }
