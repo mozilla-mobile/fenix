@@ -7,6 +7,7 @@ package org.mozilla.fenix.home
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -122,7 +123,6 @@ import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.perf.runBlockingIncrement
 import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
-import org.mozilla.fenix.search.toolbar.getScaledIcon
 import org.mozilla.fenix.tabstray.TabsTrayAccessPoint
 import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
 import org.mozilla.fenix.utils.ToolbarPopupWindow
@@ -669,8 +669,15 @@ class HomeFragment : Fragment() {
             flow.map { state -> state.search.selectedOrDefaultSearchEngine }
                 .ifChanged()
                 .collect { searchEngine ->
-                    val icon = searchEngine?.getScaledIcon(requireContext())
                     val text = searchEngine?.name
+                    val icon = searchEngine?.let {
+                        val iconSize =
+                            requireContext().resources.getDimensionPixelSize(R.dimen.preference_icon_drawable_size)
+                        BitmapDrawable(requireContext().resources, searchEngine.icon).apply {
+                            setBounds(0, 0, iconSize, iconSize)
+                        }
+                    }
+
                     if (requireContext().settings().showUnifiedSearchFeature) {
                         binding.searchSelector.setIcon(icon, text)
                     } else {

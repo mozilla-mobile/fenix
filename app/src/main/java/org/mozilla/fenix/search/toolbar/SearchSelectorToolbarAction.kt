@@ -88,7 +88,7 @@ class SearchSelectorToolbarAction(
  * Get the search engine icon appropriately scaled to be shown in the selector.
  */
 @VisibleForTesting
-fun SearchEngine.getScaledIcon(context: Context): BitmapDrawable {
+internal fun SearchEngine.getScaledIcon(context: Context): BitmapDrawable {
     val iconSize =
         context.resources.getDimensionPixelSize(R.dimen.preference_icon_drawable_size)
     val scaledIcon = Bitmap.createScaledBitmap(
