@@ -670,13 +670,7 @@ class HomeFragment : Fragment() {
                 .ifChanged()
                 .collect { searchEngine ->
                     val text = searchEngine?.name
-                    val icon = searchEngine?.let {
-                        val iconSize =
-                            requireContext().resources.getDimensionPixelSize(R.dimen.preference_icon_drawable_size)
-                        BitmapDrawable(requireContext().resources, searchEngine.icon).apply {
-                            setBounds(0, 0, iconSize, iconSize)
-                        }
-                    }
+                    val icon = searchEngine?.let { BitmapDrawable(requireContext().resources, it.icon) }
 
                     if (requireContext().settings().showUnifiedSearchFeature) {
                         binding.searchSelector.setIcon(icon, text)
