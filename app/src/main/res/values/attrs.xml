@@ -127,8 +127,4 @@
         <attr format="string" name="preferenceKey"/>
         <attr format="boolean" name="preferenceKeyDefaultValue"/>
     </declare-styleable>
-
-    <declare-styleable name="SearchSelector">
-        <attr format="dimension" name="marginTop" />
-    </declare-styleable>
 </resources>

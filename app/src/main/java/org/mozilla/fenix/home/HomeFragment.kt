@@ -359,7 +359,7 @@ class HomeFragment : Fragment() {
                     Orientation.DOWN
                 }
 
-                UnifiedSearch.searchMenuTapped.record(mozilla.telemetry.glean.private.NoExtras())
+                UnifiedSearch.searchMenuTapped.record(NoExtras())
                 searchSelectorMenu.menuController.show(anchor = it, orientation = orientation, forceOrientation = true)
             }
 

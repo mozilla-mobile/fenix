@@ -32,7 +32,6 @@ class SearchSelectorMenu(
     /**
      * Items that will appear in the search selector menu.
      */
-
     sealed class Item {
         /**
          * The menu item to navigate to the search settings.
