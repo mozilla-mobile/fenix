@@ -669,11 +669,11 @@ class HomeFragment : Fragment() {
             flow.map { state -> state.search.selectedOrDefaultSearchEngine }
                 .ifChanged()
                 .collect { searchEngine ->
-                    val text = searchEngine?.name
+                    val name = searchEngine?.name
                     val icon = searchEngine?.let { BitmapDrawable(requireContext().resources, it.icon) }
 
                     if (requireContext().settings().showUnifiedSearchFeature) {
-                        binding.searchSelector.setIcon(icon, text)
+                        binding.searchSelector.setIcon(icon, name)
                     } else {
                         binding.searchEngineIcon.setImageDrawable(icon)
                     }
