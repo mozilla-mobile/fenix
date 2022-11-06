@@ -40,11 +40,11 @@ class NimbusExperimentsFragment : Fragment() {
 
                 NimbusExperiments(
                     availableExperiments = experiments,
-                    onSelectedExperiment = { selectedExperiment ->
+                    onSelectedExperiment = { experiment ->
                         val directions =
                             NimbusExperimentsFragmentDirections.actionNimbusExperimentsFragmentToNimbusBranchesFragment(
-                                experimentId = selectedExperiment.slug,
-                                experimentName = selectedExperiment.userFacingName,
+                                experimentId = experiment.slug,
+                                experimentName = experiment.userFacingName,
                             )
 
                         findNavController().navigate(directions)

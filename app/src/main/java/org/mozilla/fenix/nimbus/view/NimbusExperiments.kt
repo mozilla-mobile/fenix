@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.nimbus.view
 
 import android.content.res.Configuration
@@ -12,10 +16,10 @@ import org.mozilla.fenix.compose.list.TextListItem
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
- * List of Nimbus Experiments,
+ * List of Nimbus Experiments.
  *
- * @param availableExperiments list of available experiments that are going to be displayed
- * @param onSelectedExperiment Callback when experiment is selected it returns [AvailableExperiment]
+ * @param experiments List of [AvailableExperiment] that are going to be displayed.
+ * @param onExperimentClick Invoked when the user clicks on an [AvailableExperiment].
  */
 @Composable
 fun NimbusExperiments(
@@ -27,30 +31,17 @@ fun NimbusExperiments(
             .fillMaxSize(),
     ) {
         items(availableExperiments) { experiment ->
-            NimbusExperimentItem(experiment = experiment, onSelectedExperiment = onSelectedExperiment)
+            TextListItem(
+                label = experiment.userFacingName,
+                description = experiment.userFacingDescription,
+                onClick = {
+                    onSelectedExperiment(experiment)
+                },
+            )
         }
     }
 }
 
-/**
- * Nimbus experiment item
- *
- * @param experiment current experiment
- * @param onSelectedExperiment Callback when experiment is selected it returns [AvailableExperiment]
- */
-@Composable
-fun NimbusExperimentItem(
-    experiment: AvailableExperiment,
-    onSelectedExperiment: (AvailableExperiment) -> Unit,
-) {
-    TextListItem(
-        label = experiment.userFacingName,
-        description = experiment.userFacingDescription,
-        onClick = {
-            onSelectedExperiment(experiment)
-        },
-    )
-}
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
