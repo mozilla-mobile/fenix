@@ -309,6 +309,7 @@ class SessionControlAdapter(
             TopPlaceholderViewHolder.LAYOUT_ID -> TopPlaceholderViewHolder(view)
             TopSitePagerViewHolder.LAYOUT_ID -> TopSitePagerViewHolder(
                 view = view,
+                appStore = components.appStore,
                 viewLifecycleOwner = viewLifecycleOwner,
                 interactor = interactor,
             )

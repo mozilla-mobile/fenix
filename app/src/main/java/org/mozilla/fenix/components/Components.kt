@@ -7,11 +7,8 @@ package org.mozilla.fenix.components
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import android.content.Intent
-import android.os.StrictMode
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.net.toUri
 import com.google.android.play.core.review.ReviewManagerFactory
 import mozilla.components.feature.addons.AddonManager
 import mozilla.components.feature.addons.amo.AddonCollectionProvider
@@ -23,19 +20,19 @@ import mozilla.components.support.base.worker.Frequency
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.autofill.AutofillConfirmActivity
 import org.mozilla.fenix.autofill.AutofillSearchActivity
 import org.mozilla.fenix.autofill.AutofillUnlockActivity
 import org.mozilla.fenix.components.appstate.AppState
+import org.mozilla.fenix.components.metrics.MetricsMiddleware
 import org.mozilla.fenix.datastore.pocketStoriesSelectedCategoriesDataStore
 import org.mozilla.fenix.ext.asRecentTabs
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.filterState
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.gleanplumb.state.MessagingMiddleware
 import org.mozilla.fenix.ext.sort
+import org.mozilla.fenix.gleanplumb.state.MessagingMiddleware
 import org.mozilla.fenix.home.PocketUpdatesMiddleware
 import org.mozilla.fenix.home.blocklist.BlocklistHandler
 import org.mozilla.fenix.home.blocklist.BlocklistMiddleware
@@ -46,7 +43,6 @@ import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.ClipboardHandler
 import org.mozilla.fenix.utils.Settings
-import org.mozilla.fenix.wallpapers.WallpaperManager
 import org.mozilla.fenix.wifi.WifiConnectionMonitor
 import java.util.concurrent.TimeUnit
 
@@ -144,11 +140,6 @@ class Components(private val context: Context) {
         DefaultSupportedAddonsChecker(
             context,
             Frequency(12, TimeUnit.HOURS),
-            onNotificationClickIntent = Intent(context, HomeActivity::class.java).apply {
-                action = Intent.ACTION_VIEW
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                data = "${BuildConfig.DEEP_LINK_SCHEME}://settings_addon_manager".toUri()
-            },
         )
     }
 
@@ -163,14 +154,6 @@ class Components(private val context: Context) {
     val push by lazyMonitored { Push(context, analytics.crashReporter) }
     val wifiConnectionMonitor by lazyMonitored { WifiConnectionMonitor(context as Application) }
     val strictMode by lazyMonitored { StrictModeManager(Config, this) }
-
-    val wallpaperManager by lazyMonitored {
-        strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
-            WallpaperManager(
-                appStore,
-            )
-        }
-    }
 
     val settings by lazyMonitored { Settings(context) }
 
@@ -225,6 +208,7 @@ class Components(private val context: Context) {
                     context.pocketStoriesSelectedCategoriesDataStore,
                 ),
                 MessagingMiddleware(messagingStorage = analytics.messagingStorage),
+                MetricsMiddleware(metrics = analytics.metrics),
             ),
         )
     }

@@ -25,12 +25,11 @@ import mozilla.components.browser.tabstray.SelectableTabViewHolder
 import mozilla.components.browser.tabstray.TabsTray
 import mozilla.components.browser.tabstray.TabsTrayStyling
 import mozilla.components.browser.tabstray.thumbnail.TabThumbnailView
-import mozilla.components.browser.toolbar.MAX_URI_LENGTH
 import mozilla.components.concept.base.images.ImageLoadRequest
 import mozilla.components.concept.base.images.ImageLoader
 import mozilla.components.concept.engine.mediasession.MediaSession
+import mozilla.components.support.ktx.kotlin.MAX_URI_LENGTH
 import mozilla.telemetry.glean.private.NoExtras
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.Tab
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
@@ -110,11 +109,7 @@ abstract class AbstractBrowserTabViewHolder(
             }
         }
 
-        if (tab.content.thumbnail != null) {
-            thumbnailView.setImageBitmap(tab.content.thumbnail)
-        } else {
-            loadIntoThumbnailView(thumbnailView, tab.id)
-        }
+        loadIntoThumbnailView(thumbnailView, tab.id)
     }
 
     override fun showTabIsMultiSelectEnabled(selectedMaskView: View?, isSelected: Boolean) {
@@ -244,7 +239,7 @@ abstract class AbstractBrowserTabViewHolder(
                     val touchStart = touchStartPoint
                     val selected = holder.selectedItems
                     val selectsOnlyThis = (selected.size == 1 && selected.contains(item))
-                    if (FeatureFlags.tabReorderingFeature && selectsOnlyThis && touchStart != null) {
+                    if (selectsOnlyThis && touchStart != null) {
                         // If the parent is null then return early and mark the event as unhandled
                         val parent = itemView.parent as? AbstractBrowserTrayList ?: return@setOnTouchListener false
 

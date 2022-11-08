@@ -14,7 +14,7 @@ object Versions {
     const val android_gradle_plugin = "7.3.0"
     const val android_lint_api = "30.3.0"
 
-    const val sentry = "6.4.2"
+    const val sentry = "6.6.0"
     const val leakcanary = "2.9.1"
     const val osslicenses_plugin = "0.10.4"
     const val detekt = "1.19.0"
@@ -29,7 +29,7 @@ object Versions {
     const val androidx_constraint_layout = "2.0.4"
     const val androidx_preference = "1.1.1"
     const val androidx_legacy = "1.0.0"
-    const val androidx_annotation = "1.1.0"
+    const val androidx_annotation = "1.5.0"
     const val androidx_lifecycle = "2.5.1"
     const val androidx_fragment = "1.5.1"
     const val androidx_navigation = "2.5.1"
@@ -45,7 +45,7 @@ object Versions {
 
     const val mozilla_android_components = AndroidComponents.VERSION
 
-    const val adjust = "4.32.0"
+    const val adjust = "4.33.0"
     const val installreferrer = "2.2"
 
     const val junit = "5.5.2"
@@ -281,14 +281,5 @@ object RepoMatching {
     const val mozilla = "org\\.mozilla\\..*"
     const val androidx = "androidx\\..*"
     const val comAndroid = "com\\.android.*"
-    const val comGoogleFirebase = "com\\.google\\.firebase"
-    const val comGoogleTesting = "com\\.google\\.testing\\..*"
-
-    /**
-     * A matcher for com.google.android.* with one exception: the espresso-contrib dependency includes the
-     * accessibility-test-framework dependency, which is not available in the google repo. As such, we must
-     * explicitly exclude it from this regex so it can be found on Maven Central. Note that the transitive
-     * dependency com.google.guava is also not available on google's repo.
-     */
-    const val comGoogleAndroid = "com\\.google\\.android\\..*"
+    const val comGoogle = "com\\.google\\..*"
 }

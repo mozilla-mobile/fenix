@@ -11,6 +11,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
@@ -295,7 +296,12 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             flow.map { state -> state.search }
                 .ifChanged()
                 .collect { search ->
-                    store.dispatch(SearchFragmentAction.UpdateSearchState(search))
+                    store.dispatch(
+                        SearchFragmentAction.UpdateSearchState(
+                            search,
+                            showUnifiedSearchFeature,
+                        ),
+                    )
 
                     updateSearchSelectorMenu(search.searchEngines)
                 }
@@ -655,7 +661,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         when (requestCode) {
             REQUEST_CODE_CAMERA_PERMISSIONS -> qrFeature.withFeature {
                 it.onPermissionsResult(permissions, grantResults)
-                resetFocus()
+                if (grantResults.contains(PackageManager.PERMISSION_DENIED)) {
+                    resetFocus()
+                }
                 requireContext().settings().setCameraPermissionNeededState = false
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -727,9 +735,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 ) {
                     interactor.onMenuItemTapped(SearchSelectorMenu.Item.SearchEngine(it))
                 }
-            } + searchSelectorMenu.menuItems()
+            }
 
-        searchSelectorMenu.menuController.submitList(searchEngineList)
+        searchSelectorMenu.menuController.submitList(searchSelectorMenu.menuItems(searchEngineList))
         toolbarView.view.invalidateActions()
     }
 

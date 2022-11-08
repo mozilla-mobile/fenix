@@ -39,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
@@ -52,6 +53,7 @@ import mozilla.components.browser.icons.compose.Placeholder
 import mozilla.components.browser.icons.compose.WithIcon
 import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.support.ktx.kotlin.trimmed
 import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.Image
@@ -65,12 +67,14 @@ import org.mozilla.fenix.theme.FirefoxTheme
  *
  * @param recentTabs List of [RecentTab] to display.
  * @param menuItems List of [RecentTabMenuItem] shown long clicking a [RecentTab].
+ * @param backgroundColor The background [Color] of each item.
  * @param onRecentTabClick Invoked when the user clicks on a recent tab.
  */
 @Composable
 fun RecentTabs(
     recentTabs: List<RecentTab>,
     menuItems: List<RecentTabMenuItem>,
+    backgroundColor: Color = FirefoxTheme.colors.layer2,
     onRecentTabClick: (String) -> Unit = {},
     onRecentTabLongClick: () -> Unit = {},
 ) {
@@ -84,6 +88,7 @@ fun RecentTabs(
                     RecentTabItem(
                         tab = tab,
                         menuItems = menuItems,
+                        backgroundColor = backgroundColor,
                         onRecentTabClick = onRecentTabClick,
                         onRecentTabLongClick = onRecentTabLongClick,
                     )
@@ -97,6 +102,7 @@ fun RecentTabs(
  * A recent tab item.
  *
  * @param tab [RecentTab.Tab] that was recently viewed.
+ * @param backgroundColor The background [Color] of the item.
  * @param onRecentTabClick Invoked when the user clicks on a recent tab.
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -104,6 +110,7 @@ fun RecentTabs(
 private fun RecentTabItem(
     tab: RecentTab.Tab,
     menuItems: List<RecentTabMenuItem>,
+    backgroundColor: Color,
     onRecentTabClick: (String) -> Unit = {},
     onRecentTabLongClick: () -> Unit = {},
 ) {
@@ -122,7 +129,7 @@ private fun RecentTabItem(
                 },
             ),
         shape = RoundedCornerShape(8.dp),
-        backgroundColor = FirefoxTheme.colors.layer2,
+        backgroundColor = backgroundColor,
         elevation = 6.dp,
     ) {
         Row(
@@ -143,7 +150,7 @@ private fun RecentTabItem(
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = tab.state.content.title.ifEmpty { tab.state.content.url },
+                    text = tab.state.content.title.ifEmpty { tab.state.content.url.trimmed() },
                     color = FirefoxTheme.colors.textPrimary,
                     fontSize = 14.sp,
                     maxLines = 2,
@@ -163,7 +170,7 @@ private fun RecentTabItem(
                     Spacer(modifier = Modifier.width(8.dp))
 
                     Text(
-                        text = tab.state.content.url,
+                        text = tab.state.content.url.trimmed(),
                         color = FirefoxTheme.colors.textSecondary,
                         fontSize = 12.sp,
                         overflow = TextOverflow.Ellipsis,
@@ -188,17 +195,14 @@ private fun RecentTabItem(
  * @param tab [RecentTab] that was recently viewed.
  * @param modifier [Modifier] used to draw the image content.
  * @param contentScale [ContentScale] used to draw image content.
- * @param alignment [Alignment] used to draw the image content.
  */
 @Composable
 fun RecentTabImage(
     tab: RecentTab.Tab,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.FillWidth,
-    alignment: Alignment = Alignment.TopCenter,
 ) {
     val previewImageUrl = tab.state.content.previewImageUrl
-    val thumbnail = tab.state.content.thumbnail
 
     when {
         !previewImageUrl.isNullOrEmpty() -> {
@@ -207,15 +211,6 @@ fun RecentTabImage(
                 modifier = modifier,
                 targetSize = 108.dp,
                 contentScale = ContentScale.Crop,
-            )
-        }
-        thumbnail != null -> {
-            Image(
-                painter = BitmapPainter(thumbnail.asImageBitmap()),
-                contentDescription = null,
-                modifier = modifier,
-                contentScale = contentScale,
-                alignment = alignment,
             )
         }
         else -> ThumbnailCard(

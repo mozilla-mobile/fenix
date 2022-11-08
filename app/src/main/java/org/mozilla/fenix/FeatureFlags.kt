@@ -67,11 +67,6 @@ object FeatureFlags {
     const val inactiveTabs = true
 
     /**
-     * Allows tabs to be dragged around as long as tab groups are disabled
-     */
-    val tabReorderingFeature = Config.channel.isNightlyOrDebug
-
-    /**
      * Show Pocket recommended stories on home.
      */
     fun isPocketRecommendationsFeatureEnabled(context: Context): Boolean {
@@ -91,11 +86,6 @@ object FeatureFlags {
      * Enables showing the homescreen onboarding card.
      */
     const val showHomeOnboarding = true
-
-    /**
-     * Enables history improvement features.
-     */
-    const val historyImprovementFeatures = true
 
     /**
      * Enables the Task Continuity enhancements.
@@ -130,5 +120,10 @@ object FeatureFlags {
     /**
      * Enables the save to PDF feature.
      */
-    val saveToPDF = Config.channel.isNightlyOrDebug
+    const val saveToPDF = true
+
+    /**
+     * Enables storage maintenance feature
+     * */
+    val storageMaintenanceFeature = Config.channel.isNightlyOrDebug
 }

@@ -49,9 +49,9 @@ import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.navigateToNotificationsSettings
+import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.perf.ProfilerViewModel
@@ -432,7 +432,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val preferenceLeakCanary = findPreference<Preference>(leakKey)
         val preferenceRemoteDebugging = findPreference<Preference>(debuggingKey)
         val preferenceMakeDefaultBrowser =
-            requirePreference<Preference>(R.string.pref_key_make_default_browser)
+            requirePreference<DefaultBrowserPreference>(R.string.pref_key_make_default_browser)
+
         val preferenceOpenLinksInExternalApp =
             findPreference<Preference>(getPreferenceKey(R.string.pref_key_open_links_in_external_app))
         if (!Config.channel.isReleased) {
@@ -451,8 +452,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
-        preferenceMakeDefaultBrowser.onPreferenceClickListener =
-            getClickListenerForMakeDefaultBrowser()
+        preferenceMakeDefaultBrowser.apply {
+            updateSwitch()
+            onPreferenceClickListener =
+                getClickListenerForMakeDefaultBrowser()
+        }
 
         preferenceOpenLinksInExternalApp?.onPreferenceChangeListener = SharedPreferenceUpdater()
 

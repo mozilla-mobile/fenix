@@ -9,22 +9,22 @@ import android.util.Log
 import androidx.navigation.NavController
 import mozilla.components.lib.crash.Crash
 import mozilla.components.lib.crash.Crash.NativeCodeCrash
+import mozilla.components.lib.crash.CrashReporter
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
-import mozilla.components.lib.crash.CrashReporter
 
 /**
  * Process the [Intent] from [CrashReporter] through which the app is informed about
  * recoverable native crashes.
  */
-class CrashReporterIntentProcessor(private val store: AppStore) : HomeIntentProcessor {
+class CrashReporterIntentProcessor(private val appStore: AppStore) : HomeIntentProcessor {
 
     override fun process(intent: Intent, navController: NavController, out: Intent): Boolean {
         return if (Crash.isCrashIntent(intent)) {
             val crash = Crash.fromIntent(intent)
             // If only a child process crashed we can handle this gracefully.
             if ((crash as? NativeCodeCrash)?.isFatal == false) {
-                store.dispatch(AppAction.AddNonFatalCrash(crash))
+                appStore.dispatch(AppAction.AddNonFatalCrash(crash))
             } else {
                 // A fatal crash means the app's main process is affected.
                 // An UncaughtExceptionCrash refers to a [Throwable] that would otherwise crash the app

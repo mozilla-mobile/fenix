@@ -81,6 +81,9 @@
     <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
     <string name="cfr_dismiss_button_default_content_description">Mboyke</string>
 
+    <!-- Total cookie protection "contextual feature recommendation" (CFR) -->
+    <!-- Text for the message displayed in the contextual feature recommendation popup promoting the total cookie protection feature. -->
+    <string name="tcp_cfr_message">Ore rembiapo tekoñemigua iporãvéva omboyke tapykuehoha tendakuéra pa’ũme.</string>
     <!-- Text displayed that links to website containing documentation about the "Total cookie protection" feature. -->
     <string name="tcp_cfr_learn_more">Maranduve kookie ñemo’ã guasu rehegua</string>
 
@@ -129,13 +132,6 @@
 
     <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
     <string name="recent_tabs_show_all_content_description_2">Ehechauka votõ opaite tendayke ramoguápe</string>
-    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
-        The first parameter is the search term that the user used. (for example: your search for "cat")-->
-    <string moz:RemovedIn="105" name="recent_tabs_search_term" tools:ignore="UnusedResources">Eheka \&quot;%1$s\&quot; rupive</string>
-
-    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
-        %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
-    <string moz:RemovedIn="105" name="recent_tabs_search_term_count_2" tools:ignore="UnusedResources">%d tendakuéra</string>
 
     <!-- Text for button in synced tab card that opens synced tabs tray -->
     <string name="recent_tabs_see_all_synced_tabs_button_text">Ehechapaite tendayke mbojuehepyre</string>
@@ -280,20 +276,31 @@
     <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
     <string moz:RemovedIn="106" name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Nde kuatiarogue ñepyrũgua mboavapyre Firefox pegua nombohasyive eñepyrũjeývo eheja haguégui. Ejuhu ne rendayke, techaukaha ha ehekaramovéva.</string>
 
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint_2">Ehecha nde kuatiarogue ñepyrũha. Umi tendayke ramovegua, techaukaha ha jeheka rapykuere oĩta ápe.</string>
     <!-- Home onboarding dialog welcome screen title text. -->
     <string moz:RemovedIn="106" name="onboarding_home_welcome_title" tools:ignore="UnusedResources">Eg̃uahẽporãite ñanduti ijeheguívape</string>
     <!-- Home onboarding dialog welcome screen title text. -->
     <string name="onboarding_home_welcome_title_2">Eg̃uahẽporãite ñanduti mba’eguáva</string>
+    <!-- Home onboarding dialog welcome screen description text. -->
+    <string name="onboarding_home_welcome_description">Sa’yve. Tekorosãve. Roykekove tapichakuérape roma’ẽ’ỹre virúre.</string>
     <!-- Home onboarding dialog sign into sync screen title text. -->
     <string moz:RemovedIn="106" name="onboarding_home_sync_title_2" tools:ignore="UnusedResources">Eva pumbyrýgui mohendahápe ha ambueháicha</string>
     <!-- Home onboarding dialog sign into sync screen title text. -->
     <string name="onboarding_home_sync_title_3">Mba’erechaha ñemoambue ndahasyiete</string>
+    <!-- Home onboarding dialog sign into sync screen description text. -->
+    <string name="onboarding_home_sync_description">Eku’ejey eheja haguégui tendayke ambue mba’e’oka ndive nde kuatiarogue ñepyrũme.</string>
     <!-- Text for the button to continue the onboarding on the home onboarding dialog. -->
     <string name="onboarding_home_get_started_button">Eñepyrũ</string>
     <!-- Text for the button to navigate to the sync sign in screen on the home onboarding dialog. -->
     <string name="onboarding_home_sign_in_button">Eñemboheraguapy</string>
     <!-- Text for the button to skip the onboarding on the home onboarding dialog. -->
     <string name="onboarding_home_skip_button">Jepo</string>
+
+    <!-- Onboarding home screen sync popup dialog message, shown on top of Recent Synced Tabs in the Jump back in section. -->
+    <string name="sync_cfr_message">¡Tendayke oñembojuehehína! Eku’ejey eheja haguégui ambue mba’e’okápe.</string>
+    <!-- Content description (not visible, for screen readers etc.): Close button for the home onboarding dialog -->
+    <string name="onboarding_home_content_description_close_button">Mboty</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -383,8 +390,6 @@
     <string name="preferences_gestures">Ñeha’ãnga</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Ñemomba’ete</string>
-    <!-- Preference description for banner about signing in -->
-    <string moz:RemovedIn="104" name="preferences_sign_in_description" tools:ignore="UnusedResources">Embojuehe techaukaha, tembiasakue ha mba’ete Firefox pegua ndive</string>
     <!-- Preference description for banner about signing in -->
     <string name="preferences_sign_in_description_2">Eñepyrũ tembiapo embojuehe hag̃ua tendayke, techaukaha, ñe’ẽñemi ha hetave.</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
@@ -478,22 +483,23 @@
     <string name="wallpaper_select_error_snackbar_message">Noñemoambuekuaái mba’erechaha rugua</string>
     <!-- Text displayed that links to website containing documentation about the "Limited Edition" wallpapers. -->
     <string name="wallpaper_learn_more">Kuaave</string>
-    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string moz:removedIn="105" name="wallpaper_tap_to_change_switch_label_1" tools:ignore="UnusedResources">Emoambue mba’erechaha rugua opokóvo Firefox kuatiarogue ñepyrũ ra’ãnga’i</string>
-
-    <!-- This is the accessibility content description for the wallpapers functionality. Users are
-    able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
-    <string moz:removedIn="105" name="wallpaper_logo_content_description" tools:ignore="UnusedResources">Firefox ra’ãnga’i - emoambue mba’erechaha rugua, votõ</string>
 
     <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
     <string name="wallpaper_classic_title">Jepokuaa %s</string>
     <!-- Text for limited edition wallpapers title. -->
     <string name="wallpaper_limited_edition_title">Ñemoheñói sa’íva</string>
+    <!-- Description text for the limited edition wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more-->
+    <string name="wallpaper_limited_edition_description_with_learn_more">Pe ñembyaty pyahu Voces Independientes. %s</string>
+    <!-- Description text for the limited edition wallpapers. -->
+    <string name="wallpaper_limited_edition_description">Pe ñembyaty pyahu Voces Independientes.</string>
     <!-- Wallpaper onboarding dialog header text. -->
     <string name="wallpapers_onboarding_dialog_title_text">Eipurukuaa sa’y sa’imi</string>
 
     <!-- Wallpaper onboarding dialog body text. -->
     <string name="wallpapers_onboarding_dialog_body_text">Eiporavo mba’erechaha rugua nde ehecharamóva.</string>
+
+    <!-- Wallpaper onboarding dialog learn more button text. The button navigates to the wallpaper settings screen. -->
+    <string name="wallpapers_onboarding_dialog_explore_more_button_text">Ema’ẽjeyjey mba’erechaha ruguáre</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -577,8 +583,6 @@
     <string name="preference_experiments_summary_2">Emoneĩ Mozilla-pe omohenda ha omongu’évo ñembokatupyry</string>
 
     <!-- Turn On Sync Preferences -->
-    <!-- Header of the Turn on Sync preference view -->
-    <string moz:RemovedIn="104" name="preferences_sync" tools:ignore="UnusedResources">Emyandy Sync</string>
     <!-- Header of the Sync and save your data preference view -->
     <string name="preferences_sync_2">Embojuehe ha eñongatu mba’ekuaarã</string>
     <!-- Preference for reconnecting to FxA sync -->
@@ -670,10 +674,6 @@
     <string name="tab_view_list">Tysýi</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Kora’ieta</string>
-    <!-- Option for search term tab groups -->
-    <string moz:RemovedIn="105" name="tab_view_search_term_tab_groups" tools:ignore="UnusedResources">Eheka atýhápe</string>
-    <!-- Summary text for search term tab groups -->
-    <string moz:RemovedIn="105" name="tab_view_search_term_tab_groups_summary" tools:ignore="UnusedResources">Ambyaty tenda ojueheguáva</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Emboty tendayke</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -802,9 +802,6 @@
     <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
     <string name="pwa_site_controls_title_private">%1$s (Ayvu Ñemigua)</string>
 
-    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string moz:removedIn="104" name="tab_tray_header_title_1" tools:ignore="UnusedResources">Ambue tendayke</string>
-
     <!-- History -->
     <!-- Text for the button to search all history -->
     <string name="history_search_1">Emoinge ñe’ẽ ehekaséva</string>
@@ -833,20 +830,6 @@
     <string name="history_older">Itujavéva</string>
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Ndaipóri tembiasakue</string>
-
-    <!-- Text for the button inside History screen that opens Synced History screen. History that is coming from other devices -->
-    <string moz:removedIn="105" name="history_synced_from_other_devices" tools:ignore="UnusedResources">Oñembojuehepyre ambue mba’e’okáre</string>
-
-    <!-- The page title for browsing history coming from other devices. -->
-    <string moz:removedIn="105" name="history_from_other_devices" tools:ignore="UnusedResources">Ambue mba’e’oka guive</string>
-
-    <!-- The synced history sign in dialog message -->
-    <string moz:removedIn="105" name="history_sign_in_message" tools:ignore="UnusedResources">Eike ehecha hag̃ua tembiasakue mbojojapyre ambue nemba’e’okagua.</string>
-    <!-- The synced history sign in dialog button text -->
-    <string moz:removedIn="105" name="history_sign_in_button" tools:ignore="UnusedResources">Eñemboheraguapy</string>
-
-    <!-- The synced history sign in dialog create a new account link -->
-    <string moz:removedIn="105" name="history_sign_in_create_account" tools:ignore="UnusedResources"><![CDATA[<u>Térã emoheñói Firefox mba’ete embojuehe hag̃ua</u>]]></string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1077,6 +1060,8 @@
         "Share" button. Opens the share menu when pressed. -->
     <string name="share_button_content_description">Moherakuã</string>
 
+    <!-- Text for the Save to PDF feature in the share menu -->
+    <string name="share_save_to_pdf">Eñongatu PDF ramo</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Emondo mba’e’okápe</string>
 
@@ -1089,9 +1074,11 @@
     <!-- Toast shown after copying link to clipboard -->
     <string name="toast_copy_link_to_clipboard">Emondo kuatiajohápe</string>
     <!-- An option from the three dot menu to into sync -->
-    <string name="sync_menu_sign_in">Eike embojuehe hag̃ua</string>
+    <string moz:removedIn="107" name="sync_menu_sign_in" tools:ignore="UnusedResources">Eike embojuehe hag̃ua</string>
     <!-- An option from the share dialog to sign into sync -->
     <string name="sync_sign_in">Eñepyrũ tembiapo Sync-pe</string>
+     <!-- An option from the three dot menu to sync and save data -->
+    <string name="sync_menu_sync_and_save_data">Embojuehe ha eñongatu mba’ekuaarã</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
     <string name="sync_send_to_all">Emondo opaite mba’e’okápe</string>
     <!-- An option from the share dialog to reconnect to sync -->
@@ -1219,8 +1206,6 @@
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Ñesẽ</string>
 
-    <!-- Dialog message to the user asking to delete browsing data. -->
-    <string moz:removedIn="104" name="delete_browsing_data_prompt_message" tools:ignore="UnusedResources">Oñemboguepáta opaite ne kundahára mba’ekuaarã.</string>
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">Pa’ũ embogue hag̃ua</string>
     <!-- Body text of a delete browsing data dialog. -->
@@ -1259,8 +1244,14 @@
     <!-- Text for onboarding welcome message
     The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string moz:RemovedIn="106" name="onboarding_header" tools:ignore="UnusedResources">¡Eg̃uahẽporãite %s-pe!</string>
+    <!-- Text for onboarding welcome header. -->
+    <string name="onboarding_header_2">Eg̃uahẽporãite ñanduti iporãvévape</string>
+    <!-- Text for the onboarding welcome message. -->
+    <string name="onboarding_message">Kundahára heñóiva tapichápe g̃uarã, ndaha’éi virurã.</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
     <string moz:removedIn="106" name="onboarding_account_sign_in_header_1" tools:ignore="UnusedResources">Embojuehe Firefox mba’e’oka pa’ũme</string>
+    <!-- Text for the Firefox account onboarding sign in card header. -->
+    <string name="onboarding_account_sign_in_header">Eku’ejey eheja haguégui</string>
     <!-- Text for the button to learn more about signing in to your Firefox account. The first parameter is the name of the application.-->
     <string moz:removedIn="106" name="onboarding_manual_sign_in_description_2" tools:ignore="UnusedResources">Egueru techaukaha, tembiasakue ha ñe’ẽñemi %1$s-pe ko mba’e’okápe.</string>
     <!-- text for the button to manually sign into Firefox account. -->
@@ -1958,4 +1949,12 @@
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">Eho ñembohekópe</string>
     <string name="firefox_suggest_header">Firefox Kuave’ẽmby</string>
+
+    <!-- Accessibility services actions labels. These will be appended to accessibility actions like "Double tap to.." but not by or applications but by services like Talkback. -->
+    <!-- Action label for elements that can be collapsed if interacting with them. Talkback will append this to say "Double tap to collapse". -->
+    <string name="a11y_action_label_collapse">pa’ãmba</string>
+    <!-- Action label for elements that can be expanded if interacting with them. Talkback will append this to say "Double tap to expand". -->
+    <string name="a11y_action_label_expand">myasãi</string>
+    <!-- Action label for links to a website containing documentation about a wallpaper collection. Talkback will append this to say "Double tap to open link to learn more about this collection". -->
+    <string name="a11y_action_label_wallpaper_collection_learn_more">embojuruja juajuha eikuaave hag̃ua ko ñembyaty</string>
 </resources>

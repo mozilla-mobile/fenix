@@ -5,33 +5,46 @@
 package org.mozilla.fenix.home.topsites
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.view.MotionEvent
 import android.view.View
 import android.widget.PopupWindow
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.TextViewCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.lib.state.ext.flowScoped
+import mozilla.components.support.ktx.android.content.getColorFromAttr
+import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.databinding.TopSiteItemBinding
 import org.mozilla.fenix.ext.bitmapForUrl
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.isSystemInDarkTheme
 import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.ext.name
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.view.ViewHolder
 
+@SuppressLint("ClickableViewAccessibility")
 class TopSiteItemViewHolder(
     view: View,
+    appStore: AppStore,
     private val viewLifecycleOwner: LifecycleOwner,
     private val interactor: TopSiteInteractor,
 ) : ViewHolder(view) {
@@ -39,7 +52,7 @@ class TopSiteItemViewHolder(
     private val binding = TopSiteItemBinding.bind(view)
 
     init {
-        binding.topSiteItem.setOnLongClickListener {
+        itemView.setOnLongClickListener {
             interactor.onTopSiteMenuOpened()
             TopSites.longPress.record(TopSites.LongPressExtra(topSite.name()))
 
@@ -63,16 +76,51 @@ class TopSiteItemViewHolder(
             }
             val menu = topSiteMenu.menuBuilder.build(view.context).show(anchor = it)
 
-            it.setOnTouchListener @SuppressLint("ClickableViewAccessibility") { v, event ->
+            it.setOnTouchListener { v, event ->
                 onTouchEvent(v, event, menu)
             }
 
             true
         }
+
+        appStore.flowScoped(viewLifecycleOwner) { flow ->
+            flow.map { state -> state.wallpaperState }
+                .ifChanged()
+                .collect { currentState ->
+                    var backgroundColor = ContextCompat.getColor(view.context, R.color.fx_mobile_layer_color_2)
+
+                    currentState.runIfWallpaperCardColorsAreAvailable { cardColorLight, cardColorDark ->
+                        backgroundColor = if (view.context.isSystemInDarkTheme()) {
+                            cardColorDark
+                        } else {
+                            cardColorLight
+                        }
+                    }
+
+                    binding.faviconCard.setCardBackgroundColor(backgroundColor)
+
+                    val textColor = currentState.currentWallpaper.textColor
+                    if (textColor != null) {
+                        val color = Color(textColor).toArgb()
+                        val colorList = ColorStateList.valueOf(color)
+                        binding.topSiteTitle.setTextColor(color)
+                        binding.topSiteSubtitle.setTextColor(color)
+                        TextViewCompat.setCompoundDrawableTintList(binding.topSiteTitle, colorList)
+                    } else {
+                        binding.topSiteTitle.setTextColor(
+                            view.context.getColorFromAttr(R.attr.textPrimary),
+                        )
+                        binding.topSiteSubtitle.setTextColor(
+                            view.context.getColorFromAttr(R.attr.textSecondary),
+                        )
+                        TextViewCompat.setCompoundDrawableTintList(binding.topSiteTitle, null)
+                    }
+                }
+        }
     }
 
     fun bind(topSite: TopSite, position: Int) {
-        binding.topSiteItem.setOnClickListener {
+        itemView.setOnClickListener {
             interactor.onSelectTopSite(topSite, position)
         }
 
@@ -140,6 +188,7 @@ class TopSiteItemViewHolder(
         Pings.topsitesImpression.submit()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun onTouchEvent(
         v: View,
         event: MotionEvent,
