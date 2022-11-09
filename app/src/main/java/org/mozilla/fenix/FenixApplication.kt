@@ -349,8 +349,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         if (settings().isMarketingTelemetryEnabled) {
             components.analytics.metrics.start(MetricServiceType.Marketing)
         }
-
-        components.appStore.dispatch(AppAction.MetricsInitializedAction)
     }
 
     // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.
