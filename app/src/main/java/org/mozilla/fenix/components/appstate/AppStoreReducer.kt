@@ -220,6 +220,8 @@ internal object AppStoreReducer {
             val wallpaperState = state.wallpaperState.copy(availableWallpapers = wallpapers)
             state.copy(wallpaperState = wallpaperState)
         }
+        is AppAction.MetricsInitializedAction -> state
+        is AppAction.ResumedMetricsAction -> state
     }
 }
 
