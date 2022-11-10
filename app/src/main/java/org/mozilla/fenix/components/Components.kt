@@ -29,6 +29,7 @@ import org.mozilla.fenix.autofill.AutofillConfirmActivity
 import org.mozilla.fenix.autofill.AutofillSearchActivity
 import org.mozilla.fenix.autofill.AutofillUnlockActivity
 import org.mozilla.fenix.components.appstate.AppState
+import org.mozilla.fenix.components.metrics.MetricsMiddleware
 import org.mozilla.fenix.datastore.pocketStoriesSelectedCategoriesDataStore
 import org.mozilla.fenix.ext.asRecentTabs
 import org.mozilla.fenix.ext.components
@@ -225,6 +226,7 @@ class Components(private val context: Context) {
                     context.pocketStoriesSelectedCategoriesDataStore,
                 ),
                 MessagingMiddleware(messagingStorage = analytics.messagingStorage),
+                MetricsMiddleware(metrics = analytics.metrics),
             ),
         )
     }
