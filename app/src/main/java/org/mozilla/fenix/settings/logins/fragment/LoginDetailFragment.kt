@@ -196,7 +196,7 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail), Menu
                 setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
-                setPositiveButton(R.string.dialog_delete_positive) { dialog: DialogInterface, _ ->
+                setPositiveButton(R.string.common_label_delete) { dialog: DialogInterface, _ ->
                     Logins.deleteSavedLogin.record(NoExtras())
                     interactor.onDeleteLogin(args.savedLoginId)
                     dialog.dismiss()

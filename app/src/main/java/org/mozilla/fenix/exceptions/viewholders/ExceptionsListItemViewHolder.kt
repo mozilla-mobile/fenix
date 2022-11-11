@@ -26,7 +26,7 @@ class ExceptionsListItemViewHolder<T : Any>(
     init {
         view.setSecondaryButton(
             icon = R.drawable.ic_close,
-            contentDescription = R.string.history_delete_item,
+            contentDescription = R.string.common_label_delete,
         ) {
             interactor.onDeleteOne(item)
         }

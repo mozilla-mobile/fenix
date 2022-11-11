@@ -217,7 +217,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
             inflater.inflate(R.menu.history_select_multi, menu)
             menu.findItem(R.id.share_history_multi_select)?.isVisible = true
             menu.findItem(R.id.delete_history_multi_select)?.title =
-                SpannableString(getString(R.string.bookmark_menu_delete_button)).apply {
+                SpannableString(getString(R.string.common_label_delete)).apply {
                     setTextColor(requireContext(), R.attr.textWarning)
                 }
         } else {
@@ -387,7 +387,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                     GleanHistory.removePromptCancelled.record(NoExtras())
                     dialog.cancel()
                 }
-                setPositiveButton(R.string.delete_browsing_data_prompt_allow) { dialog: DialogInterface, _ ->
+                setPositiveButton(R.string.common_label_delete) { dialog: DialogInterface, _ ->
                     val selectedTimeFrame = when (radioGroup.checkedRadioButtonId) {
                         R.id.last_hour_button -> RemoveTimeFrame.LastHour
                         R.id.today_and_yesterday_button -> RemoveTimeFrame.TodayAndYesterday

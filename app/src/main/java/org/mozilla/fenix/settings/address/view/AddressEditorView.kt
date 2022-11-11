@@ -116,7 +116,7 @@ class AddressEditorView(
             setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
                 dialog.cancel()
             }
-            setPositiveButton(R.string.addressess_confirm_dialog_ok_button) { _, _ ->
+            setPositiveButton(R.string.common_label_delete) { _, _ ->
                 interactor.onDeleteAddress(guid)
                 Addresses.deleted.add()
             }

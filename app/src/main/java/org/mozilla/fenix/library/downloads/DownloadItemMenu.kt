@@ -32,7 +32,7 @@ class DownloadItemMenu(
     internal fun menuItems(): List<TextMenuCandidate> {
         return listOf(
             TextMenuCandidate(
-                text = context.getString(R.string.history_delete_item),
+                text = context.getString(R.string.common_label_delete),
                 textStyle = TextStyle(
                     color = context.getColorFromAttr(R.attr.textWarning),
                 ),

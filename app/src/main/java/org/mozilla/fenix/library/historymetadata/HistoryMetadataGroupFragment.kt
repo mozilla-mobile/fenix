@@ -271,7 +271,7 @@ class HistoryMetadataGroupFragment :
                 .setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
-                .setPositiveButton(R.string.delete_history_group_prompt_allow) { dialog: DialogInterface, _ ->
+                .setPositiveButton(R.string.common_label_delete) { dialog: DialogInterface, _ ->
                     interactor.onDeleteAllConfirmed()
                     dialog.dismiss()
                 }

@@ -216,7 +216,7 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark), MenuProv
                 setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
-                setPositiveButton(R.string.tab_collection_dialog_positive) { dialog: DialogInterface, _ ->
+                setPositiveButton(R.string.common_label_delete) { dialog: DialogInterface, _ ->
                     // Use fragment's lifecycle; the view may be gone by the time dialog is interacted with.
                     lifecycleScope.launch(IO) {
                         requireComponents.core.bookmarksStorage.deleteNode(args.guidToEdit)

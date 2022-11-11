@@ -142,7 +142,7 @@ class CreditCardEditorFragment :
             setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
                 dialog.cancel()
             }
-            setPositiveButton(R.string.credit_cards_delete_dialog_button, onPositiveClickListener)
+            setPositiveButton(R.string.common_label_delete, onPositiveClickListener)
             create()
         }.show()
     }

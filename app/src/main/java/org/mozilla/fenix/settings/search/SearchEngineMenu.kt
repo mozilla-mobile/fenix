@@ -39,7 +39,7 @@ class SearchEngineMenu(
         if (allowDeletion) {
             items.add(
                 SimpleBrowserMenuItem(
-                    context.getString(R.string.search_engine_delete),
+                    context.getString(R.string.common_label_delete),
                     textColorResource = ThemeManager.resolveAttribute(R.attr.textWarning, context),
                 ) {
                     onItemTapped.invoke(Item.Delete)

@@ -221,7 +221,7 @@ class BookmarksRobot {
     }
 
     fun confirmDeletion() {
-        onView(withText(R.string.delete_browsing_data_prompt_allow))
+        onView(withText(R.string.common_label_delete))
             .inRoot(RootMatchers.isDialog())
             .check(matches(isDisplayed()))
             .click()

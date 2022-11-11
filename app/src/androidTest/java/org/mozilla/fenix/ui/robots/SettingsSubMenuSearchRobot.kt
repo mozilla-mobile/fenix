@@ -271,7 +271,7 @@ class SettingsSubMenuSearchRobot {
 
     fun clickDeleteSearchEngine() =
         mDevice.findObject(
-            UiSelector().textContains(getStringResource(R.string.search_engine_delete)),
+            UiSelector().textContains(getStringResource(R.string.common_label_delete)),
         ).click()
 
     fun clickUndoSnackBarButton() =

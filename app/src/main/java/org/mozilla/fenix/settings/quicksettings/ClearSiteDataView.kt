@@ -103,7 +103,7 @@ class ClearSiteDataView(
                 it.cancel()
             }
 
-            setPositiveButton(R.string.delete_browsing_data_prompt_allow) { it: DialogInterface, _ ->
+            setPositiveButton(R.string.common_label_delete) { it: DialogInterface, _ ->
                 it.dismiss()
                 interactor.onClearSiteDataClicked(baseDomain)
             }

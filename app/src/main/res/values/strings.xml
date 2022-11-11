@@ -7,6 +7,9 @@
     <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="app_name_private_4">%s (Private)</string>
 
+    <!-- Labels common to multiple components -->
+    <string name="common_label_delete">Delete</string>
+
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">More options</string>
@@ -781,8 +784,6 @@
     <string name="history_delete_multiple_items_snackbar">History Deleted</string>
     <!-- Text for the snackbar to confirm that a single browsing history item has been deleted. The first parameter is the shortened URL of the deleted history item. -->
     <string name="history_delete_single_item_snackbar">Deleted %1$s</string>
-    <!-- Context description text for the button to delete a single history item -->
-    <string name="history_delete_item">Delete</string>
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">%1$d selected</string>
@@ -848,8 +849,6 @@
     <string name="bookmark_menu_open_all_in_tabs_button">Open all in new tabs</string>
     <!-- Bookmark overflow menu open all in private tabs button -->
     <string name="bookmark_menu_open_all_in_private_tabs_button">Open all in private tabs</string>
-    <!-- Bookmark overflow menu delete button -->
-    <string name="bookmark_menu_delete_button">Delete</string>
     <!--Bookmark overflow menu save button -->
     <string name="bookmark_menu_save_button">Save</string>
     <!-- Bookmark multi select title in app bar
@@ -1099,8 +1098,6 @@
     <string name="delete_tab_and_collection_dialog_message">Deleting this tab will delete the entire collection. You can create new collections at any time.</string>
     <!-- Collection and tab deletion prompt dialog title. Placeholder will be replaced with the collection name. This will show when the last tab from a collection is deleted -->
     <string name="delete_tab_and_collection_dialog_title">Delete %1$s?</string>
-    <!-- Tab collection deletion prompt dialog option to delete the collection -->
-    <string name="tab_collection_dialog_positive">Delete</string>
     <!-- Text displayed in a notification when the user enters full screen mode -->
     <string name="full_screen_notification">Entering full screen mode</string>
     <!-- Message for copying the URL via long press on the toolbar -->
@@ -1162,8 +1159,6 @@
 
     <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
     <string name="delete_browsing_data_prompt_message_3">%s will delete the selected browsing data.</string>
-    <!-- Text for the allow button for the data deletion dialog -->
-    <string name="delete_browsing_data_prompt_allow">Delete</string>
     <!-- Text for the snackbar confirmation that the data was deleted -->
     <string name="preferences_delete_browsing_data_snackbar">Browsing data deleted</string>
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
@@ -1171,8 +1166,6 @@
 
     <!-- Dialog message to the user asking to delete all history items inside the opened group. Parameter will be replaced by a history group name. -->
     <string name="delete_all_history_group_prompt_message">Delete all sites in “%s”</string>
-    <!-- Text for the allow button for the history group dialog -->
-    <string name="delete_history_group_prompt_allow">Delete</string>
     <!-- Text for the snackbar confirmation that the history group was deleted -->
     <string name="delete_history_group_snackbar">Group deleted</string>
 
@@ -1557,8 +1550,6 @@
     <string name="credit_cards_delete_card_button">Delete card</string>
     <!-- The text for the confirmation message of "Delete card" dialog -->
     <string name="credit_cards_delete_dialog_confirmation">Are you sure you want to delete this credit card?</string>
-    <!-- The text for the positive button on "Delete card" dialog -->
-    <string name="credit_cards_delete_dialog_button">Delete</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
     <string name="credit_cards_menu_save">Save</string>
     <!-- The text for the "Save" button for saving a credit card -->
@@ -1617,8 +1608,6 @@
     <string name="addressess_delete_address_button">Delete address</string>
     <!-- The title for the "Delete address" confirmation dialog -->
     <string name="addressess_confirm_dialog_message">Are you sure you want to delete this address?</string>
-    <!-- The text for the positive button on "Delete address" dialog -->
-    <string name="addressess_confirm_dialog_ok_button">Delete</string>
     <!-- The text for the "Save address" menu item for saving an address -->
     <string name="address_menu_save_address">Save address</string>
     <!-- The text for the "Delete address" menu item for deleting an address -->
@@ -1634,8 +1623,6 @@
     <string name="search_engine_add_custom_search_engine_edit_button_content_description">Save</string>
     <!-- Text for the menu button to edit a search engine -->
     <string name="search_engine_edit">Edit</string>
-    <!-- Text for the menu button to delete a search engine -->
-    <string name="search_engine_delete">Delete</string>
 
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">Other</string>
@@ -1697,14 +1684,10 @@
     <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
      the certificate authority that verified the ticket-->
     <string name="certificate_info_verified_by">Verified By: %1$s </string>
-    <!-- Login overflow menu delete button -->
-    <string name="login_menu_delete_button">Delete</string>
     <!-- Login overflow menu edit button -->
     <string name="login_menu_edit_button">Edit</string>
     <!-- Message in delete confirmation dialog for logins -->
     <string name="login_deletion_confirmation">Are you sure you want to delete this login?</string>
-    <!-- Positive action of a dialog asking to delete  -->
-    <string name="dialog_delete_positive">Delete</string>
     <!--  The saved login options menu description. -->
     <string name="login_options_menu">Login options</string>
     <!--  The editable text field for a login's web address. -->

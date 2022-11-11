@@ -199,7 +199,7 @@ fun openBookmarksThreeDotMenu() = onView(withText(R.string.library_bookmarks)).c
 
 fun editBookmarkFolder() = onView(withText(R.string.bookmark_menu_edit_button)).click()
 
-fun deleteBookmarkFolder() = onView(withText(R.string.bookmark_menu_delete_button)).click()
+fun deleteBookmarkFolder() = onView(withText(R.string.common_label_delete)).click()
 
 fun tapOnTabCounter() = onView(withId(R.id.counter_text)).click()
 

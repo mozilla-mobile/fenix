@@ -20,6 +20,6 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/delete_bookmarks_multi_select"
-        android:title="@string/bookmark_menu_delete_button"
+        android:title="@string/common_label_delete"
         app:showAsAction="never" />
 </menu>

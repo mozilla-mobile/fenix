@@ -190,7 +190,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                     inflater.inflate(R.menu.bookmarks_select_multi, menu)
 
                     menu.findItem(R.id.delete_bookmarks_multi_select).title =
-                        SpannableString(getString(R.string.bookmark_menu_delete_button)).apply {
+                        SpannableString(getString(R.string.common_label_delete)).apply {
                             setTextColor(requireContext(), R.attr.textWarning)
                         }
                 }
@@ -394,7 +394,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
-                setPositiveButton(R.string.delete_browsing_data_prompt_allow) { dialog: DialogInterface, _ ->
+                setPositiveButton(R.string.common_label_delete) { dialog: DialogInterface, _ ->
                     updatePendingBookmarksToDelete(selected)
                     dialog.dismiss()
                     val snackbarMessage =
