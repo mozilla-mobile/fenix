@@ -9,6 +9,7 @@
 
     <!-- Labels common to multiple components -->
     <string name="common_label_delete">Delete</string>
+    <string name="common_label_edit">Edit</string>
 
     <!-- Home Fragment -->
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
@@ -209,8 +210,6 @@
     <string name="browser_menu_customize_reader_view">Customize reader view</string>
     <!-- Browser menu label for adding a bookmark -->
     <string name="browser_menu_add">Add</string>
-    <!-- Browser menu label for editing a bookmark -->
-    <string name="browser_menu_edit">Edit</string>
     <!-- Button shown on the home page that opens the Customize home settings -->
     <string name="browser_menu_customize_home_1">Customize homepage</string>
     <!-- Browser Toolbar -->
@@ -833,10 +832,6 @@
     <string name="bookmark_add_folder">Add folder</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
     <string name="bookmark_saved_snackbar">Bookmark saved!</string>
-    <!-- Snackbar edit button shown after a bookmark has been created. -->
-    <string name="edit_bookmark_snackbar_action">EDIT</string>
-    <!-- Bookmark overflow menu edit button -->
-    <string name="bookmark_menu_edit_button">Edit</string>
     <!-- Bookmark overflow menu copy button -->
     <string name="bookmark_menu_copy_button">Copy</string>
     <!-- Bookmark overflow menu share button -->
@@ -1621,8 +1616,6 @@
     <string name="search_engine_add_button_content_description">Add</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to save a search engine in the action bar -->
     <string name="search_engine_add_custom_search_engine_edit_button_content_description">Save</string>
-    <!-- Text for the menu button to edit a search engine -->
-    <string name="search_engine_edit">Edit</string>
 
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">Other</string>
@@ -1684,8 +1677,6 @@
     <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
      the certificate authority that verified the ticket-->
     <string name="certificate_info_verified_by">Verified By: %1$s </string>
-    <!-- Login overflow menu edit button -->
-    <string name="login_menu_edit_button">Edit</string>
     <!-- Message in delete confirmation dialog for logins -->
     <string name="login_deletion_confirmation">Are you sure you want to delete this login?</string>
     <!--  The saved login options menu description. -->
@@ -1698,8 +1689,6 @@
     <string name="saved_login_password_description">The editable text field for the password of the login.</string>
     <!--  The button description to save changes to an edited login. -->
     <string name="save_changes_to_login">Save changes to login.</string>
-    <!--  The page title for editing a saved login. -->
-    <string name="edit">Edit</string>
     <!--  The page title for adding new login. -->
     <string name="add_login">Add new login</string>
     <!--  The error message in add/edit login view when password field is blank. -->

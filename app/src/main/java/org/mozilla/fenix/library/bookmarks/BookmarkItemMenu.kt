@@ -42,7 +42,7 @@ class BookmarkItemMenu(
         return listOfNotNull(
             if (itemType != BookmarkNodeType.SEPARATOR) {
                 TextMenuCandidate(
-                    text = context.getString(R.string.bookmark_menu_edit_button),
+                    text = context.getString(R.string.common_label_edit),
                 ) {
                     onItemTapped.invoke(Item.Edit)
                 }

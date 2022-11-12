@@ -29,7 +29,7 @@ class SearchEngineMenu(
         if (isCustomSearchEngine) {
             items.add(
                 SimpleBrowserMenuItem(
-                    label = context.getString(R.string.search_engine_edit),
+                    label = context.getString(R.string.common_label_edit),
                 ) {
                     onItemTapped.invoke(Item.Edit)
                 },

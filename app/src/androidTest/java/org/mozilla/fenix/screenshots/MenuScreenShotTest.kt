@@ -197,7 +197,7 @@ fun openHistoryThreeDotMenu() = onView(withText(R.string.library_history)).click
 
 fun openBookmarksThreeDotMenu() = onView(withText(R.string.library_bookmarks)).click()
 
-fun editBookmarkFolder() = onView(withText(R.string.bookmark_menu_edit_button)).click()
+fun editBookmarkFolder() = onView(withText(R.string.common_label_edit)).click()
 
 fun deleteBookmarkFolder() = onView(withText(R.string.common_label_delete)).click()
 

@@ -335,7 +335,7 @@ open class DefaultToolbarMenu(
         secondaryStateIconResource = R.drawable.ic_bookmark_filled,
         tintColorResource = menuItemButtonTintColor(),
         primaryLabel = context.getString(R.string.browser_menu_add),
-        secondaryLabel = context.getString(R.string.browser_menu_edit),
+        secondaryLabel = context.getString(R.string.common_label_edit),
         isInPrimaryState = { !isCurrentUrlBookmarked },
     ) {
         handleBookmarkItemTapped()

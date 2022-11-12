@@ -13,12 +13,12 @@
 
     <item
         android:id="@+id/edit_login_button"
-        android:contentDescription="@string/login_menu_edit_button"
+        android:contentDescription="@string/common_label_edit"
         android:icon="@drawable/ic_edit"
         android:minWidth="82dp"
         android:padding="20dp"
         android:paddingStart="20dp"
-        android:title="@string/login_menu_edit_button"
+        android:title="@string/common_label_edit"
         app:iconTint="?attr/textPrimary"
         app:showAsAction="never" />
 

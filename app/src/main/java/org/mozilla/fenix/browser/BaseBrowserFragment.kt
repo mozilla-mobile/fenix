@@ -1304,7 +1304,7 @@ abstract class BaseBrowserFragment :
                             isDisplayedWithBrowserToolbar = true,
                         )
                             .setText(getString(R.string.bookmark_saved_snackbar))
-                            .setAction(getString(R.string.edit_bookmark_snackbar_action)) {
+                            .setAction(getString(R.string.common_label_edit)) {
                                 nav(
                                     R.id.browserFragment,
                                     BrowserFragmentDirections.actionGlobalBookmarkEditFragment(

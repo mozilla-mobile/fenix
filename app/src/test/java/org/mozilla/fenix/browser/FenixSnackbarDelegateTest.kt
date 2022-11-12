@@ -44,7 +44,7 @@ class FenixSnackbarDelegateTest {
         every { snackbar.setText(any()) } returns snackbar
         every { snackbar.setAction(any(), any()) } returns snackbar
         every { view.context.getString(R.string.app_name) } returns "Firefox"
-        every { view.context.getString(R.string.edit) } returns "Edit"
+        every { view.context.getString(R.string.common_label_edit) } returns "Edit"
     }
 
     @After
@@ -88,7 +88,7 @@ class FenixSnackbarDelegateTest {
             snackBarParentView = mockk(),
             text = R.string.app_name,
             duration = 0,
-            action = R.string.edit,
+            action = R.string.common_label_edit,
             listener = null,
         )
 
@@ -104,7 +104,7 @@ class FenixSnackbarDelegateTest {
             snackBarParentView = mockk(),
             text = R.string.app_name,
             duration = 0,
-            action = R.string.edit,
+            action = R.string.common_label_edit,
             listener = listener,
         )
 

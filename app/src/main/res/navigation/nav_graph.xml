@@ -458,7 +458,7 @@
     <fragment
         android:id="@+id/editLoginFragment"
         android:name="org.mozilla.fenix.settings.logins.fragment.EditLoginFragment"
-        android:label="@string/edit"
+        android:label="@string/common_label_edit"
         tools:layout="@layout/fragment_edit_login">
         <argument
             android:name="savedLoginItem"
