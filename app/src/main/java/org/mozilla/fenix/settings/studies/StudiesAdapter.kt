@@ -128,7 +128,7 @@ class StudiesAdapter(
     internal fun showDeleteDialog(context: Context, study: EnrolledExperiment): AlertDialog {
         val builder = AlertDialog.Builder(context)
             .setPositiveButton(
-                R.string.studies_restart_dialog_ok,
+                android.R.string.ok,
             ) { dialog, _ ->
                 studiesDelegate.onRemoveButtonClicked(study)
                 dialog.dismiss()

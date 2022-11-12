@@ -615,7 +615,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                     activity?.let {
                         AlertDialog.Builder(it).apply {
                             setMessage(R.string.qr_scanner_dialog_invalid)
-                            setPositiveButton(R.string.qr_scanner_dialog_invalid_ok) { dialog: DialogInterface, _ ->
+                            setPositiveButton(android.R.string.ok) { dialog: DialogInterface, _ ->
                                 dialog.dismiss()
                             }
                             create()

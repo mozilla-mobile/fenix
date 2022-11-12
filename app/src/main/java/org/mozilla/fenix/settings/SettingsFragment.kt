@@ -386,7 +386,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         dialog.cancel()
                     }
 
-                    setPositiveButton(R.string.customize_addon_collection_ok) { _, _ ->
+                    setPositiveButton(android.R.string.ok) { _, _ ->
                         context.settings().overrideAmoUser = binding.customAmoUser.text.toString()
                         context.settings().overrideAmoCollection = binding.customAmoCollection.text.toString()
 

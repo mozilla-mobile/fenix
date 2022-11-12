@@ -59,7 +59,7 @@ class StudiesView(
             provideStudiesTitle().text = getSwitchCheckedTitle()
             val builder = AlertDialog.Builder(context)
                 .setPositiveButton(
-                    R.string.studies_restart_dialog_ok,
+                    android.R.string.ok,
                 ) { dialog, _ ->
                     settings.isExperimentationEnabled = isChecked
                     val experimentsKey = context.getPreferenceKey(R.string.pref_key_experimentation)

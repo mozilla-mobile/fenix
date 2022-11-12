@@ -349,7 +349,7 @@ class DefaultSessionControlController(
             AlertDialog.Builder(it).apply {
                 setTitle(R.string.rename_top_site)
                 setView(customLayout)
-                setPositiveButton(R.string.top_sites_rename_dialog_ok) { dialog, _ ->
+                setPositiveButton(android.R.string.ok) { dialog, _ ->
                     viewLifecycleScope.launch(Dispatchers.IO) {
                         with(activity.components.useCases.topSitesUseCase) {
                             updateTopSites(
