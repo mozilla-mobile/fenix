@@ -75,9 +75,9 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
         val studiesPreference = requirePreference<Preference>(R.string.pref_key_studies_section)
         val settings = requireContext().settings()
         val stringId = if (settings.isExperimentationEnabled) {
-            R.string.studies_on
+            R.string.common_label_on
         } else {
-            R.string.studies_off
+            R.string.common_label_off
         }
         studiesPreference.summary = getString(stringId)
 

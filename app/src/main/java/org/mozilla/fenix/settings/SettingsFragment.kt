@@ -208,9 +208,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val trackingProtectionPreference =
             requirePreference<Preference>(R.string.pref_key_tracking_protection_settings)
         trackingProtectionPreference.summary = if (settings.shouldUseTrackingProtection) {
-            getString(R.string.tracking_protection_on)
+            getString(R.string.common_label_on)
         } else {
-            getString(R.string.tracking_protection_off)
+            getString(R.string.common_label_off)
         }
 
         val aboutPreference = requirePreference<Preference>(R.string.pref_key_about)
@@ -220,9 +220,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val deleteBrowsingDataPreference =
             requirePreference<Preference>(R.string.pref_key_delete_browsing_data_on_quit_preference)
         deleteBrowsingDataPreference.summary = if (settings.shouldDeleteBrowsingDataOnQuit) {
-            getString(R.string.delete_browsing_data_quit_on)
+            getString(R.string.common_label_on)
         } else {
-            getString(R.string.delete_browsing_data_quit_off)
+            getString(R.string.common_label_off)
         }
 
         val tabSettingsPreference =
@@ -584,9 +584,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
             requirePreference<Preference>(R.string.pref_key_https_only_settings)
         httpsOnlyPreference.summary = context?.let {
             if (it.settings().shouldUseHttpsOnly) {
-                getString(R.string.preferences_https_only_on)
+                getString(R.string.common_label_on)
             } else {
-                getString(R.string.preferences_https_only_off)
+                getString(R.string.common_label_off)
             }
         }
     }

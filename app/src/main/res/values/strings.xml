@@ -11,6 +11,8 @@
     <string name="common_label_close">Close</string>
     <string name="common_label_delete">Delete</string>
     <string name="common_label_edit">Edit</string>
+    <string name="common_label_off">Off</string>
+    <string name="common_label_on">On</string>
     <string name="common_label_remove">Remove</string>
     <string name="common_label_save">Save</string>
 
@@ -333,10 +335,6 @@
     <string name="preferences_https_only_title">HTTPS-Only Mode</string>
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Automatically attempts to connect to sites using HTTPS encryption protocol for increased security.</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="preferences_https_only_on">On</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to off -->
-    <string name="preferences_https_only_off">Off</string>
     <!-- Text displayed that links to website containing documentation about "HTTPS-Only" mode -->
     <string name="preferences_http_only_learn_more">Learn more</string>
     <!-- Option for the https only setting -->
@@ -901,10 +899,6 @@
     <string name="phone_feature_blocked_by_android">Blocked by Android</string>
     <!-- Preference for showing a list of websites that the default configurations won't apply to them -->
     <string name="preference_exceptions">Exceptions</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="tracking_protection_on">On</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to off -->
-    <string name="tracking_protection_off">Off</string>
     <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Allow audio and video</string>
     <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
@@ -921,14 +915,6 @@
     <string name="preference_option_autoplay_blocked3">Block audio and video</string>
     <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
     <string name="quick_setting_option_autoplay_blocked">Block audio and video</string>
-    <!-- Summary of delete browsing data on quit preference if it is set to on -->
-    <string name="delete_browsing_data_quit_on">On</string>
-    <!-- Summary of delete browsing data on quit preference if it is set to off -->
-    <string name="delete_browsing_data_quit_off">Off</string>
-    <!-- Summary of studies preference if it is set to on -->
-    <string name="studies_on">On</string>
-    <!-- Summary of studies data on quit preference if it is set to off -->
-    <string name="studies_off">Off</string>
 
     <!-- Collections -->
     <!-- Collections header on home fragment -->

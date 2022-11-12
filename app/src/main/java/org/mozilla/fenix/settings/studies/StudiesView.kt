@@ -149,9 +149,9 @@ class StudiesView(
     @VisibleForTesting
     internal fun getSwitchTitle(): String {
         val stringId = if (settings.isExperimentationEnabled) {
-            R.string.studies_on
+            R.string.common_label_on
         } else {
-            R.string.studies_off
+            R.string.common_label_off
         }
         return context.getString(stringId)
     }
@@ -159,9 +159,9 @@ class StudiesView(
     @VisibleForTesting
     internal fun getSwitchCheckedTitle(): String {
         val stringId = if (provideStudiesSwitch().isChecked) {
-            R.string.studies_on
+            R.string.common_label_on
         } else {
-            R.string.studies_off
+            R.string.common_label_off
         }
         return context.getString(stringId)
     }

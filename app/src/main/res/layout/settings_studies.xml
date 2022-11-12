@@ -44,8 +44,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:minHeight="48dp"
-        android:textOff="@string/studies_off"
-        android:textOn="@string/studies_on"
+        android:textOff="@string/common_label_off"
+        android:textOn="@string/common_label_on"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

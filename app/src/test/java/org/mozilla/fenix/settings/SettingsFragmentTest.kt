@@ -158,7 +158,7 @@ class SettingsFragmentTest {
         )!!
         every { testContext.settings().shouldUseHttpsOnly } returns true
         assertTrue(httpsOnlyPreference.summary.isNullOrEmpty())
-        val summary = testContext.getString(R.string.preferences_https_only_on)
+        val summary = testContext.getString(R.string.common_label_on)
 
         settingsFragment.setupHttpsOnlyPreferences()
 
@@ -172,7 +172,7 @@ class SettingsFragmentTest {
         )!!
         every { testContext.settings().shouldUseHttpsOnly } returns false
         assertTrue(httpsOnlyPreference.summary.isNullOrEmpty())
-        val summary = testContext.getString(R.string.preferences_https_only_off)
+        val summary = testContext.getString(R.string.common_label_off)
 
         settingsFragment.setupHttpsOnlyPreferences()
 
