@@ -10,6 +10,6 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/delete_downloads_multi_select"
-        android:title="@string/download_delete_item_1"
+        android:title="@string/common_label_remove"
         app:showAsAction="never" />
 </menu>

@@ -53,7 +53,7 @@ class RecentTabViewHolder(
             onRecentTabLongClick = { recentTabInteractor.onRecentTabLongClicked() },
             menuItems = listOf(
                 RecentTabMenuItem(
-                    title = stringResource(id = R.string.recent_tab_menu_item_remove),
+                    title = stringResource(id = R.string.common_label_remove),
                     onClick = { tab -> recentTabInteractor.onRemoveRecentTab(tab) },
                 ),
             ),

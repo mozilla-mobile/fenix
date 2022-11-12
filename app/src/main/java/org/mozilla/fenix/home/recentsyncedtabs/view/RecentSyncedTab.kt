@@ -266,7 +266,7 @@ private fun SyncedTabDropdown(
             },
         ) {
             Text(
-                text = stringResource(id = R.string.recent_synced_tab_menu_item_remove),
+                text = stringResource(id = R.string.common_label_remove),
                 color = FirefoxTheme.colors.textPrimary,
                 maxLines = 1,
                 modifier = Modifier

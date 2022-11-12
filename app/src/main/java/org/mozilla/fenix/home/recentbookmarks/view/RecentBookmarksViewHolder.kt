@@ -44,7 +44,7 @@ class RecentBookmarksViewHolder(
             onRecentBookmarkClick = interactor::onRecentBookmarkClicked,
             menuItems = listOf(
                 RecentBookmarksMenuItem(
-                    stringResource(id = R.string.recently_saved_menu_item_remove),
+                    stringResource(id = R.string.common_label_remove),
                     onClick = { bookmark -> interactor.onRecentBookmarkRemoved(bookmark) },
                 ),
             ),

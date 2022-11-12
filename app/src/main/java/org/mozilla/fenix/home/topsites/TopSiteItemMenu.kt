@@ -54,7 +54,7 @@ class TopSiteItemMenu(
             if (!isProvidedSite) {
                 SimpleBrowserMenuItem(
                     if (isPinnedSite) {
-                        context.getString(R.string.remove_top_site)
+                        context.getString(R.string.common_label_remove)
                     } else {
                         context.getString(R.string.delete_from_history)
                     },
