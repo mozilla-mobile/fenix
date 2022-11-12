@@ -148,7 +148,7 @@ private fun MessageCardIconButton(
         Icon(
             painter = painterResource(R.drawable.mozac_ic_close_20),
             contentDescription = stringResource(
-                R.string.content_description_close_button,
+                R.string.common_label_close,
             ),
             tint = iconTint,
         )

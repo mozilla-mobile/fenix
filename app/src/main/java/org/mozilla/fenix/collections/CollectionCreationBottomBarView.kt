@@ -43,7 +43,7 @@ class CollectionCreationBottomBarView(
                 ContextCompat.getColor(context, R.color.photonWhite),
             )
             setImageDrawable(drawable)
-            contentDescription = context.getString(R.string.create_collection_close)
+            contentDescription = context.getString(R.string.common_label_close)
             importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
             setOnClickListener { interactor.close() }
         }

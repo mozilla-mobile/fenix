@@ -33,7 +33,7 @@ class SelectionMenu(
             },
 
             SimpleBrowserMenuItem(
-                context.getString(R.string.tab_tray_multiselect_menu_item_close),
+                context.getString(R.string.common_label_close),
                 textColorResource = R.color.fx_mobile_text_color_primary,
             ) {
                 onItemTapped.invoke(Item.DeleteTabs)

@@ -96,7 +96,7 @@ fun Onboarding(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.mozac_ic_close),
-                    contentDescription = stringResource(R.string.onboarding_home_content_description_close_button),
+                    contentDescription = stringResource(R.string.common_label_close),
                     tint = FirefoxTheme.colors.iconPrimary,
                 )
             }

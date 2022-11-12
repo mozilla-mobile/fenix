@@ -22,6 +22,6 @@
         android:id="@+id/close_bookmarks"
         android:icon="@drawable/ic_close"
         app:iconTint="?attr/textPrimary"
-        android:title="@string/content_description_close_button"
+        android:title="@string/common_label_close"
         app:showAsAction="ifRoom" />
 </menu>

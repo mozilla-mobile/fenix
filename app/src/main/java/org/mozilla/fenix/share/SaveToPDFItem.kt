@@ -44,7 +44,7 @@ fun SaveToPDFItem(
         Icon(
             painter = painterResource(R.drawable.ic_download),
             contentDescription = stringResource(
-                R.string.content_description_close_button,
+                R.string.common_label_close,
             ),
             tint = FirefoxTheme.colors.iconPrimary,
         )

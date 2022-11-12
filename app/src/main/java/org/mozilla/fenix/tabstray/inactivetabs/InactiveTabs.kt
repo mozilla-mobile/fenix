@@ -109,7 +109,7 @@ fun InactiveTabsList(
                             onClick = { onTabClick(tab) },
                             url = tabUrl,
                             iconPainter = painterResource(R.drawable.mozac_ic_close),
-                            iconDescription = stringResource(R.string.content_description_close_button),
+                            iconDescription = stringResource(R.string.common_label_close),
                             onIconClick = { onTabCloseClick(tab) },
                         )
                     }
@@ -198,7 +198,7 @@ private fun InactiveTabsAutoClosePrompt(
                     Icon(
                         painter = painterResource(R.drawable.mozac_ic_close_20),
                         contentDescription =
-                        stringResource(R.string.tab_tray_inactive_auto_close_button_content_description),
+                        stringResource(R.string.common_label_close),
                         tint = FirefoxTheme.colors.iconPrimary,
                     )
                 }

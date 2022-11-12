@@ -8,6 +8,7 @@
     <string name="app_name_private_4">%s (Private)</string>
 
     <!-- Labels common to multiple components -->
+    <string name="common_label_close">Close</string>
     <string name="common_label_delete">Delete</string>
     <string name="common_label_edit">Edit</string>
     <string name="common_label_save">Save</string>
@@ -117,8 +118,6 @@
     <!-- Text for the body for the auto-close dialog of the inactive tabs.
         The first parameter is the name of the application.-->
     <string name="tab_tray_inactive_auto_close_body_2">%1$s can close tabs you haven’t viewed over the past month.</string>
-    <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
-    <string name="tab_tray_inactive_auto_close_button_content_description">Close</string>
 
     <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_turn_on_auto_close_button_2">Turn on auto-close</string>
@@ -292,8 +291,6 @@
     <string name="onboarding_home_skip_button">Skip</string>
     <!-- Onboarding home screen sync popup dialog message, shown on top of Recent Synced Tabs in the Jump back in section. -->
     <string name="sync_cfr_message">Your tabs are syncing! Pick up where you left off on your other device.</string>
-    <!-- Content description (not visible, for screen readers etc.): Close button for the home onboarding dialog -->
-    <string name="onboarding_home_content_description_close_button">Close</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -619,8 +616,6 @@
     <string name="library_new_tab">New tab</string>
     <!-- Settings Page Title -->
     <string name="settings_title">Settings</string>
-    <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
-    <string name="content_description_close_button">Close</string>
 
     <!-- Title to show in alert when a lot of tabs are to be opened
     %d is a placeholder for the number of tabs that will be opened -->
@@ -740,8 +735,6 @@
     <string name="tab_tray_menu_item_close">Close all tabs</string>
     <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
     <string name="tab_tray_multiselect_menu_item_bookmark">Bookmark</string>
-    <!-- Text shown in the multiselect menu for closing selected tabs. -->
-    <string name="tab_tray_multiselect_menu_item_close">Close</string>
     <!-- Content description for tabs tray multiselect share button -->
     <string name="tab_tray_multiselect_share_content_description">Share selected tabs</string>
     <!-- Content description for tabs tray multiselect menu -->
@@ -985,8 +978,6 @@
     <string name="create_collection_tabs_saved_new_collection">Collection saved!</string>
     <!-- Text shown in snackbar when one tab has been saved in a collection -->
     <string name="create_collection_tab_saved">Tab saved!</string>
-    <!-- Content description (not visible, for screen readers etc.): button to close the collection creator -->
-    <string name="create_collection_close">Close</string>
     <!-- Snackbar action to view the collection the user just created or updated -->
     <string name="create_collection_view">View</string>
 
@@ -1771,8 +1762,6 @@
     <!-- Content description for the action bar "up" button -->
     <string name="action_bar_up_description">Navigate up</string>
 
-    <!-- Content description for privacy content close button -->
-    <string name="privacy_content_close_button_content_description">Close</string>
 
     <!-- Pocket recommended stories -->
     <!-- Header text for a section on the home screen. -->

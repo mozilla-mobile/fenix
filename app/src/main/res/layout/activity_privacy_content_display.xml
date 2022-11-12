@@ -22,7 +22,7 @@
                     android:background="@android:color/transparent"
                     android:id="@+id/privacyContentCloseButton"
                     android:src="@drawable/ic_close"
-                    android:contentDescription="@string/privacy_content_close_button_content_description"
+                    android:contentDescription="@string/common_label_close"
                     tools:ignore="AndroidSrcXmlDetector" />
 
         </LinearLayout>
