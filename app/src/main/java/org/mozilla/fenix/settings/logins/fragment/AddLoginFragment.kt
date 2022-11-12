@@ -52,6 +52,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
     private var validPassword = false
     private var validUsername = true
     private var validHostname = false
+    private var hostnameContainsProtocol = false
     private var usernameChanged = false
 
     private var _binding: FragmentAddLoginBinding? = null
@@ -155,6 +156,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
             object : TextWatcher {
                 override fun afterTextChanged(h: Editable?) {
                     val hostnameText = h.toString()
+                    hostnameContainsProtocol = "://" in hostnameText
 
                     when {
                         hostnameText.isEmpty() -> {
@@ -163,6 +165,10 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
                         }
                         !Patterns.WEB_URL.matcher(hostnameText).matches() -> {
                             setHostnameError()
+                            binding.clearHostnameTextButton.isEnabled = true
+                        }
+                        hostnameContainsProtocol && !hostnameText.startsWith("http") -> {
+                            setHostnameError(invalidProtocol = true)
                             binding.clearHostnameTextButton.isEnabled = true
                         }
                         else -> {
@@ -317,16 +323,28 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
         }
     }
 
-    private fun setHostnameError() {
+    private fun setHostnameError(invalidProtocol: Boolean = false) {
         binding.inputLayoutHostname.let { layout ->
             validHostname = false
-            layout.error = context?.getString(R.string.add_login_hostname_invalid_text_2)
+            if (invalidProtocol) {
+                layout.error = context?.getString(R.string.add_login_hostname_invalid_text_3)
+            } else {
+                layout.error = context?.getString(R.string.add_login_hostname_invalid_text_2)
+            }
             layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
             layout.setErrorIconTintList(
                 ColorStateList.valueOf(
                     ContextCompat.getColor(requireContext(), R.color.fx_mobile_text_color_warning),
                 ),
             )
+        }
+    }
+
+    private fun hostnameEnsureProtocol(hostname: String): String {
+        return if (hostnameContainsProtocol) {
+            hostname
+        } else {
+            "https://$hostname"
         }
     }
 
@@ -362,7 +380,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
         R.id.save_login_button -> {
             view?.hideKeyboard()
             interactor.onAddLogin(
-                binding.hostnameText.text.toString(),
+                hostnameEnsureProtocol(binding.hostnameText.text.toString()),
                 binding.usernameText.text.toString(),
                 binding.passwordText.text.toString(),
             )
