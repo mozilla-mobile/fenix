@@ -382,7 +382,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 AlertDialog.Builder(context).apply {
                     setTitle(context.getString(R.string.preferences_customize_amo_collection))
                     setView(dialogView)
-                    setNegativeButton(R.string.customize_addon_collection_cancel) { dialog: DialogInterface, _ ->
+                    setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
                         dialog.cancel()
                     }
 

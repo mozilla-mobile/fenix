@@ -139,7 +139,7 @@ class CreditCardEditorFragment :
     private fun showDeleteDialog(onPositiveClickListener: DialogInterface.OnClickListener) {
         deleteDialog = AlertDialog.Builder(requireContext()).apply {
             setMessage(R.string.credit_cards_delete_dialog_confirmation)
-            setNegativeButton(R.string.credit_cards_cancel_button) { dialog: DialogInterface, _ ->
+            setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
                 dialog.cancel()
             }
             setPositiveButton(R.string.credit_cards_delete_dialog_button, onPositiveClickListener)

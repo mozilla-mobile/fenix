@@ -116,7 +116,7 @@ class SitePermissionsExceptionsFragment :
                     deleteAllSitePermissions()
                     dialog.dismiss()
                 }
-                setNegativeButton(R.string.clear_permissions_negative) { dialog: DialogInterface, _ ->
+                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
             }.show()

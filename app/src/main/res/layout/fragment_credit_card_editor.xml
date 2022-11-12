@@ -191,7 +191,7 @@
                 android:layout_height="0dp"
                 android:letterSpacing="0"
                 android:padding="10dp"
-                android:text="@string/credit_cards_cancel_button"
+                android:text="@android:string/cancel"
                 android:textAllCaps="false"
                 android:textColor="?attr/textPrimary"
                 android:textStyle="bold"

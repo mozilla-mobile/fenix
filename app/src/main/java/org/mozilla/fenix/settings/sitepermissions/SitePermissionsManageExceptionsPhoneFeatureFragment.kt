@@ -159,7 +159,7 @@ class SitePermissionsManageExceptionsPhoneFeatureFragment : Fragment() {
                     clearPermissions()
                     dialog.dismiss()
                 }
-                setNegativeButton(R.string.clear_permission_negative) { dialog: DialogInterface, _ ->
+                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
             }.show()

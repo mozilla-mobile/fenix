@@ -99,7 +99,7 @@ class ClearSiteDataView(
                 ),
             )
 
-            setNegativeButton(R.string.delete_browsing_data_prompt_cancel) { it: DialogInterface, _ ->
+            setNegativeButton(android.R.string.cancel) { it: DialogInterface, _ ->
                 it.cancel()
             }
 

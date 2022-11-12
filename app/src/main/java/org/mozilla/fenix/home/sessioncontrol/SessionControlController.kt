@@ -361,7 +361,7 @@ class DefaultSessionControlController(
                     }
                     dialog.dismiss()
                 }
-                setNegativeButton(R.string.top_sites_rename_dialog_cancel) { dialog, _ ->
+                setNegativeButton(android.R.string.cancel) { dialog, _ ->
                     dialog.cancel()
                 }
             }.show().also {

@@ -73,7 +73,7 @@ fun CollectionsDialog.show(
             }
 
             dialog.dismiss()
-        }.setNegativeButton(R.string.create_collection_negative) { dialog, _ ->
+        }.setNegativeButton(android.R.string.cancel) { dialog, _ ->
             onNegativeButtonClick.invoke()
 
             dialog.cancel()
@@ -122,7 +122,7 @@ internal fun CollectionsDialog.showAddNewDialog(
 
             dialog.dismiss()
         }
-        .setNegativeButton(R.string.create_collection_negative) { dialog, _ ->
+        .setNegativeButton(android.R.string.cancel) { dialog, _ ->
             onNegativeButtonClick.invoke()
             dialog.cancel()
         }

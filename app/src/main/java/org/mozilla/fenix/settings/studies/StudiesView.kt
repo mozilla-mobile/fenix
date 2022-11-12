@@ -73,7 +73,7 @@ class StudiesView(
                     quitTheApp()
                 }
                 .setNegativeButton(
-                    R.string.studies_restart_dialog_cancel,
+                    android.R.string.cancel,
                 ) { dialog, _ ->
                     provideStudiesSwitch().isChecked = !isChecked
                     provideStudiesTitle().text = getSwitchTitle()

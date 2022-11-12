@@ -383,7 +383,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                 radioGroup.check(R.id.last_hour_button)
                 setView(layout)
 
-                setNegativeButton(R.string.delete_browsing_data_prompt_cancel) { dialog: DialogInterface, _ ->
+                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
                     GleanHistory.removePromptCancelled.record(NoExtras())
                     dialog.cancel()
                 }

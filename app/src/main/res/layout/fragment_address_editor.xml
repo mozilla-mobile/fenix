@@ -452,7 +452,7 @@
             android:layout_marginTop="16dp"
             android:letterSpacing="0"
             android:padding="10dp"
-            android:text="@string/addresses_cancel_button"
+            android:text="@android:string/cancel"
             android:textAllCaps="false"
             android:textColor="?attr/textPrimary"
             android:textStyle="bold"

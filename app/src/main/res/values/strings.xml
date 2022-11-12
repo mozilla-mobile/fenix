@@ -426,8 +426,6 @@
     <string name="preferences_customize_amo_collection">Custom Add-on collection</string>
     <!-- Button caption to confirm the add-on collection configuration -->
     <string name="customize_addon_collection_ok">OK</string>
-    <!-- Button caption to abort the add-on collection configuration -->
-    <string name="customize_addon_collection_cancel">Cancel</string>
     <!-- Hint displayed on input field for custom collection name -->
     <string name="customize_addon_collection_hint">Collection name</string>
     <!-- Hint displayed on input field for custom collection user ID-->
@@ -631,8 +629,6 @@
     <string name="open_all_warning_message">Opening this many tabs may slow down %s while the pages are loading. Are you sure you want to continue?</string>
     <!-- Dialog button text for confirming open all tabs -->
     <string name="open_all_warning_confirm">Open tabs</string>
-    <!-- Dialog button text for canceling open all tabs -->
-    <string name="open_all_warning_cancel">Cancel</string>
 
     <!-- Text to show users they have one site in the history group section of the History fragment.
     %d is a placeholder for the number of sites in the group. -->
@@ -713,8 +709,6 @@
     <string name="studies_restart_app">The application will quit to apply changes</string>
     <!-- Dialog button to confirm the removing a study. -->
     <string name="studies_restart_dialog_ok">OK</string>
-    <!-- Dialog button text for canceling removing a study. -->
-    <string name="studies_restart_dialog_cancel">Cancel</string>
     <!-- Toast shown after turning on/off studies preferences -->
     <string name="studies_toast_quit_application" tools:ignore="UnusedResources">Quitting the application to apply changes…</string>
 
@@ -838,8 +832,6 @@
     <string name="bookmark_delete_folder_confirmation_dialog">Are you sure you want to delete this folder?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
     <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s will delete the selected items.</string>
-    <!-- Text for the cancel button on delete bookmark dialog -->
-    <string name="bookmark_delete_negative">Cancel</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Add folder</string>
     <!-- Snackbar title shown after a bookmark has been created. -->
@@ -914,14 +906,10 @@
     <string name="clear_permissions">Clear permissions</string>
     <!-- Text for the OK button on Clear permissions dialog -->
     <string name="clear_permissions_positive">OK</string>
-    <!-- Text for the cancel button on Clear permissions dialog -->
-    <string name="clear_permissions_negative">Cancel</string>
     <!-- Button label for clearing a site permission-->
     <string name="clear_permission">Clear permission</string>
     <!-- Text for the OK button on Clear permission dialog -->
     <string name="clear_permission_positive">OK</string>
-    <!-- Text for the cancel button on Clear permission dialog -->
-    <string name="clear_permission_negative">Cancel</string>
     <!-- Button label for clearing all the information on all sites-->
     <string name="clear_permissions_on_all_sites">Clear permissions on all sites</string>
     <!-- Preference for altering video and audio autoplay for all websites -->
@@ -1020,8 +1008,6 @@
     <string name="create_collection_view">View</string>
     <!-- Text for the OK button from collection dialogs -->
     <string name="create_collection_positive">OK</string>
-    <!-- Text for the cancel button from collection dialogs -->
-    <string name="create_collection_negative">Cancel</string>
 
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Collection %d</string>
@@ -1188,8 +1174,6 @@
 
     <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
     <string name="delete_browsing_data_prompt_message_3">%s will delete the selected browsing data.</string>
-    <!-- Text for the cancel button for the data deletion dialog -->
-    <string name="delete_browsing_data_prompt_cancel">Cancel</string>
     <!-- Text for the allow button for the data deletion dialog -->
     <string name="delete_browsing_data_prompt_allow">Delete</string>
     <!-- Text for the snackbar confirmation that the data was deleted -->
@@ -1199,8 +1183,6 @@
 
     <!-- Dialog message to the user asking to delete all history items inside the opened group. Parameter will be replaced by a history group name. -->
     <string name="delete_all_history_group_prompt_message">Delete all sites in “%s”</string>
-    <!-- Text for the cancel button for the history group deletion dialog -->
-    <string name="delete_history_group_prompt_cancel">Cancel</string>
     <!-- Text for the allow button for the history group dialog -->
     <string name="delete_history_group_prompt_allow">Delete</string>
     <!-- Text for the snackbar confirmation that the history group was deleted -->
@@ -1304,8 +1286,6 @@
     <string name="sign_out_confirmation_message_2">%s will stop syncing with your account, but won’t delete any of your browsing data on this device.</string>
     <!-- Option to continue signing out of account shown in confirmation dialog to sign out of account -->
     <string name="sign_out_disconnect">Disconnect</string>
-    <!-- Option to cancel signing out shown in confirmation dialog to sign out of account -->
-    <string name="sign_out_cancel">Cancel</string>
     <!-- Error message snackbar shown after the user tried to select a default folder which cannot be altered -->
     <string name="bookmark_cannot_edit_root">Can’t edit default folders</string>
 
@@ -1444,8 +1424,6 @@
 
     <!-- Title text for the Add To Homescreen dialog -->
     <string name="add_to_homescreen_title">Add to Home screen</string>
-    <!-- Cancel button text for the Add to Homescreen dialog -->
-    <string name="add_to_homescreen_cancel">Cancel</string>
     <!-- Add button text for the Add to Homescreen dialog -->
     <string name="add_to_homescreen_add">Add</string>
     <!-- Continue to website button text for the first-time Add to Homescreen dialog -->
@@ -1597,8 +1575,6 @@
     <string name="credit_cards_menu_save">Save</string>
     <!-- The text for the "Save" button for saving a credit card -->
     <string name="credit_cards_save_button">Save</string>
-    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting a credit card -->
-    <string name="credit_cards_cancel_button">Cancel</string>
     <!-- Title of the "Saved cards" screen -->
     <string name="credit_cards_saved_cards">Saved cards</string>
     <!-- Error message for credit card number validation -->
@@ -1649,16 +1625,12 @@
     <string name="addresses_email">Email</string>
     <!-- The text for the "Save" button for saving an address -->
     <string name="addresses_save_button">Save</string>
-    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting an address -->
-    <string name="addresses_cancel_button">Cancel</string>
     <!-- The text for the "Delete address" button for deleting an address -->
     <string name="addressess_delete_address_button">Delete address</string>
     <!-- The title for the "Delete address" confirmation dialog -->
     <string name="addressess_confirm_dialog_message">Are you sure you want to delete this address?</string>
     <!-- The text for the positive button on "Delete address" dialog -->
     <string name="addressess_confirm_dialog_ok_button">Delete</string>
-    <!-- The text for the negative button on "Delete address" dialog -->
-    <string name="addressess_confirm_dialog_cancel_button">Cancel</string>
     <!-- The text for the "Save address" menu item for saving an address -->
     <string name="address_menu_save_address">Save address</string>
     <!-- The text for the "Delete address" menu item for deleting an address -->
@@ -1745,8 +1717,6 @@
     <string name="login_deletion_confirmation">Are you sure you want to delete this login?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Delete</string>
-    <!-- Negative action of a dialog asking to delete login -->
-    <string name="dialog_delete_negative">Cancel</string>
     <!--  The saved login options menu description. -->
     <string name="login_options_menu">Login options</string>
     <!--  The editable text field for a login's web address. -->
@@ -1815,8 +1785,6 @@
     <string name="shortcut_name_hint">Shortcut name</string>
 	<!-- Button caption to confirm the renaming of the top site. -->
 	<string name="top_sites_rename_dialog_ok">OK</string>
-	<!-- Dialog button text for canceling the rename top site prompt. -->
-	<string name="top_sites_rename_dialog_cancel">Cancel</string>
     <!-- Text for the menu button to open the homepage settings. -->
     <string name="top_sites_menu_settings">Settings</string>
     <!-- Text for the menu button to navigate to sponsors and privacy support articles. '&amp;' is replaced with the ampersand symbol: & -->

@@ -134,7 +134,7 @@ class StudiesAdapter(
                 dialog.dismiss()
             }
             .setNegativeButton(
-                R.string.studies_restart_dialog_cancel,
+                android.R.string.cancel,
             ) { dialog: DialogInterface, _ ->
                 dialog.dismiss()
             }

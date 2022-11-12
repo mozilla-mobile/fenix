@@ -193,7 +193,7 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail), Menu
         activity?.let { activity ->
             deleteDialog = AlertDialog.Builder(activity).apply {
                 setMessage(R.string.login_deletion_confirmation)
-                setNegativeButton(R.string.dialog_delete_negative) { dialog: DialogInterface, _ ->
+                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
                 setPositiveButton(R.string.dialog_delete_positive) { dialog: DialogInterface, _ ->

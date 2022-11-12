@@ -90,7 +90,7 @@ class HistoryRobot {
         mDevice
             .findObject(
                 UiSelector()
-                    .textContains(getStringResource(R.string.delete_browsing_data_prompt_cancel)),
+                    .textContains(getStringResource(android.R.string.cancel)),
             ).click()
 
     fun verifyDeleteSnackbarText(text: String) = assertSnackBarText(text)

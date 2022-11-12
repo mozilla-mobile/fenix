@@ -79,7 +79,7 @@
             android:id="@+id/cancel_button"
             style="@style/CreateShortcutDialogButton"
             android:background="?selectableItemBackground"
-            android:text="@string/add_to_homescreen_cancel"
+            android:text="@android:string/cancel"
             app:layout_constraintBottom_toBottomOf="@id/add_button"
             app:layout_constraintEnd_toStartOf="@id/add_button" />
     </androidx.constraintlayout.widget.ConstraintLayout>

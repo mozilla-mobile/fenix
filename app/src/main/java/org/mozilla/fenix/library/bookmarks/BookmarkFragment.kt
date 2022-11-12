@@ -300,7 +300,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 dialog.dismiss()
             }
             setNegativeButton(
-                R.string.open_all_warning_cancel,
+                android.R.string.cancel,
             ) { dialog: DialogInterface, _ ->
                 dialog.dismiss()
             }
@@ -391,7 +391,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             AlertDialog.Builder(activity).apply {
                 val dialogConfirmationMessage = getDialogConfirmationMessage(selected)
                 setMessage(dialogConfirmationMessage)
-                setNegativeButton(R.string.delete_browsing_data_prompt_cancel) { dialog: DialogInterface, _ ->
+                setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _ ->
                     dialog.cancel()
                 }
                 setPositiveButton(R.string.delete_browsing_data_prompt_allow) { dialog: DialogInterface, _ ->
