@@ -8,6 +8,6 @@
             android:id="@+id/confirm_add_folder_button"
             android:icon="@drawable/mozac_ic_check"
             app:iconTint="?attr/textPrimary"
-            android:title="@string/bookmark_menu_save_button"
+            android:title="@string/common_label_save"
             app:showAsAction="ifRoom" />
 </menu>

@@ -152,7 +152,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
-            android:text="@string/create_collection_save"
+            android:text="@string/common_label_save"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
             android:textColor="?textActionPrimary"
             app:layout_constraintBottom_toBottomOf="parent"

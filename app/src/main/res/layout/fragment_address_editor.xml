@@ -465,7 +465,7 @@
             android:layout_width="wrap_content"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
-            android:text="@string/addresses_save_button"
+            android:text="@string/common_label_save"
             app:layout_constraintTop_toTopOf="@+id/cancel_button"
             app:layout_constraintBottom_toBottomOf="@id/cancel_button"
             app:layout_constraintEnd_toEndOf="parent" />

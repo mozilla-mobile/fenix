@@ -14,7 +14,7 @@
     <item
         android:id="@+id/save_credit_card_button"
         android:icon="@drawable/mozac_ic_check"
-        android:title="@string/credit_cards_menu_save"
+        android:title="@string/common_label_save"
         app:iconTint="?attr/textPrimary"
         app:showAsAction="ifRoom" />
 </menu>

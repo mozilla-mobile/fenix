@@ -67,7 +67,7 @@ class SettingsSubMenuAutofillRobot {
         scrollToElementByText(getStringResource(R.string.addresses_phone))
         phoneTextInput.setText(phoneNumber)
         emailTextInput.setText(emailAddress)
-        scrollToElementByText(getStringResource(R.string.addresses_save_button))
+        scrollToElementByText(getStringResource(R.string.common_label_save))
         saveButton.click()
         manageAddressesButton.waitForExists(waitingTime)
     }

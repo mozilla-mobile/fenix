@@ -204,7 +204,7 @@
                 android:layout_width="wrap_content"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
-                android:text="@string/credit_cards_save_button"
+                android:text="@string/common_label_save"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
