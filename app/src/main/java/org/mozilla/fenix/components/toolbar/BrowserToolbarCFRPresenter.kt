@@ -118,8 +118,7 @@ class BrowserToolbarCFRPresenter(
                 color = FirefoxTheme.colors.textOnColorPrimary,
                 modifier = Modifier.clickable {
                     context.components.useCases.tabsUseCases.selectOrAddTab.invoke(
-                        SupportUtils.getSumoURLForTopic(
-                            context,
+                        SupportUtils.getGenericSumoURLForTopic(
                             TOTAL_COOKIE_PROTECTION,
                         ),
                     )
