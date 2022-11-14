@@ -198,6 +198,19 @@ events:
       - android-probes@mozilla.com
       - kbrosnan@mozilla.com
     expires: never
+  default_browser_notif_shown:
+    type: event
+    description: |
+      Default browser notification was shown to the user
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/27779
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/27780
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 122
   toolbar_menu_visible:
     type: event
     description: |
@@ -5887,6 +5900,28 @@ pocket:
     notification_emails:
       - android-probes@mozilla.com
     expires: 119
+    metadata:
+      tags:
+        - PocketIntegration
+  spoc_shim:
+    type: text
+    description: |
+      Shim data of the Pocket sponsored story the user just
+      interacted with.
+      The shim is a unique base64 string identifying each story and
+      type of user interaction: story impression or click.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/27549
+      - https://mozilla-hub.atlassian.net/browse/FNXV2-21791
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/27550#issuecomment-1295027631
+    data_sensitivity:
+      - web_activity
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: never
+    send_in_pings:
+      - spoc
     metadata:
       tags:
         - PocketIntegration

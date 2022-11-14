@@ -15,6 +15,12 @@
 
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="search_hint">Qidiring yoki manzilni kiriting</string>
+    <!-- Placeholder text shown in search bar when using history search -->
+    <string name="history_search_hint">Tarixdan qidirish</string>
+    <!-- Placeholder text shown in search bar when using bookmarks search -->
+    <string name="bookmark_search_hint">Xatchoʻplar ichidan qidirish</string>
+    <!-- Placeholder text shown in search bar when using tabs search -->
+    <string name="tab_search_hint">Varaqlar ichidan qidirish</string>
     <!-- Placeholder text shown in the search bar when using application search engines -->
     <string name="application_search_hint">Qidiriladigan soʻzni kiriting</string>
     <!-- No Open Tabs Message Description -->
@@ -101,6 +107,9 @@
     <string name="tab_tray_inactive_onboarding_button_text">Sozlamalar orqali oʻchiring</string>
     <!-- Text for title for the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_title">Bir oydan keyin avtomatik yopilsinmi?</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs.
+        The first parameter is the name of the application.-->
+    <string name="tab_tray_inactive_auto_close_body_2">%1$s oxirgi oy davomida koʻrmagan varaqlarni yopishi mumkin.</string>
     <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_button_content_description">Yopish</string>
 
@@ -121,12 +130,6 @@
     <string name="recent_tabs_show_all">Barchasini koʻrsatish</string>
     <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
     <string name="recent_tabs_show_all_content_description_2">Barcha oxirgi varaqlarni koʻrsatish tugmasi</string>
-    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
-        The first parameter is the search term that the user used. (for example: your search for "cat")-->
-    <string moz:RemovedIn="105" name="recent_tabs_search_term" tools:ignore="UnusedResources">\&quot;%1$s\&quot; uchun qidiruvingiz</string>
-    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
-        %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
-    <string moz:RemovedIn="105" name="recent_tabs_search_term_count_2" tools:ignore="UnusedResources">%d ta sayt</string>
 
     <!-- Text for button in synced tab card that opens synced tabs tray -->
     <string name="recent_tabs_see_all_synced_tabs_button_text">Barcha sinxronlangan varaqlarni qidirish</string>
@@ -253,6 +256,9 @@
     <!-- Menu option in the search selector menu to open the search settings -->
     <string name="search_settings_menu_item">Izlash sozlamalari</string>
 
+    <!-- Header text for the search selector menu -->
+    <string name="search_header_menu_item">Bu safar qidiramiz:</string>
+
     <!-- Home onboarding -->
     <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
     <string moz:RemovedIn="106" name="onboarding_home_screen_title_3" tools:ignore="UnusedResources">%1$sda yangiliklar</string>
@@ -286,6 +292,8 @@
     <string moz:RemovedIn="106" name="onboarding_home_sync_title_2" tools:ignore="UnusedResources">Telefondan noutbukka yoki aksincha qayting</string>
     <!-- Home onboarding dialog sign into sync screen title text. -->
     <string name="onboarding_home_sync_title_3">Ekranlarga oʻtish har doimgidan osonroq</string>
+    <!-- Home onboarding dialog sign into sync screen description text. -->
+    <string name="onboarding_home_sync_description">Endi bosh sahifangizda boshqa qurilmalardagi varaqlarda toʻxtagan joydan davom etasiz.</string>
     <!-- Text for the button to continue the onboarding on the home onboarding dialog. -->
     <string name="onboarding_home_get_started_button">Boshlash</string>
     <!-- Text for the button to navigate to the sync sign in screen on the home onboarding dialog. -->
@@ -294,6 +302,9 @@
     <string name="onboarding_home_skip_button">Tashlab ketish</string>
     <!-- Onboarding home screen sync popup dialog message, shown on top of Recent Synced Tabs in the Jump back in section. -->
     <string name="sync_cfr_message">Varaqlar sinxronlanmoqda! Ishni qolgan joyidan boshqa qurilmada davom ettiring.</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Close button for the home onboarding dialog -->
+    <string name="onboarding_home_content_description_close_button">Yopish</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -450,8 +461,12 @@
     a section where users see a list of tabs that they have visited in the past few days -->
     <string name="customize_toggle_recently_visited">Oxirgi ochilgan</string>
     <!-- Title for the customize home screen section with Pocket. -->
-    <string name="customize_toggle_pocket">Pocket</string>
+    <string moz:RemovedIn="108" name="customize_toggle_pocket" tools:ignore="UnusedResources">Pocket</string>
 
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket_2">Oʻylantiruvchi hikoyalar</string>
+    <!-- Summary for the customize home screen section with Pocket. The first parameter is product name Pocket -->
+    <string name="customize_toggle_pocket_summary">%s maqolalari</string>
     <!-- Title for the customize home screen section with sponsored Pocket stories. -->
     <string name="customize_toggle_pocket_sponsored">Homiy maqolalari</string>
     <!-- Title for the opening wallpaper settings screen -->
@@ -466,11 +481,30 @@
     <string name="wallpaper_updated_snackbar_message">Fon rasmi yangilandi!</string>
     <!-- Snackbar label for action to view selected wallpaper -->
     <string name="wallpaper_updated_snackbar_action">Koʻrish</string>
-    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string moz:removedIn="105" name="wallpaper_tap_to_change_switch_label_1" tools:ignore="UnusedResources">Firefox bosh sahifasi logotipiga teginish orqali fon rasmini oʻzgartiring</string>
-    <!-- This is the accessibility content description for the wallpapers functionality. Users are
-    able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
-    <string moz:removedIn="105" name="wallpaper_logo_content_description" tools:ignore="UnusedResources">Firefox logotipi – fon rasmi, tugmani oʻzgartiring</string>
+
+    <!-- Snackbar message for when wallpaper couldn't be downloaded -->
+    <string name="wallpaper_download_error_snackbar_message">Fon rasmi yuklab olinmadi</string>
+    <!-- Snackbar label for action to retry downloading the wallpaper -->
+    <string name="wallpaper_download_error_snackbar_action">Qayta urining</string>
+    <!-- Snackbar message for when wallpaper couldn't be selected because of the disk error -->
+    <string name="wallpaper_select_error_snackbar_message">Fon rasmi oʻzgarmadi</string>
+    <!-- Text displayed that links to website containing documentation about the "Limited Edition" wallpapers. -->
+    <string name="wallpaper_learn_more">Batafsil maʼlumot</string>
+
+    <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
+    <string name="wallpaper_classic_title">Klassik %s</string>
+    <!-- Text for limited edition wallpapers title. -->
+    <string name="wallpaper_limited_edition_title">Cheklangan versiya</string>
+    <!-- Description text for the limited edition wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more-->
+    <string name="wallpaper_limited_edition_description_with_learn_more">Yangi “Mustaqil ovozlar” toʻplami. %s</string>
+    <!-- Description text for the limited edition wallpapers. -->
+    <string name="wallpaper_limited_edition_description">Yangi “Mustaqil ovozlar” toʻplami.</string>
+    <!-- Wallpaper onboarding dialog header text. -->
+    <string name="wallpapers_onboarding_dialog_title_text">Rangni chayqashga harakat qiling</string>
+    <!-- Wallpaper onboarding dialog body text. -->
+    <string name="wallpapers_onboarding_dialog_body_text">Didingizga mos fon rasmini tanlang.</string>
+    <!-- Wallpaper onboarding dialog learn more button text. The button navigates to the wallpaper settings screen. -->
+    <string name="wallpapers_onboarding_dialog_explore_more_button_text">Boshqa fon rasmlarini koʻrish</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -617,6 +651,17 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Yopish</string>
 
+    <!-- Title to show in alert when a lot of tabs are to be opened
+    %d is a placeholder for the number of tabs that will be opened -->
+    <string name="open_all_warning_title">%d ta varaq ochilsinmi?</string>
+    <!-- Message to warn users that a large number of tabs will be opened
+    %s will be replaced by app name. -->
+    <string name="open_all_warning_message">Koʻp varaqlarni ochish %s sahifalarini yuklash uchun ketadigan vaqtni choʻzishi mumkin. Rostdan ham buni qilishni xohlaysizmi?</string>
+    <!-- Dialog button text for confirming open all tabs -->
+    <string name="open_all_warning_confirm">Varaqlarni ochish</string>
+    <!-- Dialog button text for canceling open all tabs -->
+    <string name="open_all_warning_cancel">Bekor qilish</string>
+
     <!-- Text to show users they have one site in the history group section of the History fragment.
     %d is a placeholder for the number of sites in the group. -->
     <string name="history_search_group_site">%d ta sayt</string>
@@ -647,10 +692,6 @@
     <string name="tab_view_list">Roʻyxat</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Jadval</string>
-    <!-- Option for search term tab groups -->
-    <string moz:RemovedIn="105" name="tab_view_search_term_tab_groups" tools:ignore="UnusedResources">Guruhlarni qidirish</string>
-    <!-- Summary text for search term tab groups -->
-    <string moz:RemovedIn="105" name="tab_view_search_term_tab_groups_summary" tools:ignore="UnusedResources">Aloqador saytlarni birgalikda guruhlang</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Varaqlarni yopish</string>
 
@@ -700,28 +741,55 @@
     <!-- Learn more link for studies, links to an article for more information about studies. -->
     <string name="studies_learn_more">Batafsil maʼlumot</string>
 
+    <!-- Dialog message shown after removing a study -->
+    <string name="studies_restart_app">Oʻzgartirishlarni qoʻllash uchun ilova yopiladi</string>
+    <!-- Dialog button to confirm the removing a study. -->
+    <string name="studies_restart_dialog_ok">OK</string>
+    <!-- Dialog button text for canceling removing a study. -->
+    <string name="studies_restart_dialog_cancel">Bekor qilish</string>
+    <!-- Toast shown after turning on/off studies preferences -->
+    <string name="studies_toast_quit_application" tools:ignore="UnusedResources">Oʻzgarishlarni qoʻllash uchun ilovadan chiqilmoqda…</string>
+
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
     <string name="tab_header_label">Varaqlarni ochish</string>
     <!-- Title for the list of tabs in the current private session -->
     <string name="tabs_header_private_tabs_title">Maxfiy varaqlar</string>
+    <!-- Title for the list of tabs in the synced tabs -->
+    <string name="tabs_header_synced_tabs_title">Sinxronlangan varaqlar</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_tab">Varaq qoʻshish</string>
     <!-- Content description (not visible, for screen readers etc.): Add tab button. Adds a news tab when pressed -->
     <string name="add_private_tab">Maxfiy varaq qoʻshish</string>
     <!-- Text for the new tab button to indicate adding a new private tab in the tab -->
     <string name="tab_drawer_fab_content">Maxfiy</string>
+    <!-- Text for the new tab button to indicate syncing command on the synced tabs page -->
+    <string name="tab_drawer_fab_sync">Sinxronizatsiya</string>
     <!-- Text shown in the menu for sharing all tabs -->
     <string name="tab_tray_menu_item_share">Barcha varaqlarni ulashish</string>
     <!-- Text shown in the menu to view recently closed tabs -->
     <string name="tab_tray_menu_recently_closed">Yaqinda yopilgan varaqlar</string>
+    <!-- Text shown in the tabs tray inactive tabs section -->
+    <string name="tab_tray_inactive_recently_closed" tools:ignore="UnusedResources">Yaqinda yopilgan</string>
+    <!-- Text shown in the menu to view account settings -->
+    <string name="tab_tray_menu_account_settings">Hisob sozlamalari</string>
     <!-- Text shown in the menu to view tab settings -->
     <string name="tab_tray_menu_tab_settings">Varaq sozlamalari</string>
     <!-- Text shown in the menu for closing all tabs -->
     <string name="tab_tray_menu_item_close">Ichki varaqlarni yopish</string>
 
+    <!-- Text shown in the multiselect menu for bookmarking selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_bookmark">Xatchoʻp</string>
+    <!-- Text shown in the multiselect menu for closing selected tabs. -->
+    <string name="tab_tray_multiselect_menu_item_close">Yopish</string>
+    <!-- Content description for tabs tray multiselect share button -->
+    <string name="tab_tray_multiselect_share_content_description">Tanlangan varaqlarni ulashish</string>
+    <!-- Content description for tabs tray multiselect menu -->
+    <string name="tab_tray_multiselect_menu_content_description">Tanlangan varaqlar menyusi</string>
     <!-- Content description (not visible, for screen readers etc.): Removes tab from collection button. Removes the selected tab from collection when pressed -->
     <string name="remove_tab_from_collection">Kolleksiyadan varaqni olib tashlash</string>
+    <!-- Text for button to enter multiselect mode in tabs tray -->
+    <string name="tabs_tray_select_tabs">Varaqlarni tanlash</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab button. Closes the current session when pressed -->
     <string name="close_tab">Varaqni yopish</string>
     <!-- Content description (not visible, for screen readers etc.): Close tab <title> button. First parameter is tab title  -->
@@ -737,13 +805,20 @@
     <string name="collection_rename">Kolleksiya nomini oʻzgartirish</string>
     <!-- Text for the button to open tabs of the selected collection -->
     <string name="collection_open_tabs">Varaqlarni ochish</string>
-    <!-- Text for the menu button to remove a top site -->
+    <!-- Hint for adding name of a collection -->
+    <string name="collection_name_hint">Toʻplam nomi</string>
+	<!-- Text for the menu button to rename a top site -->
+	<string name="rename_top_site">Nomini oʻzgartirish</string>
+	<!-- Text for the menu button to remove a top site -->
 	<string name="remove_top_site">Olib tashlash</string>
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Tarixdan oʻchirish</string>
     <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
     <string name="pwa_site_controls_title_private">%1$s (Maxfiy rejim)</string>
 
+    <!-- History -->
+    <!-- Text for the button to search all history -->
+    <string name="history_search_1">Qidiriladigan soʻzni kiriting</string>
     <!-- Text for the button to clear all history -->
     <string name="history_delete_all">Tarixni oʻchirish</string>
     <!-- Text for the snackbar to confirm that multiple browsing history items has been deleted -->
@@ -755,6 +830,10 @@
     <!-- History multi select title in app bar
     The first parameter is the number of bookmarks selected -->
     <string name="history_multi_select_title">Tanlandi: %1$d</string>
+    <!-- Text for the header that groups the history for today -->
+    <string name="history_today">Bugun</string>
+    <!-- Text for the header that groups the history for yesterday -->
+    <string name="history_yesterday">Kecha</string>
     <!-- Text for the header that groups the history the past 7 days -->
     <string name="history_7_days">Soʻnggi 7 kun</string>
     <!-- Text for the header that groups the history the past 30 days -->
@@ -765,9 +844,20 @@
     <string name="history_empty_message">Tarix yoʻq</string>
 
 
+    <!-- Downloads -->
+    <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
+    <string name="download_delete_multiple_items_snackbar_1">Yuklanmalar olib tashlandi</string>
+    <!-- Text for the snackbar to confirm that a single download item has been removed. The first parameter is the name of the download item. -->
+    <string name="download_delete_single_item_snackbar">%1$s olib tashlandi</string>
+    <!-- Text shown when no download exists -->
+    <string name="download_empty_message_1">Yuklab olingan fayllar yoʻq</string>
     <!-- History multi select title in app bar
     The first parameter is the number of downloads selected -->
     <string name="download_multi_select_title">Tanlandi: %1$d</string>
+
+
+    <!-- Text for the button to remove a single download item -->
+    <string name="download_delete_item_1">Olib tashlash</string>
 
 
     <!-- Crashes -->
@@ -785,6 +875,8 @@
     <string name="bookmark_delete_folder_confirmation_dialog">Bu jildni oʻchirishni xohlaysizmi?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
     <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s tanlangan elementlarni oʻchiradi.</string>
+    <!-- Text for the cancel button on delete bookmark dialog -->
+    <string name="bookmark_delete_negative">Bekor qilish</string>
     <!-- Screen title for adding a bookmarks folder -->
     <string name="bookmark_add_folder">Jild qoʻshish</string>
 
@@ -802,6 +894,10 @@
     <string name="bookmark_menu_open_in_new_tab_button">Yangi varaqda ochish</string>
     <!-- Bookmark overflow menu open in private tab button -->
     <string name="bookmark_menu_open_in_private_tab_button">Yangi maxfiy varaqda ochish</string>
+    <!-- Bookmark overflow menu open all in tabs button -->
+    <string name="bookmark_menu_open_all_in_tabs_button">Barchasini yangi varaqlarda ochish</string>
+    <!-- Bookmark overflow menu open all in private tabs button -->
+    <string name="bookmark_menu_open_all_in_private_tabs_button">Barchasini maxfiy varaqlarda ochish</string>
     <!-- Bookmark overflow menu delete button -->
     <string name="bookmark_menu_delete_button">Oʻchirish</string>
     <!--Bookmark overflow menu save button -->
@@ -841,6 +937,9 @@
     <!-- Bookmark undo button for deletion snackbar action -->
     <string name="bookmark_undo_deletion">BEKOR QILISH</string>
 
+    <!-- Text for the button to search all bookmarks -->
+    <string name="bookmark_search">Qidiriladigan soʻzni kiriting</string>
+
     <!-- Site Permissions -->
     <!-- Button label that take the user to the Android App setting -->
     <string name="phone_feature_go_to_settings">Sozlamalarga oʻting</string>
@@ -852,8 +951,16 @@
     <string name="phone_feature_recommended">Tavsiya qilinadi</string>
     <!-- Button label for clearing all the information of site permissions-->
     <string name="clear_permissions">Ruxsatlarni tozalash</string>
+    <!-- Text for the OK button on Clear permissions dialog -->
+    <string name="clear_permissions_positive">OK</string>
+    <!-- Text for the cancel button on Clear permissions dialog -->
+    <string name="clear_permissions_negative">Bekor qilish</string>
     <!-- Button label for clearing a site permission-->
     <string name="clear_permission">Ruxsatni tozalash</string>
+    <!-- Text for the OK button on Clear permission dialog -->
+    <string name="clear_permission_positive">OK</string>
+    <!-- Text for the cancel button on Clear permission dialog -->
+    <string name="clear_permission_negative">Bekor qilish</string>
     <!-- Button label for clearing all the information on all sites-->
     <string name="clear_permissions_on_all_sites">Barcha saytlardagi ruxsatlarni tozalash</string>
     <!-- Preference for altering video and audio autoplay for all websites -->
@@ -867,6 +974,12 @@
     <string name="preference_phone_feature_location">Manzil</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Bildirishnoma</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Doimiy xotira</string>
+    <!-- Preference for altering the storage access setting for all websites -->
+    <string name="preference_phone_feature_cross_origin_storage_access">Saytlararo cookie fayllari</string>
+    <!-- Preference for altering the EME access for all websites -->
+    <string name="preference_phone_feature_media_key_system_access">DRM bilan himoyalangan kontent</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Ruxsat berishni soʻrang</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -883,18 +996,29 @@
     <string name="tracking_protection_off">Oʻchiq</string>
     <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Audio va videoga ruxsat berish</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
+    <string name="quick_setting_option_autoplay_allowed">Audio va videoga ruxsat berish</string>
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">Audio va video faqat mobil internetda bloklansin</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
     <string name="preference_option_autoplay_allowed_wifi_subtext">Audio va video faqat Wi-Fi yoniqligida ijro etilsin</string>
     <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">Faqat audioni bloklash</string>
+    <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_block_audio">Faqat audioni bloklash</string>
     <!-- Label for global setting that indicates that all video and audio autoplay is blocked -->
     <string name="preference_option_autoplay_blocked3">Audio va videoni bloklash</string>
+    <!-- Label for site specific setting that indicates that all video and audio autoplay is blocked -->
+    <string name="quick_setting_option_autoplay_blocked">Audio va videoni bloklash</string>
     <!-- Summary of delete browsing data on quit preference if it is set to on -->
     <string name="delete_browsing_data_quit_on">Yoniq</string>
     <!-- Summary of delete browsing data on quit preference if it is set to off -->
     <string name="delete_browsing_data_quit_off">Oʻchiq</string>
+
+    <!-- Summary of studies preference if it is set to on -->
+    <string name="studies_on">Yoniq</string>
+    <!-- Summary of studies data on quit preference if it is set to off -->
+    <string name="studies_off">Oʻchiq</string>
 
     <!-- Collections -->
     <!-- Collections header on home fragment -->
@@ -937,6 +1061,11 @@
     <!-- Snackbar action to view the collection the user just created or updated -->
     <string name="create_collection_view">Koʻrinishi</string>
 
+    <!-- Text for the OK button from collection dialogs -->
+    <string name="create_collection_positive">OK</string>
+    <!-- Text for the cancel button from collection dialogs -->
+    <string name="create_collection_negative">Bekor qilish</string>
+
     <!-- Default name for a new collection in "name new collection" step of the collection creator. %d is a placeholder for the number of collections-->
     <string name="create_collection_default_name">Kolleksiya %d</string>
 
@@ -946,14 +1075,26 @@
     <!-- Content description (not visible, for screen readers etc.):
         "Share" button. Opens the share menu when pressed. -->
     <string name="share_button_content_description">Ulashish</string>
+    <!-- Text for the Save to PDF feature in the share menu -->
+    <string name="share_save_to_pdf">PDF sifatida saqlash</string>
+    <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
+    <string name="unable_to_save_to_pdf_error">PDF yaratilmadi</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Qurilmaga joʻnatish</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
     <string name="share_link_all_apps_subheader">Barcha amallar</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Yaqinda ishlatilgan</string>
+    <!-- Text for the copy link action in the share screen. -->
+    <string name="share_copy_link_to_clipboard">Vaqtinchalik xotiraga nusxalash</string>
+    <!-- Toast shown after copying link to clipboard -->
+    <string name="toast_copy_link_to_clipboard">Vaqtinchalik xotiraga nusxalalandi</string>
+    <!-- An option from the three dot menu to into sync -->
+    <string moz:removedIn="107" name="sync_menu_sign_in" tools:ignore="UnusedResources">Sinxronlash uchun hisobingizga kiring</string>
     <!-- An option from the share dialog to sign into sync -->
     <string name="sync_sign_in">Sinxronlash uchun hisobingizga kiring</string>
+     <!-- An option from the three dot menu to sync and save data -->
+    <string name="sync_menu_sync_and_save_data">Sinxronizatsiya va maʼlumotlarni saqlash</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
     <string name="sync_send_to_all">Barcha qurilmalarga joʻnatish</string>
     <!-- An option from the share dialog to reconnect to sync -->
@@ -981,6 +1122,15 @@
     <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
     <string name="notification_pbm_delete_text_2">Maxfiy varaqlarni yopish</string>
 
+    <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
+    <string name="notification_marketing_channel_name">Marketing</string>
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_title">%1$s tez va maxfiy</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
+    <string name="notification_default_browser_text">%1$sni asosiy brauzer qiling</string>
+
     <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Kolleksiya oʻchirildi</string>
@@ -991,6 +1141,10 @@
     <!-- Text shown in snackbar when user closes all tabs -->
     <string name="snackbar_tabs_closed">Varaqlar yopildi</string>
 
+    <!-- Text shown in snackbar when user bookmarks a list of tabs -->
+    <string name="snackbar_message_bookmarks_saved">Xatchoʻplar saqlandi!</string>
+    <!-- Text shown in snackbar when user adds a site to shortcuts -->
+    <string name="snackbar_added_to_shortcuts">Yorliqlarga qoʻshildi!</string>
     <!-- Text shown in snackbar when user closes a private tab -->
     <string name="snackbar_private_tab_closed">Maxfiy varaq yopildi</string>
     <!-- Text shown in snackbar when user closes all private tabs -->
@@ -1006,6 +1160,10 @@
     <string name="qr_scanner_dialog_positive">RUXSAT BERISH</string>
     <!-- QR code scanner prompt dialog positive option to deny navigation to scanned link -->
     <string name="qr_scanner_dialog_negative">RAD ETISH</string>
+    <!-- QR code scanner prompt dialog error message shown when a hostname does not contain http or https. -->
+    <string name="qr_scanner_dialog_invalid">Manzil xato kiritilgan.</string>
+    <!-- QR code scanner prompt dialog positive option when there is an error -->
+    <string name="qr_scanner_dialog_invalid_ok">OK</string>
     <!-- Tab collection deletion prompt dialog message. Placeholder will be replaced with the collection name -->
     <string name="tab_collection_dialog_message">Siz %1$sni oʻchirishni xohlaysizmi?</string>
     <!-- Collection and tab deletion prompt dialog message. This will show when the last tab from a collection is deleted -->
@@ -1021,6 +1179,159 @@
 
     <!-- Sample text for accessibility font size -->
     <string name="accessibility_text_size_sample_text_1">Bu namuna matn. Bu sozlamalar yordamida hajmni kattalashtirish yoki kamaytirishda matn qanday koʻrinishini namoyish etadi.</string>
+
+    <!-- Summary for Accessibility Text Size Scaling Preference -->
+    <string name="preference_accessibility_text_size_summary">Veb-saytlardagi matnni kattaroq yoki kichikroq qiling</string>
+    <!-- Title for Accessibility Text Size Scaling Preference -->
+    <string name="preference_accessibility_font_size_title">Shrift hajmi</string>
+
+    <!-- Title for Accessibility Text Automatic Size Scaling Preference -->
+    <string name="preference_accessibility_auto_size_2">Avtomatik shrift hajmlari</string>
+    <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
+    <string name="preference_accessibility_auto_size_summary">Shrift hajmi Android sozlamalaringizga mos keladi. Bu yerda shrift hajmini boshqarishni oʻchirib qoʻying.</string>
+
+    <!-- Title for the Delete browsing data preference -->
+    <string name="preferences_delete_browsing_data">Brauzer maʼlumotlarini oʻchirish</string>
+    <!-- Title for the tabs item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_tabs_title_2">Varaqlarni ochish</string>
+    <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
+    <string name="preferences_delete_browsing_data_tabs_subtitle">%d ta varaq</string>
+    <!-- Title for the data and history items in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_browsing_data_title">Brauzer tarixi va sayt maʼlumotlari</string>
+    <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
+        number of history items the user has -->
+    <string name="preferences_delete_browsing_data_browsing_data_subtitle">%d ta manzil</string>
+    <!-- Title for the cookies item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies">Cookie fayllar</string>
+    <!-- Subtitle for the cookies item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies_subtitle">Koʻp saytlardan chiqib ketasiz</string>
+    <!-- Title for the cached images and files item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cached_files">Keshlangan rasmlar va fayllar</string>
+    <!-- Subtitle for the cached images and files item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cached_files_subtitle">Xotiradan boʻsh joy ochadi</string>
+    <!-- Title for the site permissions item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_site_permissions">Sayt ruxsatlari</string>
+    <!-- Title for the downloads item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_downloads">Yuklanmalar</string>
+    <!-- Text for the button to delete browsing data -->
+    <string name="preferences_delete_browsing_data_button">Brauzer maʼlumotlarini oʻchirish</string>
+    <!-- Title for the Delete browsing data on quit preference -->
+    <string name="preferences_delete_browsing_data_on_quit">Chiqish vaqtida brauzer maʼlumotlarini oʻchirish</string>
+    <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
+    <string name="preference_summary_delete_browsing_data_on_quit_2">Asosiy menyudan \&quot;Chiqish\&quot;ni tanlaganingizda, brauzer maʼlumotlari avtomatik ravishda oʻchiriladi</string>
+    <!-- Action item in menu for the Delete browsing data on quit feature -->
+    <string name="delete_browsing_data_on_quit_action">Chiqish</string>
+
+    <!-- Title text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_title">Oʻchirish uchun vaqt oraligʻi</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body">Tarixni (shu jumladan, boshqa qurilmalardan sinxronlangan tarixni), cookie-fayllarni va brauzer maʼlumotlarini oʻchirib tashlaydi.</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
+    <string name="delete_history_prompt_button_last_hour">Oxirgi soat</string>
+    <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
+    <string name="delete_history_prompt_button_today_and_yesterday">Bugun va kecha</string>
+    <!-- Radio button in the delete browsing data dialog to delete all history. -->
+    <string name="delete_history_prompt_button_everything">Hammasi</string>
+
+    <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
+    <string name="delete_browsing_data_prompt_message_3">%s tanlangan brauzer maʼlumotlarini oʻchiradi.</string>
+    <!-- Text for the cancel button for the data deletion dialog -->
+    <string name="delete_browsing_data_prompt_cancel">Bekor qilish</string>
+    <!-- Text for the allow button for the data deletion dialog -->
+    <string name="delete_browsing_data_prompt_allow">Oʻchirish</string>
+    <!-- Text for the snackbar confirmation that the data was deleted -->
+    <string name="preferences_delete_browsing_data_snackbar">Brauzer maʼlumotlari oʻchirildi</string>
+    <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
+    <string name="deleting_browsing_data_in_progress">Brauzer maʼlumotlari oʻchirilmoqda…</string>
+
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. Parameter will be replaced by a history group name. -->
+    <string name="delete_all_history_group_prompt_message">“%s”dagi barcha saytlarni oʻchirish</string>
+    <!-- Text for the cancel button for the history group deletion dialog -->
+    <string name="delete_history_group_prompt_cancel">Bekor qilish</string>
+    <!-- Text for the allow button for the history group dialog -->
+    <string name="delete_history_group_prompt_allow">Oʻchirish</string>
+    <!-- Text for the snackbar confirmation that the history group was deleted -->
+    <string name="delete_history_group_snackbar">Guruh oʻchirildi</string>
+
+    <!-- Onboarding -->
+    <!-- Text for onboarding welcome message
+    The first parameter is the name of the app (e.g. Firefox Preview) -->
+    <string moz:RemovedIn="106" name="onboarding_header" tools:ignore="UnusedResources">%sga xush kelibsiz!</string>
+    <!-- Text for onboarding welcome header. -->
+    <string name="onboarding_header_2">Yaxshiroq internetga xush kelibsiz</string>
+    <!-- Text for the onboarding welcome message. -->
+    <string name="onboarding_message">Foyda uchun emas, insonlar uchun tuzilgan brauzer.</string>
+    <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
+    <string moz:removedIn="106" name="onboarding_account_sign_in_header_1" tools:ignore="UnusedResources">Firefoxni qurilmalarga sinxronlash</string>
+    <!-- Text for the Firefox account onboarding sign in card header. -->
+    <string name="onboarding_account_sign_in_header">Qolgan joyidan davom eting</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account. The first parameter is the name of the application.-->
+    <string moz:removedIn="106" name="onboarding_manual_sign_in_description_2" tools:ignore="UnusedResources">Xatchoʻp, tarix va parollarni bu qurilmadagi %1$sga oʻtkazing.</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account. -->
+    <string name="onboarding_manual_sign_in_description">Ekranlar oʻrtasida uzluksiz oʻtish uchun yorliqlar va parollarni qurilmalar oʻrtasida sinxronlang.</string>
+    <!-- text for the button to manually sign into Firefox account. -->
+    <string moz:removedIn="106" name="onboarding_firefox_account_sign_in_1" tools:ignore="UnusedResources">Roʻyxatdan oʻtish</string>
+    <!-- Text for the button to manually sign into Firefox account. -->
+    <string name="onboarding_firefox_account_sign_in">Kirish</string>
+    <!-- text to display in the snackbar once account is signed-in -->
+    <string name="onboarding_firefox_account_sync_is_on">Sinxronizatsiya yoqilgan</string>
+    <!-- text for the tracking protection onboarding card header -->
+    <string moz:removedIn="106" name="onboarding_tracking_protection_header_3" tools:ignore="UnusedResources">Doimiy maxfiylik</string>
+    <!-- Text for the tracking protection onboarding card header -->
+    <string name="onboarding_tracking_protection_header">Standart maxfiylik himoyasi</string>
+    <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
+    <string moz:removedIn="106" name="onboarding_tracking_protection_description_4" tools:ignore="UnusedResources">Kompaniyalarning sizni onlayn kuzatishlarini %1$s avtomatik ravishda bloklaydi.</string>
+    <!-- Text for the tracking protection card description. -->
+    <string name="onboarding_tracking_protection_description">Kuzatuvchilar sizni saytlar boʻylab kuzatish uchun cookie-fayllardan foydalanishiga yoʻl qoʻyilmaydi.</string>
+    <!-- text for tracking protection radio button option for standard level of blocking -->
+    <string name="onboarding_tracking_protection_standard_button_2">Standart</string>
+
+    <!-- text for standard blocking option button description -->
+    <string name="onboarding_tracking_protection_standard_button_description_3">Maxfiylik va samaradorlikning eng yaxshi muvozanatini taʼminlaydi. Sahifalar normal yuklanadi.</string>
+    <!-- text for tracking protection radio button option for strict level of blocking -->
+    <string name="onboarding_tracking_protection_strict_option">Qatʼiy</string>
+    <!-- text for strict blocking option button description -->
+    <string name="onboarding_tracking_protection_strict_button_description_3">Sahifalar tezroq yuklanishi uchun koʻproq kuzatuvchilarni bloklaydi, lekin baʼzi sahifalar toʻgʻri ishlamasligi mumkin.</string>
+    <!-- text for the toolbar position card header  -->
+    <string name="onboarding_toolbar_placement_header_1">Asboblar paneli joylashuvini tanlang</string>
+    <!-- text for the privacy notice onboarding card header -->
+    <string moz:removedIn="106" name="onboarding_privacy_notice_header" tools:ignore="UnusedResources">Sizning maxfiyligingiz</string>
+    <!-- Text for the button to read the privacy notice -->
+    <string name="onboarding_privacy_notice_read_button">Maxfiylik toʻgʻrisidagi bildirishnomamizni oʻqing</string>
+    <!-- text for the button to finish onboarding -->
+    <string name="onboarding_finish">Koʻrishni boshlash</string>
+
+    <!-- Onboarding theme -->
+    <!-- text for the theme picker onboarding card header -->
+    <string name="onboarding_theme_picker_header">Mavzungizni tanlang</string>
+
+    <!-- Automatic theme setting (will follow device setting) -->
+    <string name="onboarding_theme_automatic_title">Avtomatik</string>
+    <!-- Summary of automatic theme setting (will follow device setting) -->
+    <string name="onboarding_theme_automatic_summary">Qurilmangiz sozlamalarga moslashadi</string>
+    <!-- Theme setting for dark mode -->
+    <string name="onboarding_theme_dark_title">Qorongʻi mavzu</string>
+    <!-- Theme setting for light mode -->
+    <string name="onboarding_theme_light_title">Yorqin mavzu</string>
+
+    <!-- Text shown in snackbar when multiple tabs have been sent to device -->
+    <string name="sync_sent_tabs_snackbar">Varaqlar yuborildi!</string>
+    <!-- Text shown in snackbar when one tab has been sent to device  -->
+    <string name="sync_sent_tab_snackbar">Varaq yuborildi!</string>
+    <!-- Text shown in snackbar when sharing tabs failed  -->
+    <string name="sync_sent_tab_error_snackbar">Yuborib boʻlmadi</string>
+    <!-- Text shown in snackbar for the "retry" action that the user has after sharing tabs failed -->
+    <string name="sync_sent_tab_error_snackbar_action">QAYTA URINING</string>
+    <!-- Title of QR Pairing Fragment -->
+    <string name="sync_scan_code">Kodni skanerlang</string>
+    <!-- Instructions on how to access pairing -->
+    <string name="sign_in_instructions"><![CDATA[KompYuteringizda Firefoxni oching va <b>https://firefox.com/pair</b>ga oʻting]]></string>
+    <!-- Text shown for sign in pairing when ready -->
+    <string name="sign_in_ready_for_scan">Skanerlashga tayyor</string>
+    <!-- Text shown for settings option for sign with pairing -->
+    <string name="sign_in_with_camera">Kamera bilan tizimga kiring</string>
+    <!-- Text shown for settings option for sign with email -->
+    <string name="sign_in_with_email">Buning oʻrniga e-pochtadan foydalaning</string>
 
     <!-- Title for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom">Barcha veb-saytlarni kattalashtirish</string>
