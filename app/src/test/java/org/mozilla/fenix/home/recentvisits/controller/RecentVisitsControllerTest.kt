@@ -87,7 +87,6 @@ class RecentVisitsControllerTest {
         controller.handleHistoryShowAllClicked()
 
         verify {
-            controller.dismissSearchDialogIfDisplayed()
             navController.navigate(
                 HomeFragmentDirections.actionGlobalHistoryFragment(),
             )
