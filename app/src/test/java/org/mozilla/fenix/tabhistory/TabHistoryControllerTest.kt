@@ -16,6 +16,7 @@ import io.mockk.verifyOrder
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.tabs.TabsUseCases
+import mozilla.components.support.test.libstate.ext.waitUntilIdle
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -26,14 +27,14 @@ class TabHistoryControllerTest {
     private lateinit var navController: NavController
     private lateinit var goToHistoryIndexUseCase: SessionUseCases.GoToHistoryIndexUseCase
     private lateinit var duplicateTabUseCase: TabsUseCases.DuplicateTabUseCase
+    private lateinit var tabsUseCases: TabsUseCases
     private lateinit var currentItem: TabHistoryItem
     private lateinit var store: BrowserStore
 
     @Before
     fun setUp() {
         store = BrowserStore()
-        val tabsUseCases = TabsUseCases(store)
-        tabsUseCases.addTab("mozilla.org")
+        tabsUseCases = TabsUseCases(store)
         navController = mockk(relaxed = true)
         goToHistoryIndexUseCase = spyk(SessionUseCases(store).goToHistoryIndex)
         duplicateTabUseCase = spyk(tabsUseCases.duplicateTab)
@@ -75,6 +76,8 @@ class TabHistoryControllerTest {
 
     @Test
     fun handleGoToHistoryIndexNewTabNormalBrowsing() {
+        tabsUseCases.addTab("mozilla.org").also { store.waitUntilIdle() }
+
         val controller = createDefaultTabHistoryController(null)
         val onSuccess = mockk<() -> Unit>()
         every { onSuccess.invoke() } just Runs
