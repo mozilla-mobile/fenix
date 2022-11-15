@@ -199,6 +199,13 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
             },
         )
 
+        binding.hostnameText.setOnFocusChangeListener { _, hasFocus ->
+            val hostnameText = binding.hostnameText.editableText
+            if (!(hasFocus || hostnameContainsProtocol || hostnameText.isEmpty())) {
+                hostnameText.insert(0, "https://")
+            }
+        }
+
         binding.usernameText.addTextChangedListener(
             object : TextWatcher {
                 override fun afterTextChanged(u: Editable?) {
