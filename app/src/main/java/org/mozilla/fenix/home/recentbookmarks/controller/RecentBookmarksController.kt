@@ -40,11 +40,6 @@ interface RecentBookmarksController {
      * @see [RecentBookmarksInteractor.onRecentBookmarkRemoved]
      */
     fun handleBookmarkRemoved(bookmark: RecentBookmark)
-
-    /**
-     * @see [RecentBookmarksInteractor.onRecentBookmarkLongClicked]
-     */
-    fun handleBookmarkLongClicked()
 }
 
 /**
@@ -77,10 +72,6 @@ class DefaultRecentBookmarksController(
 
     override fun handleBookmarkRemoved(bookmark: RecentBookmark) {
         appStore.dispatch(AppAction.RemoveRecentBookmark(bookmark))
-    }
-
-    override fun handleBookmarkLongClicked() {
-        dismissSearchDialogIfDisplayed()
     }
 
     @VisibleForTesting(otherwise = PRIVATE)
