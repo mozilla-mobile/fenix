@@ -244,8 +244,6 @@ class DefaultSessionControlController(
     }
 
     override fun handleCollectionOpenTabClicked(tab: ComponentTab) {
-        dismissSearchDialogIfDisplayed()
-
         restoreUseCase.invoke(
             activity,
             engine,
@@ -328,7 +326,6 @@ class DefaultSessionControlController(
     }
 
     override fun handlePrivateBrowsingLearnMoreClicked() {
-        dismissSearchDialogIfDisplayed()
         activity.openToBrowserAndLoad(
             searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(PRIVATE_BROWSING_MYTHS),
             newTab = true,
@@ -488,12 +485,6 @@ class DefaultSessionControlController(
         }
 
         return url
-    }
-
-    private fun dismissSearchDialogIfDisplayed() {
-        if (navController.currentDestination?.id == R.id.searchDialogFragment) {
-            navController.navigateUp()
-        }
     }
 
     override fun handleStartBrowsingClicked() {

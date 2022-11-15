@@ -133,11 +133,6 @@ interface CollectionInteractor {
      * User has removed the collections placeholder from home.
      */
     fun onRemoveCollectionsPlaceholder()
-
-    /**
-     * User has opened collection 3 dot menu.
-     */
-    fun onCollectionMenuOpened()
 }
 
 interface ToolbarInteractor {
@@ -360,10 +355,6 @@ class SessionControlInteractor(
 
     override fun onRemoveCollectionsPlaceholder() {
         controller.handleRemoveCollectionsPlaceholder()
-    }
-
-    override fun onCollectionMenuOpened() {
-        controller.handleMenuOpened()
     }
 
     override fun onRecentTabClicked(tabId: String) {

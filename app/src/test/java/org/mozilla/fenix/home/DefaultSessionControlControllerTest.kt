@@ -43,7 +43,6 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -1043,33 +1042,6 @@ class DefaultSessionControlControllerTest {
         verify {
             settings.showCollectionsPlaceholderOnHome = false
             appStore.dispatch(AppAction.RemoveCollectionsPlaceholder)
-        }
-    }
-
-    @Test
-    @Ignore("Can't instantiate proxy for class kotlin.Function0")
-    fun handleMenuOpenedWhileSearchShowing() {
-        every { navController.currentDestination } returns mockk {
-            every { id } returns R.id.searchDialogFragment
-        }
-
-        createController().handleMenuOpened()
-
-        verify {
-            navController.navigateUp()
-        }
-    }
-
-    @Test
-    fun handleMenuOpenedWhileSearchNotShowing() {
-        every { navController.currentDestination } returns mockk {
-            every { id } returns R.id.homeFragment
-        }
-
-        createController().handleMenuOpened()
-
-        verify(exactly = 0) {
-            navController.navigateUp()
         }
     }
 
