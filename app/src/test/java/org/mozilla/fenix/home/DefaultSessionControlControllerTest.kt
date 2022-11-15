@@ -56,7 +56,6 @@ import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Analytics
 import org.mozilla.fenix.components.AppStore
@@ -1089,11 +1088,6 @@ class DefaultSessionControlControllerTest {
         verify {
             settings.incrementNumTimesPrivateModeOpened()
             AppAction.ModeChange(Mode.fromBrowsingMode(newMode))
-            navController.navigate(
-                BrowserFragmentDirections.actionGlobalSearchDialog(
-                    sessionId = null,
-                ),
-            )
         }
     }
 
@@ -1121,11 +1115,8 @@ class DefaultSessionControlControllerTest {
             settings.incrementNumTimesPrivateModeOpened()
         }
         verify {
-            AppAction.ModeChange(Mode.fromBrowsingMode(newMode))
-            navController.navigate(
-                BrowserFragmentDirections.actionGlobalSearchDialog(
-                    sessionId = null,
-                ),
+            appStore.dispatch(
+                AppAction.ModeChange(Mode.fromBrowsingMode(newMode)),
             )
         }
     }
