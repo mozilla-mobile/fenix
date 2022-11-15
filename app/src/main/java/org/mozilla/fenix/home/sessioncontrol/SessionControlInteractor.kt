@@ -228,11 +228,6 @@ interface TopSiteInteractor {
      * "Our sponsors & your privacy" top site menu item.
      */
     fun onSponsorPrivacyClicked()
-
-    /**
-     * Called when top site menu is opened.
-     */
-    fun onTopSiteMenuOpened()
 }
 
 interface MessageCardInteractor {
@@ -368,10 +363,6 @@ class SessionControlInteractor(
     }
 
     override fun onCollectionMenuOpened() {
-        controller.handleMenuOpened()
-    }
-
-    override fun onTopSiteMenuOpened() {
         controller.handleMenuOpened()
     }
 

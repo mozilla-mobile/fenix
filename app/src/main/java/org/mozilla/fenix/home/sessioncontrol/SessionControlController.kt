@@ -179,11 +179,6 @@ interface SessionControlController {
     fun handleRemoveCollectionsPlaceholder()
 
     /**
-     * @see [CollectionInteractor.onCollectionMenuOpened] and [TopSiteInteractor.onTopSiteMenuOpened]
-     */
-    fun handleMenuOpened()
-
-    /**
      * @see [MessageCardInteractor.onMessageClicked]
      */
     fun handleMessageClicked(message: Message)
@@ -246,10 +241,6 @@ class DefaultSessionControlController(
             step = SaveCollectionStep.SelectTabs,
             selectedTabCollectionId = collection.id,
         )
-    }
-
-    override fun handleMenuOpened() {
-        dismissSearchDialogIfDisplayed()
     }
 
     override fun handleCollectionOpenTabClicked(tab: ComponentTab) {
@@ -403,8 +394,6 @@ class DefaultSessionControlController(
     }
 
     override fun handleSelectTopSite(topSite: TopSite, position: Int) {
-        dismissSearchDialogIfDisplayed()
-
         TopSites.openInNewTab.record(NoExtras())
 
         when (topSite) {

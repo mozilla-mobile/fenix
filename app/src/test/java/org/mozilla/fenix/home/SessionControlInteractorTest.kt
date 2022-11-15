@@ -148,13 +148,6 @@ class SessionControlInteractorTest {
         interactor.onCollectionMenuOpened()
         verify { controller.handleMenuOpened() }
     }
-
-    @Test
-    fun onTopSiteMenuOpened() {
-        interactor.onTopSiteMenuOpened()
-        verify { controller.handleMenuOpened() }
-    }
-
     @Test
     fun onRecentTabClicked() {
         val tabId = "tabId"
