@@ -1085,6 +1085,7 @@ class HomeFragment : Fragment() {
         const val AMAZON_SPONSORED_TITLE = "Amazon"
         const val AMAZON_SEARCH_ENGINE_NAME = "Amazon.com"
         const val EBAY_SPONSORED_TITLE = "eBay"
+        const val GOOGLE_SEARCH_ENGINE_NAME = "Google"
 
         // Elevation for undo toasts
         internal const val TOAST_ELEVATION = 80f

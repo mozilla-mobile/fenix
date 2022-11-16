@@ -4,12 +4,14 @@
 
 package org.mozilla.fenix.search.awesomebar
 
+import android.provider.Settings.Global.getString
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.graphics.BlendModeColorFilterCompat.createBlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat.SRC_IN
 import androidx.core.graphics.drawable.toBitmap
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.searchEngines
+import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.concept.awesomebar.AwesomeBar
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.feature.awesomebar.provider.BookmarksStorageSuggestionProvider
@@ -28,10 +30,12 @@ import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.Core.Companion.METADATA_HISTORY_SUGGESTION_LIMIT
 import org.mozilla.fenix.components.Core.Companion.METADATA_SHORTCUT_SUGGESTION_LIMIT
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.search.SearchEngineSource
 import org.mozilla.fenix.search.SearchFragmentState
 
@@ -176,6 +180,7 @@ class AwesomeBarView(
                     BrowsingMode.Normal -> false
                     BrowsingMode.Private -> true
                 },
+                suggestionsHeader = getDefaultSearchEngineSuggestionsHeader(components),
             )
 
         defaultSearchActionProvider =
@@ -184,6 +189,7 @@ class AwesomeBarView(
                 searchUseCase = searchUseCase,
                 icon = searchBitmap,
                 showDescription = false,
+                suggestionsHeader = getDefaultSearchEngineSuggestionsHeader(components),
             )
 
         shortcutsEnginePickerProvider =
@@ -205,6 +211,24 @@ class AwesomeBarView(
             )
 
         searchSuggestionProviderMap = HashMap()
+    }
+
+    private fun getDefaultSearchEngineSuggestionsHeader(components: Components, activity: HomeActivity): String? {
+        var defaultSearchEngine = components.core.store.state.search.selectedOrDefaultSearchEngine?.name
+
+        if (!defaultSearchEngine.isNullOrEmpty()) {
+            defaultSearchEngine = when (defaultSearchEngine) {
+                HomeFragment.GOOGLE_SEARCH_ENGINE_NAME -> activity.getString(
+                    defaultSearchEngine,
+                    R.string.google_search_engine_suggestion_header,
+                )
+                else -> activity.getString(
+                    defaultSearchEngine,
+                    R.string.other_default_search_engine_suggestion_header,
+                )
+            }
+        }
+        return defaultSearchEngine
     }
 
     fun update(state: SearchFragmentState) {
