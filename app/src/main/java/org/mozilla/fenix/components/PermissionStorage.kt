@@ -21,23 +21,25 @@ class PermissionStorage(
 ) {
 
     suspend fun add(sitePermissions: SitePermissions) = withContext(dispatcher) {
-        permissionsStorage.save(sitePermissions)
+        permissionsStorage.save(sitePermissions, private = false)
     }
 
-    suspend fun findSitePermissionsBy(origin: String): SitePermissions? = withContext(dispatcher) {
-        permissionsStorage.findSitePermissionsBy(origin)
-    }
+    suspend fun findSitePermissionsBy(origin: String, private: Boolean): SitePermissions? =
+        withContext(dispatcher) {
+            permissionsStorage.findSitePermissionsBy(origin, private = private)
+        }
 
-    suspend fun updateSitePermissions(sitePermissions: SitePermissions) = withContext(dispatcher) {
-        permissionsStorage.update(sitePermissions)
-    }
+    suspend fun updateSitePermissions(sitePermissions: SitePermissions, private: Boolean) =
+        withContext(dispatcher) {
+            permissionsStorage.update(sitePermissions, private = private)
+        }
 
     suspend fun getSitePermissionsPaged(): DataSource.Factory<Int, SitePermissions> {
         return permissionsStorage.getSitePermissionsPaged()
     }
 
     suspend fun deleteSitePermissions(sitePermissions: SitePermissions) = withContext(dispatcher) {
-        permissionsStorage.remove(sitePermissions)
+        permissionsStorage.remove(sitePermissions, private = false)
     }
 
     suspend fun deleteAllSitePermissions() = withContext(dispatcher) {
