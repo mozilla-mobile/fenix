@@ -65,6 +65,7 @@ class ClipboardHandler(val context: Context) {
     }
 
     /**
+     * Returns whether or not the clipboard data contains text.
      * We cannot rely on `isPrimaryClipEmpty()` since it triggers a clipboard access system notification.
      */
     fun containsText(): Boolean {
