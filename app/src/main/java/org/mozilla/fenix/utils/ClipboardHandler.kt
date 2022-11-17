@@ -101,10 +101,11 @@ class ClipboardHandler(val context: Context) {
         primaryClipDescription?.hasMimeType(MIME_TYPE_TEXT_URL) ?: false
 
     /**
+     * Returns whether or not the clipboard has any clip data.
      * Reads the clip data, be aware this is a sensitive API as from Android 12 and above,
      * accessing it will trigger a notification letting the user know the app has accessed the clipboard,
      * make sure when you call this API that users are completely aware that we are accessing the clipboard.
-     * See for more details https://github.com/mozilla-mobile/fenix/issues/22271.
+     * See https://github.com/mozilla-mobile/fenix/issues/22271 for more details.
      */
     private fun ClipboardManager.isPrimaryClipEmpty() = primaryClip?.itemCount == 0
 
