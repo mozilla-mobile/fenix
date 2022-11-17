@@ -279,32 +279,43 @@ fun PocketStories(
         itemsIndexed(storiesToShow) { columnIndex, columnItems ->
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 columnItems.forEachIndexed { rowIndex, story ->
-                    if (story == placeholderStory) {
-                        ListItemTabLargePlaceholder(stringResource(R.string.pocket_stories_placeholder_text)) {
-                            onDiscoverMoreClicked("https://getpocket.com/explore?$POCKET_FEATURE_UTM_KEY_VALUE")
-                        }
-                    } else if (story is PocketRecommendedStory) {
-                        PocketStory(
-                            story = story,
-                            backgroundColor = backgroundColor,
-                        ) {
-                            val uri = Uri.parse(story.url)
-                                .buildUpon()
-                                .appendQueryParameter(URI_PARAM_UTM_KEY, POCKET_STORIES_UTM_VALUE)
-                                .build().toString()
-                            onStoryClicked(it.copy(url = uri), rowIndex to columnIndex)
-                        }
-                    } else if (story is PocketSponsoredStory) {
-                        Box(
-                            modifier = Modifier.onShown(0.5f) {
-                                onStoryShown(story, rowIndex to columnIndex)
-                            },
-                        ) {
-                            PocketSponsoredStory(
+                    Box(
+                        modifier = Modifier.semantics {
+                            testTagsAsResourceId = true
+                            testTag = when (story) {
+                                placeholderStory -> "pocket.discover.more.story"
+                                is PocketRecommendedStory -> "pocket.recommended.story"
+                                else -> "pocket.sponsored.story"
+                            }
+                        },
+                    ) {
+                        if (story == placeholderStory) {
+                            ListItemTabLargePlaceholder(stringResource(R.string.pocket_stories_placeholder_text)) {
+                                onDiscoverMoreClicked("https://getpocket.com/explore?$POCKET_FEATURE_UTM_KEY_VALUE")
+                            }
+                        } else if (story is PocketRecommendedStory) {
+                            PocketStory(
                                 story = story,
                                 backgroundColor = backgroundColor,
                             ) {
-                                onStoryClicked(story, rowIndex to columnIndex)
+                                val uri = Uri.parse(story.url)
+                                    .buildUpon()
+                                    .appendQueryParameter(URI_PARAM_UTM_KEY, POCKET_STORIES_UTM_VALUE)
+                                    .build().toString()
+                                onStoryClicked(it.copy(url = uri), rowIndex to columnIndex)
+                            }
+                        } else if (story is PocketSponsoredStory) {
+                            Box(
+                                modifier = Modifier.onShown(0.5f) {
+                                    onStoryShown(story, rowIndex to columnIndex)
+                                },
+                            ) {
+                                PocketSponsoredStory(
+                                    story = story,
+                                    backgroundColor = backgroundColor,
+                                ) {
+                                    onStoryClicked(story, rowIndex to columnIndex)
+                                }
                             }
                         }
                     }
@@ -408,12 +419,9 @@ private fun Rect.getIntersectPercentage(realSize: IntSize, other: Rect): Float {
  *
  * @param categories The categories needed to be displayed.
  * @param selections List of categories currently selected.
- * @param selectedTextColor Text [Color] when the category is selected.
- * @param unselectedTextColor Text [Color] when the category is not selected.
- * @param selectedBackgroundColor Background [Color] when the category is selected.
- * @param unselectedBackgroundColor Background [Color] when the category is not selected.
- * @param onCategoryClick Callback for when the user taps a category.
  * @param modifier [Modifier] to be applied to the layout.
+ * @param categoryColors The color set defined by [PocketStoriesCategoryColors] used to style Pocket categories.
+ * @param onCategoryClick Callback for when the user taps a category.
  */
 @OptIn(ExperimentalComposeUiApi::class)
 @Suppress("LongParameterList")
@@ -421,12 +429,9 @@ private fun Rect.getIntersectPercentage(realSize: IntSize, other: Rect): Float {
 fun PocketStoriesCategories(
     categories: List<PocketRecommendedStoriesCategory>,
     selections: List<PocketRecommendedStoriesSelectedCategory>,
-    selectedTextColor: Color? = null,
-    unselectedTextColor: Color? = null,
-    selectedBackgroundColor: Color? = null,
-    unselectedBackgroundColor: Color? = null,
-    onCategoryClick: (PocketRecommendedStoriesCategory) -> Unit,
     modifier: Modifier = Modifier,
+    categoryColors: PocketStoriesCategoryColors = PocketStoriesCategoryColors.buildColors(),
+    onCategoryClick: (PocketRecommendedStoriesCategory) -> Unit,
 ) {
     Box(
         modifier = modifier.semantics {
@@ -442,15 +447,49 @@ fun PocketStoriesCategories(
                 SelectableChip(
                     text = category.name,
                     isSelected = selections.map { it.name }.contains(category.name),
-                    selectedTextColor = selectedTextColor,
-                    unselectedTextColor = unselectedTextColor,
-                    selectedBackgroundColor = selectedBackgroundColor,
-                    unselectedBackgroundColor = unselectedBackgroundColor,
+                    selectedTextColor = categoryColors.selectedTextColor,
+                    unselectedTextColor = categoryColors.unselectedTextColor,
+                    selectedBackgroundColor = categoryColors.selectedBackgroundColor,
+                    unselectedBackgroundColor = categoryColors.unselectedBackgroundColor,
                 ) {
                     onCategoryClick(category)
                 }
             }
         }
+    }
+}
+
+/**
+ * Wrapper for the color parameters of [PocketStoriesCategories].
+ *
+ * @param selectedTextColor Text [Color] when the category is selected.
+ * @param unselectedTextColor Text [Color] when the category is not selected.
+ * @param selectedBackgroundColor Background [Color] when the category is selected.
+ * @param unselectedBackgroundColor Background [Color] when the category is not selected.
+ */
+data class PocketStoriesCategoryColors(
+    val selectedBackgroundColor: Color,
+    val unselectedBackgroundColor: Color,
+    val selectedTextColor: Color,
+    val unselectedTextColor: Color,
+) {
+    companion object {
+
+        /**
+         * Builder function used to construct an instance of [PocketStoriesCategoryColors].
+         */
+        @Composable
+        fun buildColors(
+            selectedBackgroundColor: Color = FirefoxTheme.colors.textActionPrimary,
+            unselectedBackgroundColor: Color = FirefoxTheme.colors.textActionTertiary,
+            selectedTextColor: Color = FirefoxTheme.colors.actionPrimary,
+            unselectedTextColor: Color = FirefoxTheme.colors.actionTertiary,
+        ) = PocketStoriesCategoryColors(
+            selectedBackgroundColor = selectedBackgroundColor,
+            unselectedBackgroundColor = unselectedBackgroundColor,
+            selectedTextColor = selectedTextColor,
+            unselectedTextColor = unselectedTextColor,
+        )
     }
 }
 
