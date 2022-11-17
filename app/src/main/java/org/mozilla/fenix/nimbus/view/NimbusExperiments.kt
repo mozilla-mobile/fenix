@@ -23,14 +23,14 @@ import org.mozilla.fenix.theme.FirefoxTheme
  */
 @Composable
 fun NimbusExperiments(
-    availableExperiments: List<AvailableExperiment> = listOf(),
+    experiments: List<AvailableExperiment> = listOf(),
     onSelectedExperiment: (AvailableExperiment) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize(),
     ) {
-        items(availableExperiments) { experiment ->
+        items(experiments) { experiment ->
             TextListItem(
                 label = experiment.userFacingName,
                 description = experiment.userFacingDescription,
@@ -56,7 +56,7 @@ private fun NimbusExperimentsPreview() {
     )
     FirefoxTheme {
         NimbusExperiments(
-            availableExperiments = listOf(
+            experiments = listOf(
                 testExperiment,
                 testExperiment,
                 testExperiment,

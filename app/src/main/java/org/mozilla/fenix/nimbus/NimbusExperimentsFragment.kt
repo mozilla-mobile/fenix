@@ -39,7 +39,7 @@ class NimbusExperimentsFragment : Fragment() {
                     requireContext().components.analytics.experiments.getAvailableExperiments()
 
                 NimbusExperiments(
-                    availableExperiments = experiments,
+                    experiments = experiments,
                     onSelectedExperiment = { experiment ->
                         val directions =
                             NimbusExperimentsFragmentDirections.actionNimbusExperimentsFragmentToNimbusBranchesFragment(
