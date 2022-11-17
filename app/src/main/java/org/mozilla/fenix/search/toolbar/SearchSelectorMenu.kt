@@ -26,7 +26,7 @@ typealias MozSearchEngine = SearchEngine
  */
 class SearchSelectorMenu(
     private val context: Context,
-    private val interactor: ToolbarInteractor,
+    private val interactor: SearchSelectorInteractor,
 ) {
 
     /**
@@ -50,7 +50,7 @@ class SearchSelectorMenu(
 
     internal fun menuItems(searchEngines: List<MenuCandidate>): List<MenuCandidate> {
         val headerCandidate = DecorativeTextMenuCandidate(
-            text = context.getString(R.string.search_header_menu_item),
+            text = context.getString(R.string.search_header_menu_item_2),
         )
         val settingsCandidate = TextMenuCandidate(
             text = context.getString(R.string.search_settings_menu_item),

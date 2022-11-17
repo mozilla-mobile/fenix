@@ -14,6 +14,7 @@ import android.util.Log.INFO
 import androidx.annotation.CallSuper
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Configuration.Builder
@@ -377,8 +378,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         if (settings().isMarketingTelemetryEnabled) {
             components.analytics.metrics.start(MetricServiceType.Marketing)
         }
-
-        components.appStore.dispatch(AppAction.MetricsInitializedAction)
     }
 
     protected open fun setupLeakCanary() {
@@ -469,7 +468,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             components.core.trackingProtectionPolicyFactory.createTrackingProtectionPolicy()
 
         val settings = settings()
-        if (FeatureFlags.messagingFeature && settings.isExperimentationEnabled) {
+        if (settings.isExperimentationEnabled) {
             components.appStore.dispatch(AppAction.MessagingAction.Restore)
         }
         reportHomeScreenSectionMetrics(settings)
@@ -716,6 +715,15 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 Wallpaper.nameIsDefault(settings.currentWallpaperName)
 
             defaultWallpaper.set(isDefaultTheCurrentWallpaper)
+
+            @Suppress("TooGenericExceptionCaught")
+            try {
+                notificationsAllowed.set(
+                    NotificationManagerCompat.from(applicationContext).areNotificationsEnabled(),
+                )
+            } catch (e: Exception) {
+                Logger.warn("Failed to check if notifications are enabled", e)
+            }
         }
 
         with(AndroidAutofill) {

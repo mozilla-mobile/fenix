@@ -8,6 +8,7 @@ import android.content.Context
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import mozilla.components.support.utils.ext.getPackageInfoCompat
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.utils.Settings
@@ -43,14 +44,31 @@ internal class DefaultMetricsStorage(
                 Event.GrowthData.SetAsDefault -> {
                     !settings.setAsDefaultGrowthSent && checkDefaultBrowser()
                 }
+                Event.GrowthData.FirstAppOpenForDay -> {
+                    settings.resumeGrowthLastSent.hasBeenMoreThanDaySince()
+                }
+                Event.GrowthData.FirstUriLoadForDay -> {
+                    settings.uriLoadGrowthLastSent.hasBeenMoreThanDaySince()
+                }
             }
         }
 
     override suspend fun updateSentState(event: Event) = withContext(dispatcher) {
         when (event) {
-            Event.GrowthData.SetAsDefault -> settings.setAsDefaultGrowthSent = true
+            Event.GrowthData.SetAsDefault -> {
+                settings.setAsDefaultGrowthSent = true
+            }
+            Event.GrowthData.FirstAppOpenForDay -> {
+                settings.resumeGrowthLastSent = System.currentTimeMillis()
+            }
+            Event.GrowthData.FirstUriLoadForDay -> {
+                settings.uriLoadGrowthLastSent = System.currentTimeMillis()
+            }
         }
     }
+
+    private fun Long.hasBeenMoreThanDaySince(): Boolean =
+        System.currentTimeMillis() - this > dayMillis
 
     companion object {
         private const val dayMillis: Long = 1000 * 60 * 60 * 24
@@ -59,7 +77,7 @@ internal class DefaultMetricsStorage(
 
         fun shouldSendGenerally(context: Context): Boolean {
             val installedTime = context.packageManager
-                .getPackageInfo(context.packageName, 0)
+                .getPackageInfoCompat(context.packageName, 0)
                 .firstInstallTime
             val timeDifference = System.currentTimeMillis() - installedTime
             val withinWindow = timeDifference in windowStartMillis..windowEndMillis
