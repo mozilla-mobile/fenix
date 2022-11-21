@@ -31,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
@@ -44,6 +45,8 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -101,6 +104,7 @@ private val placeholderStory = PocketRecommendedStory("", "", "", "", "", 0, 0)
  * @param backgroundColor The background [Color] of the story.
  * @param onStoryClick Callback for when the user taps on this story.
  */
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun PocketStory(
     @PreviewParameter(PocketStoryProvider::class) story: PocketRecommendedStory,
@@ -120,6 +124,10 @@ fun PocketStory(
         title = {
             Text(
                 text = story.title,
+                modifier = Modifier.semantics {
+                    testTagsAsResourceId = true
+                    testTag = "pocket.story.title"
+                },
                 color = FirefoxTheme.colors.textPrimary,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2,
@@ -132,6 +140,10 @@ fun PocketStory(
             } else if (isValidPublisher) {
                 Text(
                     text = story.publisher,
+                    modifier = Modifier.semantics {
+                        testTagsAsResourceId = true
+                        testTag = "pocket.story.publisher"
+                    },
                     color = FirefoxTheme.colors.textSecondary,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
@@ -140,6 +152,10 @@ fun PocketStory(
             } else if (isValidTimeToRead) {
                 Text(
                     text = "${story.timeToRead} min",
+                    modifier = Modifier.semantics {
+                        testTagsAsResourceId = true
+                        testTag = "pocket.story.timeToRead"
+                    },
                     color = FirefoxTheme.colors.textSecondary,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
@@ -157,6 +173,7 @@ fun PocketStory(
  * @param backgroundColor The background [Color] of the story.
  * @param onStoryClick Callback for when the user taps on this story.
  */
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun PocketSponsoredStory(
     story: PocketSponsoredStory,
@@ -178,6 +195,10 @@ fun PocketSponsoredStory(
     ) {
         Text(
             text = story.title,
+            modifier = Modifier.semantics {
+                testTagsAsResourceId = true
+                testTag = "pocket.sponsoredStory.title"
+            },
             color = FirefoxTheme.colors.textPrimary,
             overflow = TextOverflow.Ellipsis,
             maxLines = 2,
@@ -188,6 +209,10 @@ fun PocketSponsoredStory(
 
         Text(
             text = stringResource(R.string.pocket_stories_sponsor_indication),
+            modifier = Modifier.semantics {
+                testTagsAsResourceId = true
+                testTag = "pocket.sponsoredStory.identifier"
+            },
             color = FirefoxTheme.colors.textSecondary,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
@@ -198,6 +223,10 @@ fun PocketSponsoredStory(
 
         Text(
             text = story.sponsor,
+            modifier = Modifier.semantics {
+                testTagsAsResourceId = true
+                testTag = "pocket.sponsoredStory.sponsor"
+            },
             color = FirefoxTheme.colors.textSecondary,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
@@ -219,6 +248,7 @@ fun PocketSponsoredStory(
  * @param onStoryClicked Callback for when the user taps on a recommended story.
  * @param onDiscoverMoreClicked Callback for when the user taps an element which contains an
  */
+@OptIn(ExperimentalComposeUiApi::class)
 @Suppress("LongParameterList")
 @Composable
 fun PocketStories(
@@ -237,6 +267,10 @@ fun PocketStories(
     val flingBehavior = EagerFlingBehavior(lazyRowState = listState)
 
     LazyRow(
+        modifier = Modifier.semantics {
+            testTagsAsResourceId = true
+            testTag = "pocket.stories"
+        },
         contentPadding = PaddingValues(horizontal = contentPadding),
         state = listState,
         flingBehavior = flingBehavior,
@@ -245,32 +279,43 @@ fun PocketStories(
         itemsIndexed(storiesToShow) { columnIndex, columnItems ->
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 columnItems.forEachIndexed { rowIndex, story ->
-                    if (story == placeholderStory) {
-                        ListItemTabLargePlaceholder(stringResource(R.string.pocket_stories_placeholder_text)) {
-                            onDiscoverMoreClicked("https://getpocket.com/explore?$POCKET_FEATURE_UTM_KEY_VALUE")
-                        }
-                    } else if (story is PocketRecommendedStory) {
-                        PocketStory(
-                            story = story,
-                            backgroundColor = backgroundColor,
-                        ) {
-                            val uri = Uri.parse(story.url)
-                                .buildUpon()
-                                .appendQueryParameter(URI_PARAM_UTM_KEY, POCKET_STORIES_UTM_VALUE)
-                                .build().toString()
-                            onStoryClicked(it.copy(url = uri), rowIndex to columnIndex)
-                        }
-                    } else if (story is PocketSponsoredStory) {
-                        Box(
-                            modifier = Modifier.onShown(0.5f) {
-                                onStoryShown(story, rowIndex to columnIndex)
-                            },
-                        ) {
-                            PocketSponsoredStory(
+                    Box(
+                        modifier = Modifier.semantics {
+                            testTagsAsResourceId = true
+                            testTag = when (story) {
+                                placeholderStory -> "pocket.discover.more.story"
+                                is PocketRecommendedStory -> "pocket.recommended.story"
+                                else -> "pocket.sponsored.story"
+                            }
+                        },
+                    ) {
+                        if (story == placeholderStory) {
+                            ListItemTabLargePlaceholder(stringResource(R.string.pocket_stories_placeholder_text)) {
+                                onDiscoverMoreClicked("https://getpocket.com/explore?$POCKET_FEATURE_UTM_KEY_VALUE")
+                            }
+                        } else if (story is PocketRecommendedStory) {
+                            PocketStory(
                                 story = story,
                                 backgroundColor = backgroundColor,
                             ) {
-                                onStoryClicked(story, rowIndex to columnIndex)
+                                val uri = Uri.parse(story.url)
+                                    .buildUpon()
+                                    .appendQueryParameter(URI_PARAM_UTM_KEY, POCKET_STORIES_UTM_VALUE)
+                                    .build().toString()
+                                onStoryClicked(it.copy(url = uri), rowIndex to columnIndex)
+                            }
+                        } else if (story is PocketSponsoredStory) {
+                            Box(
+                                modifier = Modifier.onShown(0.5f) {
+                                    onStoryShown(story, rowIndex to columnIndex)
+                                },
+                            ) {
+                                PocketSponsoredStory(
+                                    story = story,
+                                    backgroundColor = backgroundColor,
+                                ) {
+                                    onStoryClicked(story, rowIndex to columnIndex)
+                                }
                             }
                         }
                     }
@@ -374,26 +419,26 @@ private fun Rect.getIntersectPercentage(realSize: IntSize, other: Rect): Float {
  *
  * @param categories The categories needed to be displayed.
  * @param selections List of categories currently selected.
- * @param selectedTextColor Text [Color] when the category is selected.
- * @param unselectedTextColor Text [Color] when the category is not selected.
- * @param selectedBackgroundColor Background [Color] when the category is selected.
- * @param unselectedBackgroundColor Background [Color] when the category is not selected.
- * @param onCategoryClick Callback for when the user taps a category.
  * @param modifier [Modifier] to be applied to the layout.
+ * @param categoryColors The color set defined by [PocketStoriesCategoryColors] used to style Pocket categories.
+ * @param onCategoryClick Callback for when the user taps a category.
  */
+@OptIn(ExperimentalComposeUiApi::class)
 @Suppress("LongParameterList")
 @Composable
 fun PocketStoriesCategories(
     categories: List<PocketRecommendedStoriesCategory>,
     selections: List<PocketRecommendedStoriesSelectedCategory>,
-    selectedTextColor: Color? = null,
-    unselectedTextColor: Color? = null,
-    selectedBackgroundColor: Color? = null,
-    unselectedBackgroundColor: Color? = null,
-    onCategoryClick: (PocketRecommendedStoriesCategory) -> Unit,
     modifier: Modifier = Modifier,
+    categoryColors: PocketStoriesCategoryColors = PocketStoriesCategoryColors.buildColors(),
+    onCategoryClick: (PocketRecommendedStoriesCategory) -> Unit,
 ) {
-    Box(modifier = modifier) {
+    Box(
+        modifier = modifier.semantics {
+            testTagsAsResourceId = true
+            testTag = "pocket.categories"
+        },
+    ) {
         StaggeredHorizontalGrid(
             horizontalItemsSpacing = 16.dp,
             verticalItemsSpacing = 16.dp,
@@ -402,15 +447,49 @@ fun PocketStoriesCategories(
                 SelectableChip(
                     text = category.name,
                     isSelected = selections.map { it.name }.contains(category.name),
-                    selectedTextColor = selectedTextColor,
-                    unselectedTextColor = unselectedTextColor,
-                    selectedBackgroundColor = selectedBackgroundColor,
-                    unselectedBackgroundColor = unselectedBackgroundColor,
+                    selectedTextColor = categoryColors.selectedTextColor,
+                    unselectedTextColor = categoryColors.unselectedTextColor,
+                    selectedBackgroundColor = categoryColors.selectedBackgroundColor,
+                    unselectedBackgroundColor = categoryColors.unselectedBackgroundColor,
                 ) {
                     onCategoryClick(category)
                 }
             }
         }
+    }
+}
+
+/**
+ * Wrapper for the color parameters of [PocketStoriesCategories].
+ *
+ * @param selectedTextColor Text [Color] when the category is selected.
+ * @param unselectedTextColor Text [Color] when the category is not selected.
+ * @param selectedBackgroundColor Background [Color] when the category is selected.
+ * @param unselectedBackgroundColor Background [Color] when the category is not selected.
+ */
+data class PocketStoriesCategoryColors(
+    val selectedBackgroundColor: Color,
+    val unselectedBackgroundColor: Color,
+    val selectedTextColor: Color,
+    val unselectedTextColor: Color,
+) {
+    companion object {
+
+        /**
+         * Builder function used to construct an instance of [PocketStoriesCategoryColors].
+         */
+        @Composable
+        fun buildColors(
+            selectedBackgroundColor: Color = FirefoxTheme.colors.textActionPrimary,
+            unselectedBackgroundColor: Color = FirefoxTheme.colors.textActionTertiary,
+            selectedTextColor: Color = FirefoxTheme.colors.actionPrimary,
+            unselectedTextColor: Color = FirefoxTheme.colors.actionTertiary,
+        ) = PocketStoriesCategoryColors(
+            selectedBackgroundColor = selectedBackgroundColor,
+            unselectedBackgroundColor = unselectedBackgroundColor,
+            selectedTextColor = selectedTextColor,
+            unselectedTextColor = unselectedTextColor,
+        )
     }
 }
 
@@ -424,6 +503,7 @@ fun PocketStoriesCategories(
  * @param textColor [Color] to be applied to the text.
  * @param linkTextColor [Color] of the link text.
  */
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun PoweredByPocketHeader(
     onLearnMoreClicked: (String) -> Unit,
@@ -437,7 +517,10 @@ fun PoweredByPocketHeader(
     val linkEndIndex = linkStartIndex + link.length
 
     Column(
-        modifier = modifier,
+        modifier = modifier.semantics {
+            testTagsAsResourceId = true
+            testTag = "pocket.header"
+        },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
@@ -461,19 +544,32 @@ fun PoweredByPocketHeader(
                         R.string.pocket_stories_feature_title_2,
                         LocalContext.current.getString(R.string.pocket_product_name),
                     ),
+                    modifier = Modifier.semantics {
+                        testTagsAsResourceId = true
+                        testTag = "pocket.header.title"
+                    },
                     color = textColor,
                     style = FirefoxTheme.typography.caption,
                 )
 
-                ClickableSubstringLink(
-                    text = text,
-                    textColor = textColor,
-                    linkTextColor = linkTextColor,
-                    linkTextDecoration = TextDecoration.Underline,
-                    clickableStartIndex = linkStartIndex,
-                    clickableEndIndex = linkEndIndex,
+                Box(
+                    modifier = modifier.semantics {
+                        testTagsAsResourceId = true
+                        testTag = "pocket.header.subtitle"
+                    },
                 ) {
-                    onLearnMoreClicked("https://www.mozilla.org/en-US/firefox/pocket/?$POCKET_FEATURE_UTM_KEY_VALUE")
+                    ClickableSubstringLink(
+                        text = text,
+                        textColor = textColor,
+                        linkTextColor = linkTextColor,
+                        linkTextDecoration = TextDecoration.Underline,
+                        clickableStartIndex = linkStartIndex,
+                        clickableEndIndex = linkEndIndex,
+                    ) {
+                        onLearnMoreClicked(
+                            "https://www.mozilla.org/en-US/firefox/pocket/?$POCKET_FEATURE_UTM_KEY_VALUE",
+                        )
+                    }
                 }
             }
         }

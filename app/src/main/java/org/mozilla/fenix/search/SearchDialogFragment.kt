@@ -154,6 +154,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return object : Dialog(requireContext(), this.theme) {
+            @Deprecated("Deprecated in Java")
             override fun onBackPressed() {
                 this@SearchDialogFragment.onBackPressed()
             }
@@ -178,6 +179,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 tabId = args.sessionId,
                 pastedText = args.pastedText,
                 searchAccessPoint = args.searchAccessPoint,
+                searchEngine = requireComponents.core.store.state.search.searchEngines.firstOrNull {
+                    it.id == args.searchEngine
+                },
             ),
         )
 

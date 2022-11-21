@@ -132,6 +132,8 @@ class Core(
                 R.color.fx_mobile_layer_color_1,
             ),
             httpsOnlyMode = context.settings().getHttpsOnlyMode(),
+            cookieBannerHandlingModePrivateBrowsing = context.settings().getCookieBannerHandling(),
+            cookieBannerHandlingMode = context.settings().getCookieBannerHandling(),
         )
 
         GeckoEngine(
@@ -230,7 +232,7 @@ class Core(
                 RecentlyClosedMiddleware(recentlyClosedTabsStorage, RECENTLY_CLOSED_MAX),
                 DownloadMiddleware(context, DownloadService::class.java),
                 ReaderViewMiddleware(),
-                TelemetryMiddleware(context.settings()),
+                TelemetryMiddleware(context.settings(), metrics),
                 ThumbnailsMiddleware(thumbnailStorage),
                 UndoMiddleware(context.getUndoDelay()),
                 RegionMiddleware(context, locationService),

@@ -198,6 +198,35 @@ events:
       - android-probes@mozilla.com
       - kbrosnan@mozilla.com
     expires: never
+  default_browser_notif_shown:
+    type: event
+    description: |
+      Default browser notification was shown to the user
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/27779
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/27780
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 122
+  marketing_notification_allowed:
+    type: boolean
+    description: |
+      True if marketing notifications are allowed, otherwise false.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/27795
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/27797
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 122
+    metadata:
+      tags:
+        - Notifications
   toolbar_menu_visible:
     type: event
     description: |
@@ -1076,6 +1105,7 @@ metrics:
       to identify installs from Mozilla Online.
     send_in_pings:
       - metrics
+      - baseline
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/16075
     data_reviews:
@@ -1087,6 +1117,8 @@ metrics:
       - android-probes@mozilla.com
       - kbrosnan@mozilla.com
     expires: never
+    no_lint:
+      - BASELINE_PING
     metadata:
       tags:
         - China
@@ -1739,6 +1771,24 @@ metrics:
     metadata:
       tags:
         - Wallpapers
+  notifications_allowed:
+    type: boolean
+    description: |
+      True if notifications are allowed, otherwise false.
+    send_in_pings:
+      - metrics
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/27795
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/27797
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 122
+    metadata:
+      tags:
+        - Notifications
 
 customize_home:
   most_visited_sites:
@@ -5890,6 +5940,28 @@ pocket:
     metadata:
       tags:
         - PocketIntegration
+  spoc_shim:
+    type: text
+    description: |
+      Shim data of the Pocket sponsored story the user just
+      interacted with.
+      The shim is a unique base64 string identifying each story and
+      type of user interaction: story impression or click.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/27549
+      - https://mozilla-hub.atlassian.net/browse/FNXV2-21791
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/27550#issuecomment-1295027631
+    data_sensitivity:
+      - web_activity
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: never
+    send_in_pings:
+      - spoc
+    metadata:
+      tags:
+        - PocketIntegration
   home_recs_spoc_shown:
     type: event
     description: |
@@ -6725,6 +6797,45 @@ autoplay:
     metadata:
       tags:
         - SitePermissions
+
+cookie_banners:
+  visited_setting:
+    type: event
+    description: A user visited the cookie banner handling screen
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1796146
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/27561
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 118
+    metadata:
+      tags:
+        - Privacy&Security
+  setting_changed:
+    type: event
+    description: |
+      A user changed their setting.
+    extra_keys:
+      cookie_banner_setting:
+        description: |
+          The new setting for cookie banners: disabled,reject_all,
+          or reject_or_accept_all.
+        type: string
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1796146
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/pull/27561
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 118
+    metadata:
+      tags:
+        - Privacy&Security
 
 site_permissions:
   prompt_shown:

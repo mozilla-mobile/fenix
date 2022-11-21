@@ -56,19 +56,24 @@ class SwipeGestureLayout @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
+    /**
+     * Controls whether the swiping functionality is active or not.
+     */
+    var isSwipeEnabled = true
+
     private val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
-        override fun onDown(e: MotionEvent?): Boolean {
+        override fun onDown(e: MotionEvent): Boolean {
             return true
         }
 
         override fun onScroll(
-            e1: MotionEvent?,
-            e2: MotionEvent?,
+            e1: MotionEvent,
+            e2: MotionEvent,
             distanceX: Float,
             distanceY: Float,
         ): Boolean {
-            val start = e1?.let { event -> PointF(event.rawX, event.rawY) } ?: return false
-            val next = e2?.let { event -> PointF(event.rawX, event.rawY) } ?: return false
+            val start = e1.let { event -> PointF(event.rawX, event.rawY) }
+            val next = e2.let { event -> PointF(event.rawX, event.rawY) }
 
             if (activeListener == null && !handledInitialScroll) {
                 activeListener = listeners.firstOrNull { listener ->
@@ -81,8 +86,8 @@ class SwipeGestureLayout @JvmOverloads constructor(
         }
 
         override fun onFling(
-            e1: MotionEvent?,
-            e2: MotionEvent?,
+            e1: MotionEvent,
+            e2: MotionEvent,
             velocityX: Float,
             velocityY: Float,
         ): Boolean {
@@ -107,6 +112,10 @@ class SwipeGestureLayout @JvmOverloads constructor(
     }
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
+        if (!isSwipeEnabled) {
+            return false
+        }
+
         return when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 handledInitialScroll = false

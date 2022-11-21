@@ -21,5 +21,15 @@ sealed class Event {
          * Event recording whether Firefox has been set as the default browser.
          */
         object SetAsDefault : GrowthData("xgpcgt")
+
+        /**
+         * Event recording the first time Firefox has been resumed in a 24 hour period.
+         */
+        object FirstAppOpenForDay : GrowthData("41hl22")
+
+        /**
+         * Event recording the first time a URI is loaded in Firefox in a 24 hour period.
+         */
+        object FirstUriLoadForDay : GrowthData("ja86ek")
     }
 }
