@@ -85,7 +85,6 @@ class HomeScreenRobot {
     fun verifyDefaultSearchEngine(searchEngine: String) = verifySearchEngineIcon(searchEngine)
     fun verifyNoTabsOpened() = assertNoTabsOpened()
     fun verifyKeyboardVisible() = assertKeyboardVisibility(isExpectedToBeVisible = true)
-    fun evaluateAgainstNimbusTargetingHelper(jexl: String): Boolean = evaluateAgainstNimbus(jexl)
 
     fun verifyWallpaperImageApplied(isEnabled: Boolean) {
         if (isEnabled) {
@@ -672,14 +671,6 @@ private fun verifySearchEngineIcon(searchEngineName: String) {
     val ddgSearchEngine = getSearchEngine(searchEngineName)
         ?: throw AssertionError("No search engine with name $searchEngineName")
     verifySearchEngineIcon(ddgSearchEngine.icon, ddgSearchEngine.name)
-}
-
-private fun getNimbus() =
-    appContext.components.analytics.experiments
-
-private fun evaluateAgainstNimbus(jexl: String): Boolean {
-    val helper = getNimbus().createMessageHelper()
-    return helper.evalJexl(jexl)
 }
 
 // First Run elements
