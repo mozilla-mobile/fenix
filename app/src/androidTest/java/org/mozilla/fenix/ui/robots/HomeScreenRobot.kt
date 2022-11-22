@@ -8,17 +8,24 @@ package org.mozilla.fenix.ui.robots
 
 import android.graphics.Bitmap
 import android.widget.EditText
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.onChildAt
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItem
+import androidx.test.espresso.contrib.RecyclerViewActions.scrollToHolder
+import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
@@ -38,6 +45,8 @@ import mozilla.components.browser.state.state.searchEngines
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.instanceOf
+import org.hamcrest.Description
+import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 import org.junit.Assert
 import org.junit.Assert.assertFalse
@@ -57,9 +66,11 @@ import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.withBitmapDrawable
+import org.mozilla.fenix.home.pocket.PocketStoriesViewHolder
 import org.mozilla.fenix.ui.util.STRING_ONBOARDING_ACCOUNT_SIGN_IN_HEADER
 import org.mozilla.fenix.ui.util.STRING_ONBOARDING_TOOLBAR_PLACEMENT_HEADER
 import org.mozilla.fenix.ui.util.STRING_ONBOARDING_TRACKING_PROTECTION_HEADER
+import kotlin.reflect.KClass
 
 /**
  * Implementation of Robot Pattern for the home screen menu.
@@ -75,14 +86,14 @@ class HomeScreenRobot {
     fun verifyFocusedNavigationToolbar() = assertFocusedNavigationToolbar()
     fun verifyHomeScreen() = assertHomeScreen()
     fun verifyHomePrivateBrowsingButton() = assertHomePrivateBrowsingButton()
-    fun verifyHomeMenu() = assertHomeMenu()
+    fun verifyHomeMenuButton() = assertHomeMenuButton()
     fun verifyTabButton() = assertTabButton()
     fun verifyCollectionsHeader() = assertCollectionsHeader()
     fun verifyNoCollectionsText() = assertNoCollectionsText()
     fun verifyHomeWordmark() = assertHomeWordmark()
-    fun verifyHomeToolbar() = assertHomeToolbar()
     fun verifyHomeComponent() = assertHomeComponent()
     fun verifyDefaultSearchEngine(searchEngine: String) = verifySearchEngineIcon(searchEngine)
+    fun verifyTabCounter(expectedNumberOfTabs: Int) = assertTabCounter(expectedNumberOfTabs.toString())
     fun verifyNoTabsOpened() = assertNoTabsOpened()
     fun verifyKeyboardVisible() = assertKeyboardVisibility(isExpectedToBeVisible = true)
 
@@ -182,12 +193,17 @@ class HomeScreenRobot {
 
     fun verifyJumpBackInSectionIsDisplayed() = assertJumpBackInSectionIsDisplayed()
     fun verifyJumpBackInSectionIsNotDisplayed() = assertJumpBackInSectionIsNotDisplayed()
+    fun verifyJumpBackInItemTitle(itemTitle: String) = assertJumpBackInItemTitle(itemTitle)
     fun verifyRecentlyVisitedSectionIsDisplayed() = assertRecentlyVisitedSectionIsDisplayed()
     fun verifyRecentlyVisitedSectionIsNotDisplayed() = assertRecentlyVisitedSectionIsNotDisplayed()
     fun verifyRecentBookmarksSectionIsDisplayed() = assertRecentBookmarksSectionIsDisplayed()
     fun verifyRecentBookmarksSectionIsNotDisplayed() = assertRecentBookmarksSectionIsNotDisplayed()
     fun verifyPocketSectionIsDisplayed() = assertPocketSectionIsDisplayed()
     fun verifyPocketSectionIsNotDisplayed() = assertPocketSectionIsNotDisplayed()
+    fun verifyRecentlyVisitedItemTitle(itemTitle: String) = assertRecentlyVisitedItemTitle(itemTitle)
+    fun verifyRecentlySavedSectionIsDisplayed() = assertRecentlySavedSectionIsDisplayed()
+    fun verifyRecentlySavedSectionIsNotDisplayed() = assertRecentlySavedSectionIsNotDisplayed()
+    fun verifyRecentlySavedItemTitle(itemTitle: String) = assertRecentlySavedItemTitle(itemTitle)
 
     fun verifyRecentlyVisitedSearchGroupDisplayed(shouldBeDisplayed: Boolean, searchTerm: String, groupSize: Int) {
         // checks if the search group exists in the Recently visited section
@@ -267,6 +283,59 @@ class HomeScreenRobot {
         }
     }
 
+    /**
+     * Verify that a Pocket recommended story exists at all of the indicated [positions].
+     *
+     * @param composeTestRule [ComposeTestRule] allowing to interact with composables on the screen.
+     * @param positions Any number of positions at which to check if a Pocket recommended story exists.
+     * The index of the story checked is obtained by subtracting `1` from each of the [positions] values.
+     */
+    fun verifyPocketRecommendedStoriesItems(composeTestRule: ComposeTestRule, vararg positions: Int) {
+        composeTestRule.onNodeWithTag("pocket.stories").assertIsDisplayed()
+        positions.forEach {
+            composeTestRule.onNodeWithTag("pocket.stories")
+                .onChildAt(it - 1)
+                .assert(hasTestTag("pocket.recommended.story"))
+        }
+    }
+
+    /**
+     * Verify that a Pocket sponsored story exists at all of the indicated [positions].
+     *
+     * @param composeTestRule [ComposeTestRule] allowing to interact with composables on the screen.
+     * @param positions Any number of positions at which to check if a Pocket sponsored story exists.
+     * The index of the story checked is obtained by subtracting `1` from each of the [positions] values.
+     */
+    fun verifyPocketSponsoredStoriesItems(composeTestRule: ComposeTestRule, vararg positions: Int) {
+        composeTestRule.onNodeWithTag("pocket.stories").assertIsDisplayed()
+        positions.forEach {
+            composeTestRule.onNodeWithTag("pocket.stories")
+                .onChildAt(it - 1)
+                .assert(hasTestTag("pocket.sponsored.story"))
+        }
+    }
+
+    /**
+     * Verify that the discover more button exist at the indicated [position].
+     *
+     * @param composeTestRule [ComposeTestRule] allowing to interact with composables on the screen.
+     * @param position The expected position at which the "Discover more" button should be.
+     * The index of the button is obtained by subtracting `1` from each from the [position] value passed.
+     */
+    fun verifyDiscoverMoreStoriesButton(composeTestRule: ComposeTestRule, position: Int) {
+        composeTestRule.onNodeWithTag("pocket.stories")
+            .assertIsDisplayed()
+            .onChildAt(position - 1)
+            .assert(hasTestTag("pocket.discover.more.story"))
+    }
+
+    fun scrollPocketProvokingStories() {
+        onView(withId(R.id.sessionControlRecyclerView))
+            .perform(scrollToHolder(withClass(PocketStoriesViewHolder::class)))
+        UiScrollable(UiSelector().resourceId("pocket.stories")).setAsHorizontalList()
+            .swipeLeft(4)
+    }
+
     fun verifyStoriesByTopic(enabled: Boolean) {
         if (enabled) {
             scrollToElementByText(getStringResource(R.string.pocket_stories_categories_header))
@@ -289,6 +358,15 @@ class HomeScreenRobot {
                 ).waitForExists(waitingTime),
             )
         }
+    }
+
+    fun verifyStoriesByTopicItems() =
+        assertTrue(mDevice.findObject(UiSelector().resourceId("pocket.categories")).childCount > 1)
+
+    fun verifyPoweredByPocket(rule: ComposeTestRule) {
+        homeScreenList().scrollToEnd(LISTS_MAXSWIPES)
+        rule.onNodeWithTag("pocket.header.title", true).assertIsDisplayed()
+        rule.onNodeWithTag("pocket.header.subtitle", true).assertIsDisplayed()
     }
 
     fun verifyCustomizeHomepageButton(enabled: Boolean) {
@@ -619,7 +697,7 @@ private fun assertHomeScreen() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertHomeMenu() = onView(ViewMatchers.withResourceName("menuButton"))
+private fun assertHomeMenuButton() = onView(ViewMatchers.withResourceName("menuButton"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertHomePrivateBrowsingButton() =
@@ -630,16 +708,15 @@ private val homepageWordmark = onView(ViewMatchers.withResourceName("wordmark"))
 private fun assertHomeWordmark() =
     homepageWordmark.check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertHomeToolbar() = onView(ViewMatchers.withResourceName("toolbar"))
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
 private fun assertTabButton() =
     onView(allOf(withId(R.id.tab_button), isDisplayed()))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-private fun assertCollectionsHeader() =
+private fun assertCollectionsHeader() {
+    scrollToElementByText("Collections")
     onView(allOf(withText("Collections")))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+}
 
 private fun assertNoCollectionsText() =
     onView(
@@ -657,6 +734,8 @@ private fun assertHomeComponent() =
 
 private fun assertNoTabsOpened() = onView(withId(R.id.counter_text)).check(matches(withText("0")))
 
+private fun assertTabCounter(expected: String) = onView(withId(R.id.counter_text)).check(matches(withText(expected)))
+
 private fun threeDotButton() = onView(allOf(withId(R.id.menuButton)))
 
 private fun verifySearchEngineIcon(searchEngineIcon: Bitmap, searchEngineName: String) {
@@ -668,9 +747,9 @@ private fun getSearchEngine(searchEngineName: String) =
     appContext.components.core.store.state.search.searchEngines.find { it.name == searchEngineName }
 
 private fun verifySearchEngineIcon(searchEngineName: String) {
-    val ddgSearchEngine = getSearchEngine(searchEngineName)
+    val defaultSearchEngine = getSearchEngine(searchEngineName)
         ?: throw AssertionError("No search engine with name $searchEngineName")
-    verifySearchEngineIcon(ddgSearchEngine.icon, ddgSearchEngine.name)
+    verifySearchEngineIcon(defaultSearchEngine.icon, defaultSearchEngine.name)
 }
 
 // First Run elements
@@ -915,6 +994,54 @@ private fun assertPocketSectionIsDisplayed() = assertTrue(pocketSection().waitFo
 
 private fun assertPocketSectionIsNotDisplayed() = assertFalse(pocketSection().waitForExists(waitingTime))
 
+private fun assertJumpBackInItemTitle(itemTitle: String) {
+    assertTrue(
+        mDevice
+            .findObject(
+                UiSelector()
+                    .resourceId("recent.tab.title")
+                    .textContains(itemTitle),
+            ).waitForExists(waitingTime),
+    )
+}
+
+private fun assertRecentlyVisitedItemTitle(itemTitle: String) {
+    scrollToElementByText("Recently visited")
+    assertTrue(
+        mDevice
+            .findObject(
+                UiSelector()
+                    .resourceId("recent.visits.highlight.title")
+                    .textContains(itemTitle),
+            ).waitForExists(waitingTime),
+    )
+}
+
+private fun assertRecentlySavedSectionIsDisplayed() =
+    assertTrue(recentBookmarksSection().waitForExists(waitingTime))
+
+private fun assertRecentlySavedSectionIsNotDisplayed() =
+    assertFalse(recentBookmarksSection().waitForExists(waitingTimeShort))
+
+private fun assertRecentlySavedItemTitle(itemTitle: String) {
+    homeScreenList().scrollIntoView(
+        mDevice
+            .findObject(
+                UiSelector()
+                    .resourceId("recent.bookmark.title")
+                    .textContains(itemTitle),
+            ),
+    )
+    assertTrue(
+        mDevice
+            .findObject(
+                UiSelector()
+                    .resourceId("recent.bookmark.title")
+                    .textContains(itemTitle),
+            ).waitForExists(waitingTime),
+    )
+}
+
 private fun privateBrowsingButton() = onView(withId(R.id.privateBrowsingButton))
 
 private fun saveTabsToCollectionButton() = onView(withId(R.id.add_tabs_to_collections_button))
@@ -978,3 +1105,18 @@ private val sponsorsAndPrivacyButton =
                 .textContains(getStringResource(R.string.top_sites_menu_sponsor_privacy))
                 .resourceId("$packageName:id/simple_text"),
         )
+
+/**
+ * Custom matcher for a specific [RecyclerView.ViewHolder] class.
+ */
+inline fun<reified T> withClass(clazz: KClass<T>): Matcher<ViewHolder?> where T : ViewHolder {
+    return object : BoundedMatcher<ViewHolder?, T>(T::class.java) {
+        override fun describeTo(description: Description) {
+            description.appendText("view holder with class: $clazz")
+        }
+
+        override fun matchesSafely(item: T): Boolean {
+            return true
+        }
+    }
+}
