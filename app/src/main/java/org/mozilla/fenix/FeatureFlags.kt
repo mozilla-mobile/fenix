@@ -58,11 +58,6 @@ object FeatureFlags {
     val composeTabsTray = Config.channel.isDebug
 
     /**
-     * Enables the wallpaper v2 enhancements.
-     */
-    const val wallpaperV2Enabled = true
-
-    /**
      * Enables the save to PDF feature.
      */
     const val saveToPDF = true

@@ -12,7 +12,6 @@ import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mozilla.components.concept.fetch.Client
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
@@ -46,57 +45,33 @@ class WallpapersUseCases(
     private val downloader = WallpaperDownloader(storageRootDirectory, client)
     private val fileManager = WallpaperFileManager(storageRootDirectory)
     val initialize: InitializeWallpapersUseCase by lazy {
-        if (FeatureFlags.wallpaperV2Enabled) {
-            val metadataFetcher = WallpaperMetadataFetcher(client)
-            val migrationHelper = LegacyWallpaperMigration(
-                storageRootDirectory = storageRootDirectory,
-                settings = context.settings(),
-                selectWallpaper::invoke,
-            )
-            DefaultInitializeWallpaperUseCase(
-                appStore = appStore,
-                downloader = downloader,
-                fileManager = fileManager,
-                metadataFetcher = metadataFetcher,
-                migrationHelper = migrationHelper,
-                settings = context.settings(),
-                currentLocale = currentLocale,
-            )
-        } else {
-            val fileManager = LegacyWallpaperFileManager(storageRootDirectory)
-            val downloader = LegacyWallpaperDownloader(context, client)
-            LegacyInitializeWallpaperUseCase(
-                appStore = appStore,
-                downloader = downloader,
-                fileManager = fileManager,
-                settings = context.settings(),
-                currentLocale = currentLocale,
-            )
-        }
+        val metadataFetcher = WallpaperMetadataFetcher(client)
+        val migrationHelper = LegacyWallpaperMigration(
+            storageRootDirectory = storageRootDirectory,
+            settings = context.settings(),
+            selectWallpaper::invoke,
+        )
+        DefaultInitializeWallpaperUseCase(
+            appStore = appStore,
+            downloader = downloader,
+            fileManager = fileManager,
+            metadataFetcher = metadataFetcher,
+            migrationHelper = migrationHelper,
+            settings = context.settings(),
+            currentLocale = currentLocale,
+        )
     }
     val loadBitmap: LoadBitmapUseCase by lazy {
-        if (FeatureFlags.wallpaperV2Enabled) {
-            DefaultLoadBitmapUseCase(
-                filesDir = context.filesDir,
-                getOrientation = { context.resources.configuration.orientation },
-            )
-        } else {
-            LegacyLoadBitmapUseCase(context)
-        }
+        DefaultLoadBitmapUseCase(
+            filesDir = context.filesDir,
+            getOrientation = { context.resources.configuration.orientation },
+        )
     }
     val loadThumbnail: LoadThumbnailUseCase by lazy {
-        if (FeatureFlags.wallpaperV2Enabled) {
-            DefaultLoadThumbnailUseCase(storageRootDirectory)
-        } else {
-            LegacyLoadThumbnailUseCase(context)
-        }
+        DefaultLoadThumbnailUseCase(storageRootDirectory)
     }
     val selectWallpaper: SelectWallpaperUseCase by lazy {
-        if (FeatureFlags.wallpaperV2Enabled) {
-            DefaultSelectWallpaperUseCase(context.settings(), appStore, fileManager, downloader)
-        } else {
-            LegacySelectWallpaperUseCase(context.settings(), appStore)
-        }
+        DefaultSelectWallpaperUseCase(context.settings(), appStore, fileManager, downloader)
     }
 
     /**
