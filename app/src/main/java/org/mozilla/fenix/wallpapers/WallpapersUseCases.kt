@@ -77,7 +77,6 @@ class WallpapersUseCases(
         suspend operator fun invoke()
     }
 
-    @Suppress("LongParameterList")
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal class DefaultInitializeWallpaperUseCase(
         private val appStore: AppStore,
