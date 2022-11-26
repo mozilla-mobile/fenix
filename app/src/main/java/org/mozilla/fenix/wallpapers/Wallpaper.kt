@@ -125,14 +125,11 @@ data class Wallpaper(
 
         /**
          * Check if a wallpaper name matches the default. Considers empty strings to be default
-         * since that likely means a wallpaper has never been set. The "none" case here is to deal
-         * with a legacy case where the default wallpaper used to be Wallpaper.NONE. See
-         * commit 7a44412, Wallpaper.NONE and Settings.currentWallpaper (legacy name) for context.
+         * since that likely means a wallpaper has never been set.
          *
          * @param name The name to check.
          */
-        fun nameIsDefault(name: String): Boolean =
-            name.isEmpty() || name == defaultName || name.lowercase() == "none"
+        fun nameIsDefault(name: String): Boolean = name.isEmpty() || name == defaultName
     }
 
     /**
