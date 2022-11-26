@@ -44,17 +44,11 @@ class WallpapersUseCases(
     private val fileManager = WallpaperFileManager(storageRootDirectory)
     val initialize: InitializeWallpapersUseCase by lazy {
         val metadataFetcher = WallpaperMetadataFetcher(client)
-        val migrationHelper = LegacyWallpaperMigration(
-            storageRootDirectory = storageRootDirectory,
-            settings = context.settings(),
-            selectWallpaper::invoke,
-        )
         DefaultInitializeWallpaperUseCase(
             appStore = appStore,
             downloader = downloader,
             fileManager = fileManager,
             metadataFetcher = metadataFetcher,
-            migrationHelper = migrationHelper,
             settings = context.settings(),
             currentLocale = currentLocale,
         )
@@ -90,7 +84,6 @@ class WallpapersUseCases(
         private val downloader: WallpaperDownloader,
         private val fileManager: WallpaperFileManager,
         private val metadataFetcher: WallpaperMetadataFetcher,
-        private val migrationHelper: LegacyWallpaperMigration,
         private val settings: Settings,
         private val currentLocale: String,
     ) : InitializeWallpapersUseCase {
@@ -99,19 +92,7 @@ class WallpapersUseCases(
                 appStore.dispatch(AppAction.WallpaperAction.UpdateCurrentWallpaper(it))
             }
 
-            val currentWallpaperName = if (settings.shouldMigrateLegacyWallpaper) {
-                val migratedWallpaperName =
-                    migrationHelper.migrateLegacyWallpaper(settings.currentWallpaperName)
-                settings.currentWallpaperName = migratedWallpaperName
-                settings.shouldMigrateLegacyWallpaper = false
-                migratedWallpaperName
-            } else {
-                settings.currentWallpaperName
-            }
-
-            if (settings.shouldMigrateLegacyWallpaperCardColors) {
-                migrationHelper.migrateExpiredWallpaperCardColors()
-            }
+            val currentWallpaperName = settings.currentWallpaperName
 
             val possibleWallpapers = metadataFetcher.downloadWallpaperList().filter {
                 !it.isExpired() && it.isAvailableInLocale()

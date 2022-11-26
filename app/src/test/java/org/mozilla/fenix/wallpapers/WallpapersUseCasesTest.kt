@@ -8,24 +8,16 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.slot
-import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import mozilla.components.support.test.libstate.ext.waitUntilIdle
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.utils.Settings
-import org.mozilla.fenix.utils.toHexColor
-import org.mozilla.fenix.wallpapers.LegacyWallpaperMigration.Companion.TURNING_RED_PANDA_WALLPAPER_CARD_COLOR_DARK
-import org.mozilla.fenix.wallpapers.LegacyWallpaperMigration.Companion.TURNING_RED_PANDA_WALLPAPER_CARD_COLOR_LIGHT
-import org.mozilla.fenix.wallpapers.LegacyWallpaperMigration.Companion.TURNING_RED_PANDA_WALLPAPER_NAME
-import org.mozilla.fenix.wallpapers.LegacyWallpaperMigration.Companion.TURNING_RED_WALLPAPER_TEXT_COLOR
-import java.io.File
 import java.util.*
 import kotlin.random.Random
 
@@ -43,12 +35,7 @@ class WallpapersUseCasesTest {
         every { currentWallpaperCardColorLight = any() } just Runs
         every { currentWallpaperCardColorDark } returns 0L
         every { currentWallpaperCardColorDark = any() } just Runs
-        every { shouldMigrateLegacyWallpaper } returns false
-        every { shouldMigrateLegacyWallpaper = any() } just Runs
-        every { shouldMigrateLegacyWallpaperCardColors } returns false
-        every { shouldMigrateLegacyWallpaperCardColors = any() } just Runs
     }
-    private lateinit var mockMigrationHelper: LegacyWallpaperMigration
 
     private val mockMetadataFetcher = mockk<WallpaperMetadataFetcher>()
     private val mockDownloader = mockk<WallpaperDownloader> {
@@ -56,20 +43,6 @@ class WallpapersUseCasesTest {
     }
     private val mockFileManager = mockk<WallpaperFileManager> {
         coEvery { clean(any(), any()) } returns mockk()
-    }
-
-    private val mockFolder: File = mockk()
-    private val downloadWallpaper: (Wallpaper) -> Wallpaper.ImageFileState = mockk(relaxed = true)
-
-    @Before
-    fun setup() {
-        mockMigrationHelper = spyk(
-            LegacyWallpaperMigration(
-                storageRootDirectory = mockFolder,
-                settings = mockSettings,
-                downloadWallpaper,
-            ),
-        )
     }
 
     @Test
@@ -87,7 +60,6 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
-            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -111,7 +83,6 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
-            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -139,7 +110,6 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
-            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -167,7 +137,6 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
-            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -178,37 +147,6 @@ class WallpapersUseCasesTest {
         appStore.waitUntilIdle()
         assertTrue(appStore.state.wallpaperState.availableWallpapers.contains(expectedWallpaper))
         assertEquals(expiredWallpaper, appStore.state.wallpaperState.currentWallpaper)
-    }
-
-    @Test
-    fun `GIVEN wallpapers that expired and an expired one is selected and card colors have not been migrated WHEN invoking initialize use case THEN migrate card colors`() = runTest {
-        val fakeRemoteWallpapers = listOf("first", "second", "third").map { name ->
-            makeFakeRemoteWallpaper(TimeRelation.LATER, name)
-        }
-        val expiredWallpaper = makeFakeRemoteWallpaper(TimeRelation.BEFORE, TURNING_RED_PANDA_WALLPAPER_NAME)
-        val allWallpapers = listOf(expiredWallpaper) + fakeRemoteWallpapers
-        every { mockSettings.currentWallpaperName } returns TURNING_RED_PANDA_WALLPAPER_NAME
-        every { mockSettings.shouldMigrateLegacyWallpaperCardColors } returns true
-        every { mockSettings.currentWallpaperTextColor } returns TURNING_RED_WALLPAPER_TEXT_COLOR.toHexColor()
-        coEvery { mockFileManager.lookupExpiredWallpaper(any()) } returns expiredWallpaper
-        coEvery { mockMetadataFetcher.downloadWallpaperList() } returns allWallpapers
-        coEvery { mockDownloader.downloadThumbnail(any()) } returns Wallpaper.ImageFileState.Downloaded
-
-        WallpapersUseCases.DefaultInitializeWallpaperUseCase(
-            appStore,
-            mockDownloader,
-            mockFileManager,
-            mockMetadataFetcher,
-            mockMigrationHelper,
-            mockSettings,
-            "en-US",
-        ).invoke()
-
-        appStore.waitUntilIdle()
-
-        verify { mockMigrationHelper.migrateExpiredWallpaperCardColors() }
-        verify { mockSettings.currentWallpaperCardColorLight = TURNING_RED_PANDA_WALLPAPER_CARD_COLOR_LIGHT.toHexColor() }
-        verify { mockSettings.currentWallpaperCardColorDark = TURNING_RED_PANDA_WALLPAPER_CARD_COLOR_DARK.toHexColor() }
     }
 
     @Test
@@ -226,7 +164,6 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
-            mockMigrationHelper,
             mockSettings,
             locale,
         ).invoke()
@@ -251,7 +188,6 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
-            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -276,7 +212,6 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
-            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -309,7 +244,6 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
-            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -334,7 +268,6 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
-            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
@@ -360,7 +293,6 @@ class WallpapersUseCasesTest {
             mockDownloader,
             mockFileManager,
             mockMetadataFetcher,
-            mockMigrationHelper,
             mockSettings,
             "en-US",
         ).invoke()
