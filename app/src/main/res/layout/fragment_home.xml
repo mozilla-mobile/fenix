@@ -110,6 +110,14 @@
         tools:context=".home.HomeFragment">
 
         <View
+            android:id="@+id/search_selector_anchor"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <View
             android:id="@+id/bottom_bar"
             android:layout_width="0dp"
             android:layout_height="56dp"

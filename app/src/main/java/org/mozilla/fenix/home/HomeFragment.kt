@@ -360,7 +360,12 @@ class HomeFragment : Fragment() {
                 }
 
                 UnifiedSearch.searchMenuTapped.record(NoExtras())
-                searchSelectorMenu.menuController.show(anchor = it, orientation = orientation, forceOrientation = true)
+                binding.searchSelectorAnchor.layoutParams
+                searchSelectorMenu.menuController.show(
+                    anchor = binding.searchSelectorAnchor,
+                    orientation = orientation,
+                    forceOrientation = true,
+                )
             }
         }
 
@@ -527,6 +532,14 @@ class HomeFragment : Fragment() {
                 binding.homeAppBar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                     topMargin =
                         resources.getDimensionPixelSize(R.dimen.home_fragment_top_toolbar_header_margin)
+                }
+
+                // Align anchor for search selector menu in order to mimic the preferred padding values
+                ConstraintSet().apply {
+                    clone(binding.toolbarLayout)
+                    clear(binding.searchSelectorAnchor.id, BOTTOM)
+                    connect(binding.searchSelectorAnchor.id, TOP, PARENT_ID, TOP)
+                    applyTo(binding.toolbarLayout)
                 }
             }
             ToolbarPosition.BOTTOM -> {
