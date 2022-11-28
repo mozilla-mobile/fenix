@@ -538,7 +538,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     var shouldUseCookieBanner by lazyFeatureFlagPreference(
-        appContext.getPreferenceKey(R.string.pref_key_cookie_banner),
+        appContext.getPreferenceKey(R.string.pref_key_cookie_banner_v1),
         featureFlag = true,
         default = { cookieBannersSection[CookieBannersSection.FEATURE_SETTING_VALUE] == true },
     )
@@ -1443,5 +1443,15 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var uriLoadGrowthLastSent by longPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_growth_uri_load_last_sent),
         default = 0,
+    )
+
+    var firstWeekSeriesGrowthSent by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_first_week_series_sent),
+        default = false,
+    )
+
+    var firstWeekDaysOfUseGrowthData by stringSetPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_first_week_days_of_use),
+        default = setOf(),
     )
 }

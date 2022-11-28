@@ -258,7 +258,10 @@
     <string name="search_settings_menu_item">Sykynstellingen</string>
 
     <!-- Header text for the search selector menu -->
-    <string name="search_header_menu_item">Diskear sykje yn:</string>
+    <string moz:RemovedIn="109" name="search_header_menu_item" tools:ignore="UnusedResources">Diskear sykje yn:</string>
+
+    <!-- Header text for the search selector menu -->
+    <string name="search_header_menu_item_2">Diskear sykje yn:</string>
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
@@ -333,6 +336,14 @@
     <string name="preferences_add_private_browsing_shortcut">Fluchkeppeling nei priveenavigaasje tafoegje</string>
     <!-- Preference for enabling "HTTPS-Only" mode -->
     <string name="preferences_https_only_title">Allinnich-HTTPS-modus</string>
+
+    <!-- Preference for removing cookie/consent banners from sites automatically. See reduce_cookie_banner_summary for additional context. -->
+    <string name="preferences_cookie_banner_reduction">Reduksje fan cookiebanners</string>
+    <!-- Preference for rejecting or removing as many cookie/consent banners as possible on sites. See reduce_cookie_banner_summary for additional context. -->
+    <string name="reduce_cookie_banner_option">Cookiebanners redusearje</string>
+    <!-- Summary for the preference for rejecting all cookies whenever possible. -->
+    <string name="reduce_cookie_banner_summary">Firefox probearret automatysk cookie-oanfragen op cookiebanners te wegerjen. As der gjin wegeringsopsje beskikber is, akseptearret Firefox mooglik alle cookies om de banner te sluten.</string>
+
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Probearret foar in bettere befeiliging automatysk mei it HTTPS-fersiferingsprotokol ferbining te meitsjen mei websites.</string>
     <!-- Summary of tracking protection preference if tracking protection is set to on -->
