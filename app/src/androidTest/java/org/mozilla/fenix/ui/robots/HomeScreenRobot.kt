@@ -8,9 +8,15 @@ package org.mozilla.fenix.ui.robots
 
 import android.graphics.Bitmap
 import android.widget.EditText
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotSelected
+import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.onChildAt
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.recyclerview.widget.RecyclerView
@@ -75,12 +81,11 @@ class HomeScreenRobot {
     fun verifyFocusedNavigationToolbar() = assertFocusedNavigationToolbar()
     fun verifyHomeScreen() = assertHomeScreen()
     fun verifyHomePrivateBrowsingButton() = assertHomePrivateBrowsingButton()
-    fun verifyHomeMenu() = assertHomeMenu()
+    fun verifyHomeMenuButton() = assertHomeMenuButton()
     fun verifyTabButton() = assertTabButton()
     fun verifyCollectionsHeader() = assertCollectionsHeader()
     fun verifyNoCollectionsText() = assertNoCollectionsText()
     fun verifyHomeWordmark() = assertHomeWordmark()
-    fun verifyHomeToolbar() = assertHomeToolbar()
     fun verifyHomeComponent() = assertHomeComponent()
     fun verifyDefaultSearchEngine(searchEngine: String) = verifySearchEngineIcon(searchEngine)
     fun verifyNoTabsOpened() = assertNoTabsOpened()
@@ -182,6 +187,9 @@ class HomeScreenRobot {
 
     fun verifyJumpBackInSectionIsDisplayed() = assertJumpBackInSectionIsDisplayed()
     fun verifyJumpBackInSectionIsNotDisplayed() = assertJumpBackInSectionIsNotDisplayed()
+    fun verifyJumpBackInItemTitle(itemTitle: String) = assertJumpBackInItemTitle(itemTitle)
+    fun verifyJumpBackInItemWithUrl(itemUrl: String) = assertJumpBackInItemWithUrl(itemUrl)
+    fun verifyJumpBackInShowAllButton() = assertJumpBackInShowAllButton()
     fun verifyRecentlyVisitedSectionIsDisplayed() = assertRecentlyVisitedSectionIsDisplayed()
     fun verifyRecentlyVisitedSectionIsNotDisplayed() = assertRecentlyVisitedSectionIsNotDisplayed()
     fun verifyRecentBookmarksSectionIsDisplayed() = assertRecentBookmarksSectionIsDisplayed()
@@ -267,6 +275,39 @@ class HomeScreenRobot {
         }
     }
 
+    fun scrollToPocketProvokingStories() =
+        scrollToElementByText(getStringResource(R.string.pocket_stories_categories_header))
+
+    fun swipePocketProvokingStories() {
+        UiScrollable(UiSelector().resourceId("pocket.stories")).setAsHorizontalList()
+            .swipeLeft(3)
+    }
+
+    fun verifyPocketRecommendedStoriesItems(composeTestRule: ComposeTestRule, vararg positions: Int) {
+        composeTestRule.onNodeWithTag("pocket.stories").assertIsDisplayed()
+        positions.forEach {
+            composeTestRule.onNodeWithTag("pocket.stories")
+                .onChildAt(it - 1)
+                .assert(hasTestTag("pocket.recommended.story"))
+        }
+    }
+
+    fun verifyPocketSponsoredStoriesItems(composeTestRule: ComposeTestRule, vararg positions: Int) {
+        composeTestRule.onNodeWithTag("pocket.stories").assertIsDisplayed()
+        positions.forEach {
+            composeTestRule.onNodeWithTag("pocket.stories")
+                .onChildAt(it - 1)
+                .assert(hasTestTag("pocket.sponsored.story"))
+        }
+    }
+
+    fun verifyDiscoverMoreStoriesButton(composeTestRule: ComposeTestRule, position: Int) {
+        composeTestRule.onNodeWithTag("pocket.stories")
+            .assertIsDisplayed()
+            .onChildAt(position - 1)
+            .assert(hasTestTag("pocket.discover.more.story"))
+    }
+
     fun verifyStoriesByTopic(enabled: Boolean) {
         if (enabled) {
             scrollToElementByText(getStringResource(R.string.pocket_stories_categories_header))
@@ -289,6 +330,30 @@ class HomeScreenRobot {
                 ).waitForExists(waitingTime),
             )
         }
+    }
+
+    fun verifyStoriesByTopicItems() =
+        assertTrue(mDevice.findObject(UiSelector().resourceId("pocket.categories")).childCount > 1)
+
+    fun verifyStoriesByTopicItemState(composeTestRule: ComposeTestRule, isSelected: Boolean, position: Int) {
+        homeScreenList().scrollIntoView(mDevice.findObject(UiSelector().resourceId("pocket.header")))
+
+        if (isSelected) {
+            composeTestRule.onNodeWithTag("pocket.categories").assertIsDisplayed()
+            storyByTopicItem(composeTestRule, position).assertIsSelected()
+        } else {
+            composeTestRule.onNodeWithTag("pocket.categories").assertIsDisplayed()
+            storyByTopicItem(composeTestRule, position).assertIsNotSelected()
+        }
+    }
+
+    fun clickStoriesByTopicItem(composeTestRule: ComposeTestRule, position: Int) =
+        storyByTopicItem(composeTestRule, position).performClick()
+
+    fun verifyPoweredByPocket(rule: ComposeTestRule) {
+        homeScreenList().scrollIntoView(mDevice.findObject(UiSelector().resourceId("pocket.header")))
+        rule.onNodeWithTag("pocket.header.title", true).assertIsDisplayed()
+        rule.onNodeWithTag("pocket.header.subtitle", true).assertIsDisplayed()
     }
 
     fun verifyCustomizeHomepageButton(enabled: Boolean) {
@@ -332,6 +397,20 @@ class HomeScreenRobot {
                 ),
             ).waitForExists(waitingTime),
         )
+    }
+
+    fun getProvokingStoryPublisher(position: Int): String {
+        val publisher = mDevice.findObject(
+            UiSelector()
+                .className("android.view.View")
+                .index(position - 1),
+        ).getChild(
+            UiSelector()
+                .className("android.widget.TextView")
+                .index(1),
+        ).text
+
+        return publisher
     }
 
     class Transition {
@@ -582,6 +661,63 @@ class HomeScreenRobot {
             SettingsSubMenuHomepageRobot().interact()
             return SettingsSubMenuHomepageRobot.Transition()
         }
+
+        fun clickJumpBackInShowAllButton(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
+            mDevice
+                .findObject(
+                    UiSelector()
+                        .textContains(getStringResource(R.string.recent_tabs_show_all)),
+                ).clickAndWaitForNewWindow(waitingTime)
+
+            TabDrawerRobot().interact()
+            return TabDrawerRobot.Transition()
+        }
+
+        fun clickJumpBackInItemWithTitle(itemTitle: String, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            mDevice
+                .findObject(
+                    UiSelector()
+                        .resourceId("recent.tab.title")
+                        .textContains(itemTitle),
+                ).clickAndWaitForNewWindow(waitingTime)
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun clickPocketStoryItem(publisher: String, position: Int, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            mDevice.findObject(
+                UiSelector()
+                    .className("android.view.View")
+                    .index(position - 1),
+            ).getChild(
+                UiSelector()
+                    .className("android.widget.TextView")
+                    .index(1)
+                    .textContains(publisher),
+            ).clickAndWaitForNewWindow(waitingTime)
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun clickPocketDiscoverMoreButton(composeTestRule: ComposeTestRule, position: Int, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            composeTestRule.onNodeWithTag("pocket.stories")
+                .assertIsDisplayed()
+                .onChildAt(position - 1)
+                .assert(hasTestTag("pocket.discover.more.story"))
+                .performClick()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun clickPocketLearnMoreLink(composeTestRule: ComposeTestRule, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            composeTestRule.onNodeWithTag("pocket.header.subtitle", true).performClick()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
     }
 }
 
@@ -619,7 +755,7 @@ private fun assertHomeScreen() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertHomeMenu() = onView(ViewMatchers.withResourceName("menuButton"))
+private fun assertHomeMenuButton() = onView(ViewMatchers.withResourceName("menuButton"))
     .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertHomePrivateBrowsingButton() =
@@ -629,9 +765,6 @@ private fun assertHomePrivateBrowsingButton() =
 private val homepageWordmark = onView(ViewMatchers.withResourceName("wordmark"))
 private fun assertHomeWordmark() =
     homepageWordmark.check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-private fun assertHomeToolbar() = onView(ViewMatchers.withResourceName("toolbar"))
-    .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertTabButton() =
     onView(allOf(withId(R.id.tab_button), isDisplayed()))
@@ -668,9 +801,9 @@ private fun getSearchEngine(searchEngineName: String) =
     appContext.components.core.store.state.search.searchEngines.find { it.name == searchEngineName }
 
 private fun verifySearchEngineIcon(searchEngineName: String) {
-    val ddgSearchEngine = getSearchEngine(searchEngineName)
+    val defaultSearchEngine = getSearchEngine(searchEngineName)
         ?: throw AssertionError("No search engine with name $searchEngineName")
-    verifySearchEngineIcon(ddgSearchEngine.icon, ddgSearchEngine.name)
+    verifySearchEngineIcon(defaultSearchEngine.icon, defaultSearchEngine.name)
 }
 
 // First Run elements
@@ -901,6 +1034,35 @@ private fun assertJumpBackInSectionIsDisplayed() = assertTrue(jumpBackInSection(
 
 private fun assertJumpBackInSectionIsNotDisplayed() = assertFalse(jumpBackInSection().waitForExists(waitingTimeShort))
 
+private fun assertJumpBackInItemTitle(itemTitle: String) =
+    assertTrue(
+        mDevice
+            .findObject(
+                UiSelector()
+                    .resourceId("recent.tab.title")
+                    .textContains(itemTitle),
+            ).waitForExists(waitingTime),
+    )
+
+private fun assertJumpBackInItemWithUrl(itemUrl: String) =
+    assertTrue(
+        mDevice
+            .findObject(
+                UiSelector()
+                    .resourceId("recent.tab.url")
+                    .textContains(itemUrl),
+            ).waitForExists(waitingTime),
+    )
+
+private fun assertJumpBackInShowAllButton() =
+    assertTrue(
+        mDevice
+            .findObject(
+                UiSelector()
+                    .textContains(getStringResource(R.string.recent_tabs_show_all)),
+            ).waitForExists(waitingTime),
+    )
+
 private fun assertRecentlyVisitedSectionIsDisplayed() = assertTrue(recentlyVisitedSection().waitForExists(waitingTime))
 
 private fun assertRecentlyVisitedSectionIsNotDisplayed() = assertFalse(recentlyVisitedSection().waitForExists(waitingTime))
@@ -948,6 +1110,9 @@ private fun sponsoredShortcut(sponsoredShortcutTitle: String) =
             .res("$packageName:id/top_site_title")
             .textContains(sponsoredShortcutTitle),
     )
+
+private fun storyByTopicItem(composeTestRule: ComposeTestRule, position: Int) =
+    composeTestRule.onNodeWithTag("pocket.categories").onChildAt(position - 1)
 
 val deleteFromHistory =
     onView(
