@@ -14,13 +14,13 @@ object Versions {
     const val android_gradle_plugin = "7.3.0"
     const val android_lint_api = "30.3.0"
 
-    const val sentry = "6.6.0"
+    const val sentry = "6.8.0"
     const val leakcanary = "2.10"
     const val osslicenses_plugin = "0.10.4"
     const val detekt = "1.19.0"
     const val jna = "5.12.1"
 
-    const val androidx_compose = "1.2.1"
+    const val androidx_compose = "1.3.1"
     const val androidx_compose_compiler = "1.3.2"
     const val androidx_appcompat = "1.3.0"
     const val androidx_benchmark = "1.0.0"

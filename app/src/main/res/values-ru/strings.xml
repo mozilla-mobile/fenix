@@ -185,7 +185,7 @@
     <!-- Browser menu button that opens a user's library -->
     <string name="browser_menu_library">Библиотека</string>
     <!-- Browser menu toggle that requests a desktop site -->
-    <string name="browser_menu_desktop_site">Вид для компьютеров</string>
+    <string name="browser_menu_desktop_site">Вид для ПК</string>
     <!-- Browser menu toggle that adds a shortcut to the site on the device home screen. -->
     <string name="browser_menu_add_to_homescreen">На домашний экран</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
@@ -265,7 +265,10 @@
     <string name="search_settings_menu_item">Настройки поиска</string>
 
     <!-- Header text for the search selector menu -->
-    <string name="search_header_menu_item">В этот раз искать:</string>
+    <string moz:RemovedIn="109" name="search_header_menu_item" tools:ignore="UnusedResources">В этот раз искать:</string>
+
+    <!-- Header text for the search selector menu -->
+    <string name="search_header_menu_item_2">В этот раз искать в:</string>
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
@@ -341,6 +344,15 @@
     <string name="preferences_add_private_browsing_shortcut">Добавить ярлык приватного просмотра</string>
     <!-- Preference for enabling "HTTPS-Only" mode -->
     <string name="preferences_https_only_title">Режим «Только HTTPS»</string>
+
+    <!-- Preference for removing cookie/consent banners from sites automatically. See reduce_cookie_banner_summary for additional context. -->
+    <string name="preferences_cookie_banner_reduction">Снижение числа уведомлений о куках</string>
+
+    <!-- Preference for rejecting or removing as many cookie/consent banners as possible on sites. See reduce_cookie_banner_summary for additional context. -->
+    <string name="reduce_cookie_banner_option">Снижать число уведомлений о куках</string>
+    <!-- Summary for the preference for rejecting all cookies whenever possible. -->
+    <string name="reduce_cookie_banner_summary">Firefox автоматически пытается отклонить запросы на установку кук при показе уведомлений о них. Если вариант отклонения недоступен, Firefox может принять все куки, чтобы скрыть уведомление.</string>
+
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Автоматически пытаться подключиться к сайтам через протокол шифрования HTTPS для повышения безопасности.</string>
     <!-- Summary of tracking protection preference if tracking protection is set to on -->
@@ -575,7 +587,7 @@
 
     <!-- Turn On Sync Preferences -->
     <!-- Header of the Sync and save your data preference view -->
-    <string name="preferences_sync_2">Синхронизация и сохранение</string>
+    <string name="preferences_sync_2">Синхронизация</string>
     <!-- Preference for reconnecting to FxA sync -->
     <string name="preferences_sync_sign_in_to_reconnect">Войти, чтобы подключиться снова</string>
     <!-- Preference for removing FxA account -->
