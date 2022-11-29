@@ -11,6 +11,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
@@ -153,6 +154,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return object : Dialog(requireContext(), this.theme) {
+            @Deprecated("Deprecated in Java")
             override fun onBackPressed() {
                 this@SearchDialogFragment.onBackPressed()
             }
@@ -177,6 +179,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 tabId = args.sessionId,
                 pastedText = args.pastedText,
                 searchAccessPoint = args.searchAccessPoint,
+                searchEngine = requireComponents.core.store.state.search.searchEngines.firstOrNull {
+                    it.id == args.searchEngine
+                },
             ),
         )
 
@@ -295,7 +300,12 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             flow.map { state -> state.search }
                 .ifChanged()
                 .collect { search ->
-                    store.dispatch(SearchFragmentAction.UpdateSearchState(search))
+                    store.dispatch(
+                        SearchFragmentAction.UpdateSearchState(
+                            search,
+                            showUnifiedSearchFeature,
+                        ),
+                    )
 
                     updateSearchSelectorMenu(search.searchEngines)
                 }
@@ -512,6 +522,12 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     override fun onResume() {
         super.onResume()
 
+        qrFeature.get()?.let {
+            if (it.isScanInProgress) {
+                it.scan(binding.searchWrapper.id)
+            }
+        }
+
         view?.post {
             // We delay querying the clipboard by posting this code to the main thread message queue,
             // because ClipboardManager will return null if the does app not have input focus yet.
@@ -655,7 +671,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         when (requestCode) {
             REQUEST_CODE_CAMERA_PERMISSIONS -> qrFeature.withFeature {
                 it.onPermissionsResult(permissions, grantResults)
-                resetFocus()
+                if (grantResults.contains(PackageManager.PERMISSION_DENIED)) {
+                    resetFocus()
+                }
                 requireContext().settings().setCameraPermissionNeededState = false
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -727,9 +745,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 ) {
                     interactor.onMenuItemTapped(SearchSelectorMenu.Item.SearchEngine(it))
                 }
-            } + searchSelectorMenu.menuItems()
+            }
 
-        searchSelectorMenu.menuController.submitList(searchEngineList)
+        searchSelectorMenu.menuController.submitList(searchSelectorMenu.menuItems(searchEngineList))
         toolbarView.view.invalidateActions()
     }
 

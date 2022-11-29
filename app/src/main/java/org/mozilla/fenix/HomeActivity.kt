@@ -25,7 +25,7 @@ import android.view.WindowManager.LayoutParams.FLAG_SECURE
 import androidx.annotation.CallSuper
 import androidx.annotation.IdRes
 import androidx.annotation.VisibleForTesting
-import androidx.annotation.VisibleForTesting.PROTECTED
+import androidx.annotation.VisibleForTesting.Companion.PROTECTED
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
@@ -78,6 +78,7 @@ import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.databinding.ActivityHomeBinding
 import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExceptionsFragmentDirections
@@ -102,6 +103,7 @@ import org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragmentDir
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
 import org.mozilla.fenix.onboarding.DefaultBrowserNotificationWorker
 import org.mozilla.fenix.onboarding.FenixOnboarding
+import org.mozilla.fenix.onboarding.ReEngagementNotificationWorker
 import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.perf.Performance
@@ -274,7 +276,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             val safeIntent = intent?.toSafeIntent()
             safeIntent
                 ?.let(::getIntentSource)
-                ?.also { Events.appOpened.record(Events.AppOpenedExtra(it)) }
+                ?.also {
+                    Events.appOpened.record(Events.AppOpenedExtra(it))
+                    // This will record an event in Nimbus' internal event store. Used for behavioral targeting
+                    components.analytics.experiments.recordEvent("app_opened")
+                }
         }
         supportActionBar?.hide()
 
@@ -370,7 +376,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 Events.defaultBrowserChanged.record(NoExtras())
             }
 
+            // We attempt to send metrics onResume so that the start of new user sessions is not
+            // missed. Previously, this was done in FenixApplication::onCreate, but it was decided
+            // that we should not rely on the application being killed between user sessions.
+            components.appStore.dispatch(AppAction.ResumedMetricsAction)
+
             DefaultBrowserNotificationWorker.setDefaultBrowserNotificationIfNeeded(applicationContext)
+            ReEngagementNotificationWorker.setReEngagementNotificationIfNeeded(applicationContext)
         }
     }
 
@@ -612,7 +624,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 return
             }
         }
-        super.onBackPressed()
+        super.getOnBackPressedDispatcher().onBackPressed()
     }
 
     @Suppress("DEPRECATION")

@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.mozilla.fenix.R
 import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.theme.Theme
 
 /**
  * Base component for buttons.
@@ -38,7 +37,7 @@ import org.mozilla.fenix.theme.Theme
  * @param onClick Invoked when the user clicks on the button.
  */
 @Composable
-fun Button(
+private fun Button(
     text: String,
     textColor: Color,
     backgroundColor: Color,
@@ -79,19 +78,23 @@ fun Button(
  * Primary button.
  *
  * @param text The button text to be displayed.
+ * @param textColor [Color] to apply to the button text.
+ * @param backgroundColor The background [Color] of the button.
  * @param icon Optional [Painter] used to display an [Icon] before the button text.
  * @param onClick Invoked when the user clicks on the button.
  */
 @Composable
 fun PrimaryButton(
     text: String,
+    textColor: Color = FirefoxTheme.colors.textActionPrimary,
+    backgroundColor: Color = FirefoxTheme.colors.actionPrimary,
     icon: Painter? = null,
     onClick: () -> Unit,
 ) {
     Button(
         text = text,
-        textColor = FirefoxTheme.colors.textActionPrimary,
-        backgroundColor = FirefoxTheme.colors.actionPrimary,
+        textColor = textColor,
+        backgroundColor = backgroundColor,
         icon = icon,
         tint = FirefoxTheme.colors.iconActionPrimary,
         onClick = onClick,
@@ -102,19 +105,23 @@ fun PrimaryButton(
  * Secondary button.
  *
  * @param text The button text to be displayed.
+ * @param textColor [Color] to apply to the button text.
+ * @param backgroundColor The background [Color] of the button.
  * @param icon Optional [Painter] used to display an [Icon] before the button text.
  * @param onClick Invoked when the user clicks on the button.
  */
 @Composable
 fun SecondaryButton(
     text: String,
+    textColor: Color = FirefoxTheme.colors.textActionSecondary,
+    backgroundColor: Color = FirefoxTheme.colors.actionSecondary,
     icon: Painter? = null,
     onClick: () -> Unit,
 ) {
     Button(
         text = text,
-        textColor = FirefoxTheme.colors.textActionSecondary,
-        backgroundColor = FirefoxTheme.colors.actionSecondary,
+        textColor = textColor,
+        backgroundColor = backgroundColor,
         icon = icon,
         tint = FirefoxTheme.colors.iconActionSecondary,
         onClick = onClick,
@@ -125,19 +132,23 @@ fun SecondaryButton(
  * Tertiary button.
  *
  * @param text The button text to be displayed.
+ * @param textColor [Color] to apply to the button text.
+ * @param backgroundColor The background [Color] of the button.
  * @param icon Optional [Painter] used to display an [Icon] before the button text.
  * @param onClick Invoked when the user clicks on the button.
  */
 @Composable
 fun TertiaryButton(
     text: String,
+    textColor: Color = FirefoxTheme.colors.textActionTertiary,
+    backgroundColor: Color = FirefoxTheme.colors.actionTertiary,
     icon: Painter? = null,
     onClick: () -> Unit,
 ) {
     Button(
         text = text,
-        textColor = FirefoxTheme.colors.textActionTertiary,
-        backgroundColor = FirefoxTheme.colors.actionTertiary,
+        textColor = textColor,
+        backgroundColor = backgroundColor,
         icon = icon,
         tint = FirefoxTheme.colors.iconActionTertiary,
         onClick = onClick,
@@ -148,19 +159,23 @@ fun TertiaryButton(
  * Destructive button.
  *
  * @param text The button text to be displayed.
+ * @param textColor [Color] to apply to the button text.
+ * @param backgroundColor The background [Color] of the button.
  * @param icon Optional [Painter] used to display an [Icon] before the button text.
  * @param onClick Invoked when the user clicks on the button.
  */
 @Composable
 fun DestructiveButton(
     text: String,
+    textColor: Color = FirefoxTheme.colors.textWarningButton,
+    backgroundColor: Color = FirefoxTheme.colors.actionSecondary,
     icon: Painter? = null,
     onClick: () -> Unit,
 ) {
     Button(
         text = text,
-        textColor = FirefoxTheme.colors.textWarningButton,
-        backgroundColor = FirefoxTheme.colors.actionSecondary,
+        textColor = textColor,
+        backgroundColor = backgroundColor,
         icon = icon,
         tint = FirefoxTheme.colors.iconWarningButton,
         onClick = onClick,
@@ -171,7 +186,7 @@ fun DestructiveButton(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 private fun ButtonPreview() {
-    FirefoxTheme(theme = Theme.getTheme()) {
+    FirefoxTheme {
         Column(
             modifier = Modifier
                 .background(FirefoxTheme.colors.layer1)

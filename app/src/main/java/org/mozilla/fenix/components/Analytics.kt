@@ -10,10 +10,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import mozilla.components.lib.crash.CrashReporter
+import mozilla.components.lib.crash.sentry.SentryService
 import mozilla.components.lib.crash.service.CrashReporterService
 import mozilla.components.lib.crash.service.GleanCrashReporterService
 import mozilla.components.lib.crash.service.MozillaSocorroService
-import mozilla.components.lib.crash.sentry.SentryService
 import mozilla.components.service.nimbus.NimbusApi
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
@@ -22,15 +22,17 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ReleaseChannel
 import org.mozilla.fenix.components.metrics.AdjustMetricsService
+import org.mozilla.fenix.components.metrics.DefaultMetricsStorage
 import org.mozilla.fenix.components.metrics.GleanMetricsService
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.experiments.createNimbus
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.gleanplumb.CustomAttributeProvider
-import org.mozilla.fenix.gleanplumb.OnDiskMessageMetadataStorage
 import org.mozilla.fenix.gleanplumb.NimbusMessagingStorage
+import org.mozilla.fenix.gleanplumb.OnDiskMessageMetadataStorage
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.perf.lazyMonitored
+import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_BUILDID
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_VENDOR
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_VERSION
@@ -119,7 +121,15 @@ class Analytics(
         MetricController.create(
             listOf(
                 GleanMetricsService(context),
-                AdjustMetricsService(context as Application),
+                AdjustMetricsService(
+                    application = context as Application,
+                    storage = DefaultMetricsStorage(
+                        context = context,
+                        settings = context.settings(),
+                        checkDefaultBrowser = { BrowsersCache.all(context).isDefaultBrowser },
+                    ),
+                    crashReporter = crashReporter,
+                ),
             ),
             isDataTelemetryEnabled = { context.settings().isTelemetryEnabled },
             isMarketingDataTelemetryEnabled = { context.settings().isMarketingTelemetryEnabled },

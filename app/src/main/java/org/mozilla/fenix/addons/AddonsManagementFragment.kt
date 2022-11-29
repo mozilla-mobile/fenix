@@ -35,9 +35,9 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.databinding.FragmentAddOnsManagementBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
+import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
-import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.theme.ThemeManager
 import java.lang.ref.WeakReference
 import java.util.concurrent.CancellationException
@@ -334,17 +334,22 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
     }
 
     private fun announceForAccessibility(announcementText: CharSequence) {
-        val event = AccessibilityEvent.obtain(
-            AccessibilityEvent.TYPE_ANNOUNCEMENT,
-        )
+        val event = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            AccessibilityEvent(AccessibilityEvent.TYPE_ANNOUNCEMENT)
+        } else {
+            @Suppress("DEPRECATION")
+            AccessibilityEvent.obtain(AccessibilityEvent.TYPE_ANNOUNCEMENT)
+        }
 
         binding?.addonProgressOverlay?.overlayCardView?.onInitializeAccessibilityEvent(event)
         event.text.add(announcementText)
         event.contentDescription = null
-        binding?.addonProgressOverlay?.overlayCardView?.parent?.requestSendAccessibilityEvent(
-            binding?.addonProgressOverlay?.overlayCardView,
-            event,
-        )
+        binding?.addonProgressOverlay?.overlayCardView?.let {
+            it.parent?.requestSendAccessibilityEvent(
+                it,
+                event,
+            )
+        }
     }
 
     companion object {

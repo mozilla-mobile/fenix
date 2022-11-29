@@ -14,13 +14,13 @@ object Versions {
     const val android_gradle_plugin = "7.3.0"
     const val android_lint_api = "30.3.0"
 
-    const val sentry = "6.4.2"
-    const val leakcanary = "2.9.1"
+    const val sentry = "6.8.0"
+    const val leakcanary = "2.10"
     const val osslicenses_plugin = "0.10.4"
     const val detekt = "1.19.0"
     const val jna = "5.12.1"
 
-    const val androidx_compose = "1.2.1"
+    const val androidx_compose = "1.3.1"
     const val androidx_compose_compiler = "1.3.2"
     const val androidx_appcompat = "1.3.0"
     const val androidx_benchmark = "1.0.0"
@@ -29,7 +29,7 @@ object Versions {
     const val androidx_constraint_layout = "2.0.4"
     const val androidx_preference = "1.1.1"
     const val androidx_legacy = "1.0.0"
-    const val androidx_annotation = "1.1.0"
+    const val androidx_annotation = "1.5.0"
     const val androidx_lifecycle = "2.5.1"
     const val androidx_fragment = "1.5.1"
     const val androidx_navigation = "2.5.1"
@@ -45,7 +45,7 @@ object Versions {
 
     const val mozilla_android_components = AndroidComponents.VERSION
 
-    const val adjust = "4.32.0"
+    const val adjust = "4.33.0"
     const val installreferrer = "2.2"
 
     const val junit = "5.5.2"
@@ -227,6 +227,7 @@ object Deps {
 
     const val junit = "junit:junit:${Versions.junit}"
     const val mockk = "io.mockk:mockk:${Versions.mockk}"
+    const val mockk_android = "io.mockk:mockk-android:${Versions.mockk}"
 
     // --- START AndroidX test dependencies --- //
     // N.B.: the versions of these dependencies appear to be pinned together. To avoid bugs, they
@@ -234,11 +235,11 @@ object Deps {
     //   https://developer.android.com/jetpack/androidx/releases/test
     // For the full IDs of these test dependencies, see:
     //   https://developer.android.com/training/testing/set-up-project#android-test-dependencies
-    private const val androidx_test_shared_version = "1.4.0" // this appears to be shared with many deps.
-    private const val androidx_test_junit = "1.1.3"
-    private const val androidx_test_orchestrator = "1.4.1"
+    private const val androidx_test_shared_version = "1.5.0" // this appears to be shared with many deps.
+    private const val androidx_test_junit = "1.1.4"
+    private const val androidx_test_orchestrator = "1.4.2"
     const val androidx_test_core = "androidx.test:core:$androidx_test_shared_version"
-    private const val androidx_espresso_version = "3.4.0"
+    private const val androidx_espresso_version = "3.5.0"
     const val espresso_core = "androidx.test.espresso:espresso-core:$androidx_espresso_version"
     const val espresso_contrib = "androidx.test.espresso:espresso-contrib:$androidx_espresso_version"
     const val espresso_idling_resources = "androidx.test.espresso:espresso-idling-resource:$androidx_espresso_version"
@@ -281,14 +282,5 @@ object RepoMatching {
     const val mozilla = "org\\.mozilla\\..*"
     const val androidx = "androidx\\..*"
     const val comAndroid = "com\\.android.*"
-    const val comGoogleFirebase = "com\\.google\\.firebase"
-    const val comGoogleTesting = "com\\.google\\.testing\\..*"
-
-    /**
-     * A matcher for com.google.android.* with one exception: the espresso-contrib dependency includes the
-     * accessibility-test-framework dependency, which is not available in the google repo. As such, we must
-     * explicitly exclude it from this regex so it can be found on Maven Central. Note that the transitive
-     * dependency com.google.guava is also not available on google's repo.
-     */
-    const val comGoogleAndroid = "com\\.google\\.android\\..*"
+    const val comGoogle = "com\\.google\\..*"
 }

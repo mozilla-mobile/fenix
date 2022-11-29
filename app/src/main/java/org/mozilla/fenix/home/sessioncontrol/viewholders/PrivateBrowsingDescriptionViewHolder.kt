@@ -29,7 +29,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.ComposeViewHolder
 import org.mozilla.fenix.home.sessioncontrol.TabSessionInteractor
 import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.theme.Theme
 
 /**
  * View holder for a private browsing description.
@@ -95,7 +94,7 @@ fun PrivateBrowsingDescription(
                 .clickable(
                     interactionSource = interactionSource,
                     indication = null,
-                    onClickLabel = stringResource(R.string.link_text_view_type_announcement),
+                    onClickLabel = stringResource(R.string.a11y_action_label_read_article),
                     onClick = onLearnMoreClick,
                 ),
         ) {
@@ -116,7 +115,7 @@ fun PrivateBrowsingDescription(
 @Composable
 @Preview
 private fun PrivateBrowsingDescriptionPreview() {
-    FirefoxTheme(theme = Theme.getTheme()) {
+    FirefoxTheme {
         PrivateBrowsingDescription(
             onLearnMoreClick = {},
         )

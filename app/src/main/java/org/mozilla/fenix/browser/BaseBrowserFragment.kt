@@ -39,7 +39,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
-import mozilla.appservices.places.uniffi.PlacesException
+import mozilla.appservices.places.uniffi.PlacesApiException
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.selector.findCustomTab
 import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
@@ -54,6 +54,7 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.content.DownloadState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.thumbnails.BrowserThumbnails
+import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.accounts.FxaCapability
 import mozilla.components.feature.accounts.FxaWebChannelFeature
@@ -68,31 +69,38 @@ import mozilla.components.feature.media.fullscreen.MediaSessionFullscreenFeature
 import mozilla.components.feature.privatemode.feature.SecureWindowFeature
 import mozilla.components.feature.prompts.PromptFeature
 import mozilla.components.feature.prompts.PromptFeature.Companion.PIN_REQUEST
+import mozilla.components.feature.prompts.address.AddressDelegate
+import mozilla.components.feature.prompts.creditcard.CreditCardDelegate
+import mozilla.components.feature.prompts.login.LoginDelegate
 import mozilla.components.feature.prompts.share.ShareDelegate
 import mozilla.components.feature.readerview.ReaderViewFeature
 import mozilla.components.feature.search.SearchFeature
 import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.feature.session.PictureInPictureFeature
+import mozilla.components.feature.session.ScreenOrientationFeature
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SwipeRefreshFeature
-import mozilla.components.concept.engine.permission.SitePermissions
-import mozilla.components.feature.prompts.address.AddressDelegate
-import mozilla.components.feature.prompts.creditcard.CreditCardDelegate
-import mozilla.components.feature.prompts.login.LoginDelegate
-import mozilla.components.feature.session.ScreenOrientationFeature
+import mozilla.components.feature.session.behavior.EngineViewBrowserToolbarBehavior
 import mozilla.components.feature.sitepermissions.SitePermissionsFeature
+import mozilla.components.feature.webauthn.WebAuthnFeature
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.flowScoped
+import mozilla.components.service.glean.private.NoExtras
+import mozilla.components.service.sync.autofill.DefaultCreditCardValidationDelegate
 import mozilla.components.service.sync.logins.DefaultLoginValidationDelegate
+import mozilla.components.support.base.feature.ActivityResultHandler
 import mozilla.components.support.base.feature.PermissionsFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.support.ktx.android.view.enterToImmersiveMode
 import mozilla.components.support.ktx.android.view.exitImmersiveMode
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import mozilla.components.support.ktx.kotlin.getOrigin
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.NavGraphDirections
@@ -109,6 +117,10 @@ import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarController
 import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarMenuController
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
+import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
+import org.mozilla.fenix.components.toolbar.interactor.DefaultBrowserToolbarInteractor
+import org.mozilla.fenix.crashes.CrashContentIntegration
+import org.mozilla.fenix.databinding.FragmentBrowserBinding
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.downloads.DynamicDownloadDialog
 import org.mozilla.fenix.ext.accessibilityManager
@@ -118,31 +130,19 @@ import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
+import org.mozilla.fenix.ext.secure
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.SharedViewModel
 import org.mozilla.fenix.onboarding.FenixOnboarding
+import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.wifi.SitePermissionsWifiIntegration
 import java.lang.ref.WeakReference
-import mozilla.components.feature.session.behavior.EngineViewBrowserToolbarBehavior
-import mozilla.components.feature.webauthn.WebAuthnFeature
-import mozilla.components.service.glean.private.NoExtras
-import mozilla.components.service.sync.autofill.DefaultCreditCardValidationDelegate
-import mozilla.components.support.base.feature.ActivityResultHandler
-import mozilla.components.support.ktx.android.view.enterToImmersiveMode
-import mozilla.components.support.ktx.kotlin.getOrigin
-import org.mozilla.fenix.GleanMetrics.MediaState
-import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
-import org.mozilla.fenix.components.toolbar.interactor.DefaultBrowserToolbarInteractor
-import org.mozilla.fenix.crashes.CrashContentIntegration
-import org.mozilla.fenix.databinding.FragmentBrowserBinding
-import org.mozilla.fenix.ext.secure
-import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
-import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
 import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolbarPosition
 
 /**
@@ -1251,7 +1251,7 @@ abstract class BaseBrowserFragment :
         viewLifecycleOwner.lifecycleScope.launch(Main) {
             val sitePermissions: SitePermissions? = tab.content.url.getOrigin()?.let { origin ->
                 val storage = requireComponents.core.permissionStorage
-                storage.findSitePermissionsBy(origin)
+                storage.findSitePermissionsBy(origin, tab.content.private)
             }
 
             view?.let {
@@ -1316,7 +1316,7 @@ abstract class BaseBrowserFragment :
                             .show()
                     }
                 }
-            } catch (e: PlacesException.UrlParseFailed) {
+            } catch (e: PlacesApiException.UrlParseFailed) {
                 withContext(Main) {
                     view?.let {
                         FenixSnackbar.make(
@@ -1370,6 +1370,7 @@ abstract class BaseBrowserFragment :
                 .setText(getString(R.string.full_screen_notification))
                 .show()
             activity?.enterToImmersiveMode()
+            (view as? SwipeGestureLayout)?.isSwipeEnabled = false
             browserToolbarView.collapse()
             browserToolbarView.view.isVisible = false
             val browserEngine = binding.swipeRefresh.layoutParams as CoordinatorLayout.LayoutParams
@@ -1384,6 +1385,7 @@ abstract class BaseBrowserFragment :
             MediaState.fullscreen.record(NoExtras())
         } else {
             activity?.exitImmersiveMode()
+            (view as? SwipeGestureLayout)?.isSwipeEnabled = true
             (activity as? HomeActivity)?.let { activity ->
                 activity.themeManager.applyStatusBarTheme(activity)
             }

@@ -7,7 +7,7 @@ package org.mozilla.fenix.components
 import android.content.Context
 import android.os.Build
 import androidx.annotation.VisibleForTesting
-import androidx.annotation.VisibleForTesting.PRIVATE
+import androidx.annotation.VisibleForTesting.Companion.PRIVATE
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
@@ -46,7 +46,6 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.sync.SyncedTabsIntegration
-import org.mozilla.fenix.utils.Settings
 
 /**
  * Component group for background services. These are the components that need to be accessed from within a
@@ -127,7 +126,7 @@ class BackgroundServices(
     }
 
     private val telemetryAccountObserver = TelemetryAccountObserver(
-        context.settings(),
+        context,
     )
 
     val accountAbnormalities = AccountAbnormalities(context, crashReporter, strictMode)
@@ -183,6 +182,7 @@ class BackgroundServices(
         // Enable push if it's configured.
         push.feature?.let { autoPushFeature ->
             FxaPushSupportFeature(context, accountManager, autoPushFeature, crashReporter)
+                .initialize()
         }
 
         SendTabFeature(accountManager) { device, tabs ->
@@ -218,13 +218,16 @@ private class AccountManagerReadyObserver(
 
 @VisibleForTesting(otherwise = PRIVATE)
 internal class TelemetryAccountObserver(
-    private val settings: Settings,
+    private val context: Context,
 ) : AccountObserver {
     override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
-        settings.signedInFxaAccount = true
+        context.settings().signedInFxaAccount = true
         when (authType) {
             // User signed-in into an existing FxA account.
-            AuthType.Signin -> SyncAuth.signIn.record(NoExtras())
+            AuthType.Signin -> {
+                SyncAuth.signIn.record(NoExtras())
+                context.components.analytics.experiments.recordEvent("sync_auth.sign_in")
+            }
 
             // User created a new FxA account.
             AuthType.Signup -> SyncAuth.signUp.record(NoExtras())
@@ -253,6 +256,6 @@ internal class TelemetryAccountObserver(
 
     override fun onLoggedOut() {
         SyncAuth.signOut.record(NoExtras())
-        settings.signedInFxaAccount = false
+        context.settings().signedInFxaAccount = false
     }
 }

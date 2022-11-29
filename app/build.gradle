@@ -366,6 +366,21 @@ android.applicationVariants.all { variant ->
     }
 
 // -------------------------------------------------------------------------------------------------
+// Glean: Read custom server URL from local.properties of a local file if it exists
+// -------------------------------------------------------------------------------------------------
+
+    print("Glean custom server URL: ")
+
+    if (gradle.hasProperty("localProperties.glean.custom.server.url")) {
+        def url=gradle.getProperty("localProperties.glean.custom.server.url")
+        buildConfigField 'String', 'GLEAN_CUSTOM_URL', url
+        println "(Added from local.properties file)"
+    } else {
+        buildConfigField 'String', 'GLEAN_CUSTOM_URL', 'null'
+        println("--")
+    }
+
+// -------------------------------------------------------------------------------------------------
 // BuildConfig: Set flag for official builds; similar to MOZILLA_OFFICIAL in mozilla-central.
 // -------------------------------------------------------------------------------------------------
 
@@ -560,6 +575,7 @@ dependencies {
     implementation Deps.mozilla_lib_dataprotect
     debugImplementation Deps.leakcanary
 
+    implementation Deps.androidx_annotation
     implementation Deps.androidx_compose_ui
     implementation Deps.androidx_compose_ui_tooling
     implementation Deps.androidx_compose_foundation
@@ -643,6 +659,7 @@ dependencies {
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
     implementation Deps.mozilla_support_rusthttp
 
+    androidTestImplementation Deps.mockk_android
     testImplementation Deps.mockk
 
     // For the initial release of Glean 19, we require consumer applications to

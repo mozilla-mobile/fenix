@@ -16,6 +16,12 @@
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="search_hint">Paluruh atawa asupkeun alamat</string>
 
+    <!-- Placeholder text shown in search bar when using history search -->
+    <string name="history_search_hint">Paluruh jujutan</string>
+    <!-- Placeholder text shown in search bar when using bookmarks search -->
+    <string name="bookmark_search_hint">Paluruh markah</string>
+    <!-- Placeholder text shown in search bar when using tabs search -->
+    <string name="tab_search_hint">Paluruh tab</string>
     <!-- Placeholder text shown in the search bar when using application search engines -->
     <string name="application_search_hint">Asupkeun istilah pamaluruhan</string>
     <!-- No Open Tabs Message Description -->
@@ -39,8 +45,6 @@
     <string name="tab_tray_multiselect_selected_content_description">Dipilih</string>
 
     <!-- Home - Recently saved bookmarks -->
-    <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string moz:RemovedIn="106" name="recent_bookmarks_title" tools:ignore="UnusedResources">Markah anyar</string>
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string name="recently_saved_title">Anyar diteundeun</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
@@ -128,13 +132,6 @@
 
     <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
     <string name="recent_tabs_show_all_content_description_2">Témbongkeun sakabéh tombol tab anyar</string>
-    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
-        The first parameter is the search term that the user used. (for example: your search for "cat")-->
-    <string moz:RemovedIn="105" name="recent_tabs_search_term" tools:ignore="UnusedResources">Sungsian anjeun ngeunaan \&quot;%1$s\&quot;</string>
-
-    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
-        %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
-    <string moz:RemovedIn="105" name="recent_tabs_search_term_count_2" tools:ignore="UnusedResources">%d loka</string>
 
     <!-- Text for button in synced tab card that opens synced tabs tray -->
     <string name="recent_tabs_see_all_synced_tabs_button_text">Tingali tab anu singkron</string>
@@ -258,37 +255,19 @@
     <!-- Menu option in the search selector menu to open the search settings -->
     <string name="search_settings_menu_item">Setélan pamaluruhan</string>
 
+    <!-- Header text for the search selector menu -->
+    <string moz:RemovedIn="109" name="search_header_menu_item" tools:ignore="UnusedResources">Ayeuna paluruh:</string>
+
+    <!-- Header text for the search selector menu -->
+    <string name="search_header_menu_item_2">Saayeunaeun paluruh di:</string>
+
     <!-- Home onboarding -->
-    <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_title_3" tools:ignore="UnusedResources">Nu anyar di %1$s</string>
-    <!-- Onboarding home screen dialog description text. -->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_description_2" tools:ignore="UnusedResources">Ayeuna leuwih babari nyokot cadangan nalika anjeun ninggalkeun.</string>
-    <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_section_home_title_3" tools:ignore="UnusedResources">Tepas %1$s pribadi</string>
-    <!-- Onboarding home screen dialog description text for the home section. -->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_section_home_description_2" tools:ignore="UnusedResources">Luncat ka tab muka, markah, jeung jujutan ngalanglang.</string>
-    <!-- Onboarding home screen dialog description text for the tab tray section. -->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_section_cleaner_tab_tray_title_2" tools:ignore="UnusedResources">Tab beresih tur rapih</string>
-    <!-- Onboarding home screen dialog description text for the tab tray section. -->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_section_cleaner_tab_tray_description_2" tools:ignore="UnusedResources">Singkahan tabrakan tab ku tata perenah anu leuwih hadé tur tab oto-nutup.</string>
-    <!-- Onboarding home screen dialog description text for the history section. -->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_section_useful_history_title_2" tools:ignore="UnusedResources">Anyar nyungsi</string>
-    <!-- Onboarding home screen dialog description text for the history section. -->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_section_useful_history_description_2" tools:ignore="UnusedResources">Anjangan deui sungsian panungtung ti tepas tab.</string>
-
-    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Tepas Firefox pribadi kiwari mantuan anjeun nyokot ti anu ditinggalkeun. Néangan tab anu can lila, markah, jeung hasil nyungsi.</string>
-
     <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
     <string name="onboarding_home_screen_jump_back_contextual_hint_2">Nepangkeun kaca tepas pribadi anjeun. Tab mutahir, markah, jeung hasil maluruh bakal némbongan di dieu.</string>
-    <!-- Home onboarding dialog welcome screen title text. -->
-    <string moz:RemovedIn="106" name="onboarding_home_welcome_title" tools:ignore="UnusedResources">Wilujeng sumping di internét mandiri</string>
     <!-- Home onboarding dialog welcome screen title text. -->
     <string name="onboarding_home_welcome_title_2">Wilujeng sumping di internét anu leuwih pribadi</string>
     <!-- Home onboarding dialog welcome screen description text. -->
     <string name="onboarding_home_welcome_description">Leuwih warnaan. Pripasi leuwih hadé. Komitmen anu sarua pikeun jalma batan bati.</string>
-    <!-- Home onboarding dialog sign into sync screen title text. -->
-    <string moz:RemovedIn="106" name="onboarding_home_sync_title_2" tools:ignore="UnusedResources">Luncat tina telepon ka laptop jeung sabalikna</string>
     <!-- Home onboarding dialog sign into sync screen title text. -->
     <string name="onboarding_home_sync_title_3">Ngagilirkeun layar leuwih babari ti nu atos-atos</string>
     <!-- Home onboarding dialog sign into sync screen description text. -->
@@ -355,6 +334,14 @@
     <string name="preferences_add_private_browsing_shortcut">Tambahan tarabas nyungsi nyamuni</string>
     <!-- Preference for enabling "HTTPS-Only" mode -->
     <string name="preferences_https_only_title">Mode HTTPS-Hungkul</string>
+
+    <!-- Preference for removing cookie/consent banners from sites automatically. See reduce_cookie_banner_summary for additional context. -->
+    <string name="preferences_cookie_banner_reduction">Kurangan Spanduk Réréméh</string>
+    <!-- Preference for rejecting or removing as many cookie/consent banners as possible on sites. See reduce_cookie_banner_summary for additional context. -->
+    <string name="reduce_cookie_banner_option">Kurangan spanduk réréméh</string>
+    <!-- Summary for the preference for rejecting all cookies whenever possible. -->
+    <string name="reduce_cookie_banner_summary">Firefox otomatis nyoba nampik pamundut réréméh dina spanduk réréméh. Upama teu aya pilihan nampik, Firefox bisa nampa sadaya réréméh pikeun ngaleungitkeun spandukna.</string>
+
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Otomatis nyoba nyambung ka loka maké protokol énkripsi HTTPS pikeun ngaronjatkeun kaamanan.</string>
     <!-- Summary of tracking protection preference if tracking protection is set to on -->
@@ -464,8 +451,12 @@
     a section where users see a list of tabs that they have visited in the past few days -->
     <string name="customize_toggle_recently_visited">Anyar dianjangan</string>
     <!-- Title for the customize home screen section with Pocket. -->
-    <string name="customize_toggle_pocket">Saku</string>
+    <string moz:RemovedIn="108" name="customize_toggle_pocket" tools:ignore="UnusedResources">Saku</string>
 
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket_2">Carita pikiraneun</string>
+    <!-- Summary for the customize home screen section with Pocket. The first parameter is product name Pocket -->
+    <string name="customize_toggle_pocket_summary">Artikel dijalankeun ku %s</string>
     <!-- Title for the customize home screen section with sponsored Pocket stories. -->
     <string name="customize_toggle_pocket_sponsored">Carita anu disponsoran</string>
     <!-- Title for the opening wallpaper settings screen -->
@@ -489,11 +480,6 @@
     <string name="wallpaper_select_error_snackbar_message">Teu bisa ngarobah latar</string>
     <!-- Text displayed that links to website containing documentation about the "Limited Edition" wallpapers. -->
     <string name="wallpaper_learn_more">Leuwih teleb</string>
-    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string moz:removedIn="105" name="wallpaper_tap_to_change_switch_label_1" tools:ignore="UnusedResources">Ganti latar ku cara noél logo tepas Firefox</string>
-    <!-- This is the accessibility content description for the wallpapers functionality. Users are
-    able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
-    <string moz:removedIn="105" name="wallpaper_logo_content_description" tools:ignore="UnusedResources">Logo Firefox - ganti latar, tombol</string>
 
     <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
     <string name="wallpaper_classic_title">%s klasik</string>
@@ -656,6 +642,17 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Tutup</string>
 
+    <!-- Title to show in alert when a lot of tabs are to be opened
+    %d is a placeholder for the number of tabs that will be opened -->
+    <string name="open_all_warning_title">Buka %d tab?</string>
+    <!-- Message to warn users that a large number of tabs will be opened
+    %s will be replaced by app name. -->
+    <string name="open_all_warning_message">Muka loba tab kieu bisa matak meyeted ka %s nalika kaca-kacana dimuat. Rék diteruskeun baé?</string>
+    <!-- Dialog button text for confirming open all tabs -->
+    <string name="open_all_warning_confirm">Buka tab</string>
+    <!-- Dialog button text for canceling open all tabs -->
+    <string name="open_all_warning_cancel">Bolay</string>
+
     <!-- Text to show users they have one site in the history group section of the History fragment.
     %d is a placeholder for the number of sites in the group. -->
     <string name="history_search_group_site">%d loka</string>
@@ -685,10 +682,6 @@
     <string name="tab_view_list">Béréndélan</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Grid</string>
-    <!-- Option for search term tab groups -->
-    <string moz:RemovedIn="105" name="tab_view_search_term_tab_groups" tools:ignore="UnusedResources">Sungsi grup</string>
-    <!-- Summary text for search term tab groups -->
-    <string moz:RemovedIn="105" name="tab_view_search_term_tab_groups_summary" tools:ignore="UnusedResources">Gorombolkeun loka anu patali</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Tutup tab</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -838,18 +831,6 @@
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Teu aya jujutan di dieu</string>
 
-    <!-- Text for the button inside History screen that opens Synced History screen. History that is coming from other devices -->
-    <string moz:removedIn="105" name="history_synced_from_other_devices" tools:ignore="UnusedResources">Disingkronkeun ti séjén alat</string>
-    <!-- The page title for browsing history coming from other devices. -->
-    <string moz:removedIn="105" name="history_from_other_devices" tools:ignore="UnusedResources">Ti séjén alat</string>
-
-    <!-- The synced history sign in dialog message -->
-    <string moz:removedIn="105" name="history_sign_in_message" tools:ignore="UnusedResources">Asup pikeun nénjo jujutan anu disingkronkeun tina parangkat anjeun nu séjén.</string>
-    <!-- The synced history sign in dialog button text -->
-    <string moz:removedIn="105" name="history_sign_in_button" tools:ignore="UnusedResources">Asup</string>
-    <!-- The synced history sign in dialog create a new account link -->
-    <string moz:removedIn="105" name="history_sign_in_create_account" tools:ignore="UnusedResources"><![CDATA[<u>Atawa jieun akun Firefox pikeun mitembeyan nyingkronkeun</u>]]></string>
-
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">Undeuran Disingkahkeun</string>
@@ -899,6 +880,10 @@
     <string name="bookmark_menu_open_in_new_tab_button">Buka dina tab anyar</string>
     <!-- Bookmark overflow menu open in private tab button -->
     <string name="bookmark_menu_open_in_private_tab_button">Buka dina tab nyamuni</string>
+    <!-- Bookmark overflow menu open all in tabs button -->
+    <string name="bookmark_menu_open_all_in_tabs_button">Buka kabéh dina tab anyar</string>
+    <!-- Bookmark overflow menu open all in private tabs button -->
+    <string name="bookmark_menu_open_all_in_private_tabs_button">Buka kabéh dina tab nyamuni</string>
     <!-- Bookmark overflow menu delete button -->
     <string name="bookmark_menu_delete_button">Pupus</string>
     <!--Bookmark overflow menu save button -->
@@ -1080,6 +1065,8 @@
     <string name="share_button_content_description">Bagikeun</string>
     <!-- Text for the Save to PDF feature in the share menu -->
     <string name="share_save_to_pdf">Simpen salaku PDF</string>
+    <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
+    <string name="unable_to_save_to_pdf_error">Teu bisa nyieun PDF</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Kirim ka parangkat</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1259,34 +1246,21 @@
     <string name="delete_history_group_snackbar">Grup dihapus</string>
 
     <!-- Onboarding -->
-    <!-- Text for onboarding welcome message
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string moz:RemovedIn="106" name="onboarding_header" tools:ignore="UnusedResources">Wilujeng sumping di %s!</string>
     <!-- Text for onboarding welcome header. -->
     <string name="onboarding_header_2">Wilujeng sumping di internét anu leuwih hadé</string>
     <!-- Text for the onboarding welcome message. -->
     <string name="onboarding_message">Panyungsi anu diwangun pikeun jalma, lain bati.</string>
-    <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
-    <string moz:removedIn="106" name="onboarding_account_sign_in_header_1" tools:ignore="UnusedResources">Singkronkeun Firefox sakur parabot</string>
     <!-- Text for the Firefox account onboarding sign in card header. -->
     <string name="onboarding_account_sign_in_header">Angkut di tempat nu ku anjeun tinggalkeun</string>
-    <!-- Text for the button to learn more about signing in to your Firefox account. The first parameter is the name of the application.-->
-    <string moz:removedIn="106" name="onboarding_manual_sign_in_description_2" tools:ignore="UnusedResources">Bawa markah, jujutan, jeung kecap sandi ka %1$s di ieu parabot.</string>
     <!-- Text for the button to learn more about signing in to your Firefox account. -->
     <string name="onboarding_manual_sign_in_description">Singkronkeun tab jeung kecap sandi dina sadaya paranti pikeun pindah layar anu mulus.</string>
-    <!-- text for the button to manually sign into Firefox account. -->
-    <string moz:removedIn="106" name="onboarding_firefox_account_sign_in_1" tools:ignore="UnusedResources">Daptar</string>
     <!-- Text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in">Asup</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Singkronna hurung</string>
 
-    <!-- text for the tracking protection onboarding card header -->
-    <string moz:removedIn="106" name="onboarding_tracking_protection_header_3" tools:ignore="UnusedResources">Pripasi salawasna</string>
     <!-- Text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header">Salindung pripasi sacara baku</string>
-    <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
-    <string moz:removedIn="106" name="onboarding_tracking_protection_description_4" tools:ignore="UnusedResources">%1$s otomatis megat maskapé rerencepan nunutur anjeun ngalanglang raramat.</string>
     <!-- Text for the tracking protection card description. -->
     <string name="onboarding_tracking_protection_description">Miturkeun Total Cookie Protection pikeun ngeureunkeun palacak tina maké réréméh pikeun ngintip anjeun meuntas loka.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
@@ -1299,17 +1273,10 @@
     <string name="onboarding_tracking_protection_strict_button_description_3">Meungpeuk palacak leuwih loba sangkan kaca dimuat leuwih gancang, tapi sababaraha fungsionalitas dina kaca bisa gagal.</string>
     <!-- text for the toolbar position card header  -->
     <string name="onboarding_toolbar_placement_header_1">Pilih perenah tulbar anjeun</string>
-    <!-- text for the toolbar position card description -->
-    <string moz:removedIn="106" name="onboarding_toolbar_placement_description_1" tools:ignore="UnusedResources">Perenahkeun tulbar sangkan babari kahontal. Teundeun di handap, atawa pindahkeun ka punclut.</string>
     <!-- Text for the toolbar position card description -->
     <string name="onboarding_toolbar_placement_description">Angger di handap, atawa pindahkeun ka luhur.</string>
-    <!-- text for the privacy notice onboarding card header -->
-    <string moz:removedIn="106" name="onboarding_privacy_notice_header" tools:ignore="UnusedResources">Salindungan anjeun</string>
     <!-- Text for the privacy notice onboarding card header -->
     <string name="onboarding_privacy_notice_header_1">Anjeun ngadalikeun data anjeun</string>
-    <!-- text for the privacy notice onboarding card description
-    The first parameter is the name of the app (e.g. Firefox Preview) Substitute %s for long browser name. -->
-    <string moz:removedIn="106" name="onboarding_privacy_notice_description2" tools:ignore="UnusedResources">Kami geus ngarancang %s sangkan anjeun bisa ngatur naon anu dibagikeun onlén jeung naon anu dibagikeun ka kami.</string>
     <!-- Text for the privacy notice onboarding card description. -->
     <string name="onboarding_privacy_notice_description">Firefox ngatur sangkan anjeun bisa nangtukeun naon anu dibagikeun onlén jeung naon anu dibagikeun ka kami.</string>
     <!-- Text for the button to read the privacy notice -->
@@ -1950,7 +1917,9 @@
     <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
     <string name="pocket_stories_placeholder_text">Panggihan nu lianna</string>
     <!-- Title of an app feature. Smaller than a heading.-->
-    <string name="pocket_stories_feature_title">Ditanagaan ku Pocket.</string>
+    <string moz:removedIn="108" name="pocket_stories_feature_title" tools:ignore="UnusedResources">Ditanagaan ku Pocket.</string>
+    <!-- Title of an app feature. Smaller than a heading. The first parameter is product name Pocket -->
+    <string name="pocket_stories_feature_title_2">Dijalankeun ku %s.</string>
     <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
     <string name="pocket_stories_feature_caption">Bagéan ti kulawarga Firefox. %s</string>
     <!-- Clickable text for opening an external link for more information about Pocket. -->
@@ -1972,4 +1941,6 @@
     <string name="a11y_action_label_expand">batek</string>
     <!-- Action label for links to a website containing documentation about a wallpaper collection. Talkback will append this to say "Double tap to open link to learn more about this collection". -->
     <string name="a11y_action_label_wallpaper_collection_learn_more">buka tutumbu pikeun leuwih teleb ngeunaan ieu koléksi</string>
+    <!-- Action label for links that point to an article. Talkback will append this to say "Double tap to read the article". -->
+    <string name="a11y_action_label_read_article">baca artikel</string>
 </resources>

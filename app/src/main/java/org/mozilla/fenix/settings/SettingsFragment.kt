@@ -40,6 +40,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.CookieBanners
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.HomeActivity
@@ -49,9 +50,9 @@ import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.navigateToNotificationsSettings
+import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.perf.ProfilerViewModel
@@ -279,6 +280,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
             resources.getString(R.string.pref_key_https_only_settings) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToHttpsOnlyFragment()
             }
+            resources.getString(R.string.pref_key_cookie_banner_settings) -> {
+                CookieBanners.visitedSetting.record(mozilla.components.service.glean.private.NoExtras())
+                SettingsFragmentDirections.actionSettingsFragmentToCookieBannerFragment()
+            }
             resources.getString(R.string.pref_key_accessibility) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToAccessibilityFragment()
             }
@@ -432,9 +437,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val preferenceLeakCanary = findPreference<Preference>(leakKey)
         val preferenceRemoteDebugging = findPreference<Preference>(debuggingKey)
         val preferenceMakeDefaultBrowser =
-            requirePreference<Preference>(R.string.pref_key_make_default_browser)
+            requirePreference<DefaultBrowserPreference>(R.string.pref_key_make_default_browser)
+
         val preferenceOpenLinksInExternalApp =
             findPreference<Preference>(getPreferenceKey(R.string.pref_key_open_links_in_external_app))
+
         if (!Config.channel.isReleased) {
             preferenceLeakCanary?.setOnPreferenceChangeListener { _, newValue ->
                 val isEnabled = newValue == true
@@ -451,8 +458,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
-        preferenceMakeDefaultBrowser.onPreferenceClickListener =
-            getClickListenerForMakeDefaultBrowser()
+        preferenceMakeDefaultBrowser.apply {
+            updateSwitch()
+            onPreferenceClickListener =
+                getClickListenerForMakeDefaultBrowser()
+        }
 
         preferenceOpenLinksInExternalApp?.onPreferenceChangeListener = SharedPreferenceUpdater()
 
@@ -460,6 +470,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference<Preference>(getPreferenceKey(R.string.pref_key_start_profiler))
 
         with(requireContext().settings()) {
+            findPreference<Preference>(getPreferenceKey(R.string.pref_key_cookie_banner_settings))
+                ?.isVisible = shouldShowCookieBannerUI
             findPreference<Preference>(
                 getPreferenceKey(R.string.pref_key_nimbus_experiments),
             )?.isVisible = showSecretDebugMenuThisSession

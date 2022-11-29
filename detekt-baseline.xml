@@ -543,11 +543,11 @@
     <ID>UndocumentedPublicFunction:BookmarkController.kt$BookmarkController$fun handleBookmarkTapped(item: BookmarkNode)</ID>
     <ID>UndocumentedPublicFunction:BookmarkController.kt$BookmarkController$fun handleCopyUrl(item: BookmarkNode)</ID>
     <ID>UndocumentedPublicFunction:BookmarkController.kt$BookmarkController$fun handleOpeningBookmark(item: BookmarkNode, mode: BrowsingMode)</ID>
+    <ID>UndocumentedPublicFunction:BookmarkController.kt$BookmarkController$fun handleOpeningFolderBookmarks(folder: BookmarkNode, mode: BrowsingMode)</ID>
     <ID>UndocumentedPublicFunction:BookmarkController.kt$BookmarkController$fun handleRequestSync()</ID>
     <ID>UndocumentedPublicFunction:BookmarkController.kt$BookmarkController$fun handleSearch()</ID>
     <ID>UndocumentedPublicFunction:BookmarkController.kt$BookmarkController$fun handleSelectionModeSwitch()</ID>
     <ID>UndocumentedPublicFunction:BookmarkFragmentStore.kt$operator fun BookmarkNode.contains(item: BookmarkNode): Boolean</ID>
-    <ID>UndocumentedPublicFunction:BookmarkItemMenu.kt$BookmarkItemMenu$fun updateMenu(itemType: BookmarkNodeType)</ID>
     <ID>UndocumentedPublicFunction:BookmarkNodeViewHolder.kt$BookmarkNodeViewHolder$fun bind( item: BookmarkNode, mode: BookmarkFragmentState.Mode, payload: BookmarkPayload, )</ID>
     <ID>UndocumentedPublicFunction:BookmarkSearchController.kt$BookmarkSearchController$fun handleEditingCancelled()</ID>
     <ID>UndocumentedPublicFunction:BookmarkSearchController.kt$BookmarkSearchController$fun handleTextChanged(text: String)</ID>
@@ -664,7 +664,6 @@
     <ID>UndocumentedPublicFunction:FenixSnackbar.kt$FenixSnackbar$fun setLength(duration: Int)</ID>
     <ID>UndocumentedPublicFunction:FenixSnackbar.kt$FenixSnackbar$fun setText(text: String)</ID>
     <ID>UndocumentedPublicFunction:FirefoxTheme.kt$@Composable fun ProvideFirefoxColors( colors: FirefoxColors, content: @Composable () -&gt; Unit, )</ID>
-    <ID>UndocumentedPublicFunction:FirefoxTheme.kt$FirefoxColors$fun copy(): FirefoxColors</ID>
     <ID>UndocumentedPublicFunction:FirefoxTheme.kt$FirefoxColors$fun update(other: FirefoxColors)</ID>
     <ID>UndocumentedPublicFunction:Fragment.kt$fun Fragment.breadcrumb( message: String, data: Map&lt;String, String&gt; = emptyMap(), )</ID>
     <ID>UndocumentedPublicFunction:Fragment.kt$fun Fragment.getPreferenceKey(@StringRes resourceId: Int): String</ID>

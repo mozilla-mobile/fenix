@@ -16,6 +16,7 @@ import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.search.SearchFragmentState
 import org.mozilla.fenix.utils.Settings
 
@@ -23,7 +24,7 @@ import org.mozilla.fenix.utils.Settings
  * Interface for the Toolbar Interactor. This interface is implemented by objects that want
  * to respond to user interaction on the [ToolbarView].
  */
-interface ToolbarInteractor {
+interface ToolbarInteractor : SearchSelectorInteractor {
 
     /**
      * Called when a user hits the return key while [ToolbarView] has focus.
@@ -44,13 +45,6 @@ interface ToolbarInteractor {
      * @param text The current text displayed by [ToolbarView].
      */
     fun onTextChanged(text: String)
-
-    /**
-     * Called when an user taps on a search selector menu item.
-     *
-     * @param item The [SearchSelectorMenu.Item] that was tapped.
-     */
-    fun onMenuItemTapped(item: SearchSelectorMenu.Item)
 }
 
 /**
@@ -147,11 +141,16 @@ class ToolbarView(
 
         val searchEngine = searchState.searchEngineSource.searchEngine
 
-        when (searchEngine?.type) {
+        view.edit.hint = when (searchEngine?.type) {
             SearchEngine.Type.APPLICATION ->
-                view.edit.hint = context.getString(R.string.application_search_hint)
+                when (searchEngine.id) {
+                    Core.HISTORY_SEARCH_ENGINE_ID -> context.getString(R.string.history_search_hint)
+                    Core.BOOKMARKS_SEARCH_ENGINE_ID -> context.getString(R.string.bookmark_search_hint)
+                    Core.TABS_SEARCH_ENGINE_ID -> context.getString(R.string.tab_search_hint)
+                    else -> context.getString(R.string.application_search_hint)
+                }
             else ->
-                view.edit.hint = context.getString(R.string.search_hint)
+                context.getString(R.string.search_hint)
         }
 
         if (!settings.showUnifiedSearchFeature && searchEngine != null) {

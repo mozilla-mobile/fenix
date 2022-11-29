@@ -11,17 +11,17 @@ import mozilla.components.lib.state.Action
 import mozilla.components.service.pocket.PocketStory
 import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
 import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.gleanplumb.Message
+import org.mozilla.fenix.gleanplumb.MessagingState
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesSelectedCategory
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
+import org.mozilla.fenix.home.recentsyncedtabs.RecentSyncedTab
 import org.mozilla.fenix.home.recentsyncedtabs.RecentSyncedTabState
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
 import org.mozilla.fenix.library.history.PendingDeletionHistory
-import org.mozilla.fenix.gleanplumb.Message
-import org.mozilla.fenix.gleanplumb.MessagingState
-import org.mozilla.fenix.home.recentsyncedtabs.RecentSyncedTab
 import org.mozilla.fenix.wallpapers.Wallpaper
 
 /**
@@ -191,4 +191,9 @@ sealed class AppAction : Action {
             val imageState: Wallpaper.ImageFileState,
         ) : WallpaperAction()
     }
+
+    /**
+     * Indicates that the app has been resumed and metrics that relate to that should be sent.
+     */
+    object ResumedMetricsAction : AppAction()
 }

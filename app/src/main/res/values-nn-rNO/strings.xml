@@ -17,6 +17,12 @@
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="search_hint">Søk eller skriv inn ei adresse</string>
 
+    <!-- Placeholder text shown in search bar when using history search -->
+    <string name="history_search_hint">Søkjehistorikk</string>
+    <!-- Placeholder text shown in search bar when using bookmarks search -->
+    <string name="bookmark_search_hint">Søk i bokmerke</string>
+    <!-- Placeholder text shown in search bar when using tabs search -->
+    <string name="tab_search_hint">Søk i faner</string>
     <!-- Placeholder text shown in the search bar when using application search engines -->
     <string name="application_search_hint">Skriv inn søkjetekst</string>
     <!-- No Open Tabs Message Description -->
@@ -42,8 +48,6 @@
     <string name="tab_tray_multiselect_selected_content_description">Vald</string>
 
     <!-- Home - Recently saved bookmarks -->
-    <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string moz:RemovedIn="106" name="recent_bookmarks_title" tools:ignore="UnusedResources">Nylege bokmerke</string>
     <!-- Title for the home screen section with recently saved bookmarks. -->
     <string name="recently_saved_title">Nyleg lagra</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
@@ -80,6 +84,13 @@
 
     <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
     <string name="cfr_dismiss_button_default_content_description">Ignorer</string>
+
+    <!-- Total cookie protection "contextual feature recommendation" (CFR) -->
+    <!-- Text for the message displayed in the contextual feature recommendation popup promoting the total cookie protection feature. -->
+    <string name="tcp_cfr_message">Vår kraftigaste personvernfunksjon til no isolerer sporarar på tvers av nettstadar.</string>
+
+    <!-- Text displayed that links to website containing documentation about the "Total cookie protection" feature. -->
+    <string name="tcp_cfr_learn_more">Les meir om totalt vern mot infokapslar</string>
 
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">Kameratilgang er nødvendig. Gå til Android-innstillingar, trykk på løyve, og trykk på tillat.</string>
@@ -127,13 +138,6 @@
 
     <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
     <string name="recent_tabs_show_all_content_description_2">Vis alle nylege faner-knappen</string>
-    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
-        The first parameter is the search term that the user used. (for example: your search for "cat")-->
-    <string moz:RemovedIn="105" name="recent_tabs_search_term" tools:ignore="UnusedResources">Du søkte etter «%1$s»</string>
-
-    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
-        %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
-    <string moz:RemovedIn="105" name="recent_tabs_search_term_count_2" tools:ignore="UnusedResources">%d nettstadar</string>
 
     <!-- Text for button in synced tab card that opens synced tabs tray -->
     <string name="recent_tabs_see_all_synced_tabs_button_text">Vis alle synkroniserte faner</string>
@@ -254,33 +258,20 @@
     <!-- Menu option in the search selector menu to open the search settings -->
     <string name="search_settings_menu_item">Søkjeinnstillingar</string>
 
+    <!-- Header text for the search selector menu -->
+    <string moz:RemovedIn="109" name="search_header_menu_item" tools:ignore="UnusedResources">Søk denne gongen med:</string>
+
     <!-- Home onboarding -->
-    <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_title_3" tools:ignore="UnusedResources">Kva er nytt i %1$s</string>
-    <!-- Onboarding home screen dialog description text. -->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_description_2" tools:ignore="UnusedResources">Det er no enklare å fortsetje der du slutta.</string>
-
-    <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_section_home_title_3" tools:ignore="UnusedResources">Tilpassa %1$s-startside</string>
-    <!-- Onboarding home screen dialog description text for the home section. -->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_section_home_description_2" tools:ignore="UnusedResources">Gå til dei opne fanene, bokmerka og nettlesarhistorikken.</string>
-    <!-- Onboarding home screen dialog description text for the tab tray section. -->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_section_cleaner_tab_tray_title_2" tools:ignore="UnusedResources">Reine, organiserte faner</string>
-    <!-- Onboarding home screen dialog description text for the tab tray section. -->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_section_cleaner_tab_tray_description_2" tools:ignore="UnusedResources">Fjern rot i fanene med forbetra layout og faner som automatisk lèt seg att.</string>
-    <!-- Onboarding home screen dialog description text for the history section. -->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_section_useful_history_title_2" tools:ignore="UnusedResources">Nylege søk</string>
-
-    <!-- Onboarding home screen dialog description text for the history section. -->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_section_useful_history_description_2" tools:ignore="UnusedResources">Gå tilbake til dei siste søka dine frå startsida og fanene.</string>
-
-    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
-    <string moz:RemovedIn="106" name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Den personlege Firefox-startsida di gjer det no lettare å fortsetje der du slutta. Finn dei siste fanene, bokmerka og søkjeresultata.</string>
-
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint_2">Møt den personlege heimesida di. Nylege faner, bokmerke og søkjeresultat vert viste her.</string>
     <!-- Home onboarding dialog welcome screen title text. -->
-    <string moz:RemovedIn="106" name="onboarding_home_welcome_title" tools:ignore="UnusedResources">Velkomen til eit uavhengig internett</string>
+    <string name="onboarding_home_welcome_title_2">Velkomen til eit meir personleg internett</string>
+    <!-- Home onboarding dialog welcome screen description text. -->
+    <string name="onboarding_home_welcome_description">Fleire fargar. Betre personvern. Same forplikting til menneske over forteneste.</string>
     <!-- Home onboarding dialog sign into sync screen title text. -->
-    <string moz:RemovedIn="106" name="onboarding_home_sync_title_2" tools:ignore="UnusedResources">Byt frå telefonen til datamaskina og tilbake</string>
+    <string name="onboarding_home_sync_title_3">Det er enklare enn nokon gong g å byte skjerm</string>
+    <!-- Home onboarding dialog sign into sync screen description text. -->
+    <string name="onboarding_home_sync_description">Hald fram der du slapp med faner frå andre einingar - no på startsida di.</string>
     <!-- Text for the button to continue the onboarding on the home onboarding dialog. -->
     <string name="onboarding_home_get_started_button">Kom i gang</string>
 
@@ -288,6 +279,11 @@
     <string name="onboarding_home_sign_in_button">Logg inn</string>
     <!-- Text for the button to skip the onboarding on the home onboarding dialog. -->
     <string name="onboarding_home_skip_button">Hopp over</string>
+
+    <!-- Onboarding home screen sync popup dialog message, shown on top of Recent Synced Tabs in the Jump back in section. -->
+    <string name="sync_cfr_message">Fanene dine synkroniserer no! Hald fram der du slutta på den andre eininga.</string>
+    <!-- Content description (not visible, for screen readers etc.): Close button for the home onboarding dialog -->
+    <string name="onboarding_home_content_description_close_button">Lat att</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -339,6 +335,7 @@
     <string name="preferences_add_private_browsing_shortcut">Legg til snarveg for privat nettlesing</string>
     <!-- Preference for enabling "HTTPS-Only" mode -->
     <string name="preferences_https_only_title">Berre HTTPS-modus</string>
+
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Prøver automatisk å kople til nettstadar ved hjelp av HTTPS-krypteringsprotokollen for auka sikkerheit.</string>
     <!-- Summary of tracking protection preference if tracking protection is set to on -->
@@ -446,8 +443,12 @@
     a section where users see a list of tabs that they have visited in the past few days -->
     <string name="customize_toggle_recently_visited">Nyleg besøkte</string>
     <!-- Title for the customize home screen section with Pocket. -->
-    <string name="customize_toggle_pocket">Pocket</string>
+    <string moz:RemovedIn="108" name="customize_toggle_pocket" tools:ignore="UnusedResources">Pocket</string>
 
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket_2">Tankevekkjande artiklar</string>
+    <!-- Summary for the customize home screen section with Pocket. The first parameter is product name Pocket -->
+    <string name="customize_toggle_pocket_summary">Artiklar levert av %s</string>
     <!-- Title for the customize home screen section with sponsored Pocket stories. -->
     <string name="customize_toggle_pocket_sponsored">Sponsa historier</string>
     <!-- Title for the opening wallpaper settings screen -->
@@ -463,21 +464,23 @@
     <!-- Snackbar label for action to view selected wallpaper -->
     <string name="wallpaper_updated_snackbar_action">Vis</string>
 
+    <!-- Snackbar message for when wallpaper couldn't be downloaded -->
+    <string name="wallpaper_download_error_snackbar_message">Klarte ikkje å laste ned bakgrunnsbildet</string>
     <!-- Snackbar label for action to retry downloading the wallpaper -->
     <string name="wallpaper_download_error_snackbar_action">Prøv igjen</string>
+    <!-- Snackbar message for when wallpaper couldn't be selected because of the disk error -->
+    <string name="wallpaper_select_error_snackbar_message">Klarte ikkje å endre bakgrunnsbildet</string>
     <!-- Text displayed that links to website containing documentation about the "Limited Edition" wallpapers. -->
     <string name="wallpaper_learn_more">Les meir</string>
-    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string moz:removedIn="105" name="wallpaper_tap_to_change_switch_label_1" tools:ignore="UnusedResources">Endre bakgrunnsbilde ved å trykkje på Firefox-logoen på startsida</string>
-
-    <!-- This is the accessibility content description for the wallpapers functionality. Users are
-    able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
-    <string moz:removedIn="105" name="wallpaper_logo_content_description" tools:ignore="UnusedResources">Firefox-logo - knapp for å endre bakgrunnsbilde</string>
 
     <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
     <string name="wallpaper_classic_title">Klassisk %s</string>
     <!-- Text for limited edition wallpapers title. -->
     <string name="wallpaper_limited_edition_title">Avgrensa utgåve</string>
+    <!-- Description text for the limited edition wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more-->
+    <string name="wallpaper_limited_edition_description_with_learn_more">Den nye kolleksjonen Uavhengige røyster. %s</string>
+    <!-- Description text for the limited edition wallpapers. -->
+    <string name="wallpaper_limited_edition_description">Den nye kolleksjonen uavhengige røyster.</string>
     <!-- Wallpaper onboarding dialog header text. -->
     <string name="wallpapers_onboarding_dialog_title_text">Prøv ein fargeklatt</string>
     <!-- Wallpaper onboarding dialog body text. -->
@@ -627,6 +630,17 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Lat att</string>
 
+    <!-- Title to show in alert when a lot of tabs are to be opened
+    %d is a placeholder for the number of tabs that will be opened -->
+    <string name="open_all_warning_title">Opne %d faner?</string>
+    <!-- Message to warn users that a large number of tabs will be opened
+    %s will be replaced by app name. -->
+    <string name="open_all_warning_message">Å opne så mange faner kan seinke %s medan sidene vert lasta. Er du sikker på at du vil halde fram?</string>
+    <!-- Dialog button text for confirming open all tabs -->
+    <string name="open_all_warning_confirm">Opne faner</string>
+    <!-- Dialog button text for canceling open all tabs -->
+    <string name="open_all_warning_cancel">Avbryt</string>
+
     <!-- Text to show users they have one site in the history group section of the History fragment.
     %d is a placeholder for the number of sites in the group. -->
     <string name="history_search_group_site">%d nettstad</string>
@@ -658,10 +672,6 @@
     <string name="tab_view_list">Liste</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Rutenett</string>
-    <!-- Option for search term tab groups -->
-    <string moz:RemovedIn="105" name="tab_view_search_term_tab_groups" tools:ignore="UnusedResources">Søkjegrupper</string>
-    <!-- Summary text for search term tab groups -->
-    <string moz:RemovedIn="105" name="tab_view_search_term_tab_groups_summary" tools:ignore="UnusedResources">Grupper relaterte nettstadar saman</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Lat att faner</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -814,18 +824,6 @@
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Ingen historikk her</string>
 
-    <!-- Text for the button inside History screen that opens Synced History screen. History that is coming from other devices -->
-    <string moz:removedIn="105" name="history_synced_from_other_devices" tools:ignore="UnusedResources">Synkronisert frå andre einingar</string>
-    <!-- The page title for browsing history coming from other devices. -->
-    <string moz:removedIn="105" name="history_from_other_devices" tools:ignore="UnusedResources">Frå andre einingar</string>
-
-    <!-- The synced history sign in dialog message -->
-    <string moz:removedIn="105" name="history_sign_in_message" tools:ignore="UnusedResources">Logg inn for å sjå historikken synkronisert frå dei andre einingane dine.</string>
-    <!-- The synced history sign in dialog button text -->
-    <string moz:removedIn="105" name="history_sign_in_button" tools:ignore="UnusedResources">Logga in</string>
-    <!-- The synced history sign in dialog create a new account link -->
-    <string moz:removedIn="105" name="history_sign_in_create_account" tools:ignore="UnusedResources"><![CDATA[<u>Eller opprett ein Firefox-konto for å starte synkronisering</u>]]></string>
-
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">Nedlastingar fjerna</string>
@@ -875,6 +873,10 @@
     <string name="bookmark_menu_open_in_new_tab_button">Opne i ny fane</string>
     <!-- Bookmark overflow menu open in private tab button -->
     <string name="bookmark_menu_open_in_private_tab_button">Opne i privat fane</string>
+    <!-- Bookmark overflow menu open all in tabs button -->
+    <string name="bookmark_menu_open_all_in_tabs_button">Opne alle i nye faner</string>
+    <!-- Bookmark overflow menu open all in private tabs button -->
+    <string name="bookmark_menu_open_all_in_private_tabs_button">Opne alle i private faner</string>
     <!-- Bookmark overflow menu delete button -->
     <string name="bookmark_menu_delete_button">Slett</string>
     <!--Bookmark overflow menu save button -->
@@ -1054,6 +1056,10 @@
     <!-- Content description (not visible, for screen readers etc.):
         "Share" button. Opens the share menu when pressed. -->
     <string name="share_button_content_description">Del</string>
+    <!-- Text for the Save to PDF feature in the share menu -->
+    <string name="share_save_to_pdf">Lagre som PDF</string>
+    <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
+    <string name="unable_to_save_to_pdf_error">Klarte ikkje å generere PDF</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Send til eining</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1065,9 +1071,11 @@
     <!-- Toast shown after copying link to clipboard -->
     <string name="toast_copy_link_to_clipboard">Kopier til utklippstavla</string>
     <!-- An option from the three dot menu to into sync -->
-    <string name="sync_menu_sign_in">Logg inn for å synkronisere</string>
+    <string moz:removedIn="107" name="sync_menu_sign_in" tools:ignore="UnusedResources">Logg inn for å synkronisere</string>
     <!-- An option from the share dialog to sign into sync -->
     <string name="sync_sign_in">Logg inn på Sync</string>
+     <!-- An option from the three dot menu to sync and save data -->
+    <string name="sync_menu_sync_and_save_data">Synkroniser og lagre data</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
     <string name="sync_send_to_all">Send til alle einingar</string>
     <!-- An option from the share dialog to reconnect to sync -->
@@ -1227,30 +1235,24 @@
     <string name="delete_history_group_snackbar">Gruppe sletta</string>
 
     <!-- Onboarding -->
-    <!-- Text for onboarding welcome message
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string moz:RemovedIn="106" name="onboarding_header" tools:ignore="UnusedResources">Velkomen til %s!</string>
-
-    <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
-    <string moz:removedIn="106" name="onboarding_account_sign_in_header_1" tools:ignore="UnusedResources">Synkroniser Firefox mellom einingar</string>
+    <!-- Text for onboarding welcome header. -->
+    <string name="onboarding_header_2">Velkomen til eit betre internett</string>
+    <!-- Text for the onboarding welcome message. -->
+    <string name="onboarding_message">Ein nettlesar bygd for personar, ikkje profitt.</string>
 
     <!-- Text for the Firefox account onboarding sign in card header. -->
     <string name="onboarding_account_sign_in_header">Hald fram der du slutta</string>
-    <!-- Text for the button to learn more about signing in to your Firefox account. The first parameter is the name of the application.-->
-    <string moz:removedIn="106" name="onboarding_manual_sign_in_description_2" tools:ignore="UnusedResources">Ta med bokmerke, historikk og passord til %1$s på denne eininga.</string>
-    <!-- text for the button to manually sign into Firefox account. -->
-    <string moz:removedIn="106" name="onboarding_firefox_account_sign_in_1" tools:ignore="UnusedResources">Registrer deg</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account. -->
+    <string name="onboarding_manual_sign_in_description">Synkroniser faner og passord på tvers av einingar for saumlaus byte av skjerm.</string>
     <!-- Text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in">Logg inn</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Synkronisering er på</string>
 
-    <!-- text for the tracking protection onboarding card header -->
-    <string moz:removedIn="106" name="onboarding_tracking_protection_header_3" tools:ignore="UnusedResources">Alltid med personvern</string>
     <!-- Text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header">Personvernsikring som standard</string>
-    <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
-    <string moz:removedIn="106" name="onboarding_tracking_protection_description_4" tools:ignore="UnusedResources">%1$s stoppar selskap automatisk frå å spore aktivitetane dine på nettet i det skjulte.</string>
+    <!-- Text for the tracking protection card description. -->
+    <string name="onboarding_tracking_protection_description">Totalt vern mot infokapslar stoppar sporarar frå å bruke infokapslar til å forfølgje deg på tvers av nettstadar.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Standard (standard)</string>
     <!-- text for standard blocking option button description -->
@@ -1261,16 +1263,17 @@
     <string name="onboarding_tracking_protection_strict_button_description_3">Blokkerer fleire sporings-mekanismar. Sider vert leste inn raskare, men enkelte sider fungerer kanskje ikkje.</string>
     <!-- text for the toolbar position card header  -->
     <string name="onboarding_toolbar_placement_header_1">Vel plassering for verktøylinja</string>
-    <!-- text for the toolbar position card description -->
-    <string moz:removedIn="106" name="onboarding_toolbar_placement_description_1" tools:ignore="UnusedResources">Plassere verktøylinja innanfor rekkjevidde. Ha henne i botn eller topp.</string>
-    <!-- text for the privacy notice onboarding card header -->
-    <string moz:removedIn="106" name="onboarding_privacy_notice_header" tools:ignore="UnusedResources">Ditt personvern</string>
-    <!-- text for the privacy notice onboarding card description
-    The first parameter is the name of the app (e.g. Firefox Preview) Substitute %s for long browser name. -->
-    <string moz:removedIn="106" name="onboarding_privacy_notice_description2" tools:ignore="UnusedResources">Vi har utvikla %s for å gi deg kontroll over det du deler på nettet og kva du deler med oss.</string>
+    <!-- Text for the toolbar position card description -->
+    <string name="onboarding_toolbar_placement_description">Behald i botnen, eller flytt til toppen.</string>
+    <!-- Text for the privacy notice onboarding card header -->
+    <string name="onboarding_privacy_notice_header_1">Du kontrollerer dine data</string>
+    <!-- Text for the privacy notice onboarding card description. -->
+    <string name="onboarding_privacy_notice_description">Firefox gir deg kontroll over kva du deler på nettet og kva du deler med oss.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Les personvernmerknaden vår</string>
 
+    <!-- Text for the conclusion onboarding message -->
+    <string name="onboarding_conclusion_header">Klar til å oppdage eit fantastisk internett?</string>
     <!-- text for the button to finish onboarding -->
     <string name="onboarding_finish">Start nettlesinga</string>
 
@@ -1358,6 +1361,8 @@
     <string name="preference_enhanced_tracking_protection_custom_cookies_3">Alle tredjeparts-infokapslar (kan lage feil på nettstadar)</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies_4">Alle infokapslar (vil føre til feil på nettstadar)</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_5">Isoler infokapslar på tvers av nettstadar</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings for tracking content -->
     <string name="preference_enhanced_tracking_protection_custom_tracking_content">Sporingsinnhald</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
@@ -1384,6 +1389,8 @@
     <string name="etp_cookies_title_2">Infokapslar på tvers av nettstadar</string>
     <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_description">Blokkerer informasjonskapslar som annonsenettverk og analyseselskap brukar for å samanstille aktiviteten din på nettet på tvers av nettstadar.</string>
+    <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_description_2">Totalt vern mot infokapslar isolerer infokapslar til nettstaden du er på, så sporarar som annonsenettverk ikkje kan bruke dei til å følgje deg mellom nettstadar.</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_title">Kryptoutvinnarar</string>
     <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
@@ -1906,7 +1913,9 @@
     <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
     <string name="pocket_stories_placeholder_text">Oppdag meir</string>
     <!-- Title of an app feature. Smaller than a heading.-->
-    <string name="pocket_stories_feature_title">Levert av Pocket.</string>
+    <string moz:removedIn="108" name="pocket_stories_feature_title" tools:ignore="UnusedResources">Levert av Pocket.</string>
+    <!-- Title of an app feature. Smaller than a heading. The first parameter is product name Pocket -->
+    <string name="pocket_stories_feature_title_2">Driven av %s.</string>
     <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
     <string name="pocket_stories_feature_caption">Del av Firefox-familien. %s</string>
     <!-- Clickable text for opening an external link for more information about Pocket. -->
@@ -1920,4 +1929,14 @@
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">Gå til innstillingar</string>
     <string name="firefox_suggest_header">Firefox-forslag</string>
+
+    <!-- Accessibility services actions labels. These will be appended to accessibility actions like "Double tap to.." but not by or applications but by services like Talkback. -->
+    <!-- Action label for elements that can be collapsed if interacting with them. Talkback will append this to say "Double tap to collapse". -->
+    <string name="a11y_action_label_collapse">slå saman</string>
+    <!-- Action label for elements that can be expanded if interacting with them. Talkback will append this to say "Double tap to expand". -->
+    <string name="a11y_action_label_expand">fald ut</string>
+    <!-- Action label for links to a website containing documentation about a wallpaper collection. Talkback will append this to say "Double tap to open link to learn more about this collection". -->
+    <string name="a11y_action_label_wallpaper_collection_learn_more">opne lenka for å lære meir om denne samlinga</string>
+    <!-- Action label for links that point to an article. Talkback will append this to say "Double tap to read the article". -->
+    <string name="a11y_action_label_read_article">les artikkelen</string>
 </resources>

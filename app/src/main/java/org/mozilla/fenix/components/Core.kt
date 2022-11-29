@@ -92,6 +92,7 @@ import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.advanced.getSelectedLocale
+import org.mozilla.fenix.share.SaveToPDFMiddleware
 import org.mozilla.fenix.telemetry.TelemetryMiddleware
 import org.mozilla.fenix.utils.getUndoDelay
 import org.mozilla.geckoview.GeckoRuntime
@@ -131,6 +132,8 @@ class Core(
                 R.color.fx_mobile_layer_color_1,
             ),
             httpsOnlyMode = context.settings().getHttpsOnlyMode(),
+            cookieBannerHandlingModePrivateBrowsing = context.settings().getCookieBannerHandling(),
+            cookieBannerHandlingMode = context.settings().getCookieBannerHandling(),
         )
 
         GeckoEngine(
@@ -229,7 +232,7 @@ class Core(
                 RecentlyClosedMiddleware(recentlyClosedTabsStorage, RECENTLY_CLOSED_MAX),
                 DownloadMiddleware(context, DownloadService::class.java),
                 ReaderViewMiddleware(),
-                TelemetryMiddleware(context.settings()),
+                TelemetryMiddleware(context.settings(), metrics),
                 ThumbnailsMiddleware(thumbnailStorage),
                 UndoMiddleware(context.getUndoDelay()),
                 RegionMiddleware(context, locationService),
@@ -244,6 +247,7 @@ class Core(
                 LastMediaAccessMiddleware(),
                 HistoryMetadataMiddleware(historyMetadataService),
                 SessionPrioritizationMiddleware(),
+                SaveToPDFMiddleware(context),
             )
 
         BrowserStore(
