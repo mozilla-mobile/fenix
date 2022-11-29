@@ -276,7 +276,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             val safeIntent = intent?.toSafeIntent()
             safeIntent
                 ?.let(::getIntentSource)
-                ?.also { Events.appOpened.record(Events.AppOpenedExtra(it)) }
+                ?.also {
+                    Events.appOpened.record(Events.AppOpenedExtra(it))
+                    // This will record an event in Nimbus' internal event store. Used for behavioral targeting
+                    components.analytics.experiments.recordEvent("app_opened")
+                }
         }
         supportActionBar?.hide()
 
