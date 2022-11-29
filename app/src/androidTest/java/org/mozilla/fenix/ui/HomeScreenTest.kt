@@ -85,7 +85,7 @@ class HomeScreenTest {
             verifyDefaultSearchEngine("Google")
             verifyHomeMenuButton()
             verifyTabButton()
-            verifyNoTabsOpened()
+            verifyTabCounter("0")
         }
     }
 
