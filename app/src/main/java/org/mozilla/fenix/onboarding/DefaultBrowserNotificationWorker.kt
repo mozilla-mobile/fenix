@@ -5,12 +5,9 @@
 package org.mozilla.fenix.onboarding
 
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -22,7 +19,6 @@ import androidx.work.WorkerParameters
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.ids.SharedIdsHelper
 import org.mozilla.fenix.GleanMetrics.Events
-import org.mozilla.fenix.GleanMetrics.Events.marketingNotificationAllowed
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.settings
@@ -36,9 +32,15 @@ class DefaultBrowserNotificationWorker(
 ) : Worker(context, workerParameters) {
 
     override fun doWork(): Result {
-        val channelId = ensureChannelExists()
+        val channelId = ensureMarketingChannelExists(applicationContext)
+
         NotificationManagerCompat.from(applicationContext)
-            .notify(NOTIFICATION_TAG, NOTIFICATION_ID, buildNotification(channelId))
+            .notify(
+                NOTIFICATION_TAG,
+                DEFAULT_BROWSER_NOTIFICATION_ID,
+                buildNotification(channelId),
+            )
+
         Events.defaultBrowserNotifShown.record(NoExtras())
 
         // default browser notification should only happen once
@@ -81,50 +83,12 @@ class DefaultBrowserNotificationWorker(
         }
     }
 
-    /**
-     * Make sure a notification channel for default browser notification exists.
-     *
-     * Returns the channel id to be used for notifications.
-     */
-    private fun ensureChannelExists(): String {
-        var channelEnabled = true
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationManager: NotificationManager =
-                applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-            val channel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                applicationContext.getString(R.string.notification_marketing_channel_name),
-                NotificationManager.IMPORTANCE_DEFAULT,
-            )
-
-            notificationManager.createNotificationChannel(channel)
-
-            val existingChannel = notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_ID)
-            channelEnabled =
-                existingChannel != null && existingChannel.importance != NotificationManager.IMPORTANCE_NONE
-        }
-
-        @Suppress("TooGenericExceptionCaught")
-        val notificationsEnabled = try {
-            NotificationManagerCompat.from(applicationContext).areNotificationsEnabled()
-        } catch (e: Exception) {
-            false
-        }
-
-        marketingNotificationAllowed.set(notificationsEnabled && channelEnabled)
-
-        return NOTIFICATION_CHANNEL_ID
-    }
-
     companion object {
-        private const val NOTIFICATION_CHANNEL_ID = "org.mozilla.fenix.default.browser.channel"
-        private const val NOTIFICATION_ID = 1
         private const val NOTIFICATION_PENDING_INTENT_TAG = "org.mozilla.fenix.default.browser"
         private const val INTENT_DEFAULT_BROWSER_NOTIFICATION = "org.mozilla.fenix.default.browser.intent"
         private const val NOTIFICATION_TAG = "org.mozilla.fenix.default.browser.tag"
         private const val NOTIFICATION_WORK_NAME = "org.mozilla.fenix.default.browser.work"
-        private const val NOTIFICATION_DELAY = Settings.ONE_DAY_MS
+        private const val NOTIFICATION_DELAY = Settings.THREE_DAYS_MS
 
         fun isDefaultBrowserNotificationIntent(intent: Intent) =
             intent.extras?.containsKey(INTENT_DEFAULT_BROWSER_NOTIFICATION) ?: false

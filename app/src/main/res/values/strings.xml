@@ -244,7 +244,9 @@
     <!-- Menu option in the search selector menu to open the search settings -->
     <string name="search_settings_menu_item">Search settings</string>
     <!-- Header text for the search selector menu -->
-    <string name="search_header_menu_item">This time search:</string>
+    <string name="search_header_menu_item" moz:RemovedIn="109" tools:ignore="UnusedResources">This time search:</string>
+    <!-- Header text for the search selector menu -->
+    <string name="search_header_menu_item_2">This time search in:</string>
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
@@ -317,9 +319,9 @@
     <!-- Preference for enabling "HTTPS-Only" mode -->
     <string name="preferences_https_only_title">HTTPS-Only Mode</string>
 
-    <!-- Description of the cookie banner reduction setting. -->
+    <!-- Preference for removing cookie/consent banners from sites automatically. See reduce_cookie_banner_summary for additional context. -->
     <string name="preferences_cookie_banner_reduction">Cookie Banner Reduction</string>
-    <!-- Preference for rejecting all cookies whenever possible. -->
+    <!-- Preference for rejecting or removing as many cookie/consent banners as possible on sites. See reduce_cookie_banner_summary for additional context. -->
     <string name="reduce_cookie_banner_option">Reduce cookie banners</string>
     <!-- Summary for the preference for rejecting all cookies whenever possible. -->
     <string name="reduce_cookie_banner_summary">Firefox automatically tries to reject cookie requests on cookie banners. If a reject option isn’t available, Firefox may accept all cookies to dismiss the banner.</string>
@@ -1070,6 +1072,11 @@
     <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
     %1$s is a placeholder that will be replaced by the app name (Fenix). -->
     <string name="notification_default_browser_text">Make %1$s your default browser</string>
+    <!-- Title shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_title">Try private browsing</string>
+    <!-- Text shown in the notification that pops up to re-engage the user.
+    %1$s is a placeholder that will be replaced by the app name. -->
+    <string name="notification_re_engagement_text">Browse with no saved cookies or history in %1$s</string>
 
     <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->

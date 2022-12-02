@@ -50,7 +50,6 @@ import mozilla.components.service.glean.net.ConceptFetchHttpUploader
 import mozilla.components.support.base.facts.register
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.logger.Logger
-import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.ktx.android.content.isMainProcess
 import mozilla.components.support.ktx.android.content.runOnlyInMainProcess
 import mozilla.components.support.locale.LocaleAwareApplication
@@ -59,8 +58,6 @@ import mozilla.components.support.rusthttp.RustHttpConfig
 import mozilla.components.support.rustlog.RustLog
 import mozilla.components.support.utils.logElapsedTime
 import mozilla.components.support.webextensions.WebExtensionSupport
-import org.mozilla.experiments.nimbus.NimbusInterface
-import org.mozilla.experiments.nimbus.internal.EnrolledExperiment
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.AndroidAutofill
 import org.mozilla.fenix.GleanMetrics.CustomizeHome
@@ -83,6 +80,7 @@ import org.mozilla.fenix.ext.isKnownSearchDomain
 import org.mozilla.fenix.ext.setCustomEndpointIfAvailable
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.FxNimbus
+import org.mozilla.fenix.onboarding.ensureMarketingChannelExists
 import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
 import org.mozilla.fenix.perf.ProfilerMarkerFactProcessor
 import org.mozilla.fenix.perf.StartupTimeline
@@ -134,12 +132,9 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             return
         }
 
-        // We need to always initialize Glean and do it early here.
-        initializeGlean()
-
+        // DO NOT ADD ANYTHING ABOVE HERE.
         setupInMainProcessOnly()
-
-        downloadWallpapers()
+        // DO NOT ADD ANYTHING UNDER HERE.
 
         // DO NOT MOVE ANYTHING BELOW THIS elapsedRealtimeNanos CALL.
         val stop = SystemClock.elapsedRealtimeNanos()
@@ -197,11 +192,22 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
     @CallSuper
     open fun setupInMainProcessOnly() {
+        // ⚠️ DO NOT ADD ANYTHING ABOVE THIS LINE.
+        // Especially references to the engine/BrowserStore which can alter the app initialization.
+        // See: https://github.com/mozilla-mobile/fenix/issues/26320
+        //
+        // We can initialize Nimbus before Glean because Glean will queue messages
+        // before it's initialized.
+        initializeNimbus()
+
         ProfilerMarkerFactProcessor.create { components.core.engine.profiler }.register()
 
         run {
+            // We need to always initialize Glean and do it early here.
+            initializeGlean()
+
             // Attention: Do not invoke any code from a-s in this scope.
-            val megazordSetup = setupMegazord()
+            val megazordSetup = finishSetupMegazord()
 
             setDayNightTheme()
             components.strictMode.enableStrictMode(true)
@@ -222,6 +228,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             }
             restoreBrowserState()
             restoreDownloads()
+            restoreMessaging()
 
             // Just to make sure it is impossible for any application-services pieces
             // to invoke parts of itself that require complete megazord initialization
@@ -244,6 +251,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         initVisualCompletenessQueueAndQueueTasks()
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(TelemetryLifecycleObserver(components.core.store))
+
+        downloadWallpapers()
     }
 
     @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
@@ -359,6 +368,16 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             }
         }
 
+        // For Android 13 or above, prompt the user for notification permission at the start.
+        // Regardless if the user accepts or denies the permission prompt, the prompt will occur only once.
+        fun queueNotificationPermissionRequest() {
+            if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                queue.runIfReadyOrQueue {
+                    ensureMarketingChannelExists(this)
+                }
+            }
+        }
+
         initQueue()
 
         // We init these items in the visual completeness queue to avoid them initing in the critical
@@ -368,6 +387,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         queueReviewPrompt()
         queueRestoreLocale()
         queueStorageMaintenance()
+        queueNotificationPermissionRequest()
     }
 
     private fun startMetricsIfEnabled() {
@@ -415,6 +435,15 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             .install(this)
     }
 
+    protected open fun initializeNimbus() {
+        beginSetupMegazord()
+
+        // This lazily constructs the Nimbus object…
+        val nimbus = components.analytics.experiments
+        // … which we then can populate the feature configuration.
+        FxNimbus.initialize { nimbus }
+    }
+
     /**
      * Initiate Megazord sequence! Megazord Battle Mode!
      *
@@ -424,54 +453,40 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
      * Documentation on what megazords are, and why they're needed:
      * - https://github.com/mozilla/application-services/blob/master/docs/design/megazords.md
      * - https://mozilla.github.io/application-services/docs/applications/consuming-megazord-libraries.html
+     *
+     * This is the initialization of the megazord without setting up networking, i.e. needing the
+     * engine for networking. This should do the minimum work necessary as it is done on the main
+     * thread, early in the app startup sequence.
      */
-    @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
-    private fun setupMegazord(): Deferred<Unit> {
+    private fun beginSetupMegazord() {
         // Note: Megazord.init() must be called as soon as possible ...
         Megazord.init()
-        // Give the generated FxNimbus a closure to lazily get the Nimbus object
-        FxNimbus.initialize { components.analytics.experiments }
+
+        initializeRustErrors(components.analytics.crashReporter)
+        // ... but RustHttpConfig.setClient() and RustLog.enable() can be called later.
+
+        // Once application-services has switched to using the new
+        // error reporting system, RustLog shouldn't input a CrashReporter
+        // anymore.
+        // (https://github.com/mozilla/application-services/issues/4981).
+        RustLog.enable(components.analytics.crashReporter)
+    }
+
+    @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
+    private fun finishSetupMegazord(): Deferred<Unit> {
         return GlobalScope.async(Dispatchers.IO) {
-            initializeRustErrors(components.analytics.crashReporter)
-            // ... but RustHttpConfig.setClient() and RustLog.enable() can be called later.
             RustHttpConfig.setClient(lazy { components.core.client })
-            // Once application-services has switched to using the new
-            // error reporting system, RustLog shouldn't input a CrashReporter
-            // anymore.
-            // (https://github.com/mozilla/application-services/issues/4981).
-            RustLog.enable(components.analytics.crashReporter)
-            // We want to ensure Nimbus is initialized as early as possible so we can
-            // experiment on features close to startup.
-            // But we need viaduct (the RustHttp client) to be ready before we do.
-            components.analytics.experiments.apply {
-                setupNimbusObserver(this)
-            }
+
+            // Now viaduct (the RustHttp client) is initialized we can ask Nimbus to fetch
+            // experiments recipes from the server.
+            components.analytics.experiments.fetchExperiments()
         }
     }
 
-    private fun setupNimbusObserver(nimbus: Observable<NimbusInterface.Observer>) {
-        nimbus.register(
-            object : NimbusInterface.Observer {
-                override fun onUpdatesApplied(updated: List<EnrolledExperiment>) {
-                    onNimbusStartupAndUpdate()
-                }
-            },
-        )
-    }
-
-    private fun onNimbusStartupAndUpdate() {
-        // When Nimbus has successfully started up, we can apply our engine settings experiment.
-        // Any previous value that was set on the engine will be overridden from those set in
-        // Core.Engine.DefaultSettings.
-        // NOTE ⚠️: Any startup experiment we want to run needs to have it's value re-applied here.
-        components.core.engine.settings.trackingProtectionPolicy =
-            components.core.trackingProtectionPolicyFactory.createTrackingProtectionPolicy()
-
-        val settings = settings()
-        if (settings.isExperimentationEnabled) {
+    private fun restoreMessaging() {
+        if (settings().isExperimentationEnabled) {
             components.appStore.dispatch(AppAction.MessagingAction.Restore)
         }
-        reportHomeScreenSectionMetrics(settings)
     }
 
     override fun onTrimMemory(level: Int) {

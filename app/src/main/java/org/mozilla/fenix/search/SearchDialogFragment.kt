@@ -154,6 +154,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return object : Dialog(requireContext(), this.theme) {
+            @Deprecated("Deprecated in Java")
             override fun onBackPressed() {
                 this@SearchDialogFragment.onBackPressed()
             }
@@ -520,6 +521,12 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
     override fun onResume() {
         super.onResume()
+
+        qrFeature.get()?.let {
+            if (it.isScanInProgress) {
+                it.scan(binding.searchWrapper.id)
+            }
+        }
 
         view?.post {
             // We delay querying the clipboard by posting this code to the main thread message queue,

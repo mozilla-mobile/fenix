@@ -312,6 +312,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         }
 
         subscribeToTabCollections()
+        updateLastBrowseActivity()
     }
 
     override fun onStop() {
