@@ -16,6 +16,7 @@ import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.Constants.POCKET_FEATURE_UTM_KEY_VALUE
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
@@ -279,7 +280,6 @@ class HomeScreenTest {
         }
     }
 
-    @Ignore("Failed, see: https://github.com/mozilla-mobile/fenix/issues/28098")
     @Test
     fun openPocketDiscoverMoreTest() {
         activityTestRule.activityRule.applySettingsExceptions {
@@ -295,7 +295,7 @@ class HomeScreenTest {
             swipePocketProvokingStories()
             verifyDiscoverMoreStoriesButton(activityTestRule, 9)
         }.clickPocketDiscoverMoreButton(activityTestRule, 9) {
-            verifyUrl("getpocket.com/explore")
+            verifyUrl(POCKET_FEATURE_UTM_KEY_VALUE)
         }
     }
 

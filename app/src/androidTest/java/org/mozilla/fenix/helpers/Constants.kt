@@ -18,6 +18,7 @@ object Constants {
     }
 
     const val SPEECH_RECOGNITION = "android.speech.action.RECOGNIZE_SPEECH"
+    const val POCKET_FEATURE_UTM_KEY_VALUE = "utm_source=ff_android"
     const val LONG_CLICK_DURATION: Long = 5000
     const val LISTS_MAXSWIPES: Int = 3
     const val RETRY_COUNT = 3
