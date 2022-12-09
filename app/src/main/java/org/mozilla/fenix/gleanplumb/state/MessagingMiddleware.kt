@@ -40,6 +40,12 @@ class MessagingMiddleware(
                 coroutineScope.launch {
                     val messages = messagingStorage.getMessages()
                     context.store.dispatch(UpdateMessages(messages))
+                    // It may be that the first `Evaluate` from `MessagingFeature` was dispatched
+                    // before the messages were loaded based on the `Restore` action and so
+                    // it won't lead to messages being shown because none were loaded.
+                    // Calling `Evaluate` again after the messages are loaded based on the `Restore` action
+                    // will ensure the newly made available messages will be shown.
+                    context.store.dispatch(Evaluate)
                 }
             }
 
