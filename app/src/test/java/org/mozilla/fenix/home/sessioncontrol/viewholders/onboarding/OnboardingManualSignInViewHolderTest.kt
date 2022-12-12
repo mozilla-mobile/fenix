@@ -13,6 +13,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.telemetry.glean.testing.GleanTestRule
 import org.junit.After
@@ -60,7 +61,9 @@ class OnboardingManualSignInViewHolderTest {
         OnboardingManualSignInViewHolder(binding.root)
         binding.fxaSignInButton.performClick()
 
-        verify { navController.navigate(HomeFragmentDirections.actionGlobalTurnOnSync()) }
+        verify { navController.navigate(HomeFragmentDirections.actionGlobalTurnOnSync(
+            entrypoint = FxAEntrypoint.OnboardingManualSignIn
+        )) }
         // Check if the event was recorded
         Assert.assertNotNull(Onboarding.fxaManualSignin.testGetValue())
         assertEquals(1, Onboarding.fxaManualSignin.testGetValue()!!.size)

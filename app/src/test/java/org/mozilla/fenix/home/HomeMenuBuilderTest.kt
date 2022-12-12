@@ -12,6 +12,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.menu.view.MenuButton
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.telemetry.glean.testing.GleanTestRule
 import org.junit.Assert.assertNotNull
@@ -116,7 +117,9 @@ class HomeMenuBuilderTest {
         verify {
             navController.nav(
                 R.id.homeFragment,
-                HomeFragmentDirections.actionGlobalAccountProblemFragment(),
+                HomeFragmentDirections.actionGlobalAccountProblemFragment(
+                    entrypoint = FxAEntrypoint.HomeMenu,
+                ),
             )
         }
 
@@ -125,7 +128,7 @@ class HomeMenuBuilderTest {
         verify {
             navController.nav(
                 R.id.homeFragment,
-                HomeFragmentDirections.actionGlobalTurnOnSync(),
+                HomeFragmentDirections.actionGlobalTurnOnSync(entrypoint = FxAEntrypoint.HomeMenu),
             )
         }
     }
@@ -208,7 +211,9 @@ class HomeMenuBuilderTest {
         verify {
             navController.nav(
                 R.id.homeFragment,
-                HomeFragmentDirections.actionGlobalAccountProblemFragment(),
+                HomeFragmentDirections.actionGlobalAccountProblemFragment(
+                    entrypoint = FxAEntrypoint.HomeMenu,
+                ),
             )
         }
     }

@@ -7,6 +7,7 @@ package org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding
 import android.view.View
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.R
@@ -20,7 +21,7 @@ class OnboardingManualSignInViewHolder(view: View) : RecyclerView.ViewHolder(vie
         binding.fxaSignInButton.setOnClickListener {
             Onboarding.fxaManualSignin.record(NoExtras())
 
-            val directions = HomeFragmentDirections.actionGlobalTurnOnSync()
+            val directions = HomeFragmentDirections.actionGlobalTurnOnSync(entrypoint = FxAEntrypoint.OnboardingManualSignIn)
             Navigation.findNavController(view).navigate(directions)
         }
     }

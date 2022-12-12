@@ -6,6 +6,7 @@ package org.mozilla.fenix
 
 import androidx.navigation.NavDirections
 import mozilla.appservices.places.BookmarkRoot
+import mozilla.components.concept.sync.FxAEntrypoint
 
 /**
  * Used with [HomeActivity] global navigation to indicate which fragment is being opened.
@@ -28,7 +29,7 @@ enum class GlobalDirections(val navDirections: NavDirections, val destinationId:
         R.id.settingsFragment,
     ),
     Sync(
-        NavGraphDirections.actionGlobalTurnOnSync(),
+        NavGraphDirections.actionGlobalTurnOnSync(entrypoint = FxAEntrypoint.DeepLink),
         R.id.turnOnSyncFragment,
     ),
     SearchEngine(

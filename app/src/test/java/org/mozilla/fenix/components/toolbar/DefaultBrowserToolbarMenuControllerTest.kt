@@ -34,6 +34,7 @@ import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.prompt.ShareData
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.session.SessionUseCases
@@ -785,7 +786,9 @@ class DefaultBrowserToolbarMenuControllerTest {
     @Test
     fun `GIVEN account exists and the user is not signed in WHEN sign in to sync menu item is pressed THEN navigate to account problem fragment`() = runTest {
         val item = ToolbarMenu.Item.SyncAccount(AccountState.NEEDS_REAUTHENTICATION)
-        val accountProblemDirections = BrowserFragmentDirections.actionGlobalAccountProblemFragment()
+        val accountProblemDirections = BrowserFragmentDirections.actionGlobalAccountProblemFragment(
+            entrypoint = FxAEntrypoint.BrowserToolbar,
+        )
         val controller = createController(scope = this, store = browserStore)
 
         controller.handleToolbarItemInteraction(item)
@@ -796,7 +799,9 @@ class DefaultBrowserToolbarMenuControllerTest {
     @Test
     fun `GIVEN account doesn't exist WHEN sign in to sync menu item is pressed THEN navigate to sign in`() = runTest {
         val item = ToolbarMenu.Item.SyncAccount(AccountState.NO_ACCOUNT)
-        val turnOnSyncDirections = BrowserFragmentDirections.actionGlobalTurnOnSync()
+        val turnOnSyncDirections = BrowserFragmentDirections.actionGlobalTurnOnSync(
+            entrypoint = FxAEntrypoint.BrowserToolbar,
+        )
         val controller = createController(scope = this, store = browserStore)
 
         controller.handleToolbarItemInteraction(item)

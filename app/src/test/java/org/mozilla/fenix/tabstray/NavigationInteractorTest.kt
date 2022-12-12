@@ -21,6 +21,7 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.content.DownloadState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.TabEntry
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.service.fxa.manager.FxaAccountManager
 import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.test.robolectric.testContext
@@ -104,7 +105,9 @@ class NavigationInteractorTest {
 
         createInteractor().onAccountSettingsClicked()
 
-        verify(exactly = 1) { navController.navigate(TabsTrayFragmentDirections.actionGlobalTurnOnSync()) }
+        verify(exactly = 1) { navController.navigate(TabsTrayFragmentDirections.actionGlobalTurnOnSync(
+            entrypoint = FxAEntrypoint.NavigationInteraction,
+        )) }
     }
 
     @Test

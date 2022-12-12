@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
@@ -140,7 +141,7 @@ class BookmarkView(
             adapter = bookmarkAdapter
         }
         binding.bookmarkFoldersSignIn.setOnClickListener {
-            navController.navigate(NavGraphDirections.actionGlobalTurnOnSync())
+            navController.navigate(NavGraphDirections.actionGlobalTurnOnSync(entrypoint = FxAEntrypoint.BookmarkView))
         }
         binding.swipeRefresh.setOnRefreshListener {
             interactor.onRequestSync()

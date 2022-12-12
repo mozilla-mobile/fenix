@@ -32,6 +32,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
 import mozilla.components.service.glean.private.NoExtras
@@ -256,7 +257,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val directions: NavDirections? = when (preference.key) {
             resources.getString(R.string.pref_key_sign_in) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToTurnOnSyncFragment()
+                SettingsFragmentDirections.actionSettingsFragmentToTurnOnSyncFragment(entrypoint = FxAEntrypoint.SettingsMenu)
             }
             resources.getString(R.string.pref_key_tabs) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToTabsSettingsFragment()
@@ -338,7 +339,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 SettingsFragmentDirections.actionSettingsFragmentToAccountSettingsFragment()
             }
             resources.getString(R.string.pref_key_account_auth_error) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToAccountProblemFragment()
+                SettingsFragmentDirections.actionSettingsFragmentToAccountProblemFragment(entrypoint = FxAEntrypoint.SettingsMenu)
             }
             resources.getString(R.string.pref_key_delete_browsing_data) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToDeleteBrowsingDataFragment()

@@ -27,6 +27,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.sync.Device
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.concept.sync.TabData
 import mozilla.components.feature.accounts.push.SendTabUseCases
 import mozilla.components.feature.session.SessionUseCases
@@ -73,6 +74,7 @@ interface ShareController {
  * @param sendTabUseCases instance of [SendTabUseCases] which allows sending tabs to account devices.
  * @param snackbar - instance of [FenixSnackbar] for displaying styled snackbars
  * @param navController - [NavController] used for navigation.
+ * @param fxaEntrypoint - the entrypoint if we need to authenticate, it will be reported in telemetry
  * @param dismiss - callback signalling sharing can be closed.
  */
 @Suppress("TooManyFunctions", "LongParameterList")
@@ -87,11 +89,12 @@ class DefaultShareController(
     private val recentAppsStorage: RecentAppsStorage,
     private val viewLifecycleScope: CoroutineScope,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val fxaEntrypoint: FxAEntrypoint = FxAEntrypoint.ShareMenu,
     private val dismiss: (ShareController.Result) -> Unit,
 ) : ShareController {
 
     override fun handleReauth() {
-        val directions = ShareFragmentDirections.actionGlobalAccountProblemFragment()
+        val directions = ShareFragmentDirections.actionGlobalAccountProblemFragment(entrypoint = fxaEntrypoint)
         navController.nav(R.id.shareFragment, directions)
         dismiss(ShareController.Result.DISMISSED)
     }
@@ -161,7 +164,7 @@ class DefaultShareController(
     override fun handleSignIn() {
         SyncAccount.signInToSendTab.record(NoExtras())
         val directions =
-            ShareFragmentDirections.actionGlobalTurnOnSync(padSnackbar = true)
+            ShareFragmentDirections.actionGlobalTurnOnSync(padSnackbar = true, entrypoint = fxaEntrypoint)
         navController.nav(R.id.shareFragment, directions)
         dismiss(ShareController.Result.DISMISSED)
     }

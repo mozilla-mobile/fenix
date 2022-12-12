@@ -6,6 +6,7 @@ package org.mozilla.fenix.tabstray.ext
 
 import android.content.Context
 import androidx.navigation.NavController
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.feature.syncedtabs.view.SyncedTabsView
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
@@ -40,7 +41,11 @@ fun SyncedTabsView.ErrorType.toSyncedTabsListItem(context: Context, navControlle
                 errorButton = SyncedTabsListItem.ErrorButton(
                     buttonText = context.getString(R.string.synced_tabs_sign_in_button),
                 ) {
-                    navController.navigate(NavGraphDirections.actionGlobalTurnOnSync())
+                    navController.navigate(
+                        NavGraphDirections.actionGlobalTurnOnSync(
+                            entrypoint = FxAEntrypoint.SyncedTabsMenu,
+                        ),
+                    )
                 },
             )
     }

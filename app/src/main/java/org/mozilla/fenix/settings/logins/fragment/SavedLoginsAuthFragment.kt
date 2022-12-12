@@ -22,6 +22,7 @@ import androidx.preference.SwitchPreference
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.feature.autofill.preference.AutofillPreference
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.glean.private.NoExtras
@@ -148,12 +149,12 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
                 .getString(R.string.preferences_passwords_sync_logins),
             onSyncSignInClicked = {
                 val directions =
-                    SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment()
+                    SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment(entrypoint = FxAEntrypoint.SavedLogins)
                 findNavController().navigate(directions)
             },
             onReconnectClicked = {
                 val directions =
-                    SavedLoginsAuthFragmentDirections.actionGlobalAccountProblemFragment()
+                    SavedLoginsAuthFragmentDirections.actionGlobalAccountProblemFragment(entrypoint = FxAEntrypoint.SavedLogins)
                 findNavController().navigate(directions)
             },
         )

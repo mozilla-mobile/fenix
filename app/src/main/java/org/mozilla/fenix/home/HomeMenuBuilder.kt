@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.menu.view.MenuButton
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
@@ -43,6 +44,7 @@ import org.mozilla.fenix.GleanMetrics.HomeMenu as HomeMenuMetrics
  * @property menuButton The [MenuButton] that will be used to create a menu when the button is
  * clicked.
  * @property hideOnboardingIfNeeded Lambda invoked to dismiss onboarding.
+ * @property fxaEntrypoint the entrypoint if we need to authenticate, it will be reported in telemetry
  */
 @Suppress("LongParameterList")
 class HomeMenuBuilder(
@@ -53,6 +55,7 @@ class HomeMenuBuilder(
     private val navController: NavController,
     private val menuButton: WeakReference<MenuButton>,
     private val hideOnboardingIfNeeded: () -> Unit,
+    private val fxaEntrypoint: FxAEntrypoint = FxAEntrypoint.HomeMenu,
 ) {
 
     /**
@@ -109,9 +112,9 @@ class HomeMenuBuilder(
                         AccountState.AUTHENTICATED ->
                             HomeFragmentDirections.actionGlobalAccountSettingsFragment()
                         AccountState.NEEDS_REAUTHENTICATION ->
-                            HomeFragmentDirections.actionGlobalAccountProblemFragment()
+                            HomeFragmentDirections.actionGlobalAccountProblemFragment(entrypoint = fxaEntrypoint)
                         AccountState.NO_ACCOUNT ->
-                            HomeFragmentDirections.actionGlobalTurnOnSync()
+                            HomeFragmentDirections.actionGlobalTurnOnSync(entrypoint = fxaEntrypoint)
                     },
                 )
             }
@@ -181,7 +184,7 @@ class HomeMenuBuilder(
             HomeMenu.Item.ReconnectSync -> {
                 navController.nav(
                     R.id.homeFragment,
-                    HomeFragmentDirections.actionGlobalAccountProblemFragment(),
+                    HomeFragmentDirections.actionGlobalAccountProblemFragment(entrypoint = fxaEntrypoint),
                 )
             }
             HomeMenu.Item.Extensions -> {

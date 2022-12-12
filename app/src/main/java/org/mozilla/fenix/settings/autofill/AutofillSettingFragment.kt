@@ -23,6 +23,7 @@ import androidx.preference.SwitchPreference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.sync.autofill.AutofillCreditCardsAddressesStorage
@@ -164,12 +165,12 @@ class AutofillSettingFragment : BiometricPromptPreferenceFragment() {
                 .getString(R.string.preferences_credit_cards_sync_cards),
             onSyncSignInClicked = {
                 findNavController().navigate(
-                    NavGraphDirections.actionGlobalTurnOnSync(),
+                    NavGraphDirections.actionGlobalTurnOnSync(entrypoint = FxAEntrypoint.AutofillSetting),
                 )
             },
             onReconnectClicked = {
                 findNavController().navigate(
-                    AutofillSettingFragmentDirections.actionGlobalAccountProblemFragment(),
+                    AutofillSettingFragmentDirections.actionGlobalAccountProblemFragment(entrypoint = FxAEntrypoint.AutofillSetting),
                 )
             },
         )

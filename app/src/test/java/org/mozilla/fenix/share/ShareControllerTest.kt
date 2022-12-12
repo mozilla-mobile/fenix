@@ -22,6 +22,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.sync.Device
 import mozilla.components.concept.sync.DeviceType
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.concept.sync.TabData
 import mozilla.components.feature.accounts.push.SendTabUseCases
 import mozilla.components.feature.session.SessionUseCases
@@ -78,7 +79,7 @@ class ShareControllerTest {
     private val testCoroutineScope = coroutinesTestRule.scope
     private val controller = DefaultShareController(
         context, shareSubject, shareData, sendTabUseCases, saveToPdfUseCase, snackbar, navController,
-        recentAppStorage, testCoroutineScope, testDispatcher, dismiss,
+        recentAppStorage, testCoroutineScope, testDispatcher, FxAEntrypoint.ShareMenu, dismiss
     )
 
     @Test
@@ -100,7 +101,8 @@ class ShareControllerTest {
         val activityContext: Context = mockk<Activity>()
         val testController = DefaultShareController(
             activityContext, shareSubject, shareData, mockk(), mockk(),
-            mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher, dismiss,
+            mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher,
+            FxAEntrypoint.ShareMenu, dismiss
         )
         every { activityContext.startActivity(capture(shareIntent)) } just Runs
         every { recentAppStorage.updateRecentApp(appShareOption.activityName) } just Runs
@@ -423,7 +425,9 @@ class ShareControllerTest {
         verifyOrder {
             navController.nav(
                 R.id.shareFragment,
-                ShareFragmentDirections.actionGlobalTurnOnSync(),
+                ShareFragmentDirections.actionGlobalTurnOnSync(
+                    entrypoint = FxAEntrypoint.ShareMenu,
+                ),
             )
             dismiss(ShareController.Result.DISMISSED)
         }
@@ -436,7 +440,9 @@ class ShareControllerTest {
         verifyOrder {
             navController.nav(
                 R.id.shareFragment,
-                ShareFragmentDirections.actionGlobalAccountProblemFragment(),
+                ShareFragmentDirections.actionGlobalAccountProblemFragment(
+                    entrypoint = FxAEntrypoint.ShareMenu
+                ),
             )
             dismiss(ShareController.Result.DISMISSED)
         }

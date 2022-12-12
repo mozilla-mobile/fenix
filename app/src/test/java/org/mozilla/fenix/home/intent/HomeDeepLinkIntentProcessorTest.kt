@@ -18,6 +18,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.engine.EngineSession
+import mozilla.components.concept.sync.FxAEntrypoint
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -121,7 +122,9 @@ class HomeDeepLinkIntentProcessorTest {
         assertTrue(processorHome.process(testIntent("turn_on_sync"), navController, out))
 
         verify { activity wasNot Called }
-        verify { navController.navigate(NavGraphDirections.actionGlobalTurnOnSync()) }
+        verify { navController.navigate(NavGraphDirections.actionGlobalTurnOnSync(
+            entrypoint = FxAEntrypoint.DeepLink,
+        )) }
         verify { out wasNot Called }
     }
 

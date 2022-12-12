@@ -22,6 +22,7 @@ import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.EngineSession.LoadUrlFlags
 import mozilla.components.concept.engine.prompt.ShareData
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.feature.session.SessionFeature
 import mozilla.components.feature.top.sites.DefaultTopSitesStorage
 import mozilla.components.feature.top.sites.PinnedSiteStorage
@@ -231,9 +232,9 @@ class DefaultBrowserToolbarMenuController(
                     AccountState.AUTHENTICATED ->
                         BrowserFragmentDirections.actionGlobalAccountSettingsFragment()
                     AccountState.NEEDS_REAUTHENTICATION ->
-                        BrowserFragmentDirections.actionGlobalAccountProblemFragment()
+                        BrowserFragmentDirections.actionGlobalAccountProblemFragment(entrypoint = FxAEntrypoint.BrowserToolbar)
                     AccountState.NO_ACCOUNT ->
-                        BrowserFragmentDirections.actionGlobalTurnOnSync()
+                        BrowserFragmentDirections.actionGlobalTurnOnSync(entrypoint = FxAEntrypoint.BrowserToolbar)
                 }
                 browserAnimator.captureEngineViewAndDrawStatically {
                     navController.nav(
