@@ -172,7 +172,7 @@ class SmokeTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
             waitForPageToLoad()
         }.openThreeDotMenu {
-            verifyPageThreeDotMainMenuItems()
+            verifyPageThreeDotMainMenuItems(isRequestDesktopSiteEnabled = false)
         }
     }
 
@@ -283,7 +283,7 @@ class SmokeTest {
         }.openThreeDotMenu {
             expandMenu()
         }.openAddToHomeScreen {
-            verifyShortcutNameField("Test_Page_1")
+            verifyShortcutTextFieldTitle("Test_Page_1")
             addShortcutName(shortcutTitle)
             clickAddShortcutButton()
             clickAddAutomaticallyButton()
