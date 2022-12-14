@@ -58,7 +58,7 @@ class StartSearchIntentProcessorTest {
         }
         StartSearchIntentProcessor().process(intent, navController, out)
         val options = navOptions {
-            popUpTo = R.id.homeFragment
+            popUpTo(R.id.homeFragment)
         }
 
         assertNotNull(SearchWidget.newTabButton.testGetValue())
@@ -71,9 +71,9 @@ class StartSearchIntentProcessorTest {
                 null,
                 NavGraphDirections.actionGlobalSearchDialog(
                     sessionId = null,
-                    searchAccessPoint = MetricsUtils.Source.WIDGET
+                    searchAccessPoint = MetricsUtils.Source.WIDGET,
                 ),
-                options
+                options,
             )
         }
         verify { out.removeExtra(HomeActivity.OPEN_TO_SEARCH) }

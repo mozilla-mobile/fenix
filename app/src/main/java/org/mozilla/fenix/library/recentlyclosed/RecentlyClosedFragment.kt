@@ -12,6 +12,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.flow.collect
@@ -35,7 +37,10 @@ import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.library.LibraryPageFragment
 
 @Suppress("TooManyFunctions")
-class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserInteractionHandler {
+class RecentlyClosedFragment :
+    LibraryPageFragment<RecoverableTab>(),
+    UserInteractionHandler,
+    MenuProvider {
     private lateinit var recentlyClosedFragmentStore: RecentlyClosedFragmentStore
     private var _recentlyClosedFragmentView: RecentlyClosedFragmentView? = null
     private val recentlyClosedFragmentView: RecentlyClosedFragmentView
@@ -49,7 +54,7 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
         showToolbar(getString(R.string.library_recently_closed_tabs))
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         if (recentlyClosedFragmentStore.state.selectedTabs.isNotEmpty()) {
             inflater.inflate(R.menu.history_select_multi, menu)
             menu.findItem(R.id.delete_history_multi_select)?.let { deleteItem ->
@@ -61,7 +66,7 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onMenuItemSelected(item: MenuItem): Boolean {
         val selectedTabs = recentlyClosedFragmentStore.state.selectedTabs
 
         return when (item.itemId) {
@@ -86,28 +91,28 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
                 recentlyClosedController.handleOpen(selectedTabs, BrowsingMode.Private)
                 true
             }
-            else -> super.onOptionsItemSelected(item)
+            // other options are not handled by this menu provider
+            else -> false
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
         RecentlyClosedTabs.opened.record(NoExtras())
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         val binding = FragmentRecentlyClosedTabsBinding.inflate(inflater, container, false)
         recentlyClosedFragmentStore = StoreProvider.get(this) {
             RecentlyClosedFragmentStore(
                 RecentlyClosedFragmentState(
                     items = listOf(),
-                    selectedTabs = emptySet()
-                )
+                    selectedTabs = emptySet(),
+                ),
             )
         }
         recentlyClosedController = DefaultRecentlyClosedController(
@@ -118,12 +123,12 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
             tabsUseCases = requireComponents.useCases.tabsUseCases,
             recentlyClosedTabsStorage = requireComponents.core.recentlyClosedTabsStorage.value,
             lifecycleScope = lifecycleScope,
-            openToBrowser = ::openItem
+            openToBrowser = ::openItem,
         )
         recentlyClosedInteractor = RecentlyClosedFragmentInteractor(recentlyClosedController)
         _recentlyClosedFragmentView = RecentlyClosedFragmentView(
             binding.recentlyClosedLayout,
-            recentlyClosedInteractor
+            recentlyClosedInteractor,
         )
         return binding.root
     }
@@ -139,11 +144,13 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
         (activity as HomeActivity).openToBrowserAndLoad(
             searchTermOrURL = url,
             newTab = true,
-            from = BrowserDirection.FromRecentlyClosed
+            from = BrowserDirection.FromRecentlyClosed,
         )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         consumeFrom(recentlyClosedFragmentStore) { state ->
             recentlyClosedFragmentView.update(state)
             activity?.invalidateOptionsMenu()
@@ -154,7 +161,7 @@ class RecentlyClosedFragment : LibraryPageFragment<RecoverableTab>(), UserIntera
                 .ifChanged()
                 .collect { tabs ->
                     recentlyClosedFragmentStore.dispatch(
-                        RecentlyClosedFragmentAction.Change(tabs)
+                        RecentlyClosedFragmentAction.Change(tabs),
                     )
                 }
         }

@@ -7,13 +7,13 @@ package org.mozilla.fenix.tabstray.browser
 import android.content.Context
 import android.util.AttributeSet
 import androidx.annotation.VisibleForTesting
-import androidx.annotation.VisibleForTesting.PACKAGE_PRIVATE
+import androidx.annotation.VisibleForTesting.Companion.PACKAGE_PRIVATE
 import org.mozilla.fenix.ext.components
 
 class PrivateBrowserTrayList @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = 0,
 ) : AbstractBrowserTrayList(context, attrs, defStyleAttr) {
 
     private val privateTabsBinding by lazy {
@@ -25,7 +25,7 @@ class PrivateBrowserTrayList @JvmOverloads constructor(
             interactionDelegate = (adapter as BrowserTabsAdapter).delegate,
             onViewHolderTouched = { swipeToDelete.isSwipeable },
             onViewHolderDraw = { context.components.settings.gridTabView.not() },
-            featureNameHolder = (adapter as BrowserTabsAdapter)
+            featureNameHolder = (adapter as BrowserTabsAdapter),
         )
     }
 

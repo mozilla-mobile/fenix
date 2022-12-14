@@ -35,9 +35,15 @@ class StartupReportFullyDrawnTest {
 
     @MockK private lateinit var activity: HomeActivity
     private lateinit var holder: TopSiteItemViewHolder
-    @MockK(relaxed = true) private lateinit var rootContainer: LinearLayout
-    @MockK(relaxed = true) private lateinit var holderItemView: View
-    @MockK(relaxed = true) private lateinit var viewTreeObserver: ViewTreeObserver
+
+    @MockK(relaxed = true)
+    private lateinit var rootContainer: LinearLayout
+
+    @MockK(relaxed = true)
+    private lateinit var holderItemView: View
+
+    @MockK(relaxed = true)
+    private lateinit var viewTreeObserver: ViewTreeObserver
     private lateinit var fullyDrawn: StartupReportFullyDrawn
 
     @Before
@@ -47,7 +53,7 @@ class StartupReportFullyDrawnTest {
         holderItemView = spyk(binding.root)
         every { activity.findViewById<LinearLayout>(R.id.rootContainer) } returns rootContainer
         every { holderItemView.context } returns activity
-        holder = TopSiteItemViewHolder(holderItemView, mockk(), mockk())
+        holder = TopSiteItemViewHolder(holderItemView, mockk(), mockk(), mockk())
         every { rootContainer.viewTreeObserver } returns viewTreeObserver
         every { holderItemView.viewTreeObserver } returns viewTreeObserver
 

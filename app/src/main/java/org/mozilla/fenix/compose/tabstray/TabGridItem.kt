@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -46,6 +45,7 @@ import androidx.core.text.BidiFormatter
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.createTab
 import org.mozilla.fenix.R
+import org.mozilla.fenix.compose.Divider
 import org.mozilla.fenix.compose.Favicon
 import org.mozilla.fenix.compose.HorizontalFadingEdgeBox
 import org.mozilla.fenix.compose.ThumbnailCard
@@ -83,7 +83,7 @@ fun TabGridItem(
         Modifier.border(
             4.dp,
             FirefoxTheme.colors.borderAccent,
-            RoundedCornerShape(12.dp)
+            RoundedCornerShape(12.dp),
         )
     } else {
         Modifier
@@ -92,7 +92,7 @@ fun TabGridItem(
     Box(
         modifier = Modifier
             .wrapContentHeight()
-            .wrapContentWidth()
+            .wrapContentWidth(),
     ) {
         Card(
             modifier = Modifier
@@ -103,26 +103,26 @@ fun TabGridItem(
                 .padding(4.dp)
                 .combinedClickable(
                     onLongClick = { onLongClick(tab) },
-                    onClick = { onClick(tab) }
+                    onClick = { onClick(tab) },
                 ),
             elevation = 0.dp,
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.tab_tray_grid_item_border_radius)),
-            border = BorderStroke(1.dp, FirefoxTheme.colors.borderPrimary)
+            border = BorderStroke(1.dp, FirefoxTheme.colors.borderPrimary),
         ) {
             Column(
-                modifier = Modifier.background(FirefoxTheme.colors.layer2)
+                modifier = Modifier.background(FirefoxTheme.colors.layer2),
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight()
+                        .wrapContentHeight(),
                 ) {
                     Favicon(
                         url = tab.content.url,
                         size = 16.dp,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
-                            .padding(start = 8.dp)
+                            .padding(start = 8.dp),
                     )
 
                     HorizontalFadingEdgeBox(
@@ -133,7 +133,7 @@ fun TabGridItem(
                             .padding(7.dp, 5.dp)
                             .clipToBounds(),
                         backgroundColor = FirefoxTheme.colors.layer2,
-                        isContentRtl = BidiFormatter.getInstance().isRtl(tab.content.title)
+                        isContentRtl = BidiFormatter.getInstance().isRtl(tab.content.title),
                     ) {
                         Text(
                             text = tab.content.title,
@@ -142,8 +142,8 @@ fun TabGridItem(
                             softWrap = false,
                             style = TextStyle(
                                 color = FirefoxTheme.colors.textPrimary,
-                                textDirection = TextDirection.Content
-                            )
+                                textDirection = TextDirection.Content,
+                            ),
                         )
                     }
 
@@ -154,15 +154,12 @@ fun TabGridItem(
                         modifier = Modifier
                             .clickable { onCloseClick(tab) }
                             .size(24.dp)
-                            .align(Alignment.CenterVertically)
+                            .align(Alignment.CenterVertically),
 
                     )
                 }
 
-                Divider(
-                    color = FirefoxTheme.colors.borderPrimary,
-                    thickness = 1.dp
-                )
+                Divider()
 
                 Thumbnail(
                     tab = tab,
@@ -176,7 +173,7 @@ fun TabGridItem(
                 tab = tab,
                 onMediaIconClicked = { onMediaClick(tab) },
                 modifier = Modifier
-                    .align(Alignment.TopStart)
+                    .align(Alignment.TopStart),
             )
         }
     }
@@ -196,21 +193,21 @@ private fun Thumbnail(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(FirefoxTheme.colors.layer2)
+            .background(FirefoxTheme.colors.layer2),
     ) {
         ThumbnailCard(
             url = tab.content.url,
             key = tab.id,
             size = LocalConfiguration.current.screenWidthDp.dp,
             backgroundColor = FirefoxTheme.colors.layer2,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
 
         if (multiSelectionSelected) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(FirefoxTheme.colors.layerAccentNonOpaque)
+                    .background(FirefoxTheme.colors.layerAccentNonOpaque),
             )
 
             Card(
@@ -226,7 +223,7 @@ private fun Thumbnail(
                         .matchParentSize()
                         .padding(all = 8.dp),
                     contentDescription = null,
-                    tint = colorResource(id = R.color.mozac_ui_icons_fill)
+                    tint = colorResource(id = R.color.mozac_ui_icons_fill),
                 )
             }
         }
@@ -241,7 +238,7 @@ private fun TabGridItemPreview() {
         TabGridItem(
             tab = createTab(
                 url = "www.mozilla.com",
-                title = "Mozilla Domain"
+                title = "Mozilla Domain",
             ),
             onCloseClick = {},
             onMediaClick = {},

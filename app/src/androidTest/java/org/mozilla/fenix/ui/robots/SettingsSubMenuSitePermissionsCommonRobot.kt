@@ -17,9 +17,9 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
-import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
+import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.assertIsChecked
 import org.mozilla.fenix.helpers.click
@@ -124,22 +124,22 @@ class SettingsSubMenuSitePermissionsCommonRobot {
     fun verifySystemGrantedPermission(permissionCategory: String) {
         assertTrue(
             mDevice.findObject(
-                UiSelector().className("android.widget.RelativeLayout")
+                UiSelector().className("android.widget.RelativeLayout"),
             ).getChild(
                 UiSelector()
                     .resourceId("android:id/title")
-                    .textContains(permissionCategory)
-            ).waitForExists(waitingTime)
+                    .textContains(permissionCategory),
+            ).waitForExists(waitingTime),
         )
 
         assertTrue(
             mDevice.findObject(
-                UiSelector().className("android.widget.RelativeLayout")
+                UiSelector().className("android.widget.RelativeLayout"),
             ).getChild(
                 UiSelector()
                     .resourceId("android:id/summary")
-                    .textContains("Only while app is in use")
-            ).waitForExists(waitingTime)
+                    .textContains("Only while app is in use"),
+            ).waitForExists(waitingTime),
         )
     }
 
@@ -166,7 +166,6 @@ private fun assertVideoAndAudioBlockedRecommended() = onView(withId(R.id.fourth_
     .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
 
 private fun assertCheckAutoPayRadioButtonDefault() {
-
     // Allow audio and video
     onView(withId(R.id.block_radio))
         .assertIsChecked(isChecked = false)
@@ -199,8 +198,8 @@ private fun assertBlockedByAndroid() {
     blockedByAndroidContainer().waitForExists(waitingTime)
     assertTrue(
         mDevice.findObject(
-            UiSelector().textContains(getStringResource(R.string.phone_feature_blocked_by_android))
-        ).waitForExists(waitingTimeShort)
+            UiSelector().textContains(getStringResource(R.string.phone_feature_blocked_by_android)),
+        ).waitForExists(waitingTimeShort),
     )
 }
 
@@ -208,8 +207,8 @@ private fun assertUnblockedByAndroid() {
     blockedByAndroidContainer().waitUntilGone(waitingTime)
     assertFalse(
         mDevice.findObject(
-            UiSelector().textContains(getStringResource(R.string.phone_feature_blocked_by_android))
-        ).waitForExists(waitingTimeShort)
+            UiSelector().textContains(getStringResource(R.string.phone_feature_blocked_by_android)),
+        ).waitForExists(waitingTimeShort),
     )
 }
 

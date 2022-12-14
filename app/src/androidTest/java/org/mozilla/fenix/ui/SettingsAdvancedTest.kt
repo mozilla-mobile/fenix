@@ -13,11 +13,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_PLAY_SERVICES
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
+import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -31,10 +29,12 @@ class SettingsAdvancedTest {
 
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
-    private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
-    val activityIntentTestRule = HomeActivityIntentTestRule()
+    val activityIntentTestRule = HomeActivityIntentTestRule(
+        isPocketEnabled = false,
+        isTCPCFREnabled = false,
+    )
 
     @Before
     fun setUp() {
@@ -43,19 +43,15 @@ class SettingsAdvancedTest {
             dispatcher = AndroidAssetDispatcher()
             start()
         }
-        featureSettingsHelper.setPocketEnabled(false)
-        featureSettingsHelper.setTCPCFREnabled(false)
     }
 
     @After
     fun tearDown() {
         mockWebServer.shutdown()
-
-        featureSettingsHelper.resetAllFeatureFlags()
     }
 
-    @Test
     // Walks through settings menu and sub-menus to ensure all items are present
+    @Test
     fun settingsAboutItemsTest() {
         // ADVANCED
         homeScreen {
@@ -71,12 +67,11 @@ class SettingsAdvancedTest {
         }
     }
 
+    // Assumes Play Store is installed and enabled
     @SmokeTest
     @Test
-    // Assumes Play Store is installed and enabled
     fun openLinkInAppTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 3)
-        val playStoreUrl = "play.google.com/store/apps/details?id=org.mozilla.fenix"
 
         homeScreen {
         }.openThreeDotMenu {
@@ -91,7 +86,7 @@ class SettingsAdvancedTest {
             mDevice.waitForIdle()
             clickLinkMatchingText("Mozilla Playstore link")
             mDevice.waitForIdle()
-            assertNativeAppOpens(GOOGLE_PLAY_SERVICES, playStoreUrl)
+            TestHelper.assertPlayStoreOpens()
         }
     }
 }

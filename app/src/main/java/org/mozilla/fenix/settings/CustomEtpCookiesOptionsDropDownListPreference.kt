@@ -15,7 +15,7 @@ import org.mozilla.fenix.ext.settings
  */
 class CustomEtpCookiesOptionsDropDownListPreference @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
 ) : DropDownListPreference(context, attrs) {
     init {
         with(context) {
@@ -34,7 +34,7 @@ class CustomEtpCookiesOptionsDropDownListPreference @JvmOverloads constructor(
             )
 
             @Suppress("UNCHECKED_CAST")
-            if (context.settings().enabledTotalCookieProtectionSetting) {
+            if (context.settings().enabledTotalCookieProtection) {
                 // If the new "Total cookie protection" should be shown it must be first item.
                 entries = arrayOf(getString(R.string.preference_enhanced_tracking_protection_custom_cookies_5)) +
                     entries as Array<String>

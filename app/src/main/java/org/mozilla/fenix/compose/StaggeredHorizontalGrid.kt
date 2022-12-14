@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.theme.Theme
 
 /**
  * Displays a list of items as a staggered horizontal grid placing them on ltr rows and continuing
@@ -41,7 +40,7 @@ fun StaggeredHorizontalGrid(
     horizontalItemsSpacing: Dp = 0.dp,
     verticalItemsSpacing: Dp = 8.dp,
     arrangement: Arrangement.Horizontal = Arrangement.Start,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val currentLayoutDirection = LocalLayoutDirection.current
 
@@ -69,7 +68,7 @@ fun StaggeredHorizontalGrid(
                     notYetPlacedItems[0].also {
                         currentWidth += it.width + horizontalItemsSpacingPixels
                         totalHeight += it.height + verticalItemsSpacingPixels
-                    }
+                    },
                 )
                 notYetPlacedItems.removeAt(0)
             } else {
@@ -78,7 +77,7 @@ fun StaggeredHorizontalGrid(
                     currentRow.add(
                         notYetPlacedItems[nextPlaceableThatFitsIndex].also {
                             currentWidth += it.width + horizontalItemsSpacingPixels
-                        }
+                        },
                     )
                     notYetPlacedItems.removeAt(nextPlaceableThatFitsIndex)
                 } else {
@@ -110,7 +109,7 @@ fun StaggeredHorizontalGrid(
                 itemRow.forEachIndexed { itemIndex, item ->
                     item.place(
                         x = itemsPositions[itemIndex],
-                        y = (rowIndex * item.height) + (rowIndex * verticalItemsSpacingPixels)
+                        y = (rowIndex * item.height) + (rowIndex * verticalItemsSpacingPixels),
                     )
                 }
             }
@@ -121,11 +120,11 @@ fun StaggeredHorizontalGrid(
 @Composable
 @Preview
 private fun StaggeredHorizontalGridPreview() {
-    FirefoxTheme(theme = Theme.getTheme()) {
+    FirefoxTheme {
         Box(Modifier.background(FirefoxTheme.colors.layer2)) {
             StaggeredHorizontalGrid(
                 horizontalItemsSpacing = 8.dp,
-                arrangement = Arrangement.Center
+                arrangement = Arrangement.Center,
             ) {
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
                     .split(" ")

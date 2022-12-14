@@ -17,9 +17,11 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import io.mockk.runs
 import io.mockk.slot
 import io.mockk.spyk
+import io.mockk.unmockkConstructor
 import io.mockk.verify
 import io.mockk.verifyOrder
 import mozilla.appservices.places.BookmarkRoot
@@ -75,7 +77,7 @@ class BookmarkControllerTest {
         "Firefox",
         "https://www.mozilla.org/en-US/firefox/",
         0,
-        null
+        null,
     )
     private val tree = BookmarkNode(
         BookmarkNodeType.FOLDER,
@@ -85,10 +87,27 @@ class BookmarkControllerTest {
         "Mobile",
         null,
         0,
-        listOf(item, item, childItem, subfolder)
+        listOf(item, item, childItem, subfolder),
+    )
+    private val largeTree = BookmarkNode(
+        BookmarkNodeType.FOLDER,
+        "123",
+        null,
+        0u,
+        "Mobile",
+        null,
+        0,
+        List(WARN_OPEN_ALL_SIZE) { item },
     )
     private val root = BookmarkNode(
-        BookmarkNodeType.FOLDER, BookmarkRoot.Root.id, null, 0u, BookmarkRoot.Root.name, null, 0, null
+        BookmarkNodeType.FOLDER,
+        BookmarkRoot.Root.id,
+        null,
+        0u,
+        BookmarkRoot.Root.name,
+        null,
+        0,
+        null,
     )
 
     @Before
@@ -126,7 +145,7 @@ class BookmarkControllerTest {
                 item.url!!,
                 false,
                 BrowserDirection.FromBookmarks,
-                flags = flags
+                flags = flags,
             )
         }
     }
@@ -144,7 +163,7 @@ class BookmarkControllerTest {
                 item.url!!,
                 true,
                 BrowserDirection.FromBookmarks,
-                flags = flags
+                flags = flags,
             )
         }
     }
@@ -161,7 +180,7 @@ class BookmarkControllerTest {
                 item.url!!,
                 true,
                 BrowserDirection.FromBookmarks,
-                flags = flags
+                flags = flags,
             )
         }
     }
@@ -186,10 +205,10 @@ class BookmarkControllerTest {
     fun `handleBookmarkExpand should refresh and change the active bookmark node`() = runTestOnMain {
         var loadBookmarkNodeInvoked = false
         createController(
-            loadBookmarkNode = {
+            loadBookmarkNode = { _: String, _: Boolean ->
                 loadBookmarkNodeInvoked = true
                 tree
-            }
+            },
         ).handleBookmarkExpand(tree)
 
         assertTrue(loadBookmarkNodeInvoked)
@@ -215,9 +234,9 @@ class BookmarkControllerTest {
         verify {
             navController.navigate(
                 BookmarkFragmentDirections.actionBookmarkFragmentToBookmarkEditFragment(
-                    item.guid
+                    item.guid,
                 ),
-                null
+                null,
             )
         }
     }
@@ -228,7 +247,7 @@ class BookmarkControllerTest {
 
         verify {
             navController.navigate(
-                BookmarkFragmentDirections.actionBookmarkFragmentToBookmarkSearchDialogFragment()
+                BookmarkFragmentDirections.actionBookmarkFragmentToBookmarkSearchDialogFragment(),
             )
         }
     }
@@ -251,7 +270,7 @@ class BookmarkControllerTest {
             showSnackbar = {
                 assertEquals(errorMessage, it)
                 showSnackbarInvoked = true
-            }
+            },
         ).handleBookmarkSelected(root)
 
         assertTrue(showSnackbarInvoked)
@@ -284,7 +303,7 @@ class BookmarkControllerTest {
             showSnackbar = {
                 assertEquals(urlCopiedMessage, it)
                 showSnackbarInvoked = true
-            }
+            },
         ).handleCopyUrl(item)
 
         assertTrue(showSnackbarInvoked)
@@ -314,7 +333,7 @@ class BookmarkControllerTest {
                 item.url!!,
                 false,
                 BrowserDirection.FromBookmarks,
-                flags = flags
+                flags = flags,
             )
         }
     }
@@ -325,7 +344,7 @@ class BookmarkControllerTest {
         createController(
             showTabTray = {
                 showTabTrayInvoked = true
-            }
+            },
         ).handleOpeningBookmark(item, BrowsingMode.Normal)
 
         assertTrue(showTabTrayInvoked)
@@ -341,7 +360,7 @@ class BookmarkControllerTest {
         createController(
             showTabTray = {
                 showTabTrayInvoked = true
-            }
+            },
         ).handleOpeningBookmark(item, BrowsingMode.Private)
 
         assertTrue(showTabTrayInvoked)
@@ -352,6 +371,91 @@ class BookmarkControllerTest {
     }
 
     @Test
+    fun `WHEN handle opening folder bookmarks THEN all bookmarks in folder is opened in normal tabs`() {
+        var showTabTrayInvoked = false
+        createController(
+            showTabTray = {
+                showTabTrayInvoked = true
+            },
+            loadBookmarkNode = { guid: String, _: Boolean ->
+                fun recurseFind(item: BookmarkNode, guid: String): BookmarkNode? {
+                    if (item.guid == guid) {
+                        return item
+                    } else {
+                        item.children?.iterator()?.forEach {
+                            val res = recurseFind(it, guid)
+                            if (res != null) {
+                                return res
+                            }
+                        }
+                        return null
+                    }
+                }
+                recurseFind(tree, guid)
+            },
+        ).handleOpeningFolderBookmarks(tree, BrowsingMode.Normal)
+
+        assertTrue(showTabTrayInvoked)
+        verifyOrder {
+            addNewTabUseCase.invoke(item.url!!, private = false)
+            addNewTabUseCase.invoke(item.url!!, private = false)
+            addNewTabUseCase.invoke(childItem.url!!, private = false)
+            homeActivity.browsingModeManager.mode = BrowsingMode.Normal
+        }
+    }
+
+    @Test
+    fun `WHEN handle opening folder bookmarks in private tabs THEN all bookmarks in folder is opened in private tabs`() {
+        var showTabTrayInvoked = false
+        createController(
+            showTabTray = {
+                showTabTrayInvoked = true
+            },
+            loadBookmarkNode = { guid: String, _: Boolean ->
+                fun recurseFind(item: BookmarkNode, guid: String): BookmarkNode? {
+                    if (item.guid == guid) {
+                        return item
+                    } else {
+                        item.children?.iterator()?.forEach {
+                            val res = recurseFind(it, guid)
+                            if (res != null) {
+                                return res
+                            }
+                        }
+                        return null
+                    }
+                }
+                recurseFind(tree, guid)
+            },
+        ).handleOpeningFolderBookmarks(tree, BrowsingMode.Private)
+
+        assertTrue(showTabTrayInvoked)
+        verifyOrder {
+            addNewTabUseCase.invoke(item.url!!, private = true)
+            addNewTabUseCase.invoke(item.url!!, private = true)
+            addNewTabUseCase.invoke(childItem.url!!, private = true)
+            homeActivity.browsingModeManager.mode = BrowsingMode.Private
+        }
+    }
+
+    @Test
+    fun `WHEN handle opening folder bookmarks with more than max items THEN warning is invoked`() {
+        var warningInvoked = false
+
+        mockkConstructor(DefaultBookmarkController::class)
+        createController(
+            loadBookmarkNode = { _: String, _: Boolean ->
+                largeTree
+            },
+            warnLargeOpenAll = { _: Int, _: () -> Unit -> warningInvoked = true },
+        ).handleOpeningFolderBookmarks(tree, BrowsingMode.Normal)
+
+        unmockkConstructor(DefaultBookmarkController::class)
+
+        assertTrue(warningInvoked)
+    }
+
+    @Test
     fun `handleBookmarkDeletion for an item should properly call a passed in delegate`() {
         var deleteBookmarkNodesInvoked = false
         createController(
@@ -359,7 +463,7 @@ class BookmarkControllerTest {
                 assertEquals(setOf(item), nodes)
                 assertEquals(BookmarkRemoveType.SINGLE, removeEvent)
                 deleteBookmarkNodesInvoked = true
-            }
+            },
         ).handleBookmarkDeletion(setOf(item), BookmarkRemoveType.SINGLE)
 
         assertTrue(deleteBookmarkNodesInvoked)
@@ -373,7 +477,7 @@ class BookmarkControllerTest {
                 assertEquals(setOf(item, subfolder), nodes)
                 assertEquals(BookmarkRemoveType.MULTIPLE, removeEvent)
                 deleteBookmarkNodesInvoked = true
-            }
+            },
         ).handleBookmarkDeletion(setOf(item, subfolder), BookmarkRemoveType.MULTIPLE)
 
         assertTrue(deleteBookmarkNodesInvoked)
@@ -386,7 +490,7 @@ class BookmarkControllerTest {
             deleteBookmarkFolder = { nodes ->
                 assertEquals(setOf(subfolder), nodes)
                 deleteBookmarkFolderInvoked = true
-            }
+            },
         ).handleBookmarkFolderDeletion(setOf(subfolder))
 
         assertTrue(deleteBookmarkFolderInvoked)
@@ -419,11 +523,12 @@ class BookmarkControllerTest {
 
     @Suppress("LongParameterList")
     private fun createController(
-        loadBookmarkNode: suspend (String) -> BookmarkNode? = { _ -> null },
+        loadBookmarkNode: suspend (String, Boolean) -> BookmarkNode? = { _, _ -> null },
         showSnackbar: (String) -> Unit = { _ -> },
         deleteBookmarkNodes: (Set<BookmarkNode>, BookmarkRemoveType) -> Unit = { _, _ -> },
         deleteBookmarkFolder: (Set<BookmarkNode>) -> Unit = { _ -> },
-        showTabTray: () -> Unit = { }
+        showTabTray: () -> Unit = { },
+        warnLargeOpenAll: (Int, () -> Unit) -> Unit = { _: Int, _: () -> Unit -> },
     ): BookmarkController {
         return DefaultBookmarkController(
             activity = homeActivity,
@@ -438,6 +543,7 @@ class BookmarkControllerTest {
             deleteBookmarkNodes = deleteBookmarkNodes,
             deleteBookmarkFolder = deleteBookmarkFolder,
             showTabTray = showTabTray,
+            warnLargeOpenAll = warnLargeOpenAll,
             settings = settings,
         )
     }

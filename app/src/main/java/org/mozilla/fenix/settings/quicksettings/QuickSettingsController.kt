@@ -17,6 +17,7 @@ import mozilla.components.feature.session.SessionUseCases.ReloadUrlUseCase
 import mozilla.components.support.base.feature.OnNeedToRequestPermissions
 import mozilla.components.support.ktx.kotlin.getOrigin
 import mozilla.telemetry.glean.private.NoExtras
+import org.mozilla.fenix.GleanMetrics.CookieBanners
 import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.components.PermissionStorage
@@ -60,14 +61,19 @@ interface QuickSettingsController {
     fun handleAndroidPermissionGranted(feature: PhoneFeature)
 
     /**
-     * @see [TrackingProtectionInteractor.onTrackingProtectionToggled]
+     * @see [ProtectionsInteractor.onTrackingProtectionToggled]
      */
     fun handleTrackingProtectionToggled(isEnabled: Boolean)
 
     /**
-     * @see [TrackingProtectionInteractor.onDetailsClicked]
+     * Navigates to the cookie banners details panel.
      */
-    fun handleDetailsClicked()
+    fun handleCookieBannerHandlingDetailsClicked()
+
+    /**
+     * Navigates to the tracking protection details panel.
+     */
+    fun handleTrackingProtectionDetailsClicked()
 
     /**
      * Navigates to the connection details. Called when a user clicks on the
@@ -98,16 +104,14 @@ interface QuickSettingsController {
  * specific Android runtime permissions.
  * @param displayPermissions callback for when [WebsitePermissionsView] needs to be displayed.
  */
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LongParameterList")
 class DefaultQuickSettingsController(
     private val context: Context,
     private val quickSettingsStore: QuickSettingsFragmentStore,
     private val browserStore: BrowserStore,
     private val ioScope: CoroutineScope,
     private val navController: NavController,
-    @VisibleForTesting
     internal val sessionId: String,
-    @VisibleForTesting
     internal var sitePermissions: SitePermissions?,
     private val settings: Settings,
     private val permissionStorage: PermissionStorage,
@@ -136,8 +140,8 @@ class DefaultQuickSettingsController(
                         WebsitePermissionAction.TogglePermission(
                             featureToggled,
                             featureToggled.getActionLabel(context, newPermissions, settings),
-                            featureToggled.shouldBeEnabled(context, newPermissions, settings)
-                        )
+                            featureToggled.shouldBeEnabled(context, newPermissions, settings),
+                        ),
                     )
                 } else {
                     navigateToManagePhoneFeature(featureToggled)
@@ -151,8 +155,8 @@ class DefaultQuickSettingsController(
             WebsitePermissionAction.TogglePermission(
                 feature,
                 feature.getActionLabel(context, sitePermissions, settings),
-                feature.shouldBeEnabled(context, sitePermissions, settings)
-            )
+                feature.shouldBeEnabled(context, sitePermissions, settings),
+            ),
         )
     }
 
@@ -174,7 +178,7 @@ class DefaultQuickSettingsController(
             newPermission
         }
         quickSettingsStore.dispatch(
-            WebsitePermissionAction.ChangeAutoplay(autoplayValue)
+            WebsitePermissionAction.ChangeAutoplay(autoplayValue),
         )
     }
 
@@ -198,22 +202,41 @@ class DefaultQuickSettingsController(
 
         quickSettingsStore.dispatch(
             TrackingProtectionAction.ToggleTrackingProtectionEnabled(
-                isEnabled
-            )
+                isEnabled,
+            ),
         )
     }
 
-    override fun handleDetailsClicked() {
+    override fun handleCookieBannerHandlingDetailsClicked() {
+        CookieBanners.visitedPanel.record(NoExtras())
+
         navController.popBackStack()
 
-        val state = quickSettingsStore.state.trackingProtectionState
+        val state = quickSettingsStore.state.protectionsState
+        val directions = NavGraphDirections
+            .actionGlobalCookieBannerProtectionPanelDialogFragment(
+                sessionId = sessionId,
+                url = state.url,
+                trackingProtectionEnabled = state.isTrackingProtectionEnabled,
+                cookieBannerHandlingEnabled = state.isCookieBannerHandlingEnabled,
+                gravity = context.components.settings.toolbarPosition.androidGravity,
+                sitePermissions = sitePermissions,
+            )
+        navController.navigate(directions)
+    }
+
+    override fun handleTrackingProtectionDetailsClicked() {
+        navController.popBackStack()
+
+        val state = quickSettingsStore.state.protectionsState
         val directions = NavGraphDirections
             .actionGlobalTrackingProtectionPanelDialogFragment(
                 sessionId = sessionId,
                 url = state.url,
                 trackingProtectionEnabled = state.isTrackingProtectionEnabled,
+                cookieBannerHandlingEnabled = state.isCookieBannerHandlingEnabled,
                 gravity = context.components.settings.toolbarPosition.androidGravity,
-                sitePermissions = sitePermissions
+                sitePermissions = sitePermissions,
             )
         navController.navigate(directions)
     }
@@ -230,7 +253,7 @@ class DefaultQuickSettingsController(
                 isSecured = state.websiteSecurityUiValues == WebsiteSecurityUiValues.SECURE,
                 certificateName = state.certificateName,
                 gravity = context.components.settings.toolbarPosition.androidGravity,
-                sitePermissions = sitePermissions
+                sitePermissions = sitePermissions,
             )
         navController.navigate(directions)
     }
@@ -265,8 +288,11 @@ class DefaultQuickSettingsController(
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun handlePermissionsChange(updatedPermissions: SitePermissions) {
+        val tab = requireNotNull(browserStore.state.findTabOrCustomTab(sessionId)) {
+            "A session is required to update permission"
+        }
         ioScope.launch {
-            permissionStorage.updateSitePermissions(updatedPermissions)
+            permissionStorage.updateSitePermissions(updatedPermissions, tab.content.private)
             reload(sessionId)
         }
     }

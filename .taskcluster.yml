@@ -13,17 +13,14 @@ tasks:
             $if: 'tasks_for in ["cron", "action"]'
             then: '${tasks_for}@noreply.mozilla.org'
             else:
-                $if: 'event.sender.login == "bors[bot]"'
-                then: 'skaspari+mozlando@mozilla.com'   # It must match what's in bors.toml
+                $if: 'tasks_for == "github-push"'
+                then:
+                    $if: 'event.pusher.email'
+                    then: '${event.pusher.email}'
+                    else: '${event.pusher.name}@users.noreply.github.com'
                 else:
-                    $if: 'event.sender.login == "github-actions[bot]"'
-                    then: 'github-actions[bot]@users.noreply.github.com'
-                    else:
-                        $if: 'tasks_for == "github-push"'
-                        then: '${event.pusher.email}'
-                        else:
-                            $if: 'tasks_for == "github-pull-request"'
-                            then: '${event.pull_request.user.login}@users.noreply.github.com'
+                    $if: 'tasks_for == "github-pull-request"'
+                    then: '${event.pull_request.user.login}@users.noreply.github.com'
         baseRepoUrl:
             $if: 'tasks_for == "github-push"'
             then: '${event.repository.html_url}'
@@ -125,7 +122,7 @@ tasks:
                                 name: "Decision Task for cron job ${cron.job_name}"
                                 description: 'Created by a [cron task](https://firefox-ci-tc.services.mozilla.com/tasks/${cron.task_id})'
                 provisionerId: "${trustDomain}-${level}"
-                workerType: "decision"
+                workerType: "decision-gcp"
                 tags:
                     $if: 'tasks_for in ["github-push", "github-pull-request"]'
                     then:

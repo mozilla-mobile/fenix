@@ -11,7 +11,6 @@ import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.concept.storage.VisitInfo
 import mozilla.components.concept.storage.VisitType
 import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.library.history.History
 import org.mozilla.fenix.library.history.HistoryItemTimeGroup
 import org.mozilla.fenix.utils.Settings.Companion.SEARCH_GROUP_MINIMUM_SITES
@@ -45,14 +44,14 @@ sealed class HistoryDB {
         override val visitedAt: Long,
         val totalViewTime: Int,
         val historyMetadataKey: HistoryMetadataKey,
-        override val selected: Boolean = false
+        override val selected: Boolean = false,
     ) : HistoryDB()
 
     data class Group(
         override val title: String,
         override val visitedAt: Long,
         val items: List<Metadata>,
-        override val selected: Boolean = false
+        override val selected: Boolean = false,
     ) : HistoryDB()
 }
 
@@ -63,7 +62,7 @@ private fun HistoryMetadata.toHistoryDBMetadata(): HistoryDB.Metadata {
         url = key.url,
         visitedAt = createdAt,
         totalViewTime = totalViewTime,
-        historyMetadataKey = key
+        historyMetadataKey = key,
     )
 }
 
@@ -86,7 +85,6 @@ interface PagedHistoryProvider {
  */
 class DefaultPagedHistoryProvider(
     private val historyStorage: PlacesHistoryStorage,
-    private val historyImprovementFeatures: Boolean = FeatureFlags.historyImprovementFeatures,
 ) : PagedHistoryProvider {
 
     /**
@@ -114,7 +112,7 @@ class DefaultPagedHistoryProvider(
 
     override suspend fun getHistory(
         offset: Int,
-        numberOfItems: Int
+        numberOfItems: Int,
     ): List<HistoryDB> {
         // We need to re-fetch all the history metadata if the offset resets back at 0
         // in the case of a pull to refresh.
@@ -128,15 +126,11 @@ class DefaultPagedHistoryProvider(
                     HistoryDB.Group(
                         title = searchTerm,
                         visitedAt = items.first().createdAt,
-                        items = items.map { it.toHistoryDBMetadata() }
+                        items = items.map { it.toHistoryDBMetadata() },
                     )
                 }
                 .filter {
-                    if (historyImprovementFeatures) {
-                        it.items.size >= SEARCH_GROUP_MINIMUM_SITES
-                    } else {
-                        true
-                    }
+                    it.items.size >= SEARCH_GROUP_MINIMUM_SITES
                 }
                 .toList()
         }
@@ -169,7 +163,7 @@ class DefaultPagedHistoryProvider(
             .getVisitsPaginated(
                 offset.toLong(),
                 numberOfItems.toLong(),
-                excludeTypes = excludedVisitTypes
+                excludeTypes = excludedVisitTypes,
             )
             .map { transformVisitInfoToHistoryItem(it) }
 
@@ -178,7 +172,7 @@ class DefaultPagedHistoryProvider(
             historyStorage.getDetailedVisits(
                 start = history.last().visitedAt,
                 end = history.first().visitedAt,
-                excludeTypes = notRedirectTypes
+                excludeTypes = notRedirectTypes,
             ).map { it.url }
         } else {
             // Edge-case this doesn't cover: if we only had redirects in the current page,
@@ -207,10 +201,7 @@ class DefaultPagedHistoryProvider(
             emptyList()
         }
         val historyMetadata = historyGroupsInOffset.flatMap { it.items }
-
-        if (historyImprovementFeatures) {
-            history = history.distinctBy { Pair(it.historyTimeGroup, it.url) }
-        }
+        history = history.distinctBy { Pair(it.historyTimeGroup, it.url) }
 
         // Add all history items that are not in a group filtering out any matches with a history
         // metadata item.
@@ -224,14 +215,10 @@ class DefaultPagedHistoryProvider(
         result.addAll(
             historyGroupsInOffset.map { group ->
                 group.copy(items = group.items.distinctBy { it.url }.filterNot { redirectsInThePage.contains(it.url) })
-            }
+            },
         )
 
-        return if (historyImprovementFeatures) {
-            result.sortedByDescending { it.visitedAt }
-        } else {
-            result.removeConsecutiveDuplicates().sortedByDescending { it.visitedAt }
-        }
+        return result.sortedByDescending { it.visitedAt }
     }
 
     private fun transformVisitInfoToHistoryItem(visit: VisitInfo): HistoryDB.Regular {
@@ -243,7 +230,7 @@ class DefaultPagedHistoryProvider(
             title = title,
             url = visit.url,
             visitedAt = visit.visitTime,
-            isRemote = visit.isRemote
+            isRemote = visit.isRemote,
         )
     }
 }

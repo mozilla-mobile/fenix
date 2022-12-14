@@ -13,12 +13,12 @@ import androidx.test.uiautomator.Until
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import java.lang.AssertionError
-import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 
 class NotificationRobot {
 
@@ -54,13 +54,13 @@ class NotificationRobot {
     fun verifySystemNotificationGone(notificationMessage: String) {
         mDevice.waitNotNull(
             Until.gone(text(notificationMessage)),
-            waitingTime
+            waitingTime,
         )
 
         assertFalse(
             mDevice.findObject(
-                UiSelector().text(notificationMessage)
-            ).exists()
+                UiSelector().text(notificationMessage),
+            ).exists(),
         )
     }
 
@@ -117,7 +117,7 @@ class NotificationRobot {
         fun clickClosePrivateTabsNotification(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
             try {
                 assertTrue(
-                    closePrivateTabsNotification().exists()
+                    closePrivateTabsNotification().exists(),
                 )
             } catch (e: AssertionError) {
                 notificationTray().flingToEnd(1)
@@ -143,25 +143,25 @@ private fun downloadSystemNotificationButton(action: String) =
     mDevice.findObject(
         UiSelector()
             .resourceId("android:id/action0")
-            .textContains(action)
+            .textContains(action),
     )
 
 private fun mediaSystemNotificationButton(action: String) =
     mDevice.findObject(
         UiSelector()
             .resourceId("com.android.systemui:id/action0")
-            .descriptionContains(action)
+            .descriptionContains(action),
     )
 
 private fun notificationTray() = UiScrollable(
-    UiSelector().resourceId("com.android.systemui:id/notification_stack_scroller")
+    UiSelector().resourceId("com.android.systemui:id/notification_stack_scroller"),
 ).setAsVerticalList()
 
 private val notificationHeader =
     mDevice.findObject(
         UiSelector()
             .resourceId("android:id/app_name_text")
-            .text(appName)
+            .text(appName),
     )
 
 private fun scrollToEnd() {

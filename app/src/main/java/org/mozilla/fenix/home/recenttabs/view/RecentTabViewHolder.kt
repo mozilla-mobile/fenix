@@ -14,6 +14,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.ComposeViewHolder
 import org.mozilla.fenix.home.recenttabs.interactor.RecentTabInteractor
+import org.mozilla.fenix.wallpapers.WallpaperState
 
 /**
  * View holder for a recent tab item.
@@ -42,16 +43,19 @@ class RecentTabViewHolder(
     @Composable
     override fun Content() {
         val recentTabs = components.appStore.observeAsComposableState { state -> state.recentTabs }
+        val wallpaperState = components.appStore
+            .observeAsComposableState { state -> state.wallpaperState }.value ?: WallpaperState.default
 
         RecentTabs(
             recentTabs = recentTabs.value ?: emptyList(),
+            backgroundColor = wallpaperState.wallpaperCardColor,
             onRecentTabClick = { recentTabInteractor.onRecentTabClicked(it) },
             menuItems = listOf(
                 RecentTabMenuItem(
                     title = stringResource(id = R.string.recent_tab_menu_item_remove),
-                    onClick = { tab -> recentTabInteractor.onRemoveRecentTab(tab) }
-                )
-            )
+                    onClick = { tab -> recentTabInteractor.onRemoveRecentTab(tab) },
+                ),
+            ),
         )
     }
 }

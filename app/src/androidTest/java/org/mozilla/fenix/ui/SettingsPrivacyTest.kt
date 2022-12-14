@@ -13,14 +13,11 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.getStorageTestAsset
@@ -49,10 +46,9 @@ class SettingsPrivacyTest {
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
     private val pageShortcutName = generateRandomString(5)
-    private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
-    val activityTestRule = HomeActivityIntentTestRule(skipOnboarding = true)
+    val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
 
     @Before
     fun setUp() {
@@ -61,10 +57,6 @@ class SettingsPrivacyTest {
             dispatcher = AndroidAssetDispatcher()
             start()
         }
-
-        featureSettingsHelper.setJumpBackCFREnabled(false)
-        featureSettingsHelper.setTCPCFREnabled(false)
-        featureSettingsHelper.disablePwaCFR(true)
 
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
             val autofillManager: AutofillManager =
@@ -76,11 +68,10 @@ class SettingsPrivacyTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
-        featureSettingsHelper.resetAllFeatureFlags()
     }
 
-    @Test
     // Walks through settings privacy menu and sub-menus to ensure all items are present
+    @Test
     fun settingsPrivacyItemsTest() {
         homeScreen {
         }.openThreeDotMenu {
@@ -110,7 +101,6 @@ class SettingsPrivacyTest {
             verifyEnhancedTrackingProtectionProtectionExceptionsSubMenuItems()
         }.goBack {
         }.goBack {
-
             // SITE PERMISSIONS
             verifySitePermissionsButton()
         }.openSettingsSubMenuSitePermissions {
@@ -122,54 +112,46 @@ class SettingsPrivacyTest {
             verifyNavigationToolBarHeader("Autoplay")
             verifySitePermissionsAutoPlaySubMenuItems()
         }.goBack {
-
             // SITE PERMISSIONS CAMERA
         }.openCamera {
             verifyNavigationToolBarHeader("Camera")
             verifySitePermissionsCommonSubMenuItems()
             verifyToggleNameToON("3. Toggle Camera to ON")
         }.goBack {
-
             // SITE PERMISSIONS LOCATION
         }.openLocation {
             verifyNavigationToolBarHeader("Location")
             verifySitePermissionsCommonSubMenuItems()
             verifyToggleNameToON("3. Toggle Location to ON")
         }.goBack {
-
             // SITE PERMISSIONS MICROPHONE
         }.openMicrophone {
             verifyNavigationToolBarHeader("Microphone")
             verifySitePermissionsCommonSubMenuItems()
             verifyToggleNameToON("3. Toggle Microphone to ON")
         }.goBack {
-
             // SITE PERMISSIONS NOTIFICATION
         }.openNotification {
             verifyNavigationToolBarHeader("Notification")
             verifySitePermissionsNotificationSubMenuItems()
         }.goBack {
-
             // SITE PERMISSIONS PERSISTENT STORAGE
         }.openPersistentStorage {
             verifyNavigationToolBarHeader("Persistent Storage")
             verifySitePermissionsPersistentStorageSubMenuItems()
         }.goBack {
-
             // SITE PERMISSIONS EXCEPTIONS
         }.openExceptions {
             verifyNavigationToolBarHeader()
             verifySitePermissionsExceptionSubMenuItems()
         }.goBack {
         }.goBack {
-
             // DELETE BROWSING DATA
             verifyDeleteBrowsingDataButton()
         }.openSettingsSubMenuDeleteBrowsingData {
             verifyNavigationToolBarHeader()
             verifyDeleteBrowsingDataSubMenuItems()
         }.goBack {
-
             // DELETE BROWSING DATA ON QUIT
             verifyDeleteBrowsingDataOnQuitButton()
             verifyDeleteBrowsingDataOnQuitState("Off")
@@ -177,13 +159,11 @@ class SettingsPrivacyTest {
             verifyNavigationToolBarHeader()
             verifyDeleteBrowsingDataOnQuitSubMenuItems()
         }.goBack {
-
             // NOTIFICATIONS
             verifyNotificationsButton()
         }.openSettingsSubMenuNotifications {
             verifySystemNotificationsView()
         }.goBack {
-
             // DATA COLLECTION
             verifyDataCollectionButton()
         }.openSettingsSubMenuDataCollection {
@@ -249,8 +229,6 @@ class SettingsPrivacyTest {
     @Test
     fun neverSaveLoginFromPromptTest() {
         val saveLoginTest = TestAssetHelper.getSaveLoginAsset(mockWebServer)
-        val settings = activityTestRule.activity.settings()
-        settings.shouldShowJumpBackInCFR = false
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(saveLoginTest.url) {
@@ -371,7 +349,6 @@ class SettingsPrivacyTest {
     }
 
     @Test
-    @Ignore("Failing after compose migration. See: https://github.com/mozilla-mobile/fenix/issues/26087")
     fun launchPageShortcutInPrivateModeTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -402,11 +379,8 @@ class SettingsPrivacyTest {
         }
     }
 
-    @Ignore("Failing with frequent ANR: https://bugzilla.mozilla.org/show_bug.cgi?id=1764605")
     @Test
     fun launchLinksInPrivateToggleOffStateDoesntChangeTest() {
-        val settings = activityTestRule.activity.applicationContext.settings()
-        settings.shouldShowJumpBackInCFR = false
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         setOpenLinksInPrivateOn()
@@ -455,10 +429,10 @@ class SettingsPrivacyTest {
         }
     }
 
+    // Verifies that you can go to System settings and change app's permissions from inside the app
     @SmokeTest
     @Test
     @SdkSuppress(minSdkVersion = 29)
-    // Verifies that you can go to System settings and change app's permissions from inside the app
     fun redirectToAppPermissionsSystemSettingsTest() {
         homeScreen {
         }.openThreeDotMenu {
@@ -639,9 +613,13 @@ class SettingsPrivacyTest {
     @SmokeTest
     @Test
     fun deleteCookiesTest() {
+        val genericPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val cookiesTestPage = getStorageTestAsset(mockWebServer, "storage_write.html").url
 
+        // Browsing a generic page to allow GV to load on a fresh run
         navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericPage.url) {
+        }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(cookiesTestPage) {
             verifyPageContent("No cookies set")
             clickSetCookiesButton()

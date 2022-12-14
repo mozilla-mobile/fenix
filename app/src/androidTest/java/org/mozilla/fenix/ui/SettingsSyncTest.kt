@@ -7,10 +7,10 @@ package org.mozilla.fenix.ui
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
-import org.junit.Rule
-import org.junit.Before
 import org.junit.After
+import org.junit.Before
 import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
@@ -43,9 +43,9 @@ class SettingsSyncTest {
         mockWebServer.shutdown()
     }
 
+    // Walks through settings sync menu and sub-menus to ensure all items are present
     @Ignore("This is a stub test, ignore for now")
     @Test
-    // Walks through settings sync menu and sub-menus to ensure all items are present
     fun settingsSyncItemsTest() {
         // SYNC
 

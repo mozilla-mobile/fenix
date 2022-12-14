@@ -12,8 +12,8 @@ import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.mozilla.fenix.settings.PhoneFeature
-import org.mozilla.fenix.trackingprotection.TrackingProtectionState
-import org.mozilla.fenix.trackingprotection.TrackingProtectionState.Mode.Normal
+import org.mozilla.fenix.trackingprotection.ProtectionsState
+import org.mozilla.fenix.trackingprotection.ProtectionsState.Mode.Normal
 
 class QuickSettingsFragmentReducerTest {
 
@@ -24,15 +24,20 @@ class QuickSettingsFragmentReducerTest {
             status = "status",
             isVisible = false,
             isEnabled = false,
-            isBlockedByAndroid = false
+            isBlockedByAndroid = false,
         )
 
         val map =
             mapOf<PhoneFeature, WebsitePermission>(PhoneFeature.CAMERA to toggleablePermission)
         val infoState = WebsiteInfoState("", "", WebsiteSecurityUiValues.SECURE, "")
-        val tpState = TrackingProtectionState(
-            null, "", false, emptyList(),
-            Normal, ""
+        val tpState = ProtectionsState(
+            null,
+            "",
+            isTrackingProtectionEnabled = false,
+            isCookieBannerHandlingEnabled = false,
+            listTrackers = emptyList(),
+            mode = Normal,
+            lastAccessedCategory = "",
         )
         val state = QuickSettingsFragmentState(infoState, map, tpState)
         val newState = quickSettingsFragmentReducer(
@@ -40,8 +45,8 @@ class QuickSettingsFragmentReducerTest {
             WebsitePermissionAction.TogglePermission(
                 updatedFeature = PhoneFeature.CAMERA,
                 updatedStatus = "newStatus",
-                updatedEnabledStatus = true
-            )
+                updatedEnabledStatus = true,
+            ),
         )
         val result = newState.websitePermissionsState[PhoneFeature.CAMERA]!!
         assertEquals("newStatus", result.status)
@@ -54,28 +59,33 @@ class QuickSettingsFragmentReducerTest {
             autoplayValue = AutoplayValue.BlockAll(
                 label = "label",
                 rules = createTestRule(),
-                sitePermission = null
+                sitePermission = null,
             ),
             options = emptyList(),
-            isVisible = false
+            isVisible = false,
         )
 
         val map =
             mapOf<PhoneFeature, WebsitePermission>(PhoneFeature.AUTOPLAY to permissionPermission)
         val infoState = WebsiteInfoState("", "", WebsiteSecurityUiValues.SECURE, "")
-        val tpState = TrackingProtectionState(
-            null, "", false, emptyList(),
-            Normal, ""
+        val tpState = ProtectionsState(
+            null,
+            "",
+            isTrackingProtectionEnabled = false,
+            isCookieBannerHandlingEnabled = false,
+            listTrackers = emptyList(),
+            mode = Normal,
+            lastAccessedCategory = "",
         )
         val state = QuickSettingsFragmentState(infoState, map, tpState)
         val autoplayValue = AutoplayValue.AllowAll(
             label = "newLabel",
             rules = createTestRule(),
-            sitePermission = null
+            sitePermission = null,
         )
         val newState = quickSettingsFragmentReducer(
             state,
-            WebsitePermissionAction.ChangeAutoplay(autoplayValue)
+            WebsitePermissionAction.ChangeAutoplay(autoplayValue),
         )
 
         val result =
@@ -84,27 +94,28 @@ class QuickSettingsFragmentReducerTest {
     }
 
     @Test
-    fun `TrackingProtectionAction - ToggleTrackingProtectionEnabled`() = runTest {
+    fun `ProtectionsAction - ToggleTrackingProtectionEnabled`() = runTest {
         val state = QuickSettingsFragmentState(
             webInfoState = WebsiteInfoState("", "", WebsiteSecurityUiValues.SECURE, ""),
             websitePermissionsState = emptyMap(),
-            trackingProtectionState = TrackingProtectionState(
+            protectionsState = ProtectionsState(
                 tab = null,
                 url = "https://www.firefox.com",
                 isTrackingProtectionEnabled = true,
+                isCookieBannerHandlingEnabled = true,
                 listTrackers = listOf(),
                 mode = Normal,
-                lastAccessedCategory = ""
-            )
+                lastAccessedCategory = "",
+            ),
         )
 
         val newState = quickSettingsFragmentReducer(
             state = state,
-            action = TrackingProtectionAction.ToggleTrackingProtectionEnabled(false)
+            action = TrackingProtectionAction.ToggleTrackingProtectionEnabled(false),
         )
 
         assertNotSame(state, newState)
-        assertFalse(newState.trackingProtectionState.isTrackingProtectionEnabled)
+        assertFalse(newState.protectionsState.isTrackingProtectionEnabled)
     }
 
     private fun createTestRule() = SitePermissionsRules(

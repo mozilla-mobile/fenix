@@ -14,13 +14,17 @@ import java.util.Date
  * @property collection The name of the collection the wallpaper belongs to.
  * is not restricted.
  * @property textColor The 8 digit hex code color that should be used for text overlaying the wallpaper.
- * @property cardColor The 8 digit hex code color that should be used for cards overlaying the wallpaper.
+ * @property cardColorLight The 8 digit hex code color that should be used for cards overlaying the wallpaper
+ * when the user's theme is set to Light.
+ * @property cardColorDark The 8 digit hex code color that should be used for cards overlaying the wallpaper
+ * when the user's theme is set to Dark.
  */
 data class Wallpaper(
     val name: String,
     val collection: Collection,
     val textColor: Long?,
-    val cardColor: Long?,
+    val cardColorLight: Long?,
+    val cardColorDark: Long?,
     val thumbnailFileState: ImageFileState,
     val assetsFileState: ImageFileState,
 ) {
@@ -54,6 +58,23 @@ data class Wallpaper(
         const val beachVibeName = "beach-vibe"
         const val firefoxCollectionName = "firefox"
         const val defaultName = "default"
+
+        /*
+        Note: this collection could get out of sync with the version of it generated when fetching
+        remote metadata. It is included mostly for convenience, but use with utmost care until
+        we find a better way of handling the edge cases around this collection. It is generally
+        safer to do comparison directly with the collection name.
+        */
+        const val classicFirefoxCollectionName = "classic-firefox"
+        val ClassicFirefoxCollection = Collection(
+            name = classicFirefoxCollectionName,
+            heading = null,
+            description = null,
+            learnMoreUrl = null,
+            availableLocales = null,
+            startDate = null,
+            endDate = null,
+        )
         val DefaultCollection = Collection(
             name = defaultName,
             heading = null,
@@ -67,7 +88,8 @@ data class Wallpaper(
             name = defaultName,
             collection = DefaultCollection,
             textColor = null,
-            cardColor = null,
+            cardColorLight = null,
+            cardColorDark = null,
             thumbnailFileState = ImageFileState.Downloaded,
             assetsFileState = ImageFileState.Downloaded,
         )
@@ -95,21 +117,37 @@ data class Wallpaper(
          *
          * @param settings The local cache.
          */
+        @Suppress("ComplexCondition")
         fun getCurrentWallpaperFromSettings(settings: Settings): Wallpaper? {
             val name = settings.currentWallpaperName
             val textColor = settings.currentWallpaperTextColor
-            val cardColor = settings.currentWallpaperCardColor
-            return if (name.isNotEmpty() && textColor != 0L && cardColor != 0L) {
+            val cardColorLight = settings.currentWallpaperCardColorLight
+            val cardColorDark = settings.currentWallpaperCardColorDark
+            return if (name.isNotEmpty() && textColor != 0L && cardColorLight != 0L && cardColorDark != 0L) {
                 Wallpaper(
                     name = name,
                     textColor = textColor,
-                    cardColor = cardColor,
+                    cardColorLight = cardColorLight,
+                    cardColorDark = cardColorDark,
                     collection = DefaultCollection,
                     thumbnailFileState = ImageFileState.Downloaded,
                     assetsFileState = ImageFileState.Downloaded,
                 )
-            } else null
+            } else {
+                null
+            }
         }
+
+        /**
+         * Check if a wallpaper name matches the default. Considers empty strings to be default
+         * since that likely means a wallpaper has never been set. The "none" case here is to deal
+         * with a legacy case where the default wallpaper used to be Wallpaper.NONE. See
+         * commit 7a44412, Wallpaper.NONE and Settings.currentWallpaper (legacy name) for context.
+         *
+         * @param name The name to check.
+         */
+        fun nameIsDefault(name: String): Boolean =
+            name.isEmpty() || name == defaultName || name.lowercase() == "none"
     }
 
     /**
@@ -118,7 +156,8 @@ data class Wallpaper(
     enum class ImageType {
         Portrait,
         Landscape,
-        Thumbnail;
+        Thumbnail,
+        ;
 
         /**
          * Get a lowercase string representation of the [ImageType.name] for use in path segments.
@@ -134,17 +173,5 @@ data class Wallpaper(
         Downloading,
         Downloaded,
         Error,
-    }
-
-    override fun hashCode(): Int {
-        return name.hashCode()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        return if (other is Wallpaper) {
-            this.name == other.name
-        } else {
-            false
-        }
     }
 }

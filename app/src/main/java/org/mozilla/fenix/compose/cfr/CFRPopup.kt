@@ -58,7 +58,7 @@ class CFRPopup(
     @get:VisibleForTesting internal val anchor: View,
     @get:VisibleForTesting internal val properties: CFRPopupProperties = CFRPopupProperties(),
     @get:VisibleForTesting internal val onDismiss: (Boolean) -> Unit = {},
-    @get:VisibleForTesting internal val action: @Composable (() -> Unit) = {}
+    @get:VisibleForTesting internal val action: @Composable (() -> Unit) = {},
 ) {
     // This is just a facade for the CFRPopupFullScreenLayout composable offering a cleaner API.
 
@@ -72,6 +72,19 @@ class CFRPopup(
      */
     fun show() {
         anchor.post {
+            // When we're in this Runnable, the 'show' method might have been called right before
+            // the activity is no longer attached to the WindowManager. When we get to calling
+            // the CFRPopupFullscreenLayout#show method below, we are now trying to attach the View
+            // with the WindowManager that has an unusable Activity.
+            //
+            // To protect against this, within this same Runnable, we check if the anchor view is
+            // safe to use before continuing.
+            //
+            // See: https://bugzilla.mozilla.org/show_bug.cgi?id=1799996
+            if (anchor.context == null || !anchor.isAttachedToWindow) {
+                return@post
+            }
+
             CFRPopupFullscreenLayout(text, anchor, properties, onDismiss, action).apply {
                 this.show()
                 popup = WeakReference(this)
@@ -93,7 +106,7 @@ class CFRPopup(
      */
     enum class IndicatorDirection {
         UP,
-        DOWN
+        DOWN,
     }
 
     /**
@@ -116,7 +129,7 @@ class CFRPopup(
          * Recommended to be used when there are multiple widgets displayed horizontally so that this will allow
          * to indicate exactly which widget the popup refers to.
          */
-        INDICATOR_CENTERED_IN_ANCHOR
+        INDICATOR_CENTERED_IN_ANCHOR,
     }
 
     companion object {

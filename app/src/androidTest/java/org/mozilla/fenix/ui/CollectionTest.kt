@@ -15,7 +15,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
 import org.mozilla.fenix.ui.robots.browserScreen
@@ -35,23 +34,21 @@ class CollectionTest {
     private val firstCollectionName = "testcollection_1"
     private val secondCollectionName = "testcollection_2"
     private val collectionName = "First Collection"
-    private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
     val composeTestRule = AndroidComposeTestRule(
-        HomeActivityIntentTestRule(),
-        { it.activity }
-    )
+        // disabling these features to have better visibility of Collections,
+        // and to avoid multiple matches on tab items
+        HomeActivityIntentTestRule(
+            isPocketEnabled = false,
+            isJumpBackInCFREnabled = false,
+            isRecentTabsFeatureEnabled = false,
+            isRecentlyVisitedFeatureEnabled = false,
+        ),
+    ) { it.activity }
 
     @Before
     fun setUp() {
-        // disabling these features to have better visibility of Collections,
-        // and to avoid multiple matches on tab items
-        featureSettingsHelper.setRecentTabsFeatureEnabled(false)
-        featureSettingsHelper.setPocketEnabled(false)
-        featureSettingsHelper.setJumpBackCFREnabled(false)
-        featureSettingsHelper.setRecentlyVisitedFeatureEnabled(false)
-
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
@@ -62,9 +59,6 @@ class CollectionTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
-
-        // resetting modified features enabled setting to default
-        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     @SmokeTest
@@ -168,7 +162,7 @@ class CollectionTest {
             createCollection(
                 firstTestPage.title,
                 secondTestPage.title,
-                collectionName = collectionName
+                collectionName = collectionName,
             )
             closeTab()
         }
@@ -324,8 +318,9 @@ class CollectionTest {
             createCollection(webPage.title, collectionName = firstCollectionName)
             verifySnackBarText("Collection saved!")
             createCollection(
-                webPage.title, collectionName = secondCollectionName,
-                firstCollection = false
+                webPage.title,
+                collectionName = secondCollectionName,
+                firstCollection = false,
             )
             verifySnackBarText("Collection saved!")
         }.closeTabDrawer {
@@ -369,7 +364,7 @@ class CollectionTest {
         }.openTabDrawer {
             createCollection(
                 testPage.title,
-                collectionName = collectionName
+                collectionName = collectionName,
             )
             closeTab()
         }
@@ -396,7 +391,7 @@ class CollectionTest {
         }.openTabDrawer {
             createCollection(
                 testPage.title,
-                collectionName = collectionName
+                collectionName = collectionName,
             )
             closeTab()
         }
@@ -498,7 +493,7 @@ class CollectionTest {
 
         homeScreen {
             verifySnackBarText("Collection deleted")
-            clickUndoCollectionDeletion("UNDO")
+            clickUndoSnackBarButton()
             verifyCollectionIsDisplayed(collectionName, true)
         }
     }

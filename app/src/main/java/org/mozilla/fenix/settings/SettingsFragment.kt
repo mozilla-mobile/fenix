@@ -38,7 +38,9 @@ import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.ktx.android.view.showKeyboard
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.CookieBanners
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.HomeActivity
@@ -48,9 +50,9 @@ import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.navigateToNotificationsSettings
+import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.perf.ProfilerViewModel
@@ -66,14 +68,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var accountUiView: AccountUiView
     private val profilerViewModel: ProfilerViewModel by activityViewModels()
 
-    private val accountObserver = object : AccountObserver {
+    @VisibleForTesting
+    internal val accountObserver = object : AccountObserver {
         private fun updateAccountUi(profile: Profile? = null) {
             val context = context ?: return
             lifecycleScope.launch {
                 accountUiView.updateAccountUIState(
                     context = context,
                     profile = profile
-                        ?: context.components.backgroundServices.accountManager.accountProfile()
+                        ?: context.components.backgroundServices.accountManager.accountProfile(),
                 )
             }
         }
@@ -97,14 +100,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             scope = lifecycleScope,
             accountManager = requireComponents.backgroundServices.accountManager,
             httpClient = requireComponents.core.client,
-            updateFxAAllowDomesticChinaServerMenu = :: updateFxAAllowDomesticChinaServerMenu
-        )
-
-        // Observe account changes to keep the UI up-to-date.
-        requireComponents.backgroundServices.accountManager.register(
-            accountObserver,
-            owner = this,
-            autoPause = true
+            updateFxAAllowDomesticChinaServerMenu = ::updateFxAAllowDomesticChinaServerMenu,
         )
 
         // It's important to update the account UI state in onCreate since that ensures we'll never
@@ -115,7 +111,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         // once this call is ran in onResume shortly after.
         accountUiView.updateAccountUIState(
             requireContext(),
-            requireComponents.backgroundServices.accountManager.accountProfile()
+            requireComponents.backgroundServices.accountManager.accountProfile(),
         )
 
         val booleanPreferenceTelemetryAllowList = listOf(
@@ -132,7 +128,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             requireContext().getString(R.string.pref_key_sync_bookmarks),
             requireContext().getString(R.string.pref_key_sync_history),
             requireContext().getString(R.string.pref_key_show_voice_search),
-            requireContext().getString(R.string.pref_key_show_search_suggestions_in_private)
+            requireContext().getString(R.string.pref_key_show_search_suggestions_in_private),
         )
 
         preferenceManager.sharedPreferences
@@ -151,7 +147,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             this,
             Observer<Boolean> {
                 updateProfilerUI(it)
-            }
+            },
         )
     }
 
@@ -183,6 +179,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
         // Consider finish of `onResume` to be the point at which we consider this fragment as 'created'.
         creatingFragment = false
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Observe account changes to keep the UI up-to-date.
+        requireComponents.backgroundServices.accountManager.register(
+            accountObserver,
+            owner = this,
+            autoPause = true,
+        )
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // If the screen isn't visible we don't need to show updates.
+        // Also prevent the observer registered to the FXA singleton causing memory leaks.
+        requireComponents.backgroundServices.accountManager.unregister(accountObserver)
     }
 
     override fun onDestroyView() {
@@ -229,7 +242,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (shouldUpdateAccountUIState) {
             accountUiView.updateAccountUIState(
                 requireContext(),
-                requireComponents.backgroundServices.accountManager.accountProfile()
+                requireComponents.backgroundServices.accountManager.accountProfile(),
             )
         }
     }
@@ -267,6 +280,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
             resources.getString(R.string.pref_key_https_only_settings) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToHttpsOnlyFragment()
             }
+            resources.getString(R.string.pref_key_cookie_banner_settings) -> {
+                FxNimbus.features.cookieBanners.recordExposure()
+                CookieBanners.visitedSetting.record(mozilla.components.service.glean.private.NoExtras())
+                SettingsFragmentDirections.actionSettingsFragmentToCookieBannerFragment()
+            }
             resources.getString(R.string.pref_key_accessibility) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToAccessibilityFragment()
             }
@@ -287,10 +305,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 (activity as HomeActivity).openToBrowserAndLoad(
                     searchTermOrURL = SupportUtils.getSumoURLForTopic(
                         requireContext(),
-                        SupportUtils.SumoTopic.HELP
+                        SupportUtils.SumoTopic.HELP,
                     ),
                     newTab = true,
-                    from = BrowserDirection.FromSettings
+                    from = BrowserDirection.FromSettings,
                 )
                 null
             }
@@ -303,7 +321,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     (activity as HomeActivity).openToBrowserAndLoad(
                         searchTermOrURL = SupportUtils.FENIX_PLAY_STORE_URL,
                         newTab = true,
-                        from = BrowserDirection.FromSettings
+                        from = BrowserDirection.FromSettings,
                     )
                 }
                 null
@@ -339,7 +357,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             resources.getString(R.string.pref_key_privacy_link) -> {
                 val intent = SupportUtils.createCustomTabIntent(
                     requireContext(),
-                    SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE)
+                    SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE),
                 )
                 startActivity(intent)
                 null
@@ -348,7 +366,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 val context = requireContext()
                 val intent = SupportUtils.createCustomTabIntent(
                     context,
-                    SupportUtils.getSumoURLForTopic(context, SupportUtils.SumoTopic.YOUR_RIGHTS)
+                    SupportUtils.getSumoURLForTopic(context, SupportUtils.SumoTopic.YOUR_RIGHTS),
                 )
                 startActivity(intent)
                 null
@@ -381,14 +399,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         Toast.makeText(
                             context,
                             getString(R.string.toast_customize_addon_collection_done),
-                            Toast.LENGTH_LONG
+                            Toast.LENGTH_LONG,
                         ).show()
 
                         Handler(Looper.getMainLooper()).postDelayed(
                             {
                                 exitProcess(0)
                             },
-                            AMO_COLLECTION_OVERRIDE_EXIT_DELAY
+                            AMO_COLLECTION_OVERRIDE_EXIT_DELAY,
                         )
                     }
 
@@ -420,9 +438,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val preferenceLeakCanary = findPreference<Preference>(leakKey)
         val preferenceRemoteDebugging = findPreference<Preference>(debuggingKey)
         val preferenceMakeDefaultBrowser =
-            requirePreference<Preference>(R.string.pref_key_make_default_browser)
+            requirePreference<DefaultBrowserPreference>(R.string.pref_key_make_default_browser)
+
         val preferenceOpenLinksInExternalApp =
             findPreference<Preference>(getPreferenceKey(R.string.pref_key_open_links_in_external_app))
+
         if (!Config.channel.isReleased) {
             preferenceLeakCanary?.setOnPreferenceChangeListener { _, newValue ->
                 val isEnabled = newValue == true
@@ -439,8 +459,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
-        preferenceMakeDefaultBrowser.onPreferenceClickListener =
-            getClickListenerForMakeDefaultBrowser()
+        preferenceMakeDefaultBrowser.apply {
+            updateSwitch()
+            onPreferenceClickListener =
+                getClickListenerForMakeDefaultBrowser()
+        }
 
         preferenceOpenLinksInExternalApp?.onPreferenceChangeListener = SharedPreferenceUpdater()
 
@@ -448,17 +471,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference<Preference>(getPreferenceKey(R.string.pref_key_start_profiler))
 
         with(requireContext().settings()) {
+            findPreference<Preference>(getPreferenceKey(R.string.pref_key_cookie_banner_settings))
+                ?.isVisible = shouldShowCookieBannerUI
             findPreference<Preference>(
-                getPreferenceKey(R.string.pref_key_nimbus_experiments)
+                getPreferenceKey(R.string.pref_key_nimbus_experiments),
             )?.isVisible = showSecretDebugMenuThisSession
             findPreference<Preference>(
-                getPreferenceKey(R.string.pref_key_debug_settings)
+                getPreferenceKey(R.string.pref_key_debug_settings),
             )?.isVisible = showSecretDebugMenuThisSession
             findPreference<Preference>(
-                getPreferenceKey(R.string.pref_key_secret_debug_info)
+                getPreferenceKey(R.string.pref_key_secret_debug_info),
             )?.isVisible = showSecretDebugMenuThisSession
             findPreference<Preference>(
-                getPreferenceKey(R.string.pref_key_sync_debug)
+                getPreferenceKey(R.string.pref_key_sync_debug),
             )?.isVisible = showSecretDebugMenuThisSession
             preferenceStartProfiler?.isVisible = showSecretDebugMenuThisSession &&
                 (requireContext().components.core.engine.profiler?.isProfilerActive() != null)
@@ -522,7 +547,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference<Preference>(getPreferenceKey(R.string.pref_key_override_amo_collection))
 
         val show = (
-            Config.channel.isNightlyOrDebug && (
+            FeatureFlags.customExtensionCollectionFeature && (
                 settings.amoCollectionOverrideConfigured() || settings.showSecretDebugMenuThisSession
                 )
             )
@@ -550,13 +575,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     Toast.makeText(
                         context,
                         getString(R.string.toast_override_fxa_sync_server_done),
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_LONG,
                     ).show()
                     Handler(Looper.getMainLooper()).postDelayed(
                         {
                             exitProcess(0)
                         },
-                        FXA_SYNC_OVERRIDE_EXIT_DELAY
+                        FXA_SYNC_OVERRIDE_EXIT_DELAY,
                     )
                 }
         }

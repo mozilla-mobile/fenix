@@ -6,9 +6,12 @@
 
 package org.mozilla.fenix.helpers
 
+import android.Manifest
 import android.app.ActivityManager
 import android.app.PendingIntent
 import android.content.ActivityNotFoundException
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -18,12 +21,17 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
+import android.os.storage.StorageManager
+import android.os.storage.StorageVolume
 import android.provider.Settings
+import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.intent.Intents.intended
@@ -35,15 +43,13 @@ import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
+import androidx.test.runner.permission.PermissionRequester
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject
-import androidx.test.uiautomator.UiObjectNotFoundException
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
-import java.util.Locale
-import java.util.regex.Pattern
 import junit.framework.AssertionFailedError
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.support.ktx.android.content.appName
@@ -51,12 +57,13 @@ import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.Matcher
 import org.junit.Assert
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_APPS_PHOTOS
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.ext.waitNotNull
@@ -64,6 +71,9 @@ import org.mozilla.fenix.helpers.idlingresource.NetworkConnectionIdlingResource
 import org.mozilla.fenix.ui.robots.BrowserRobot
 import org.mozilla.fenix.utils.IntentUtils
 import org.mozilla.gecko.util.ThreadUtils
+import java.io.File
+import java.util.Locale
+import java.util.regex.Pattern
 
 object TestHelper {
 
@@ -82,18 +92,19 @@ object TestHelper {
     fun longTapSelectItem(url: Uri) {
         mDevice.waitNotNull(
             Until.findObject(By.text(url.toString())),
-            waitingTime
+            waitingTime,
         )
         onView(
             allOf(
                 withId(R.id.url),
-                withText(url.toString())
-            )
+                withText(url.toString()),
+            ),
         ).perform(longClick())
     }
 
     fun restartApp(activity: HomeActivityIntentTestRule) {
         with(activity) {
+            updateCachedSettings()
             finishActivity()
             mDevice.waitForIdle()
             launchActivity(null)
@@ -111,8 +122,14 @@ object TestHelper {
     fun waitUntilObjectIsFound(resourceName: String) {
         mDevice.waitNotNull(
             Until.findObjects(By.res(resourceName)),
-            waitingTime
+            waitingTime,
         )
+    }
+
+    fun waitUntilSnackbarGone() {
+        mDevice.findObject(
+            UiSelector().resourceId("$packageName:id/snackbar_layout"),
+        ).waitUntilGone(waitingTime)
     }
 
     fun verifyUrl(urlSubstring: String, resourceName: String, resId: Int) {
@@ -137,24 +154,21 @@ object TestHelper {
         }
     }
 
-    // Remove test file from Google Photos (AOSP) on Firebase
-    fun deleteDownloadFromStorage() {
-        val deleteButton = mDevice.findObject(UiSelector().resourceId("$GOOGLE_APPS_PHOTOS:id/trash"))
-        deleteButton.waitForExists(waitingTime)
-        deleteButton.click()
-
-        // Sometimes there's a secondary confirmation
+    @RequiresApi(Build.VERSION_CODES.R)
+    fun deleteDownloadedFileOnStorage(fileName: String) {
+        val storageManager: StorageManager? = appContext.getSystemService(Context.STORAGE_SERVICE) as StorageManager?
+        val storageVolumes = storageManager!!.storageVolumes
+        val storageVolume: StorageVolume = storageVolumes[0]
+        val file = File(storageVolume.directory!!.path + "/Download/" + fileName)
         try {
-            val deleteConfirm = mDevice.findObject(UiSelector().text("Got it"))
-            deleteConfirm.waitForExists(waitingTime)
-            deleteConfirm.click()
-        } catch (e: UiObjectNotFoundException) {
-            // Do nothing
+            file.delete()
+            Log.d("TestLog", "File delete try 1")
+            assertFalse("The file was not deleted", file.exists())
+        } catch (e: AssertionError) {
+            file.delete()
+            Log.d("TestLog", "File delete retried")
+            assertFalse("The file was not deleted", file.exists())
         }
-
-        val trashIt = mDevice.findObject(UiSelector().resourceId("$GOOGLE_APPS_PHOTOS:id/move_to_trash"))
-        trashIt.waitForExists(waitingTime)
-        trashIt.click()
     }
 
     fun setNetworkEnabled(enabled: Boolean) {
@@ -189,7 +203,7 @@ object TestHelper {
     fun createCustomTabIntent(
         pageUrl: String,
         customMenuItemLabel: String = "",
-        customActionButtonDescription: String = ""
+        customActionButtonDescription: String = "",
     ): Intent {
         val appContext = InstrumentationRegistry.getInstrumentation()
             .targetContext
@@ -200,7 +214,9 @@ object TestHelper {
             .setShareState(CustomTabsIntent.SHARE_STATE_ON)
             .setActionButton(
                 createTestBitmap(),
-                customActionButtonDescription, pendingIntent, true
+                customActionButtonDescription,
+                pendingIntent,
+                true,
             )
             .build()
         customTabsIntent.intent.data = Uri.parse(pageUrl)
@@ -233,7 +249,7 @@ object TestHelper {
         } else {
             mDevice.waitNotNull(
                 Until.findObject(By.text("Could not open file")),
-                waitingTime
+                waitingTime,
             )
         }
     }
@@ -243,10 +259,22 @@ object TestHelper {
             mDevice.waitForIdle(waitingTimeShort)
             assertTrue(
                 mDevice.findObject(UiSelector().packageName(appPackageName))
-                    .waitForExists(waitingTime)
+                    .waitForExists(waitingTime),
             )
         } else {
             BrowserRobot().verifyUrl(url)
+        }
+    }
+
+    fun assertPlayStoreOpens() {
+        if (isPackageInstalled(Constants.PackageName.GOOGLE_PLAY_SERVICES)) {
+            try {
+                intended(toPackage(Constants.PackageName.GOOGLE_PLAY_SERVICES))
+            } catch (e: AssertionFailedError) {
+                BrowserRobot().verifyRateOnGooglePlayURL()
+            }
+        } else {
+            BrowserRobot().verifyRateOnGooglePlayURL()
         }
     }
 
@@ -261,6 +289,29 @@ object TestHelper {
         mDevice.waitForIdle(waitingTimeShort)
 
         return activityManager.appTasks[0].taskInfo.topActivity!!.className == ExternalAppBrowserActivity::class.java.name
+    }
+
+    /**
+     * Run test with automatically registering idling resources and cleanup.
+     *
+     * @param idlingResources zero or more [IdlingResource] to be used when running [testBlock].
+     * @param testBlock test code to execute.
+     */
+    fun registerAndCleanupIdlingResources(
+        vararg idlingResources: IdlingResource,
+        testBlock: () -> Unit,
+    ) {
+        idlingResources.forEach {
+            IdlingRegistry.getInstance().register(it)
+        }
+
+        try {
+            testBlock()
+        } finally {
+            idlingResources.forEach {
+                IdlingRegistry.getInstance().unregister(it)
+            }
+        }
     }
 
     // exit from Menus to home screen or browser
@@ -281,9 +332,9 @@ object TestHelper {
         return withParent(
             hasSibling(
                 withChild(
-                    matcher
-                )
-            )
+                    matcher,
+                ),
+            ),
         )
     }
 
@@ -302,11 +353,12 @@ object TestHelper {
                 By.text(
                     when (Build.VERSION.SDK_INT) {
                         Build.VERSION_CODES.R -> Pattern.compile(
-                            "WHILE USING THE APP", Pattern.CASE_INSENSITIVE
+                            "WHILE USING THE APP",
+                            Pattern.CASE_INSENSITIVE,
                         )
                         else -> Pattern.compile("Allow", Pattern.CASE_INSENSITIVE)
-                    }
-                )
+                    },
+                ),
             ).click()
         }
     }
@@ -317,11 +369,12 @@ object TestHelper {
                 By.text(
                     when (Build.VERSION.SDK_INT) {
                         Build.VERSION_CODES.R -> Pattern.compile(
-                            "DENY", Pattern.CASE_INSENSITIVE
+                            "DENY",
+                            Pattern.CASE_INSENSITIVE,
                         )
                         else -> Pattern.compile("Deny", Pattern.CASE_INSENSITIVE)
-                    }
-                )
+                    },
+                ),
             ).click()
         }
     }
@@ -339,20 +392,31 @@ object TestHelper {
 
     /**
      * Changes the default language of the entire device, not just the app.
+     * Runs on Debug variant as we don't want to adjust Release permission manifests
      * Runs the test in its testBlock.
-     * Cleans up and sets the default locale after it's are done.
+     * Cleans up and sets the default locale after it's done.
      */
     fun runWithSystemLocaleChanged(locale: Locale, testRule: ActivityTestRule<HomeActivity>, testBlock: () -> Unit) {
-        val defaultLocale = Locale.getDefault()
+        if (Config.channel.isDebug) {
+            /* Sets permission to change device language */
+            PermissionRequester().apply {
+                addPermissions(
+                    Manifest.permission.CHANGE_CONFIGURATION,
+                )
+                requestPermissions()
+            }
 
-        try {
-            setSystemLocale(locale)
-            testBlock()
-            ThreadUtils.runOnUiThread { testRule.activity.recreate() }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            setSystemLocale(defaultLocale)
+            val defaultLocale = Locale.getDefault()
+
+            try {
+                setSystemLocale(locale)
+                testBlock()
+                ThreadUtils.runOnUiThread { testRule.activity.recreate() }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                setSystemLocale(defaultLocale)
+            }
         }
     }
 
@@ -368,7 +432,17 @@ object TestHelper {
         config.javaClass.getDeclaredField("userSetLocale").setBoolean(config, true)
         am.javaClass.getMethod(
             "updateConfiguration",
-            Configuration::class.java
+            Configuration::class.java,
         ).invoke(am, config)
+    }
+
+    /**
+     * Creates clipboard data.
+     */
+    fun setTextToClipBoard(context: Context, message: String) {
+        val clipBoard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("label", message)
+
+        clipBoard.setPrimaryClip(clipData)
     }
 }

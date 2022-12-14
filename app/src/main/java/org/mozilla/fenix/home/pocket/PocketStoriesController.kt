@@ -4,17 +4,15 @@
 
 package org.mozilla.fenix.home.pocket
 
-import androidx.annotation.VisibleForTesting
-import androidx.navigation.NavController
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.service.pocket.PocketStory
 import mozilla.components.service.pocket.PocketStory.PocketRecommendedStory
 import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
 import mozilla.components.service.pocket.ext.getCurrentFlightImpressions
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.Pocket
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.R
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 
@@ -72,16 +70,14 @@ interface PocketStoriesController {
  *
  * @param homeActivity [HomeActivity] used to open URLs in a new tab.
  * @param appStore [AppStore] from which to read the current Pocket recommendations and dispatch new actions on.
- * @param navController [NavController] used for navigation.
  */
 internal class DefaultPocketStoriesController(
     private val homeActivity: HomeActivity,
     private val appStore: AppStore,
-    private val navController: NavController,
 ) : PocketStoriesController {
     override fun handleStoryShown(
         storyShown: PocketStory,
-        storyPosition: Pair<Int, Int>
+        storyPosition: Pair<Int, Int>,
     ) {
         appStore.dispatch(AppAction.PocketStoriesShown(listOf(storyShown)))
 
@@ -90,9 +86,11 @@ internal class DefaultPocketStoriesController(
                 Pocket.homeRecsSpocShown.record(
                     Pocket.HomeRecsSpocShownExtra(
                         position = "${storyPosition.first}x${storyPosition.second}",
-                        timesShown = storyShown.getCurrentFlightImpressions().size.inc().toString()
-                    )
+                        timesShown = storyShown.getCurrentFlightImpressions().size.inc().toString(),
+                    ),
                 )
+                Pocket.spocShim.set(storyShown.shim.impression)
+                Pings.spoc.submit(Pings.spocReasonCodes.impression)
             }
             else -> {
                 // no-op
@@ -116,8 +114,8 @@ internal class DefaultPocketStoriesController(
                 Pocket.HomeRecsCategoryClickedExtra(
                     categoryName = categoryClicked.name,
                     newState = "deselected",
-                    selectedTotal = initialCategoriesSelections.size.toString()
-                )
+                    selectedTotal = initialCategoriesSelections.size.toString(),
+                ),
             )
             return
         }
@@ -141,16 +139,15 @@ internal class DefaultPocketStoriesController(
             Pocket.HomeRecsCategoryClickedExtra(
                 categoryName = categoryClicked.name,
                 newState = "selected",
-                selectedTotal = initialCategoriesSelections.size.toString()
-            )
+                selectedTotal = initialCategoriesSelections.size.toString(),
+            ),
         )
     }
 
     override fun handleStoryClicked(
         storyClicked: PocketStory,
-        storyPosition: Pair<Int, Int>
+        storyPosition: Pair<Int, Int>,
     ) {
-        dismissSearchDialogIfDisplayed()
         homeActivity.openToBrowserAndLoad(storyClicked.url, true, BrowserDirection.FromHome)
 
         when (storyClicked) {
@@ -158,37 +155,30 @@ internal class DefaultPocketStoriesController(
                 Pocket.homeRecsStoryClicked.record(
                     Pocket.HomeRecsStoryClickedExtra(
                         position = "${storyPosition.first}x${storyPosition.second}",
-                        timesShown = storyClicked.timesShown.inc().toString()
-                    )
+                        timesShown = storyClicked.timesShown.inc().toString(),
+                    ),
                 )
             }
             is PocketSponsoredStory -> {
                 Pocket.homeRecsSpocClicked.record(
                     Pocket.HomeRecsSpocClickedExtra(
                         position = "${storyPosition.first}x${storyPosition.second}",
-                        timesShown = storyClicked.getCurrentFlightImpressions().size.inc().toString()
-                    )
+                        timesShown = storyClicked.getCurrentFlightImpressions().size.inc().toString(),
+                    ),
                 )
+                Pocket.spocShim.set(storyClicked.shim.click)
+                Pings.spoc.submit(Pings.spocReasonCodes.click)
             }
         }
     }
 
     override fun handleLearnMoreClicked(link: String) {
-        dismissSearchDialogIfDisplayed()
         homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome)
         Pocket.homeRecsLearnMoreClicked.record(NoExtras())
     }
 
     override fun handleDiscoverMoreClicked(link: String) {
-        dismissSearchDialogIfDisplayed()
         homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome)
         Pocket.homeRecsDiscoverClicked.record(NoExtras())
-    }
-
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun dismissSearchDialogIfDisplayed() {
-        if (navController.currentDestination?.id == R.id.searchDialogFragment) {
-            navController.navigateUp()
-        }
     }
 }

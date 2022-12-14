@@ -43,7 +43,6 @@ import org.mozilla.fenix.compose.list.FaviconListItem
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.tabstray.ext.toDisplayTitle
 import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.theme.Theme
 
 private val ROUNDED_CORNER_SHAPE = RoundedCornerShape(8.dp)
 
@@ -83,7 +82,7 @@ fun InactiveTabsList(
         ),
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             InactiveTabsHeader(
                 expanded = expanded,
@@ -188,12 +187,12 @@ private fun InactiveTabsAutoClosePrompt(
                     text = stringResource(R.string.tab_tray_inactive_auto_close_title),
                     color = FirefoxTheme.colors.textPrimary,
                     modifier = Modifier.weight(1f),
-                    style = FirefoxTheme.typography.headline8
+                    style = FirefoxTheme.typography.headline8,
                 )
 
                 IconButton(
                     onClick = onDismissClick,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.mozac_ic_close_20),
@@ -207,7 +206,7 @@ private fun InactiveTabsAutoClosePrompt(
             Text(
                 text = stringResource(
                     R.string.tab_tray_inactive_auto_close_body_2,
-                    stringResource(R.string.app_name)
+                    stringResource(R.string.app_name),
                 ),
                 color = FirefoxTheme.colors.textSecondary,
                 modifier = Modifier.fillMaxWidth(),
@@ -226,7 +225,7 @@ private fun InactiveTabsAutoClosePrompt(
 @Preview(name = "Auto close dialog dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(name = "Auto close dialog light", uiMode = Configuration.UI_MODE_NIGHT_NO)
 private fun InactiveTabsAutoClosePromptPreview() {
-    FirefoxTheme(theme = Theme.getTheme()) {
+    FirefoxTheme {
         Box(Modifier.background(FirefoxTheme.colors.layer1)) {
             InactiveTabsAutoClosePrompt(
                 onDismissClick = {},
@@ -243,7 +242,7 @@ private fun InactiveTabsListPreview() {
     var expanded by remember { mutableStateOf(true) }
     var showAutoClosePrompt by remember { mutableStateOf(true) }
 
-    FirefoxTheme(theme = Theme.getTheme()) {
+    FirefoxTheme {
         Box(Modifier.background(FirefoxTheme.colors.layer1)) {
             InactiveTabsList(
                 inactiveTabs = generateFakeInactiveTabsList(),
@@ -266,12 +265,12 @@ private fun generateFakeInactiveTabsList(): List<TabSessionState> =
             id = "tabId",
             content = ContentState(
                 url = "www.mozilla.com",
-            )
+            ),
         ),
         TabSessionState(
             id = "tabId",
             content = ContentState(
                 url = "www.google.com",
-            )
+            ),
         ),
     )

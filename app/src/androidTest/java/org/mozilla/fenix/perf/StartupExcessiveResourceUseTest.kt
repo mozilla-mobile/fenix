@@ -33,7 +33,7 @@ import org.mozilla.fenix.helpers.HomeActivityTestRule
  *
  * Say no to main thread IO! 🙅
  */
-private const val EXPECTED_SUPPRESSION_COUNT = 17
+private const val EXPECTED_SUPPRESSION_COUNT = 18
 
 /**
  * The number of times we call the `runBlocking` coroutine method on the main thread during this
@@ -46,7 +46,7 @@ private const val EXPECTED_SUPPRESSION_COUNT = 17
  * generally be replaced with a slow operation on a background thread launching onto the main thread
  * when completed. However, in a very small number of cases, blocking may be impossible to avoid.
  */
-private val EXPECTED_RUNBLOCKING_RANGE = 0..1 // CI has +1 counts compared to local runs: increment these together
+private val EXPECTED_RUNBLOCKING_RANGE = 0..2 // CI has +1 counts compared to local runs: increment these together
 
 /**
  * The number of `ConstraintLayout`s we inflate that are children of a `RecyclerView` during this
@@ -79,7 +79,7 @@ private val EXPECTED_NUMBER_OF_INFLATION =
 private val failureMsgStrictMode = getErrorMessage("StrictMode suppression")
 private val failureMsgRunBlocking = getErrorMessage("runBlockingIncrement")
 private val failureMsgRecyclerViewConstraintLayoutChildren = getErrorMessage(
-    "ConstraintLayout being a common direct descendant of a RecyclerView"
+    "ConstraintLayout being a common direct descendant of a RecyclerView",
 )
 private val failureMsgNumberOfInflation = getErrorMessage("start up inflation")
 

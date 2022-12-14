@@ -101,10 +101,6 @@
     <!-- Shortcut action to open new private tab -->
     <string name="home_screen_shortcut_open_new_private_tab_2">Llingüeta privada nueva</string>
 
-    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
-        %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
-    <string moz:RemovedIn="105" name="recent_tabs_search_term_count_2" tools:ignore="UnusedResources">%d sitios</string>
-
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate backward (browsing history) -->
     <string name="browser_menu_back">Atrás</string>
@@ -288,8 +284,6 @@
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Personalización</string>
     <!-- Preference description for banner about signing in -->
-    <string moz:RemovedIn="104" name="preferences_sign_in_description" tools:ignore="UnusedResources">Sincroniza los marcadores, l\'historial y muncho más cola to cuenta de Firefox</string>
-    <!-- Preference description for banner about signing in -->
     <string name="preferences_sign_in_description_2">Anicia la sesión pa sincronizar les llingüetes, los marcadores, les contraseñes y muncho más.</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
     <string name="preferences_account_default_name">Cuenta de Firefox</string>
@@ -347,7 +341,7 @@
     <!-- Title for the customize home screen section with recently saved bookmarks. -->
     <string name="customize_toggle_recent_bookmarks">Marcadores de recién</string>
     <!-- Title for the customize home screen section with Pocket. -->
-    <string name="customize_toggle_pocket">Pocket</string>
+    <string moz:RemovedIn="108" name="customize_toggle_pocket" tools:ignore="UnusedResources">Pocket</string>
     <!-- Title for the opening wallpaper settings screen -->
     <string name="customize_wallpapers">Fondos de pantalla</string>
     <!-- Title for the customize home screen section with sponsored shortcuts. -->
@@ -438,9 +432,6 @@
     <string name="preference_experiments_summary_2">Permite a Mozilla qu\'instale o execute estudios</string>
 
     <!-- Turn On Sync Preferences -->
-    <!-- Header of the Turn on Sync preference view -->
-    <string moz:RemovedIn="104" name="preferences_sync" tools:ignore="UnusedResources">Activación de Sync</string>
-
     <!-- Header of the Sync and save your data preference view -->
     <string name="preferences_sync_2">Sincronización y guardáu de datos</string>
     <!-- Preference for reconnecting to FxA sync -->
@@ -529,10 +520,6 @@
     <string name="tab_view_list">En llista</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">En rexáu</string>
-    <!-- Option for search term tab groups -->
-    <string moz:RemovedIn="105" name="tab_view_search_term_tab_groups" tools:ignore="UnusedResources">Grupos de busca</string>
-    <!-- Summary text for search term tab groups -->
-    <string moz:RemovedIn="105" name="tab_view_search_term_tab_groups_summary" tools:ignore="UnusedResources">Axunta los sitios rellacionaos</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Zarru de llingüetes</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -681,15 +668,6 @@
     <string name="history_empty_message">Nun hai nada</string>
 
 
-    <!-- The page title for browsing history coming from other devices. -->
-    <string moz:removedIn="105" name="history_from_other_devices" tools:ignore="UnusedResources">D\'otros preseos</string>
-    <!-- The synced history sign in dialog message -->
-    <string moz:removedIn="105" name="history_sign_in_message" tools:ignore="UnusedResources">Anicia la sesión pa ver l\'historial sincronizáu de los otros preseos de to.</string>
-    <!-- The synced history sign in dialog button text -->
-    <string moz:removedIn="105" name="history_sign_in_button" tools:ignore="UnusedResources">Aniciar la sesión</string>
-    <!-- The synced history sign in dialog create a new account link -->
-    <string moz:removedIn="105" name="history_sign_in_create_account" tools:ignore="UnusedResources"><![CDATA[<u>O crea una cuenta de Firefox pa comenzar a sincronizar</u>]]></string>
-
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
     <string name="download_delete_multiple_items_snackbar_1">Quitáronse les descargues</string>
@@ -709,7 +687,7 @@
     <string name="tab_crash_title_2">Perdona mas %1$s nun pue cargar esa páxina.</string>
 
     <!-- Send crash report checkbox text on the tab crash page -->
-    <string name="tab_crash_send_report">Unviar un informe del fallu a Mozilla</string>
+    <string name="tab_crash_send_report">Unviar un informe del error a Mozilla</string>
     <!-- Close tab button text on the tab crash page -->
     <string name="tab_crash_close">Zarrar la llingüeta</string>
     <!-- Restore tab button text on the tab crash page -->
@@ -900,7 +878,7 @@
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Usóse apocayá</string>
     <!-- An option from the three dot menu to into sync -->
-    <string name="sync_menu_sign_in">Aniciar sesión pa sincronizar</string>
+    <string moz:removedIn="107" name="sync_menu_sign_in" tools:ignore="UnusedResources">Aniciar sesión pa sincronizar</string>
     <!-- An option from the share dialog to sign into sync -->
     <string name="sync_sign_in">Aniciar sesión en Sync</string>
 
@@ -1019,9 +997,6 @@
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Colar</string>
 
-    <!-- Dialog message to the user asking to delete browsing data. -->
-    <string moz:removedIn="104" name="delete_browsing_data_prompt_message" tools:ignore="UnusedResources">Esto va desaniciar tolos datos de restolar.</string>
-
     <!-- Dialog message to the user asking to delete browsing data. Parameter will be replaced by app name. -->
     <string name="delete_browsing_data_prompt_message_3">%s va desaniciar los datos de restolar seleicionaos.</string>
     <!-- Text for the cancel button for the data deletion dialog -->
@@ -1038,12 +1013,12 @@
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_header">¡Afáyate en %s!</string>
+    <string moz:RemovedIn="106" name="onboarding_header" tools:ignore="UnusedResources">¡Afáyate en %s!</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">La sincronización ta activada</string>
 
     <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header_3">Privacidá permanente</string>
+    <string moz:removedIn="106" name="onboarding_tracking_protection_header_3" tools:ignore="UnusedResources">Privacidá permanente</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Estándar (por defeutu)</string>
     <!-- text for standard blocking option button description -->
@@ -1055,11 +1030,11 @@
     <!-- text for the toolbar position card header  -->
     <string name="onboarding_toolbar_placement_header_1">Sitiu de la barra de ferramientes</string>
     <!-- text for the privacy notice onboarding card header -->
-    <string name="onboarding_privacy_notice_header">La to privacidá</string>
+    <string moz:removedIn="106" name="onboarding_privacy_notice_header" tools:ignore="UnusedResources">La to privacidá</string>
 
     <!-- text for the privacy notice onboarding card description
     The first parameter is the name of the app (e.g. Firefox Preview) Substitute %s for long browser name. -->
-    <string name="onboarding_privacy_notice_description2">Diseñemos %s pa date\'l control tocante a los que compartes
+    <string moz:removedIn="106" name="onboarding_privacy_notice_description2" tools:ignore="UnusedResources">Diseñemos %s pa date\'l control tocante a los que compartes
 en llinia y con nós.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Lleer el nuesu avisu de privacidá</string>
@@ -1272,6 +1247,8 @@ en llinia y con nós.</string>
 
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Sincronización de cuentes</string>
+    <!-- Preference for syncing saved logins in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices">Sincronizar les cuentes ente preseos</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins">Cuentes guardaes</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
@@ -1347,7 +1324,7 @@ en llinia y con nós.</string>
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Cífrense los datos</string>
 
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
-    <string name="preferences_credit_cards_sync_cards_across_devices">Sincronizar les tarxetes en tolos preseos</string>
+    <string name="preferences_credit_cards_sync_cards_across_devices">Sincronizar les tarxetes ente preseos</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
     <string name="preferences_credit_cards_sync_cards">Sincronizar les tarxetes</string>
     <!-- Preference option for adding a credit card -->
@@ -1417,7 +1394,7 @@ en llinia y con nós.</string>
     <!-- Text shown when a user leaves out the required template string -->
     <string name="search_add_custom_engine_error_missing_template">Comprueba que la cadena de busca concase col formatu del exemplu</string>
     <!-- Text shown when we aren't able to validate the custom search query. The first parameter is the url of the custom search engine -->
-    <string name="search_add_custom_engine_error_cannot_reach">Fallu al conectar con «%s»</string>
+    <string name="search_add_custom_engine_error_cannot_reach">Prodúxose un error al conectase a «%s»</string>
     <!-- Text shown when a user creates a new search engine -->
     <string name="search_add_custom_engine_success_message">Creóse %s</string>
     <!-- Text shown when a user successfully edits a custom search engine -->
@@ -1499,7 +1476,9 @@ en llinia y con nós.</string>
     <!-- Confirmation dialog button text when top sites limit is reached. -->
     <string name="top_sites_max_limit_confirmation_button">Val, entendílo</string>
 
-    <!-- Title text displayed in the rename top site dialog. -->
+    <!-- Label for the preference to show the shortcuts for the most visited top sites on the homepage -->
+    <string name="top_sites_toggle_top_recent_sites_4">Atayos</string>
+	<!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Nome</string>
     <!-- Button caption to confirm the renaming of the top site. -->
 	<string name="top_sites_rename_dialog_ok">Aceutar</string>
@@ -1509,6 +1488,9 @@ en llinia y con nós.</string>
     <!-- Inactive tabs in the tabs tray -->
     <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
     <string name="inactive_tabs_title">Llingüetes inactives</string>
+
+    <!-- A description below the header to notify the user what the inactive tabs auto-close feature is. -->
+    <string name="inactive_tabs_auto_close_message_description" tools:ignore="UnusedResources">Firefox pue zarrar les llingüetes que nun visitesti demientres el mes pasáu.</string>
 
     <!-- Content description for close button in collection placeholder. -->
     <string name="remove_home_collection_placeholder_content_description">Quitar</string>
@@ -1520,7 +1502,7 @@ en llinia y con nós.</string>
     <string name="privacy_content_close_button_content_description">Zarrar</string>
 
     <!-- Title of an app feature. Smaller than a heading.-->
-    <string name="pocket_stories_feature_title">Cola potencia de Pocket.</string>
+    <string moz:removedIn="108" name="pocket_stories_feature_title" tools:ignore="UnusedResources">Cola potencia de Pocket.</string>
     <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
     <string name="pocket_stories_feature_caption">Parte de la familia de Firefox. %s</string>
     <!-- Clickable text for opening an external link for more information about Pocket. -->

@@ -34,7 +34,7 @@ object TestAssetHelper {
             TestAsset(
                 server.url("pages/generic$it.html").toString().toUri()!!,
                 "Page content: $it",
-                ""
+                "",
             )
         }
     }
@@ -95,6 +95,18 @@ object TestAssetHelper {
 
     fun getCreditCardFormAsset(server: MockWebServer): TestAsset {
         val url = server.url("pages/creditCardForm.html").toString().toUri()!!
+
+        return TestAsset(url, "", "")
+    }
+
+    fun getHTMLControlsFormAsset(server: MockWebServer): TestAsset {
+        val url = server.url("pages/htmlControls.html").toString().toUri()!!
+
+        return TestAsset(url, "", "")
+    }
+
+    fun getExternalLinksAsset(server: MockWebServer): TestAsset {
+        val url = server.url("pages/externalLinks.html").toString().toUri()!!
 
         return TestAsset(url, "", "")
     }

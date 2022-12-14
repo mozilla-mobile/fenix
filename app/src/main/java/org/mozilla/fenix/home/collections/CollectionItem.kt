@@ -46,7 +46,6 @@ import org.mozilla.fenix.R.string
 import org.mozilla.fenix.compose.list.FaviconListItem
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.theme.Theme
 
 /**
  * Rectangular shape with only right angles used to display a middle tab.
@@ -87,7 +86,7 @@ fun CollectionItem(
                 dismissDirection = dismissState.dismissDirection,
                 isLastInCollection = isLastInCollection,
             )
-        }
+        },
     ) {
         // We need to clip the top bounds to avoid this item drawing shadows over the above item.
         // But we need to add this shadows back to have a clearer separation between tabs
@@ -154,7 +153,7 @@ private fun DismissedTabBackground(
                     .padding(horizontal = 32.dp)
                     // Only show the delete icon for where the swipe starts.
                     .alpha(
-                        if (dismissDirection == StartToEnd) 1f else 0f
+                        if (dismissDirection == StartToEnd) 1f else 0f,
                     ),
                 tint = FirefoxTheme.colors.iconWarning,
             )
@@ -166,7 +165,7 @@ private fun DismissedTabBackground(
                     .padding(horizontal = 32.dp)
                     // Only show the delete icon for where the swipe starts.
                     .alpha(
-                        if (dismissDirection == EndToStart) 1f else 0f
+                        if (dismissDirection == EndToStart) 1f else 0f,
                     ),
                 tint = FirefoxTheme.colors.iconWarning,
             )
@@ -184,18 +183,18 @@ private fun Modifier.clipTop() = this.then(
             left = 0f - paddingPx,
             top = 0f,
             right = size.width + paddingPx,
-            bottom = size.height + paddingPx
+            bottom = size.height + paddingPx,
         ) {
             this@drawWithContent.drawContent()
         }
-    }
+    },
 )
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 private fun TabInCollectionPreview() {
-    FirefoxTheme(theme = Theme.getTheme()) {
+    FirefoxTheme {
         Column {
             Box(modifier = Modifier.height(56.dp)) {
                 DismissedTabBackground(
@@ -236,6 +235,6 @@ private val tabPreview = object : Tab {
     override fun restore(
         context: Context,
         engine: Engine,
-        restoreSessionId: Boolean
+        restoreSessionId: Boolean,
     ): RecoverableTab? = null
 }

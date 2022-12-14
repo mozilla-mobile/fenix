@@ -38,6 +38,8 @@ import org.mozilla.fenix.utils.Settings
  * @param sessionId [String] Id of the tab or custom tab which should be observed for [EngineState.crashed]
  * depending on which [crashReporterView] will be shown or hidden.
  */
+
+@Suppress("LongParameterList")
 class CrashContentIntegration(
     private val browserStore: BrowserStore,
     private val appStore: AppStore,
@@ -47,7 +49,7 @@ class CrashContentIntegration(
     private val components: Components,
     private val settings: Settings,
     private val navController: NavController,
-    private val sessionId: String?
+    private val sessionId: String?,
 ) : AbstractBinding<BrowserState>(browserStore) {
     override suspend fun onState(flow: Flow<BrowserState>) {
         flow.mapNotNull { state -> state.findTabOrCustomTabOrSelectedTab(sessionId) }
@@ -67,7 +69,7 @@ class CrashContentIntegration(
                             components = components,
                             settings = settings,
                             navController = navController,
-                            appStore = appStore
+                            appStore = appStore,
                         )
 
                         show(controller)

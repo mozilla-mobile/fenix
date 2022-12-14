@@ -26,6 +26,7 @@ interface DeleteBrowsingDataController {
     suspend fun deleteDownloads()
 }
 
+@Suppress("LongParameterList")
 class DefaultDeleteBrowsingDataController(
     private val removeAllTabs: TabsUseCases.RemoveAllTabsUseCase,
     private val removeAllDownloads: DownloadsUseCases.RemoveAllDownloadsUseCase,
@@ -34,7 +35,7 @@ class DefaultDeleteBrowsingDataController(
     private val store: BrowserStore,
     private val iconsStorage: BrowserIcons,
     private val engine: Engine,
-    private val coroutineContext: CoroutineContext = Dispatchers.Main
+    private val coroutineContext: CoroutineContext = Dispatchers.Main,
 ) : DeleteBrowsingDataController {
 
     override suspend fun deleteTabs() {
@@ -58,8 +59,8 @@ class DefaultDeleteBrowsingDataController(
             engine.clearData(
                 Engine.BrowsingData.select(
                     Engine.BrowsingData.COOKIES,
-                    Engine.BrowsingData.AUTH_SESSIONS
-                )
+                    Engine.BrowsingData.AUTH_SESSIONS,
+                ),
             )
         }
     }
@@ -67,7 +68,7 @@ class DefaultDeleteBrowsingDataController(
     override suspend fun deleteCachedFiles() {
         withContext(coroutineContext) {
             engine.clearData(
-                Engine.BrowsingData.select(Engine.BrowsingData.ALL_CACHES)
+                Engine.BrowsingData.select(Engine.BrowsingData.ALL_CACHES),
             )
         }
     }
@@ -75,7 +76,7 @@ class DefaultDeleteBrowsingDataController(
     override suspend fun deleteSitePermissions() {
         withContext(coroutineContext) {
             engine.clearData(
-                Engine.BrowsingData.select(Engine.BrowsingData.ALL_SITE_SETTINGS)
+                Engine.BrowsingData.select(Engine.BrowsingData.ALL_SITE_SETTINGS),
             )
         }
         permissionStorage.deleteAllSitePermissions()

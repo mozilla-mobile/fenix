@@ -14,7 +14,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.StrictMode
 import androidx.annotation.VisibleForTesting
-import androidx.annotation.VisibleForTesting.PRIVATE
+import androidx.annotation.VisibleForTesting.Companion.PRIVATE
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import mozilla.components.support.ktx.android.os.resetAfter
@@ -38,7 +38,7 @@ open class StrictModeManager(
     // Ideally, we'd pass in a more specific value but there is a circular dependency: StrictMode
     // is passed into Core but we'd need to pass in Core here. Instead, we take components and later
     // fetch the value we need from it.
-    private val components: Components
+    private val components: Components,
 ) {
 
     private val isEnabledByBuildConfig = config.channel.isDebug

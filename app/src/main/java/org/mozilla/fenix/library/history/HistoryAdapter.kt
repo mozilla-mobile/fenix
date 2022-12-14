@@ -8,8 +8,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.library.history.viewholders.HistoryListItemViewHolder
+import org.mozilla.fenix.selection.SelectionHolder
 
 /**
  * Adapter for the list of visited pages, that uses Paging 3 versions of the Paging library.
@@ -23,6 +23,7 @@ class HistoryAdapter(
     private var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
     private var pendingDeletionItems = emptySet<PendingDeletionHistory>()
     private val itemsWithHeaders: MutableMap<HistoryItemTimeGroup, Int> = mutableMapOf()
+
     // A flag to track the empty state of the list. Items are not being deleted immediately,
     // but hidden from the UI until the Undo snackbar will execute the delayed operation.
     // Whether the adapter has actually zero items or all present items are hidden,
@@ -121,7 +122,7 @@ class HistoryAdapter(
             position == 0,
             mode,
             isPendingDeletion,
-            groupPendingDeletionCount
+            groupPendingDeletionCount,
         )
     }
 

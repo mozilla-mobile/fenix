@@ -8,11 +8,11 @@ import android.content.Context
 import android.content.DialogInterface
 import android.view.View
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
-import mozilla.components.concept.storage.Address
-import android.widget.ArrayAdapter
 import mozilla.components.browser.state.search.RegionState
+import mozilla.components.concept.storage.Address
 import mozilla.components.concept.storage.UpdatableAddressFields
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.android.view.showKeyboard
@@ -39,7 +39,7 @@ class AddressEditorView(
     private val binding: FragmentAddressEditorBinding,
     private val interactor: AddressEditorInteractor,
     private val region: RegionState? = RegionState.Default,
-    private val address: Address? = null
+    private val address: Address? = null,
 ) {
 
     /**
@@ -98,7 +98,7 @@ class AddressEditorView(
             postalCode = binding.zipInput.text.toString(),
             country = binding.countryDropDown.selectedItem.toString().toCountryCode(),
             tel = binding.phoneInput.text.toString(),
-            email = binding.emailInput.text.toString()
+            email = binding.emailInput.text.toString(),
         )
 
         if (address != null) {
@@ -128,7 +128,7 @@ class AddressEditorView(
         val adapter = ArrayAdapter(
             binding.root.context,
             android.R.layout.simple_spinner_dropdown_item,
-            countries.values.map { it.displayName }
+            countries.values.map { it.displayName },
         )
 
         val selectedCountryKey = (address?.country ?: region?.home).takeIf {
@@ -147,7 +147,7 @@ class AddressEditorView(
                 parent: AdapterView<*>?,
                 view: View?,
                 position: Int,
-                id: Long
+                id: Long,
             ) {
                 val newCountryKey = binding.countryDropDown.selectedItem.toString().toCountryCode()
                 countries[newCountryKey]?.let { country ->
@@ -171,7 +171,7 @@ class AddressEditorView(
         val adapter = ArrayAdapter(
             binding.root.context,
             android.R.layout.simple_spinner_dropdown_item,
-            country.subregions
+            country.subregions,
         )
 
         val selectedPosition = subregions.indexOf(selectedSubregion).takeIf { it > 0 } ?: 0

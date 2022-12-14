@@ -3,18 +3,7 @@ queue_rules:
     conditions:
       - or:
         - status-success=complete-pr
-        - and:
-          # For more context, see "Auto Merge" rules down below
-          - status-success=complete-push
-          - or:
-            - and:
-              - base~=^releases[_/].*
-              - or:
-                - head~=^automation/sync-strings-\d+
-                - head~=^relbot/fenix-\d+
-            - and:
-              - base=main
-              - head~=^relbot/AC-Nightly-.+
+        - status-success=complete-push
 pull_request_rules:
   - name: Resolve conflict
     conditions:
@@ -77,7 +66,9 @@ pull_request_rules:
         rebase_fallback: none
   - name: Needs landing - Rebase
     conditions:
-      - check-success=complete-pr
+      - or:
+        - check-success=complete-pr
+        - check-success=complete-push
       - label=pr:needs-landing
       - "#approved-reviews-by>=1"
       - -draft
@@ -90,7 +81,9 @@ pull_request_rules:
         rebase_fallback: none
   - name: Needs landing - Squash
     conditions:
-      - check-success=complete-pr
+      - or:
+        - check-success=complete-pr
+        - check-success=complete-push
       - label=pr:needs-landing-squashed
       - "#approved-reviews-by>=1"
       - -draft

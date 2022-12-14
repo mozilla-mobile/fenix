@@ -22,7 +22,6 @@ import mozilla.components.browser.state.state.createTab
 import mozilla.components.concept.engine.mediasession.MediaSession.PlaybackState
 import org.mozilla.fenix.R
 import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.theme.Theme
 
 /**
  * Controller buttons for the media (play/pause) state for the given [tab].
@@ -59,13 +58,13 @@ fun MediaImage(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 private fun ImagePreview() {
-    FirefoxTheme(theme = Theme.getTheme()) {
+    FirefoxTheme {
         MediaImage(
             tab = createTab(url = "https://mozilla.com"),
             onMediaIconClicked = {},
             modifier = Modifier
                 .height(100.dp)
-                .width(200.dp)
+                .width(200.dp),
         )
     }
 }

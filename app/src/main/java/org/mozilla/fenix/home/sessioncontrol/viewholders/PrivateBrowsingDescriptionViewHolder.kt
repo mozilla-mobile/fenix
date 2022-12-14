@@ -29,7 +29,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.ComposeViewHolder
 import org.mozilla.fenix.home.sessioncontrol.TabSessionInteractor
 import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.theme.Theme
 
 /**
  * View holder for a private browsing description.
@@ -53,7 +52,7 @@ class PrivateBrowsingDescriptionViewHolder(
     @Composable
     override fun Content() {
         PrivateBrowsingDescription(
-            onLearnMoreClick = interactor::onPrivateBrowsingLearnMoreClicked
+            onLearnMoreClick = interactor::onPrivateBrowsingLearnMoreClicked,
         )
     }
 
@@ -74,17 +73,17 @@ fun PrivateBrowsingDescription(
     val interactionSource = remember { MutableInteractionSource() }
 
     Column(
-        modifier = Modifier.padding(horizontal = 4.dp)
+        modifier = Modifier.padding(horizontal = 4.dp),
     ) {
         Text(
             text = stringResource(
                 R.string.private_browsing_placeholder_description_2,
-                stringResource(R.string.app_name)
+                stringResource(R.string.app_name),
             ),
             modifier = Modifier.padding(top = 4.dp),
             color = FirefoxTheme.colors.textPrimary,
             fontSize = 14.sp,
-            lineHeight = 20.sp
+            lineHeight = 20.sp,
         )
 
         // The text is wrapped in a box to increase the tap area.
@@ -95,9 +94,9 @@ fun PrivateBrowsingDescription(
                 .clickable(
                     interactionSource = interactionSource,
                     indication = null,
-                    onClickLabel = stringResource(R.string.link_text_view_type_announcement),
+                    onClickLabel = stringResource(R.string.a11y_action_label_read_article),
                     onClick = onLearnMoreClick,
-                )
+                ),
         ) {
             Text(
                 text = stringResource(R.string.private_browsing_common_myths),
@@ -106,8 +105,8 @@ fun PrivateBrowsingDescription(
                     color = FirefoxTheme.colors.textPrimary,
                     fontSize = 14.sp,
                     textDecoration = TextDecoration.Underline,
-                    textDirection = TextDirection.Content
-                )
+                    textDirection = TextDirection.Content,
+                ),
             )
         }
     }
@@ -116,9 +115,9 @@ fun PrivateBrowsingDescription(
 @Composable
 @Preview
 private fun PrivateBrowsingDescriptionPreview() {
-    FirefoxTheme(theme = Theme.getTheme()) {
+    FirefoxTheme {
         PrivateBrowsingDescription(
-            onLearnMoreClick = {}
+            onLearnMoreClick = {},
         )
     }
 }

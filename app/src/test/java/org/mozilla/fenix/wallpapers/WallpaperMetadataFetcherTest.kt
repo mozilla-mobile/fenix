@@ -24,7 +24,7 @@ class WallpaperMetadataFetcherTest {
     private val expectedRequest = Request(
         url = BuildConfig.WALLPAPER_URL.substringBefore("android") +
             "metadata/v$currentJsonVersion/wallpapers.json",
-        method = Request.Method.GET
+        method = Request.Method.GET,
     )
     private val mockResponse = mockk<Response>()
     private val mockClient = mockk<Client> {
@@ -52,12 +52,14 @@ class WallpaperMetadataFetcherTest {
                             {
                                 "id": "beach-vibes",
                                 "text-color": "FBFBFE",
-                                "card-color": "15141A"
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
                             },
                             {
                                 "id": "sunrise",
                                 "text-color": "15141A",
-                                "card-color": "FBFBFE"
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
                             }
                         ]
                     }
@@ -70,11 +72,13 @@ class WallpaperMetadataFetcherTest {
 
         with(wallpapers[0]) {
             assertEquals(0xFFFBFBFE, textColor)
-            assertEquals(0xFF15141A, cardColor)
+            assertEquals(0xFFFFFFFF, cardColorLight)
+            assertEquals(0xFF000000, cardColorDark)
         }
         with(wallpapers[1]) {
             assertEquals(0xFF15141A, textColor)
-            assertEquals(0xFFFBFBFE, cardColor)
+            assertEquals(0xFFFFFFFF, cardColorLight)
+            assertEquals(0xFF000000, cardColorDark)
         }
     }
 
@@ -91,12 +95,14 @@ class WallpaperMetadataFetcherTest {
                         "wallpapers": [
                             {
                                 "text-color": "FBFBFE",
-                                "card-color": "15141A"
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
                             },
                             {
                                 "id": "sunrise",
                                 "text-color": "15141A",
-                                "card-color": "FBFBFE"
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
                             }
                         ]
                     }
@@ -123,12 +129,14 @@ class WallpaperMetadataFetcherTest {
                         "wallpapers": [
                             {
                                 "id": "beach-vibes",
-                                "card-color": "15141A"
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
                             },
                             {
                                 "id": "sunrise",
                                 "text-color": "15141A",
-                                "card-color": "FBFBFE"
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
                             }
                         ]
                     }
@@ -160,7 +168,8 @@ class WallpaperMetadataFetcherTest {
                             {
                                 "id": "sunrise",
                                 "text-color": "15141A",
-                                "card-color": "FBFBFE"
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
                             }
                         ]
                     }
@@ -189,12 +198,14 @@ class WallpaperMetadataFetcherTest {
                             {
                                 "id": "beach-vibes",
                                 "text-color": "FBFBFE",
-                                "card-color": "15141A"
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
                             },
                             {
                                 "id": "sunrise",
                                 "text-color": "15141A",
-                                "card-color": "FBFBFE"
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
                             }
                         ]
                     }
@@ -209,7 +220,7 @@ class WallpaperMetadataFetcherTest {
         assertTrue(
             wallpapers.all {
                 it.collection.availableLocales == locales
-            }
+            },
         )
     }
 
@@ -239,12 +250,14 @@ class WallpaperMetadataFetcherTest {
                             {
                                 "id": "beach-vibes",
                                 "text-color": "FBFBFE",
-                                "card-color": "15141A"
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
                             },
                             {
                                 "id": "sunrise",
                                 "text-color": "15141A",
-                                "card-color": "FBFBFE"
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
                             }
                         ]
                     }
@@ -261,7 +274,7 @@ class WallpaperMetadataFetcherTest {
                 val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
                 formatter.format(startDate) == formatter.format(it.collection.startDate!!) &&
                     formatter.format(endDate) == formatter.format(it.collection.endDate!!)
-            }
+            },
         )
     }
 
@@ -280,12 +293,14 @@ class WallpaperMetadataFetcherTest {
                             {
                                 "id": "beach-vibes",
                                 "text-color": "FBFBFE",
-                                "card-color": "15141A"
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
                             },
                             {
                                 "id": "sunrise",
                                 "text-color": "15141A",
-                                "card-color": "FBFBFE"
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
                             }
                         ]
                     }
@@ -300,7 +315,7 @@ class WallpaperMetadataFetcherTest {
         assertTrue(
             wallpapers.all {
                 it.collection.learnMoreUrl == "https://www.mozilla.org"
-            }
+            },
         )
     }
 
@@ -323,12 +338,14 @@ class WallpaperMetadataFetcherTest {
                             {
                                 "id": "beach-vibes",
                                 "text-color": "FBFBFE",
-                                "card-color": "15141A"
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
                             },
                             {
                                 "id": "sunrise",
                                 "text-color": "15141A",
-                                "card-color": "FBFBFE"
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
                             }
                         ]
                     }
@@ -343,7 +360,7 @@ class WallpaperMetadataFetcherTest {
         assertTrue(
             wallpapers.all {
                 it.collection.heading == heading && it.collection.description == description
-            }
+            },
         )
     }
 
@@ -364,12 +381,14 @@ class WallpaperMetadataFetcherTest {
                             {
                                 "id": "beach-vibes",
                                 "text-color": "FBFBFE",
-                                "card-color": "15141A"
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
                             },
                             {
                                 "id": "sunrise",
                                 "text-color": "15141A",
-                                "card-color": "FBFBFE"
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
                             }
                         ]
                     }
@@ -384,7 +403,7 @@ class WallpaperMetadataFetcherTest {
         assertTrue(
             wallpapers.all {
                 it.collection.heading == null && it.collection.description == null
-            }
+            },
         )
     }
 }

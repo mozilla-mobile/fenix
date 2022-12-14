@@ -4,14 +4,14 @@
 
 package org.mozilla.fenix.settings.quicksettings
 
-import org.mozilla.fenix.trackingprotection.TrackingProtectionState
+import org.mozilla.fenix.trackingprotection.ProtectionsState
 
 /**
  * Parent Reducer for all [QuickSettingsFragmentState]s of all Views shown in this Fragment.
  */
 internal fun quickSettingsFragmentReducer(
     state: QuickSettingsFragmentState,
-    action: QuickSettingsFragmentAction
+    action: QuickSettingsFragmentAction,
 ): QuickSettingsFragmentState {
     return when (action) {
         is WebsiteInfoAction -> {
@@ -23,14 +23,14 @@ internal fun quickSettingsFragmentReducer(
         is WebsitePermissionAction -> state.copy(
             websitePermissionsState = WebsitePermissionsStateReducer.reduce(
                 state.websitePermissionsState,
-                action
-            )
+                action,
+            ),
         )
         is TrackingProtectionAction -> state.copy(
-            trackingProtectionState = TrackingProtectionStateReducer.reduce(
-                state = state.trackingProtectionState,
-                action = action
-            )
+            protectionsState = ProtectionsStateReducer.reduce(
+                state = state.protectionsState,
+                action = action,
+            ),
         )
     }
 }
@@ -41,7 +41,7 @@ object WebsitePermissionsStateReducer {
      */
     fun reduce(
         state: WebsitePermissionsState,
-        action: WebsitePermissionAction
+        action: WebsitePermissionAction,
     ): WebsitePermissionsState {
         val key = action.updatedFeature
         val value = state.getValue(key)
@@ -51,7 +51,7 @@ object WebsitePermissionsStateReducer {
                 val toggleable = value as WebsitePermission.Toggleable
                 val newWebsitePermission = toggleable.copy(
                     status = action.updatedStatus,
-                    isEnabled = action.updatedEnabledStatus
+                    isEnabled = action.updatedEnabledStatus,
                 )
 
                 state + Pair(key, newWebsitePermission)
@@ -59,7 +59,7 @@ object WebsitePermissionsStateReducer {
             is WebsitePermissionAction.ChangeAutoplay -> {
                 val autoplay = value as WebsitePermission.Autoplay
                 val newWebsitePermission = autoplay.copy(
-                    autoplayValue = action.autoplayValue
+                    autoplayValue = action.autoplayValue,
                 )
                 state + Pair(key, newWebsitePermission)
             }
@@ -67,15 +67,18 @@ object WebsitePermissionsStateReducer {
     }
 }
 
-object TrackingProtectionStateReducer {
+/**
+ * A reduce for [TrackingProtectionAction]s.
+ */
+object ProtectionsStateReducer {
     /**
-     * Handles creating a new [TrackingProtectionState] based on the specific
+     * Handles creating a new [ProtectionsState] based on the specific
      * [TrackingProtectionAction].
      */
     fun reduce(
-        state: TrackingProtectionState,
-        action: TrackingProtectionAction
-    ): TrackingProtectionState {
+        state: ProtectionsState,
+        action: TrackingProtectionAction,
+    ): ProtectionsState {
         return when (action) {
             is TrackingProtectionAction.ToggleTrackingProtectionEnabled ->
                 state.copy(isTrackingProtectionEnabled = action.isTrackingProtectionEnabled)

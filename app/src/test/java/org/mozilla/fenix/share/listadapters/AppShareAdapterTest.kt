@@ -16,16 +16,16 @@ import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.share.ShareInteractor
 import org.mozilla.fenix.share.viewholders.AppViewHolder
-import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
 class AppShareAdapterTest {
 
     private val appOptions = mutableListOf(
         AppShareOption("App 0", mockk(), "package 0", "activity 0"),
-        AppShareOption("App 1", mockk(), "package 1", "activity 1")
+        AppShareOption("App 1", mockk(), "package 1", "activity 1"),
     )
     private val appOptionsEmpty = emptyList<AppShareOption>()
     private val interactor: ShareInteractor = mockk(relaxed = true)

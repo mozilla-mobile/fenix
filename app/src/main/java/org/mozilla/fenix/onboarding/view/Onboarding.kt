@@ -51,7 +51,7 @@ import org.mozilla.fenix.GleanMetrics.Onboarding as OnboardingMetrics
  */
 private enum class OnboardingState {
     Welcome,
-    SyncSignIn
+    SyncSignIn,
 }
 
 /**
@@ -92,11 +92,11 @@ fun Onboarding(
                         OnboardingMetrics.syncCloseClicked.record(NoExtras())
                     }
                     onDismiss()
-                }
+                },
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.mozac_ic_close),
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.onboarding_home_content_description_close_button),
                     tint = FirefoxTheme.colors.iconPrimary,
                 )
             }
@@ -131,7 +131,7 @@ fun Onboarding(
                 onSkipButtonClick = {
                     OnboardingMetrics.syncSkipClicked.record(NoExtras())
                     onDismiss()
-                }
+                },
             )
 
             OnboardingMetrics.syncCardImpression.record(NoExtras())
@@ -143,7 +143,7 @@ fun Onboarding(
 private fun OnboardingWelcomeBottomContent(
     onboardingState: OnboardingState,
     isSyncSignIn: Boolean,
-    onGetStartedButtonClick: () -> Unit
+    onGetStartedButtonClick: () -> Unit,
 ) {
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         PrimaryButton(
@@ -175,7 +175,7 @@ private fun OnboardingWelcomeContent() {
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = stringResource(id = R.string.onboarding_home_welcome_title),
+            text = stringResource(id = R.string.onboarding_home_welcome_title_2),
             color = FirefoxTheme.colors.textPrimary,
             textAlign = TextAlign.Center,
             style = FirefoxTheme.typography.headline5,
@@ -206,7 +206,7 @@ private fun OnboardingSyncSignInContent() {
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = stringResource(id = R.string.onboarding_home_sync_title_2),
+            text = stringResource(id = R.string.onboarding_home_sync_title_3),
             color = FirefoxTheme.colors.textPrimary,
             textAlign = TextAlign.Center,
             style = FirefoxTheme.typography.headline5,
@@ -259,7 +259,7 @@ private fun Indicators(onboardingState: OnboardingState) {
                 FirefoxTheme.colors.indicatorActive
             } else {
                 FirefoxTheme.colors.indicatorInactive
-            }
+            },
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -269,7 +269,7 @@ private fun Indicators(onboardingState: OnboardingState) {
                 FirefoxTheme.colors.indicatorActive
             } else {
                 FirefoxTheme.colors.indicatorInactive
-            }
+            },
         )
     }
 }

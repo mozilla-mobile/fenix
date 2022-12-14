@@ -19,12 +19,18 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
+    <!-- Needed for Google Play policy https://support.google.com/googleplay/android-developer/answer/6048248 -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+
     <!-- Needed to prompt the user to give permission to install a downloaded apk -->
     <uses-permission-sdk-23 android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <!-- Needed to interact with all apps installed on a device -->
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
+
+    <!-- Needed to post notifications on devices with Android 13 and later-->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".FenixApplication"

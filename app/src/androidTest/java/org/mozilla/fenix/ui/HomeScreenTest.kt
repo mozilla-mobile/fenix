@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ui
 
+import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
@@ -11,10 +12,11 @@ import androidx.test.uiautomator.Until
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
+import org.mozilla.fenix.helpers.Constants.POCKET_RECOMMENDED_STORIES_UTM_PARAM
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
@@ -35,12 +37,13 @@ class HomeScreenTest {
 
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
-    private val featureSettingsHelper = FeatureSettingsHelper()
+    private lateinit var firstPocketStoryPublisher: String
 
-    @get:Rule
-    val activityTestRule = HomeActivityTestRule()
+    @get:Rule(order = 0)
+    val activityTestRule =
+        AndroidComposeTestRule(HomeActivityTestRule.withDefaultSettingsOverrides()) { it.activity }
 
-    @Rule
+    @Rule(order = 1)
     @JvmField
     val retryTestRule = RetryTestRule(3)
 
@@ -52,14 +55,11 @@ class HomeScreenTest {
             dispatcher = AndroidAssetDispatcher()
             start()
         }
-
-        featureSettingsHelper.setTCPCFREnabled(false)
     }
 
     @After
     fun tearDown() {
         mockWebServer.shutdown()
-        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     @Test
@@ -67,21 +67,26 @@ class HomeScreenTest {
         homeScreen { }.dismissOnboarding()
 
         homeScreen {
-            verifyHomeScreen()
-            verifyNavigationToolbar()
-            verifyHomePrivateBrowsingButton()
-            verifyHomeMenu()
             verifyHomeWordmark()
-            verifyTabButton()
-            verifyCollectionsHeader()
-            verifyHomeToolbar()
-            verifyHomeComponent()
-
-            // Verify Top Sites
-            verifyExistingTopSitesList()
+            verifyHomePrivateBrowsingButton()
             verifyExistingTopSitesTabs("Wikipedia")
             verifyExistingTopSitesTabs("Top Articles")
             verifyExistingTopSitesTabs("Google")
+            verifyCollectionsHeader()
+            verifyNoCollectionsText()
+            scrollToPocketProvokingStories()
+            swipePocketProvokingStories()
+            verifyPocketRecommendedStoriesItems(activityTestRule, 1, 3, 4, 5, 6, 7)
+            verifyPocketSponsoredStoriesItems(activityTestRule, 2, 8)
+            verifyDiscoverMoreStoriesButton(activityTestRule, 9)
+            verifyStoriesByTopicItems()
+            verifyPoweredByPocket(activityTestRule)
+            verifyCustomizeHomepageButton(true)
+            verifyNavigationToolbar()
+            verifyDefaultSearchEngine("Google")
+            verifyHomeMenuButton()
+            verifyTabButton()
+            verifyTabCounter("0")
         }
     }
 
@@ -94,11 +99,11 @@ class HomeScreenTest {
             verifyHomeScreen()
             verifyNavigationToolbar()
             verifyHomePrivateBrowsingButton()
-            verifyHomeMenu()
+            verifyHomeMenuButton()
             verifyHomeWordmark()
             verifyTabButton()
             verifyPrivateSessionMessage()
-            verifyHomeToolbar()
+            verifyNavigationToolbar()
             verifyHomeComponent()
         }.openCommonMythsLink {
             verifyUrl("common-myths-about-private-browsing")
@@ -112,12 +117,44 @@ class HomeScreenTest {
             verifyHomeScreen()
             verifyNavigationToolbar()
             verifyHomePrivateBrowsingButton()
-            verifyHomeMenu()
+            verifyHomeMenuButton()
             verifyHomeWordmark()
             verifyTabButton()
             verifyPrivateSessionMessage()
-            verifyHomeToolbar()
+            verifyNavigationToolbar()
             verifyHomeComponent()
+        }
+    }
+
+    @Test
+    fun verifyJumpBackInSectionTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 4)
+        val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+        }.goToHomescreen {
+            verifyJumpBackInSectionIsDisplayed()
+            verifyJumpBackInItemTitle(firstWebPage.title)
+            verifyJumpBackInItemWithUrl(firstWebPage.url.toString())
+            verifyJumpBackInShowAllButton()
+        }.clickJumpBackInShowAllButton {
+            verifyExistingOpenTabs(firstWebPage.title)
+        }.closeTabDrawer() {
+        }
+        homeScreen {
+        }.clickJumpBackInItemWithTitle(firstWebPage.title) {
+            verifyUrl(firstWebPage.url.toString())
+            clickLinkMatchingText("Link 1")
+        }.goToHomescreen {
+            verifyJumpBackInSectionIsDisplayed()
+            verifyJumpBackInItemTitle(secondWebPage.title)
+            verifyJumpBackInItemWithUrl(secondWebPage.url.toString())
+        }.openTabDrawer {
+            closeTab()
+        }
+        homeScreen {
+            verifyJumpBackInSectionIsNotDisplayed()
         }
     }
 
@@ -149,7 +186,10 @@ class HomeScreenTest {
 
     @Test
     fun dismissOnboardingUsingHelpTest() {
-        featureSettingsHelper.setJumpBackCFREnabled(false)
+        activityTestRule.activityRule.applySettingsExceptions {
+            it.isJumpBackInCFREnabled = false
+            it.isWallpaperOnboardingEnabled = false
+        }
 
         homeScreen {
             verifyWelcomeHeader()
@@ -157,6 +197,25 @@ class HomeScreenTest {
         }.openHelp {
             verifyHelpUrl()
         }.goBack {
+            verifyExistingTopSitesList()
+        }
+    }
+
+    @Test
+    fun dismissOnboardingWithPageLoadTest() {
+        activityTestRule.activityRule.applySettingsExceptions {
+            it.isJumpBackInCFREnabled = false
+            it.isWallpaperOnboardingEnabled = false
+        }
+
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+            verifyWelcomeHeader()
+        }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.goToHomescreen {
             verifyExistingTopSitesList()
         }
     }
@@ -176,14 +235,21 @@ class HomeScreenTest {
 
     @Test
     fun verifyPocketHomepageStoriesTest() {
-        featureSettingsHelper.setRecentTabsFeatureEnabled(false)
-        featureSettingsHelper.setRecentlyVisitedFeatureEnabled(false)
+        activityTestRule.activityRule.applySettingsExceptions {
+            it.isRecentTabsFeatureEnabled = false
+            it.isRecentlyVisitedFeatureEnabled = false
+        }
 
         homeScreen {
         }.dismissOnboarding()
 
         homeScreen {
             verifyThoughtProvokingStories(true)
+            scrollToPocketProvokingStories()
+            swipePocketProvokingStories()
+            verifyPocketRecommendedStoriesItems(activityTestRule, 1, 3, 4, 5, 6, 7)
+            verifyPocketSponsoredStoriesItems(activityTestRule, 2, 8)
+            verifyDiscoverMoreStoriesButton(activityTestRule, 9)
             verifyStoriesByTopic(true)
         }.openThreeDotMenu {
         }.openCustomizeHome {
@@ -195,9 +261,81 @@ class HomeScreenTest {
     }
 
     @Test
+    fun openPocketStoryItemTest() {
+        activityTestRule.activityRule.applySettingsExceptions {
+            it.isRecentTabsFeatureEnabled = false
+            it.isRecentlyVisitedFeatureEnabled = false
+        }
+
+        homeScreen {
+        }.dismissOnboarding()
+
+        homeScreen {
+            verifyThoughtProvokingStories(true)
+            scrollToPocketProvokingStories()
+            firstPocketStoryPublisher = getProvokingStoryPublisher(1)
+        }.clickPocketStoryItem(firstPocketStoryPublisher, 1) {
+            verifyUrl(POCKET_RECOMMENDED_STORIES_UTM_PARAM)
+        }
+    }
+
+    @Ignore("Failed, see: https://github.com/mozilla-mobile/fenix/issues/28098")
+    @Test
+    fun openPocketDiscoverMoreTest() {
+        activityTestRule.activityRule.applySettingsExceptions {
+            it.isRecentTabsFeatureEnabled = false
+            it.isRecentlyVisitedFeatureEnabled = false
+        }
+
+        homeScreen {
+        }.dismissOnboarding()
+
+        homeScreen {
+            scrollToPocketProvokingStories()
+            swipePocketProvokingStories()
+            verifyDiscoverMoreStoriesButton(activityTestRule, 9)
+        }.clickPocketDiscoverMoreButton(activityTestRule, 9) {
+            verifyUrl("getpocket.com/explore")
+        }
+    }
+
+    @Test
+    fun selectStoriesByTopicItemTest() {
+        activityTestRule.activityRule.applySettingsExceptions {
+            it.isRecentTabsFeatureEnabled = false
+            it.isRecentlyVisitedFeatureEnabled = false
+        }
+
+        homeScreen {
+        }.dismissOnboarding()
+
+        homeScreen {
+            verifyStoriesByTopicItemState(activityTestRule, false, 1)
+            clickStoriesByTopicItem(activityTestRule, 1)
+            verifyStoriesByTopicItemState(activityTestRule, true, 1)
+        }
+    }
+
+    @Test
+    fun verifyPocketLearnMoreLinkTest() {
+        activityTestRule.activityRule.applySettingsExceptions {
+            it.isRecentTabsFeatureEnabled = false
+            it.isRecentlyVisitedFeatureEnabled = false
+        }
+
+        homeScreen {
+        }.dismissOnboarding()
+
+        homeScreen {
+            verifyPoweredByPocket(activityTestRule)
+        }.clickPocketLearnMoreLink(activityTestRule) {
+            verifyUrl("mozilla.org/en-US/firefox/pocket")
+        }
+    }
+
+    @Test
     fun verifyCustomizeHomepageTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-        featureSettingsHelper.setJumpBackCFREnabled(false)
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {

@@ -5,9 +5,8 @@
 package org.mozilla.fenix.ext
 
 import mozilla.components.browser.state.state.content.DownloadState
-import org.junit.Test
-
 import org.junit.Assert.assertEquals
+import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.library.downloads.DownloadItem
 
@@ -21,7 +20,7 @@ class DownloadItemKtTest {
             filePath = "",
             size = "",
             contentType = "image/png",
-            status = DownloadState.Status.COMPLETED
+            status = DownloadState.Status.COMPLETED,
         )
 
         assertEquals(R.drawable.ic_file_type_image, downloadItem.getIcon())

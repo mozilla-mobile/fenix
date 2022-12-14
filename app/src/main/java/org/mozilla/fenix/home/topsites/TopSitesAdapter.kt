@@ -10,17 +10,19 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import mozilla.components.feature.top.sites.TopSite
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
 import org.mozilla.fenix.perf.StartupTimeline
 
 class TopSitesAdapter(
+    private val appStore: AppStore,
     private val viewLifecycleOwner: LifecycleOwner,
-    private val interactor: TopSiteInteractor
+    private val interactor: TopSiteInteractor,
 ) : ListAdapter<TopSite, TopSiteItemViewHolder>(TopSitesDiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopSiteItemViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(TopSiteItemViewHolder.LAYOUT_ID, parent, false)
-        return TopSiteItemViewHolder(view, viewLifecycleOwner, interactor)
+        return TopSiteItemViewHolder(view, appStore, viewLifecycleOwner, interactor)
     }
 
     override fun onBindViewHolder(holder: TopSiteItemViewHolder, position: Int) {
@@ -31,7 +33,7 @@ class TopSitesAdapter(
     override fun onBindViewHolder(
         holder: TopSiteItemViewHolder,
         position: Int,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         if (payloads.isNullOrEmpty()) {
             onBindViewHolder(holder, position)
@@ -53,7 +55,9 @@ class TopSitesAdapter(
         override fun getChangePayload(oldItem: TopSite, newItem: TopSite): Any? {
             return if (oldItem.id == newItem.id && oldItem.url == newItem.url && oldItem.title != newItem.title) {
                 newItem
-            } else null
+            } else {
+                null
+            }
         }
     }
 }

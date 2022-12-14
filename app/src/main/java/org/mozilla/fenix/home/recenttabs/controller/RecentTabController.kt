@@ -4,8 +4,6 @@
 
 package org.mozilla.fenix.home.recenttabs.controller
 
-import androidx.annotation.VisibleForTesting
-import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.navigation.NavController
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.tabs.TabsUseCases.SelectTabUseCase
@@ -65,19 +63,11 @@ class DefaultRecentTabsController(
     }
 
     override fun handleRecentTabShowAllClicked() {
-        dismissSearchDialogIfDisplayed()
         RecentTabs.showAllClicked.record(NoExtras())
         navController.navigate(HomeFragmentDirections.actionGlobalTabsTrayFragment())
     }
 
     override fun handleRecentTabRemoved(tab: RecentTab.Tab) {
         appStore.dispatch(AppAction.RemoveRecentTab(tab))
-    }
-
-    @VisibleForTesting(otherwise = PRIVATE)
-    fun dismissSearchDialogIfDisplayed() {
-        if (navController.currentDestination?.id == R.id.searchDialogFragment) {
-            navController.navigateUp()
-        }
     }
 }

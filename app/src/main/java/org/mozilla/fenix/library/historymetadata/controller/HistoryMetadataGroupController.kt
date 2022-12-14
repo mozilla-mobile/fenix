@@ -14,11 +14,11 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.tabs.TabsUseCases
+import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.ext.components
-import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.library.history.History
 import org.mozilla.fenix.library.history.toPendingDeletionHistory
 import org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragment.DeleteAllConfirmationDialogFragment
@@ -100,10 +100,10 @@ class DefaultHistoryMetadataGroupController(
     private val deleteSnackbar: (
         items: Set<History.Metadata>,
         undo: suspend (Set<History.Metadata>) -> Unit,
-        delete: (Set<History.Metadata>) -> suspend (context: Context) -> Unit
+        delete: (Set<History.Metadata>) -> suspend (context: Context) -> Unit,
     ) -> Unit,
     private val promptDeleteAll: () -> Unit,
-    private val allDeletedSnackbar: () -> Unit
+    private val allDeletedSnackbar: () -> Unit,
 ) : HistoryMetadataGroupController {
 
     override fun handleOpen(item: History.Metadata) {
@@ -132,8 +132,8 @@ class DefaultHistoryMetadataGroupController(
     override fun handleShare(items: Set<History.Metadata>) {
         navController.navigate(
             HistoryMetadataGroupFragmentDirections.actionGlobalShareFragment(
-                data = items.map { ShareData(url = it.url, title = it.title) }.toTypedArray()
-            )
+                data = items.map { ShareData(url = it.url, title = it.title) }.toTypedArray(),
+            ),
         )
     }
 
@@ -161,7 +161,7 @@ class DefaultHistoryMetadataGroupController(
                 // In case all items have been deleted, we have to disband the search group.
                 if (isDeletingLastItem) {
                     context.components.core.store.dispatch(
-                        HistoryMetadataAction.DisbandSearchGroupAction(searchTerm = searchTerm)
+                        HistoryMetadataAction.DisbandSearchGroupAction(searchTerm = searchTerm),
                     )
                 }
             }
@@ -179,7 +179,7 @@ class DefaultHistoryMetadataGroupController(
                 historyStorage.deleteVisitsFor(it.url)
             }
             browserStore.dispatch(
-                HistoryMetadataAction.DisbandSearchGroupAction(searchTerm = searchTerm)
+                HistoryMetadataAction.DisbandSearchGroupAction(searchTerm = searchTerm),
             )
             GleanHistory.searchTermGroupRemoveAll.record(NoExtras())
             allDeletedSnackbar.invoke()

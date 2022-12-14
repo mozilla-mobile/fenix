@@ -20,6 +20,7 @@ import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryGroup
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryHighlight
 import org.mozilla.fenix.home.recentvisits.interactor.RecentVisitsInteractor
+import org.mozilla.fenix.wallpapers.WallpaperState
 
 /**
  * View holder for [RecentlyVisitedItem]s.
@@ -43,6 +44,8 @@ class RecentlyVisitedViewHolder(
     override fun Content() {
         val recentVisits = components.appStore
             .observeAsComposableState { state -> state.recentHistory }
+        val wallpaperState = components.appStore
+            .observeAsComposableState { state -> state.wallpaperState }.value ?: WallpaperState.default
 
         RecentlyVisited(
             recentVisits = recentVisits.value ?: emptyList(),
@@ -53,12 +56,13 @@ class RecentlyVisitedViewHolder(
                         when (visit) {
                             is RecentHistoryGroup -> interactor.onRemoveRecentHistoryGroup(visit.title)
                             is RecentHistoryHighlight -> interactor.onRemoveRecentHistoryHighlight(
-                                visit.url
+                                visit.url,
                             )
                         }
-                    }
-                )
+                    },
+                ),
             ),
+            backgroundColor = wallpaperState.wallpaperCardColor,
             onRecentVisitClick = { recentlyVisitedItem, pageNumber ->
                 when (recentlyVisitedItem) {
                     is RecentHistoryHighlight -> {
@@ -69,13 +73,13 @@ class RecentlyVisitedViewHolder(
                         RecentlyVisitedHomepage.searchGroupOpened.record(NoExtras())
                         History.recentSearchesTapped.record(
                             History.RecentSearchesTappedExtra(
-                                pageNumber.toString()
-                            )
+                                pageNumber.toString(),
+                            ),
                         )
                         interactor.onRecentHistoryGroupClicked(recentlyVisitedItem)
                     }
                 }
-            }
+            },
         )
     }
 

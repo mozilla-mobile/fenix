@@ -9,8 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.plus
 import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.state.SessionState
 import org.mozilla.fenix.R
@@ -26,23 +29,26 @@ class ConnectionPanelDialogFragment : FenixDialogFragment() {
 
     override val gravity: Int get() = args.gravity
     override val layoutId: Int = R.layout.fragment_connection_details_dialog
+
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         val rootView = inflateRootView(container)
 
         val controller = DefaultConnectionDetailsController(
             context = requireContext(),
+            ioScope = viewLifecycleOwner.lifecycleScope + Dispatchers.IO,
+            cookieBannersStorage = requireComponents.core.cookieBannersStorage,
             fragment = this,
             navController = { findNavController() },
             sitePermissions = args.sitePermissions,
             gravity = args.gravity,
-            getCurrentTab = ::getCurrentTab
+            getCurrentTab = ::getCurrentTab,
         )
 
         val interactor = ConnectionDetailsInteractor(controller)
@@ -51,7 +57,7 @@ class ConnectionPanelDialogFragment : FenixDialogFragment() {
         connectionView = ConnectionDetailsView(
             binding.connectionDetailsInfoLayout,
             icons = requireComponents.core.icons,
-            interactor = interactor
+            interactor = interactor,
         )
 
         return rootView
@@ -64,8 +70,8 @@ class ConnectionPanelDialogFragment : FenixDialogFragment() {
                 args.url,
                 args.title,
                 args.isSecured,
-                args.certificateName
-            )
+                args.certificateName,
+            ),
         )
     }
 

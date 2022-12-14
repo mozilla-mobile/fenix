@@ -6,6 +6,7 @@ package org.mozilla.fenix.home
 
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
+import androidx.navigation.NavOptions
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -42,7 +43,6 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -51,12 +51,11 @@ import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.Pings
-import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
+import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Analytics
 import org.mozilla.fenix.components.AppStore
@@ -71,8 +70,12 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
+import org.mozilla.fenix.onboarding.WallpaperOnboardingDialogFragment.Companion.THUMBNAILS_SELECTION_COUNT
+import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.wallpapers.Wallpaper
+import org.mozilla.fenix.wallpapers.WallpaperState
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
 @RunWith(FenixRobolectricTestRunner::class) // For gleanTestRule
@@ -81,6 +84,7 @@ class DefaultSessionControlControllerTest {
 
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
+
     @get:Rule
     val gleanTestRule = GleanTestRule(testContext)
 
@@ -101,7 +105,7 @@ class DefaultSessionControlControllerTest {
         name = "Test Engine",
         icon = mockk(relaxed = true),
         type = SearchEngine.Type.BUNDLED,
-        resultUrls = listOf("https://example.org/?q={searchTerms}")
+        resultUrls = listOf("https://example.org/?q={searchTerms}"),
     )
 
     private val googleSearchEngine = SearchEngine(
@@ -110,7 +114,7 @@ class DefaultSessionControlControllerTest {
         icon = mockk(relaxed = true),
         type = SearchEngine.Type.BUNDLED,
         resultUrls = listOf("https://www.google.com/?q={searchTerms}"),
-        suggestUrl = "https://www.google.com/"
+        suggestUrl = "https://www.google.com/",
     )
 
     private val duckDuckGoSearchEngine = SearchEngine(
@@ -119,7 +123,7 @@ class DefaultSessionControlControllerTest {
         icon = mockk(relaxed = true),
         type = SearchEngine.Type.BUNDLED,
         resultUrls = listOf("https://duckduckgo.com/?q=%7BsearchTerms%7D&t=fpas"),
-        suggestUrl = "https://ac.duckduckgo.com/ac/?q=%7BsearchTerms%7D&type=list"
+        suggestUrl = "https://ac.duckduckgo.com/ac/?q=%7BsearchTerms%7D&type=list",
     )
 
     private lateinit var store: BrowserStore
@@ -130,9 +134,9 @@ class DefaultSessionControlControllerTest {
         store = BrowserStore(
             BrowserState(
                 search = SearchState(
-                    regionSearchEngines = listOf(searchEngine)
-                )
-            )
+                    regionSearchEngines = listOf(searchEngine),
+                ),
+            ),
         )
 
         every { appStore.state } returns AppState(
@@ -142,7 +146,7 @@ class DefaultSessionControlControllerTest {
             topSites = emptyList(),
             showCollectionPlaceholder = true,
             recentTabs = emptyList(),
-            recentBookmarks = emptyList()
+            recentBookmarks = emptyList(),
         )
 
         every { navController.currentDestination } returns mockk {
@@ -170,7 +174,7 @@ class DefaultSessionControlControllerTest {
                 match<NavDirections> {
                     it.actionId == R.id.action_global_collectionCreationFragment
                 },
-                null
+                null,
             )
         }
     }
@@ -187,7 +191,7 @@ class DefaultSessionControlControllerTest {
                 match<NavDirections> {
                     it.actionId == R.id.action_global_homeSettingsFragment
                 },
-                null
+                null,
             )
         }
     }
@@ -209,7 +213,7 @@ class DefaultSessionControlControllerTest {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = "https://mozilla.org",
                 newTab = true,
-                from = BrowserDirection.FromHome
+                from = BrowserDirection.FromHome,
             )
         }
     }
@@ -226,8 +230,8 @@ class DefaultSessionControlControllerTest {
                 contextId = null,
                 readerState = ReaderState(),
                 lastAccess = 0,
-                private = false
-            )
+                private = false,
+            ),
         )
 
         val tab = mockk<ComponentTab> {
@@ -264,8 +268,8 @@ class DefaultSessionControlControllerTest {
                 contextId = null,
                 readerState = ReaderState(),
                 lastAccess = 0,
-                private = false
-            )
+                private = false,
+            ),
         )
 
         val tab = mockk<ComponentTab> {
@@ -310,7 +314,7 @@ class DefaultSessionControlControllerTest {
         every {
             activity.resources.getString(
                 R.string.delete_tab_and_collection_dialog_title,
-                "Collection"
+                "Collection",
             )
         } returns "Delete Collection?"
         every {
@@ -322,7 +326,7 @@ class DefaultSessionControlControllerTest {
         createController(
             removeCollectionWithUndo = { collection ->
                 actualCollection = collection
-            }
+            },
         ).handleCollectionRemoveTab(expectedCollection, tab, false)
 
         assertNotNull(Collections.tabRemoved.testGetValue())
@@ -361,7 +365,7 @@ class DefaultSessionControlControllerTest {
         verify {
             navController.navigate(
                 match<NavDirections> { it.actionId == R.id.action_global_shareFragment },
-                null
+                null,
             )
         }
     }
@@ -380,7 +384,7 @@ class DefaultSessionControlControllerTest {
         createController(
             removeCollectionWithUndo = { collection ->
                 actualCollection = collection
-            }
+            },
         ).handleDeleteCollectionTapped(expectedCollection)
 
         assertEquals(expectedCollection, actualCollection)
@@ -398,7 +402,7 @@ class DefaultSessionControlControllerTest {
                 searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
                 (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
                 newTab = true,
-                from = BrowserDirection.FromHome
+                from = BrowserDirection.FromHome,
             )
         }
     }
@@ -418,7 +422,7 @@ class DefaultSessionControlControllerTest {
         verify {
             navController.navigate(
                 match<NavDirections> { it.actionId == R.id.action_global_collectionCreationFragment },
-                null
+                null,
             )
         }
     }
@@ -429,7 +433,7 @@ class DefaultSessionControlControllerTest {
             id = 1L,
             title = "Mozilla",
             url = "mozilla.org",
-            createdAt = 0
+            createdAt = 0,
         )
         val controller = spyk(createController())
 
@@ -449,7 +453,7 @@ class DefaultSessionControlControllerTest {
             tabsUseCases.addTab.invoke(
                 url = topSite.url,
                 selectTab = true,
-                startLoading = true
+                startLoading = true,
             )
         }
         verify { activity.openToBrowser(BrowserDirection.FromHome) }
@@ -461,7 +465,7 @@ class DefaultSessionControlControllerTest {
             id = 1L,
             title = "Mozilla",
             url = "mozilla.org",
-            createdAt = 0
+            createdAt = 0,
         )
         val controller = spyk(createController())
 
@@ -477,7 +481,7 @@ class DefaultSessionControlControllerTest {
             tabsUseCases.addTab.invoke(
                 url = topSite.url,
                 selectTab = true,
-                startLoading = true
+                startLoading = true,
             )
         }
         verify { activity.openToBrowser(BrowserDirection.FromHome) }
@@ -489,7 +493,7 @@ class DefaultSessionControlControllerTest {
             id = 1L,
             title = "Google",
             url = SupportUtils.GOOGLE_URL,
-            createdAt = 0
+            createdAt = 0,
         )
         val controller = spyk(createController())
 
@@ -515,7 +519,7 @@ class DefaultSessionControlControllerTest {
             tabsUseCases.addTab.invoke(
                 url = SupportUtils.GOOGLE_US_URL,
                 selectTab = true,
-                startLoading = true
+                startLoading = true,
             )
         }
         verify { activity.openToBrowser(BrowserDirection.FromHome) }
@@ -527,7 +531,7 @@ class DefaultSessionControlControllerTest {
             id = 1L,
             title = "Google",
             url = SupportUtils.GOOGLE_URL,
-            createdAt = 0
+            createdAt = 0,
         )
         val controller = spyk(createController())
 
@@ -553,7 +557,7 @@ class DefaultSessionControlControllerTest {
             tabsUseCases.addTab.invoke(
                 SupportUtils.GOOGLE_XX_URL,
                 selectTab = true,
-                startLoading = true
+                startLoading = true,
             )
         }
         verify { activity.openToBrowser(BrowserDirection.FromHome) }
@@ -567,7 +571,7 @@ class DefaultSessionControlControllerTest {
             id = 1L,
             title = "Google",
             url = SupportUtils.GOOGLE_URL,
-            createdAt = 0
+            createdAt = 0,
         )
         val controller = spyk(createController())
 
@@ -602,7 +606,7 @@ class DefaultSessionControlControllerTest {
             id = 1L,
             title = "DuckDuckGo",
             url = "https://duckduckgo.com",
-            createdAt = 0
+            createdAt = 0,
         )
         val controller = spyk(createController())
 
@@ -627,7 +631,7 @@ class DefaultSessionControlControllerTest {
             id = 1L,
             title = "Google",
             url = SupportUtils.GOOGLE_URL,
-            createdAt = 0
+            createdAt = 0,
         )
         val controller = spyk(createController())
 
@@ -653,7 +657,7 @@ class DefaultSessionControlControllerTest {
             tabsUseCases.addTab.invoke(
                 SupportUtils.GOOGLE_US_URL,
                 selectTab = true,
-                startLoading = true
+                startLoading = true,
             )
         }
         verify { activity.openToBrowser(BrowserDirection.FromHome) }
@@ -665,7 +669,7 @@ class DefaultSessionControlControllerTest {
             id = 1L,
             title = "Google",
             url = SupportUtils.GOOGLE_URL,
-            createdAt = 0
+            createdAt = 0,
         )
         val controller = spyk(createController())
 
@@ -691,7 +695,7 @@ class DefaultSessionControlControllerTest {
             tabsUseCases.addTab.invoke(
                 SupportUtils.GOOGLE_XX_URL,
                 selectTab = true,
-                startLoading = true
+                startLoading = true,
             )
         }
         verify { activity.openToBrowser(BrowserDirection.FromHome) }
@@ -703,7 +707,7 @@ class DefaultSessionControlControllerTest {
             id = 1L,
             title = "Google",
             url = SupportUtils.GOOGLE_URL,
-            createdAt = 0
+            createdAt = 0,
         )
         val controller = spyk(createController())
 
@@ -729,7 +733,7 @@ class DefaultSessionControlControllerTest {
             tabsUseCases.addTab.invoke(
                 SupportUtils.GOOGLE_US_URL,
                 selectTab = true,
-                startLoading = true
+                startLoading = true,
             )
         }
         verify { activity.openToBrowser(BrowserDirection.FromHome) }
@@ -741,7 +745,7 @@ class DefaultSessionControlControllerTest {
             id = 1L,
             title = "Google",
             url = SupportUtils.GOOGLE_URL,
-            createdAt = 0
+            createdAt = 0,
         )
         val controller = spyk(createController())
 
@@ -767,7 +771,7 @@ class DefaultSessionControlControllerTest {
             tabsUseCases.addTab.invoke(
                 SupportUtils.GOOGLE_XX_URL,
                 selectTab = true,
-                startLoading = true
+                startLoading = true,
             )
         }
         verify { activity.openToBrowser(BrowserDirection.FromHome) }
@@ -782,7 +786,7 @@ class DefaultSessionControlControllerTest {
             clickUrl = "",
             imageUrl = "",
             impressionUrl = "",
-            createdAt = 0
+            createdAt = 0,
         )
         val position = 0
         val controller = spyk(createController())
@@ -803,7 +807,7 @@ class DefaultSessionControlControllerTest {
             tabsUseCases.addTab.invoke(
                 url = topSite.url,
                 selectTab = true,
-                startLoading = true
+                startLoading = true,
             )
         }
         verify { controller.submitTopSitesImpressionPing(topSite, position) }
@@ -820,7 +824,7 @@ class DefaultSessionControlControllerTest {
             clickUrl = "https://mozilla.com/click",
             imageUrl = "https://test.com/image2.jpg",
             impressionUrl = "https://example.com",
-            createdAt = 3
+            createdAt = 3,
         )
         val position = 0
         assertNull(TopSites.contileImpression.testGetValue())
@@ -861,7 +865,7 @@ class DefaultSessionControlControllerTest {
             id = 1L,
             title = "Google",
             url = SupportUtils.GOOGLE_URL,
-            createdAt = 0
+            createdAt = 0,
         )
         assertNull(TopSites.remove.testGetValue())
         assertNull(TopSites.googleTopSiteRemoved.testGetValue())
@@ -875,6 +879,78 @@ class DefaultSessionControlControllerTest {
         assertNotNull(TopSites.remove.testGetValue())
         assertEquals(1, TopSites.remove.testGetValue()!!.size)
         assertNull(TopSites.remove.testGetValue()!!.single().extra)
+    }
+
+    @Test
+    fun `GIVEN exactly the required amount of downloaded thumbnails with no errors WHEN handling wallpaper dialog THEN dialog is shown`() {
+        val wallpaperState = WallpaperState.default.copy(
+            availableWallpapers = makeFakeRemoteWallpapers(
+                THUMBNAILS_SELECTION_COUNT,
+                false,
+            ),
+        )
+        assertTrue(createController().handleShowWallpapersOnboardingDialog(wallpaperState))
+    }
+
+    @Test
+    fun `GIVEN more than required amount of downloaded thumbnails with no errors WHEN handling wallpaper dialog THEN dialog is shown`() {
+        val wallpaperState = WallpaperState.default.copy(
+            availableWallpapers = makeFakeRemoteWallpapers(
+                THUMBNAILS_SELECTION_COUNT,
+                false,
+            ),
+        )
+        assertTrue(createController().handleShowWallpapersOnboardingDialog(wallpaperState))
+    }
+
+    @Test
+    fun `GIVEN more than required amount of downloaded thumbnails with some errors WHEN handling wallpaper dialog THEN dialog is shown`() {
+        val wallpaperState = WallpaperState.default.copy(
+            availableWallpapers = makeFakeRemoteWallpapers(
+                THUMBNAILS_SELECTION_COUNT + 2,
+                true,
+            ),
+        )
+        assertTrue(createController().handleShowWallpapersOnboardingDialog(wallpaperState))
+    }
+
+    @Test
+    fun `GIVEN fewer than the required amount of downloaded thumbnails WHEN handling wallpaper dialog THEN the dialog is not shown`() {
+        val wallpaperState = WallpaperState.default.copy(
+            availableWallpapers = makeFakeRemoteWallpapers(
+                THUMBNAILS_SELECTION_COUNT - 1,
+                false,
+            ),
+        )
+        assertFalse(createController().handleShowWallpapersOnboardingDialog(wallpaperState))
+    }
+
+    @Test
+    fun `GIVEN exactly the required amount of downloaded thumbnails with errors WHEN handling wallpaper dialog THEN the dialog is not shown`() {
+        val wallpaperState = WallpaperState.default.copy(
+            availableWallpapers = makeFakeRemoteWallpapers(
+                THUMBNAILS_SELECTION_COUNT,
+                true,
+            ),
+        )
+        assertFalse(createController().handleShowWallpapersOnboardingDialog(wallpaperState))
+    }
+
+    @Test
+    fun `GIVEN app is in private browsing mode WHEN handling wallpaper dialog THEN the dialog is not shown`() {
+        every { activity.browsingModeManager } returns mockk {
+            every { mode } returns mockk {
+                every { isPrivate } returns true
+            }
+        }
+        val wallpaperState = WallpaperState.default.copy(
+            availableWallpapers = makeFakeRemoteWallpapers(
+                THUMBNAILS_SELECTION_COUNT,
+                true,
+            ),
+        )
+
+        assertFalse(createController().handleShowWallpapersOnboardingDialog(wallpaperState))
     }
 
     @Test
@@ -892,7 +968,7 @@ class DefaultSessionControlControllerTest {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE),
                 newTab = true,
-                from = BrowserDirection.FromHome
+                from = BrowserDirection.FromHome,
             )
         }
     }
@@ -911,7 +987,7 @@ class DefaultSessionControlControllerTest {
         verify {
             navController.navigate(
                 match<NavDirections> { it.actionId == R.id.action_global_tabsTrayFragment },
-                null
+                null,
             )
         }
     }
@@ -928,7 +1004,7 @@ class DefaultSessionControlControllerTest {
                 searchTermOrURL = "text",
                 newTab = true,
                 from = BrowserDirection.FromHome,
-                engine = searchEngine
+                engine = searchEngine,
             )
         }
 
@@ -940,7 +1016,7 @@ class DefaultSessionControlControllerTest {
                 searchTermOrURL = "https://mozilla.org",
                 newTab = true,
                 from = BrowserDirection.FromHome,
-                engine = searchEngine
+                engine = searchEngine,
             )
         }
         assertNotNull(Events.enteredUrl.testGetValue())
@@ -953,7 +1029,7 @@ class DefaultSessionControlControllerTest {
         verify {
             navController.navigate(
                 match<NavDirections> { it.actionId == R.id.action_global_search_dialog },
-                null
+                null,
             )
         }
     }
@@ -965,33 +1041,6 @@ class DefaultSessionControlControllerTest {
         verify {
             settings.showCollectionsPlaceholderOnHome = false
             appStore.dispatch(AppAction.RemoveCollectionsPlaceholder)
-        }
-    }
-
-    @Test
-    @Ignore("Can't instantiate proxy for class kotlin.Function0")
-    fun handleMenuOpenedWhileSearchShowing() {
-        every { navController.currentDestination } returns mockk {
-            every { id } returns R.id.searchDialogFragment
-        }
-
-        createController().handleMenuOpened()
-
-        verify {
-            navController.navigateUp()
-        }
-    }
-
-    @Test
-    fun handleMenuOpenedWhileSearchNotShowing() {
-        every { navController.currentDestination } returns mockk {
-            every { id } returns R.id.homeFragment
-        }
-
-        createController().handleMenuOpened()
-
-        verify(exactly = 0) {
-            navController.navigateUp()
         }
     }
 
@@ -1027,7 +1076,7 @@ class DefaultSessionControlControllerTest {
             id = "otherTab",
             url = url,
             private = false,
-            engineSession = mockk(relaxed = true)
+            engineSession = mockk(relaxed = true),
         )
         store.dispatch(TabListAction.AddTabAction(tab, select = true)).joinBlocking()
 
@@ -1039,11 +1088,6 @@ class DefaultSessionControlControllerTest {
         verify {
             settings.incrementNumTimesPrivateModeOpened()
             AppAction.ModeChange(Mode.fromBrowsingMode(newMode))
-            navController.navigate(
-                BrowserFragmentDirections.actionGlobalSearchDialog(
-                    sessionId = null
-                )
-            )
         }
     }
 
@@ -1058,7 +1102,7 @@ class DefaultSessionControlControllerTest {
             id = "otherTab",
             url = url,
             private = true,
-            engineSession = mockk(relaxed = true)
+            engineSession = mockk(relaxed = true),
         )
         store.dispatch(TabListAction.AddTabAction(tab, select = true)).joinBlocking()
 
@@ -1071,11 +1115,8 @@ class DefaultSessionControlControllerTest {
             settings.incrementNumTimesPrivateModeOpened()
         }
         verify {
-            AppAction.ModeChange(Mode.fromBrowsingMode(newMode))
-            navController.navigate(
-                BrowserFragmentDirections.actionGlobalSearchDialog(
-                    sessionId = null
-                )
+            appStore.dispatch(
+                AppAction.ModeChange(Mode.fromBrowsingMode(newMode)),
             )
         }
     }
@@ -1139,7 +1180,7 @@ class DefaultSessionControlControllerTest {
                 match<NavDirections> {
                     it.actionId == R.id.action_global_homeSettingsFragment
                 },
-                null
+                null,
             )
         }
     }
@@ -1155,7 +1196,7 @@ class DefaultSessionControlControllerTest {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(SupportUtils.SumoTopic.SPONSOR_PRIVACY),
                 newTab = true,
-                from = BrowserDirection.FromHome
+                from = BrowserDirection.FromHome,
             )
         }
     }
@@ -1169,7 +1210,7 @@ class DefaultSessionControlControllerTest {
             clickUrl = "",
             imageUrl = "",
             impressionUrl = "",
-            createdAt = 0
+            createdAt = 0,
         )
         createController().handleOpenInPrivateTabClicked(topSite)
 
@@ -1185,19 +1226,19 @@ class DefaultSessionControlControllerTest {
             id = 1L,
             title = "Mozilla",
             url = "mozilla.org",
-            createdAt = 0
+            createdAt = 0,
         )
         val topSite2 = TopSite.Pinned(
             id = 1L,
             title = "Mozilla",
             url = "mozilla.org",
-            createdAt = 0
+            createdAt = 0,
         )
         val topSite3 = TopSite.Frecent(
             id = 1L,
             title = "Mozilla",
             url = "mozilla.org",
-            createdAt = 0
+            createdAt = 0,
         )
         assertNull(TopSites.openInPrivateTab.testGetValue())
 
@@ -1228,11 +1269,39 @@ class DefaultSessionControlControllerTest {
         }
     }
 
+    @Test
+    fun `WHEN handleMenuItemTapped is called with SearchSettings item THEN navigate to SearchEngineFragment`() {
+        createController().handleMenuItemTapped(SearchSelectorMenu.Item.SearchSettings)
+
+        verify {
+            navController.navigate(
+                match<NavDirections> { it.actionId == R.id.action_global_searchEngineFragment },
+                null,
+            )
+        }
+    }
+
+    @Test
+    fun `WHEN handleMenuItemTapped is called with SearchEngine item THEN navigate to SearchDialogFragment`() {
+        val item = mockk<SearchSelectorMenu.Item.SearchEngine>()
+        every { item.searchEngine.id } returns "DuckDuckGo"
+
+        createController().handleMenuItemTapped(item)
+
+        val expectedDirections = HomeFragmentDirections.actionGlobalSearchDialog(
+            sessionId = null,
+            searchEngine = item.searchEngine.id,
+        )
+        verify {
+            navController.navigate(expectedDirections, any<NavOptions>())
+        }
+    }
+
     private fun createController(
         hideOnboarding: () -> Unit = { },
         registerCollectionStorageObserver: () -> Unit = { },
         showTabTray: () -> Unit = { },
-        removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit = { }
+        removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit = { },
     ): DefaultSessionControlController {
         return DefaultSessionControlController(
             activity = activity,
@@ -1251,7 +1320,39 @@ class DefaultSessionControlControllerTest {
             hideOnboarding = hideOnboarding,
             registerCollectionStorageObserver = registerCollectionStorageObserver,
             removeCollectionWithUndo = removeCollectionWithUndo,
-            showTabTray = showTabTray
+            showTabTray = showTabTray,
         )
     }
+
+    private fun makeFakeRemoteWallpapers(size: Int, hasError: Boolean): List<Wallpaper> {
+        val list = mutableListOf<Wallpaper>()
+        for (i in 0 until size) {
+            if (hasError && i == 0) {
+                list.add(makeFakeRemoteWallpaper(Wallpaper.ImageFileState.Error))
+            } else {
+                list.add(makeFakeRemoteWallpaper(Wallpaper.ImageFileState.Downloaded))
+            }
+        }
+        return list
+    }
+
+    private fun makeFakeRemoteWallpaper(
+        thumbnailFileState: Wallpaper.ImageFileState = Wallpaper.ImageFileState.Unavailable,
+    ) = Wallpaper(
+        name = "name",
+        collection = Wallpaper.Collection(
+            name = Wallpaper.firefoxCollectionName,
+            heading = null,
+            description = null,
+            availableLocales = null,
+            startDate = null,
+            endDate = null,
+            learnMoreUrl = null,
+        ),
+        textColor = null,
+        cardColorLight = null,
+        cardColorDark = null,
+        thumbnailFileState = thumbnailFileState,
+        assetsFileState = Wallpaper.ImageFileState.Unavailable,
+    )
 }

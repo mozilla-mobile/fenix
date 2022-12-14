@@ -12,9 +12,9 @@ import android.os.SystemClock
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import org.junit.rules.ExternalResource
+import org.mozilla.fenix.helpers.TestHelper.mDevice
 import java.util.Date
 import kotlin.random.Random
-import org.mozilla.fenix.helpers.TestHelper.mDevice
 
 private const val mockProviderName = LocationManager.GPS_PROVIDER
 
@@ -42,7 +42,7 @@ class MockLocationUpdatesRule : ExternalResource() {
         mDevice.executeShellCommand(
             "appops set " +
                 appContext.packageName +
-                " android:mock_location allow"
+                " android:mock_location allow",
         )
 
         // To mock locations we need a location provider, so we generate and set it here.
@@ -57,7 +57,7 @@ class MockLocationUpdatesRule : ExternalResource() {
                 true,
                 true,
                 3,
-                2
+                2,
             )
         } catch (ex: Exception) {
             // unstable

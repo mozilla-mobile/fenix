@@ -5,7 +5,6 @@
 package org.mozilla.fenix.ui
 
 import android.view.View
-import androidx.test.espresso.IdlingRegistry
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
@@ -15,11 +14,11 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.getEnhancedTrackingProtectionAsset
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
+import org.mozilla.fenix.helpers.TestHelper.registerAndCleanupIdlingResources
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.addonsMenu
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -31,12 +30,9 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  */
 class SettingsAddonsTest {
     private lateinit var mockWebServer: MockWebServer
-    private var addonsListIdlingResource: RecyclerViewIdlingResource? = null
-    private var addonContainerIdlingResource: ViewVisibilityIdlingResource? = null
-    private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
-    val activityTestRule = HomeActivityIntentTestRule()
+    val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
 
     @Before
     fun setUp() {
@@ -44,23 +40,11 @@ class SettingsAddonsTest {
             dispatcher = AndroidAssetDispatcher()
             start()
         }
-
-        featureSettingsHelper.setTCPCFREnabled(false)
     }
 
     @After
     fun tearDown() {
         mockWebServer.shutdown()
-
-        if (addonsListIdlingResource != null) {
-            IdlingRegistry.getInstance().unregister(addonsListIdlingResource!!)
-        }
-
-        if (addonContainerIdlingResource != null) {
-            IdlingRegistry.getInstance().unregister(addonContainerIdlingResource!!)
-        }
-
-        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     // Walks through settings add-ons menu to ensure all items are present
@@ -72,10 +56,11 @@ class SettingsAddonsTest {
             verifyAdvancedHeading()
             verifyAddons()
         }.openAddonsManagerMenu {
-            addonsListIdlingResource =
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.add_ons_list), 1)
-            IdlingRegistry.getInstance().register(addonsListIdlingResource!!)
-            verifyAddonsItems()
+            registerAndCleanupIdlingResources(
+                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.add_ons_list), 1),
+            ) {
+                verifyAddonsItems()
+            }
         }
     }
 
@@ -87,14 +72,14 @@ class SettingsAddonsTest {
         homeScreen {}
             .openThreeDotMenu {}
             .openAddonsManagerMenu {
-                addonsListIdlingResource =
+                registerAndCleanupIdlingResources(
                     RecyclerViewIdlingResource(
                         activityTestRule.activity.findViewById(R.id.add_ons_list),
-                        1
-                    )
-                IdlingRegistry.getInstance().register(addonsListIdlingResource!!)
-                clickInstallAddon(addonName)
-                IdlingRegistry.getInstance().unregister(addonsListIdlingResource!!)
+                        1,
+                    ),
+                ) {
+                    clickInstallAddon(addonName)
+                }
                 verifyAddonPermissionPrompt(addonName)
                 cancelInstallAddon()
                 clickInstallAddon(addonName)
@@ -117,20 +102,20 @@ class SettingsAddonsTest {
             verifyAddonInstallCompleted(addonName, activityTestRule)
             closeAddonInstallCompletePrompt()
         }.openDetailedMenuForAddon(addonName) {
-            addonContainerIdlingResource = ViewVisibilityIdlingResource(
-                activityTestRule.activity.findViewById(R.id.addon_container),
-                View.VISIBLE
-            )
-            IdlingRegistry.getInstance().register(addonContainerIdlingResource!!)
+            registerAndCleanupIdlingResources(
+                ViewVisibilityIdlingResource(
+                    activityTestRule.activity.findViewById(R.id.addon_container),
+                    View.VISIBLE,
+                ),
+            ) {}
         }.removeAddon {
-            IdlingRegistry.getInstance().unregister(addonContainerIdlingResource!!)
             verifyAddonCanBeInstalled(addonName)
         }
     }
 
+    // Installs uBlock add-on and checks that the app doesn't crash while loading pages with trackers
     @SmokeTest
     @Test
-    // Installs uBlock add-on and checks that the app doesn't crash while loading pages with trackers
     fun noCrashWithAddonInstalledTest() {
         // setting ETP to Strict mode to test it works with add-ons
         activityTestRule.activity.settings().setStrictETP()

@@ -6,13 +6,18 @@ package org.mozilla.fenix.browser
 
 import android.content.Context
 import android.view.View
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.navigation.NavController
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.mockkStatic
 import io.mockk.spyk
+import io.mockk.unmockkObject
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import mozilla.components.browser.state.action.RestoreCompleteAction
 import mozilla.components.browser.state.action.TabListAction
@@ -39,6 +44,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.onboarding.FenixOnboarding
+import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -307,6 +313,21 @@ class BrowserFragmentTest {
     }
 
     @Test
+    fun `WHEN toolbar is initialized THEN onConfigurationChanged sets toolbar actions for size in fragment`() {
+        val browserToolbarView: BrowserToolbarView = mockk(relaxed = true)
+
+        browserFragment._browserToolbarView = null
+        browserFragment.onConfigurationChanged(mockk(relaxed = true))
+        verify(exactly = 0) { browserFragment.onUpdateToolbarForConfigurationChange(any()) }
+        verify(exactly = 0) { browserFragment.updateToolbarActions(any()) }
+
+        browserFragment._browserToolbarView = browserToolbarView
+        browserFragment.onConfigurationChanged(mockk(relaxed = true))
+        verify(exactly = 1) { browserFragment.onUpdateToolbarForConfigurationChange(any()) }
+        verify(exactly = 1) { browserFragment.updateToolbarActions(any()) }
+    }
+
+    @Test
     fun `WHEN fragment configuration changed THEN menu is dismissed`() {
         val browserToolbarView: BrowserToolbarView = mockk(relaxed = true)
         every { browserFragment.context } returns null
@@ -315,6 +336,81 @@ class BrowserFragmentTest {
         browserFragment.onConfigurationChanged(mockk(relaxed = true))
 
         verify(exactly = 1) { browserToolbarView.dismissMenu() }
+    }
+
+    @Test
+    fun `WHEN fragment configuration screen size changes between tablet and mobile size THEN tablet action items added and removed`() {
+        val browserToolbarView: BrowserToolbarView = mockk(relaxed = true)
+        val browserToolbar: BrowserToolbar = mockk(relaxed = true)
+        browserFragment._browserToolbarView = browserToolbarView
+        every { browserFragment.browserToolbarView.view } returns browserToolbar
+
+        mockkObject(ThemeManager.Companion)
+        every { ThemeManager.resolveAttribute(any(), context) } returns mockk(relaxed = true)
+
+        mockkStatic(AppCompatResources::class)
+        every { AppCompatResources.getDrawable(context, any()) } returns mockk()
+
+        every { browserFragment.resources.getBoolean(R.bool.tablet) } returns true
+        browserFragment.onConfigurationChanged(mockk(relaxed = true))
+        verify(exactly = 3) { browserToolbar.addNavigationAction(any()) }
+
+        every { browserFragment.resources.getBoolean(R.bool.tablet) } returns false
+        browserFragment.onConfigurationChanged(mockk(relaxed = true))
+        verify(exactly = 3) { browserToolbar.removeNavigationAction(any()) }
+
+        unmockkObject(ThemeManager.Companion)
+        unmockkStatic(AppCompatResources::class)
+    }
+
+    @Test
+    fun `WHEN fragment configuration change enables tablet size twice THEN tablet action items are only added once`() {
+        val browserToolbarView: BrowserToolbarView = mockk(relaxed = true)
+        val browserToolbar: BrowserToolbar = mockk(relaxed = true)
+        browserFragment._browserToolbarView = browserToolbarView
+        every { browserFragment.browserToolbarView.view } returns browserToolbar
+
+        mockkObject(ThemeManager.Companion)
+        every { ThemeManager.resolveAttribute(any(), context) } returns mockk(relaxed = true)
+
+        mockkStatic(AppCompatResources::class)
+        every { AppCompatResources.getDrawable(context, any()) } returns mockk()
+
+        every { browserFragment.resources.getBoolean(R.bool.tablet) } returns true
+        browserFragment.onConfigurationChanged(mockk(relaxed = true))
+        verify(exactly = 3) { browserToolbar.addNavigationAction(any()) }
+
+        browserFragment.onConfigurationChanged(mockk(relaxed = true))
+        verify(exactly = 3) { browserToolbar.addNavigationAction(any()) }
+
+        unmockkObject(ThemeManager.Companion)
+        unmockkStatic(AppCompatResources::class)
+    }
+
+    @Test
+    fun `WHEN fragment configuration change sets mobile size twice THEN tablet action items are not added or removed`() {
+        val browserToolbarView: BrowserToolbarView = mockk(relaxed = true)
+        val browserToolbar: BrowserToolbar = mockk(relaxed = true)
+        browserFragment._browserToolbarView = browserToolbarView
+        every { browserFragment.browserToolbarView.view } returns browserToolbar
+
+        mockkObject(ThemeManager.Companion)
+        every { ThemeManager.resolveAttribute(any(), context) } returns mockk(relaxed = true)
+
+        mockkStatic(AppCompatResources::class)
+        every { AppCompatResources.getDrawable(context, any()) } returns mockk()
+
+        every { browserFragment.resources.getBoolean(R.bool.tablet) } returns false
+        browserFragment.onConfigurationChanged(mockk(relaxed = true))
+        verify(exactly = 0) { browserToolbar.addNavigationAction(any()) }
+        verify(exactly = 0) { browserToolbar.removeNavigationAction(any()) }
+
+        browserFragment.onConfigurationChanged(mockk(relaxed = true))
+        verify(exactly = 0) { browserToolbar.addNavigationAction(any()) }
+        verify(exactly = 0) { browserToolbar.removeNavigationAction(any()) }
+
+        unmockkObject(ThemeManager.Companion)
+        unmockkStatic(AppCompatResources::class)
     }
 
     private fun addAndSelectTab(tab: TabSessionState) {

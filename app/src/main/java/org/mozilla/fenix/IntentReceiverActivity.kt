@@ -15,6 +15,7 @@ import mozilla.components.feature.intent.ext.sanitize
 import mozilla.components.feature.intent.processing.IntentProcessor
 import mozilla.components.support.utils.EXTRA_ACTIVITY_REFERRER_CATEGORY
 import mozilla.components.support.utils.EXTRA_ACTIVITY_REFERRER_PACKAGE
+import mozilla.components.support.utils.ext.getApplicationInfoCompat
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.HomeActivity.Companion.PRIVATE_BROWSING_MODE
 import org.mozilla.fenix.components.IntentProcessorType
@@ -48,7 +49,9 @@ class IntentReceiverActivity : Activity() {
         processIntent(intent)
 
         components.core.engine.profiler?.addMarker(
-            MarkersActivityLifecycleCallbacks.MARKER_NAME, startTimeProfiler, "IntentReceiverActivity.onCreate"
+            MarkersActivityLifecycleCallbacks.MARKER_NAME,
+            startTimeProfiler,
+            "IntentReceiverActivity.onCreate",
         )
         StartupTimeline.onActivityCreateEndIntentReceiver() // DO NOT MOVE ANYTHING BELOW HERE.
     }
@@ -78,7 +81,7 @@ class IntentReceiverActivity : Activity() {
         if (!intent.hasExtra(HomeActivity.OPEN_TO_BROWSER)) {
             intent.putExtra(
                 HomeActivity.OPEN_TO_BROWSER,
-                intentProcessorType.shouldOpenToBrowser(intent)
+                intentProcessorType.shouldOpenToBrowser(intent),
             )
         }
         // StrictMode violation on certain devices such as Samsung
@@ -92,13 +95,13 @@ class IntentReceiverActivity : Activity() {
         val modeDependentProcessors = if (private) {
             listOf(
                 components.intentProcessors.privateCustomTabIntentProcessor,
-                components.intentProcessors.privateIntentProcessor
+                components.intentProcessors.privateIntentProcessor,
             )
         } else {
             Events.openedLink.record(Events.OpenedLinkExtra("NORMAL"))
             listOf(
                 components.intentProcessors.customTabIntentProcessor,
-                components.intentProcessors.intentProcessor
+                components.intentProcessors.intentProcessor,
             )
         }
 
@@ -123,7 +126,7 @@ class IntentReceiverActivity : Activity() {
             // Category is supported for API>=26.
             r.host?.let { host ->
                 try {
-                    val category = packageManager.getApplicationInfo(host, 0).category
+                    val category = packageManager.getApplicationInfoCompat(host, 0).category
                     intent.putExtra(EXTRA_ACTIVITY_REFERRER_CATEGORY, category)
                 } catch (e: PackageManager.NameNotFoundException) {
                     // At least we tried.

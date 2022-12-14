@@ -6,7 +6,10 @@
 
 package org.mozilla.fenix.home.pocket
 
+import android.content.res.Configuration
 import android.view.View
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,7 +27,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.ComposeViewHolder
 import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.theme.Theme
 
 /**
  * [RecyclerView.ViewHolder] for displaying the Pocket feature header.
@@ -36,7 +38,7 @@ import org.mozilla.fenix.theme.Theme
 class PocketRecommendationsHeaderViewHolder(
     composeView: ComposeView,
     viewLifecycleOwner: LifecycleOwner,
-    private val interactor: PocketStoriesInteractor
+    private val interactor: PocketStoriesInteractor,
 ) : ComposeViewHolder(composeView, viewLifecycleOwner) {
 
     @Composable
@@ -47,7 +49,17 @@ class PocketRecommendationsHeaderViewHolder(
 
         val wallpaperState = components.appStore
             .observeAsComposableState { state -> state.wallpaperState }.value
-        val wallpaperAdaptedTextColor = wallpaperState?.currentWallpaper?.textColor?.let { Color(it) }
+
+        var textColor = FirefoxTheme.colors.textPrimary
+        var linkTextColor = FirefoxTheme.colors.textAccent
+
+        wallpaperState?.currentWallpaper?.let { currentWallpaper ->
+            currentWallpaper.textColor?.let {
+                val wallpaperAdaptedTextColor = Color(it)
+                textColor = wallpaperAdaptedTextColor
+                linkTextColor = wallpaperAdaptedTextColor
+            }
+        }
 
         Column {
             Spacer(Modifier.height(24.dp))
@@ -55,7 +67,8 @@ class PocketRecommendationsHeaderViewHolder(
             PoweredByPocketHeader(
                 onLearnMoreClicked = interactor::onLearnMoreClicked,
                 modifier = Modifier.fillMaxWidth(),
-                textColor = wallpaperAdaptedTextColor ?: FirefoxTheme.colors.textPrimary
+                textColor = textColor,
+                linkTextColor = linkTextColor,
             )
         }
     }
@@ -66,11 +79,14 @@ class PocketRecommendationsHeaderViewHolder(
 }
 
 @Composable
-@Preview
-fun PocketRecommendationsFooterViewHolderPreview() {
-    FirefoxTheme(theme = Theme.getTheme()) {
-        PoweredByPocketHeader(
-            onLearnMoreClicked = {}
-        )
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
+private fun PocketRecommendationsFooterViewHolderPreview() {
+    FirefoxTheme {
+        Box(modifier = Modifier.background(color = FirefoxTheme.colors.layer1)) {
+            PoweredByPocketHeader(
+                onLearnMoreClicked = {},
+            )
+        }
     }
 }

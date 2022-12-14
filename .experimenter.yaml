@@ -1,4 +1,20 @@
 ---
+cookie-banners:
+  description: Features for cookie banner handling.
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    sections-enabled:
+      type: json
+      description: This property provides a lookup table of whether or not the given section should be enabled.
+growth-data:
+  description: A feature measuring campaign growth data
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    enabled:
+      type: boolean
+      description: "If true, the feature is active"
 homescreen:
   description: The homescreen that the user goes to when they press home or new tab.
   hasExposure: true
@@ -55,6 +71,14 @@ nimbus-validation:
     settings-title:
       type: string
       description: The title of displayed in the Settings screen and app menu.
+re-engagement-notification:
+  description: A feature that shows the re-enagement notification if the user is inactive.
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    enabled:
+      type: boolean
+      description: "If true, the re-engagement notification is shown to the inactive user."
 search-term-groups:
   description: A feature allowing the grouping of URLs around the search term that it came from.
   hasExposure: true

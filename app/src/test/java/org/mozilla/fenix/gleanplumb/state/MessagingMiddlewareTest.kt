@@ -44,7 +44,7 @@ class MessagingMiddlewareTest {
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
     private val coroutineScope = coroutinesTestRule.scope
-    private lateinit var store: AppStore
+    private lateinit var appStore: AppStore
     private lateinit var middleware: MessagingMiddleware
     private lateinit var messagingStorage: NimbusMessagingStorage
     private lateinit var middlewareContext: MiddlewareContext<AppState, AppAction>
@@ -54,14 +54,14 @@ class MessagingMiddlewareTest {
 
     @Before
     fun setUp() {
-        store = mockk(relaxed = true)
+        appStore = mockk(relaxed = true)
         messagingStorage = mockk(relaxed = true)
         middlewareContext = mockk(relaxed = true)
-        every { middlewareContext.store } returns store
+        every { middlewareContext.store } returns appStore
 
         middleware = MessagingMiddleware(
             messagingStorage,
-            coroutineScope
+            coroutineScope,
         )
     }
 
@@ -73,7 +73,7 @@ class MessagingMiddlewareTest {
 
         middleware.invoke(middlewareContext, {}, Restore)
 
-        verify { store.dispatch(UpdateMessages(messages)) }
+        verify { appStore.dispatch(UpdateMessages(messages)) }
     }
 
     @Test
@@ -100,7 +100,7 @@ class MessagingMiddlewareTest {
             action = "action",
             mockk(relaxed = true),
             listOf("trigger"),
-            Message.Metadata("same-id")
+            Message.Metadata("same-id"),
         )
         val appState: AppState = mockk(relaxed = true)
         val messagingState: MessagingState = mockk(relaxed = true)
@@ -123,7 +123,7 @@ class MessagingMiddlewareTest {
             action = "action",
             mockk(relaxed = true),
             listOf("trigger"),
-            Message.Metadata("same-id")
+            Message.Metadata("same-id"),
         )
         val appState: AppState = mockk(relaxed = true)
         val messagingState: MessagingState = mockk(relaxed = true)
@@ -133,8 +133,9 @@ class MessagingMiddlewareTest {
         every { middlewareContext.state } returns appState
 
         middleware.invoke(
-            middlewareContext, {},
-            MessageDismissed(message)
+            middlewareContext,
+            {},
+            MessageDismissed(message),
         )
 
         coVerify { messagingStorage.updateMetadata(message.metadata.copy(dismissed = true)) }
@@ -149,7 +150,7 @@ class MessagingMiddlewareTest {
             action = "action",
             mockk(relaxed = true),
             listOf("trigger"),
-            Message.Metadata("same-id")
+            Message.Metadata("same-id"),
         )
         val appState: AppState = mockk(relaxed = true)
         val messagingState: MessagingState = mockk(relaxed = true)
@@ -175,7 +176,7 @@ class MessagingMiddlewareTest {
             action = "action",
             mockk(relaxed = true),
             listOf("trigger"),
-            Message.Metadata("same-id")
+            Message.Metadata("same-id"),
         )
 
         val spiedMiddleware = spyk(middleware)
@@ -198,7 +199,7 @@ class MessagingMiddlewareTest {
             action = "action",
             mockk(relaxed = true),
             listOf("trigger"),
-            Message.Metadata("same-id")
+            Message.Metadata("same-id"),
         )
         val messages = listOf(message)
         val appState: AppState = mockk(relaxed = true)
@@ -221,7 +222,7 @@ class MessagingMiddlewareTest {
             action = "action",
             mockk(relaxed = true),
             listOf("trigger"),
-            Message.Metadata("same-id")
+            Message.Metadata("same-id"),
         )
         val appState: AppState = mockk(relaxed = true)
         val messagingState: MessagingState = mockk(relaxed = true)
@@ -243,7 +244,7 @@ class MessagingMiddlewareTest {
             action = "action",
             mockk(relaxed = true),
             listOf("trigger"),
-            Message.Metadata("same-id", pressed = false)
+            Message.Metadata("same-id", pressed = false),
         )
 
         val updatedMessage = Message(
@@ -252,7 +253,7 @@ class MessagingMiddlewareTest {
             action = "action",
             mockk(relaxed = true),
             listOf("trigger"),
-            Message.Metadata("same-id", pressed = true)
+            Message.Metadata("same-id", pressed = true),
         )
 
         val spiedMiddleware = spyk(middleware)
@@ -284,7 +285,7 @@ class MessagingMiddlewareTest {
             action = "action",
             style,
             listOf("trigger"),
-            Message.Metadata("same-id", displayCount = 0)
+            Message.Metadata("same-id", displayCount = 0),
         )
         val updatedMessage = oldMessage.copy(metadata = oldMessage.metadata.copy(displayCount = 1))
         val spiedMiddleware = spyk(middleware)
@@ -295,7 +296,7 @@ class MessagingMiddlewareTest {
             spiedMiddleware.updateMessage(
                 middlewareContext,
                 oldMessage,
-                updatedMessage
+                updatedMessage,
             )
         } returns emptyList()
 
@@ -316,7 +317,7 @@ class MessagingMiddlewareTest {
             action = "action",
             style,
             listOf("trigger"),
-            Message.Metadata("same-id", displayCount = 0)
+            Message.Metadata("same-id", displayCount = 0),
         )
         val updatedMessage = oldMessage.copy(metadata = oldMessage.metadata.copy(displayCount = 1))
         val spiedMiddleware = spyk(middleware)
@@ -326,7 +327,7 @@ class MessagingMiddlewareTest {
         every {
             spiedMiddleware.consumeMessageToShowIfNeeded(
                 middlewareContext,
-                oldMessage
+                oldMessage,
             )
         } just Runs
         every { spiedMiddleware.removeMessage(middlewareContext, oldMessage) } returns emptyList()

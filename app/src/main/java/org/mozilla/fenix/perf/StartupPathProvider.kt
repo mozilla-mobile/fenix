@@ -7,8 +7,8 @@ package org.mozilla.fenix.perf
 import android.app.Activity
 import android.content.Intent
 import androidx.annotation.VisibleForTesting
-import androidx.annotation.VisibleForTesting.NONE
-import androidx.annotation.VisibleForTesting.PRIVATE
+import androidx.annotation.VisibleForTesting.Companion.NONE
+import androidx.annotation.VisibleForTesting.Companion.PRIVATE
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -42,7 +42,7 @@ class StartupPathProvider {
          * - this API is accessed before it is set
          * - if no intent is received before the activity is STARTED (e.g. app switcher)
          */
-        NOT_SET
+        NOT_SET,
     }
 
     /**

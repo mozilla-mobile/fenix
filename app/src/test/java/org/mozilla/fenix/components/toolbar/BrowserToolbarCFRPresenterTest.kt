@@ -26,6 +26,7 @@ import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
+import mozilla.telemetry.glean.testing.GleanTestRule
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -33,18 +34,18 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.R
-import org.mozilla.fenix.compose.cfr.CFRPopup
-import org.mozilla.fenix.utils.Settings
-import mozilla.telemetry.glean.testing.GleanTestRule
 import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.TrackingProtection
+import org.mozilla.fenix.R
+import org.mozilla.fenix.compose.cfr.CFRPopup
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
 class BrowserToolbarCFRPresenterTest {
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
+
     @get:Rule
     val gleanTestRule = GleanTestRule(testContext)
 
@@ -218,7 +219,7 @@ class BrowserToolbarCFRPresenterTest {
     @Test
     fun `WHEN the TCP CFR is dismissed THEN log telemetry`() {
         val presenter = createPresenter(
-            anchor = mockk(relaxed = true)
+            anchor = mockk(relaxed = true),
         )
 
         presenter.showTcpCfr()
@@ -241,7 +242,7 @@ class BrowserToolbarCFRPresenterTest {
         browserStore: BrowserStore = mockk(),
         settings: Settings = mockk { every { shouldShowTotalCookieProtectionCFR } returns true },
         toolbar: BrowserToolbar = mockk(),
-        sessionId: String? = null
+        sessionId: String? = null,
     ) = spyk(createPresenter(context, anchor, browserStore, settings, toolbar, sessionId)) {
         every { showTcpCfr() } just Runs
     }
@@ -258,24 +259,24 @@ class BrowserToolbarCFRPresenterTest {
         toolbar: BrowserToolbar = mockk {
             every { findViewById<View>(R.id.mozac_browser_toolbar_security_indicator) } returns anchor
         },
-        sessionId: String? = null
+        sessionId: String? = null,
     ) = BrowserToolbarCFRPresenter(
         context = context,
         browserStore = browserStore,
         settings = settings,
         toolbar = toolbar,
-        sessionId = sessionId
+        sessionId = sessionId,
     )
 
     private fun createBrowserStore(
         tab: TabSessionState? = null,
         customTab: CustomTabSessionState? = null,
-        selectedTabId: String? = null
+        selectedTabId: String? = null,
     ) = BrowserStore(
         initialState = BrowserState(
             tabs = if (tab != null) listOf(tab) else listOf(),
             customTabs = if (customTab != null) listOf(customTab) else listOf(),
-            selectedTabId = selectedTabId
-        )
+            selectedTabId = selectedTabId,
+        ),
     )
 }

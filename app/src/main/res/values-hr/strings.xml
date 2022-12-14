@@ -41,7 +41,9 @@
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recent_bookmarks_title">Nedavne zabilješke</string>
+    <string moz:RemovedIn="106" name="recent_bookmarks_title" tools:ignore="UnusedResources">Nedavne zabilješke</string>
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_title">Nedavno spremljeno</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description_2">Prikaži sve spremljene zabilješke</string>
 
@@ -121,18 +123,13 @@
 
     <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
     <string name="recent_tabs_show_all_content_description_2">Prikaži tipku za prikaz svih nedavnih kartica</string>
-    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
-        The first parameter is the search term that the user used. (for example: your search for "cat")-->
-    <string moz:RemovedIn="105" name="recent_tabs_search_term" tools:ignore="UnusedResources">Tvoja pretraga za \&quot;%1$s\&quot;</string>
-
-    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
-        %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
-    <string moz:RemovedIn="105" name="recent_tabs_search_term_count_2" tools:ignore="UnusedResources">%d stranica</string>
 
     <!-- Text for button in synced tab card that opens synced tabs tray -->
     <string name="recent_tabs_see_all_synced_tabs_button_text">Pogledaj sve sinkronizirane kartice</string>
     <!-- Accessibility description for device icon used for recent synced tab -->
     <string name="recent_tabs_synced_device_icon_content_description">Sinkronizirani uređaj</string>
+    <!-- Text for the dropdown menu to remove a recent synced tab from the homescreen -->
+    <string name="recent_synced_tab_menu_item_remove">Ukloni</string>
     <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
          in the Recently visited section -->
     <string name="recent_tab_menu_item_remove">Ukloni</string>
@@ -249,24 +246,31 @@
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
-    <string name="onboarding_home_screen_title_3">Što je novo u %1$s</string>
+    <string moz:RemovedIn="106" name="onboarding_home_screen_title_3" tools:ignore="UnusedResources">Što je novo u %1$s</string>
     <!-- Onboarding home screen dialog description text. -->
-    <string name="onboarding_home_screen_description_2">Sada je lakše nastaviti pregledavati web.</string>
+    <string moz:RemovedIn="106" name="onboarding_home_screen_description_2" tools:ignore="UnusedResources">Sada je lakše nastaviti pregledavati web.</string>
     <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
-    <string name="onboarding_home_screen_section_home_title_3">%1$s personalizirana početna stranica</string>
+    <string moz:RemovedIn="106" name="onboarding_home_screen_section_home_title_3" tools:ignore="UnusedResources">%1$s personalizirana početna stranica</string>
     <!-- Onboarding home screen dialog description text for the home section. -->
-    <string name="onboarding_home_screen_section_home_description_2">Skoči na svoje otvorene kartice, zabilješke i povijest pregledavanja.</string>
+    <string moz:RemovedIn="106" name="onboarding_home_screen_section_home_description_2" tools:ignore="UnusedResources">Skoči na svoje otvorene kartice, zabilješke i povijest pregledavanja.</string>
     <!-- Onboarding home screen dialog description text for the tab tray section. -->
-    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">Čiste, organizirane kartice</string>
+    <string moz:RemovedIn="106" name="onboarding_home_screen_section_cleaner_tab_tray_title_2" tools:ignore="UnusedResources">Čiste, organizirane kartice</string>
     <!-- Onboarding home screen dialog description text for the tab tray section. -->
-    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">Očisti nered među karticama pomoću poboljšanog rasporeda i automatskog zatvaranja kartica.</string>
+    <string moz:RemovedIn="106" name="onboarding_home_screen_section_cleaner_tab_tray_description_2" tools:ignore="UnusedResources">Očisti nered među karticama pomoću poboljšanog rasporeda i automatskog zatvaranja kartica.</string>
     <!-- Onboarding home screen dialog description text for the history section. -->
-    <string name="onboarding_home_screen_section_useful_history_title_2">Nedavne pretrage</string>
+    <string moz:RemovedIn="106" name="onboarding_home_screen_section_useful_history_title_2" tools:ignore="UnusedResources">Nedavne pretrage</string>
     <!-- Onboarding home screen dialog description text for the history section. -->
-    <string name="onboarding_home_screen_section_useful_history_description_2">Ponovno pregledaj svoja posljednja pretraživanja na početnoj stranici i karticama.</string>
+    <string moz:RemovedIn="106" name="onboarding_home_screen_section_useful_history_description_2" tools:ignore="UnusedResources">Ponovno pregledaj svoja posljednja pretraživanja na početnoj stranici i karticama.</string>
 
     <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
-    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Tvoja personalizirana Firefoxova početna stranica sada ti olakšava da nastaviš pretraživati. Pronađi svoje nedavne kartice, zabilješke i rezultate pretraživanja.</string>
+    <string moz:RemovedIn="106" name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">Tvoja personalizirana Firefoxova početna stranica sada ti olakšava da nastaviš pretraživati. Pronađi svoje nedavne kartice, zabilješke i rezultate pretraživanja.</string>
+
+    <!-- Text for the button to navigate to the sync sign in screen on the home onboarding dialog. -->
+    <string name="onboarding_home_sign_in_button">Prijavi se</string>
+    <!-- Text for the button to skip the onboarding on the home onboarding dialog. -->
+    <string name="onboarding_home_skip_button">Preskoči</string>
+    <!-- Content description (not visible, for screen readers etc.): Close button for the home onboarding dialog -->
+    <string name="onboarding_home_content_description_close_button">Zatvori</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -353,8 +357,6 @@
     <string name="preferences_gestures">Geste</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Prilagodi</string>
-    <!-- Preference description for banner about signing in -->
-    <string moz:RemovedIn="104" name="preferences_sign_in_description" tools:ignore="UnusedResources">Sinkroniziraj zabilješke, lozinke i ostalo sa svojim Firefox računom</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
     <string name="preferences_account_default_name">Firefox račun</string>
     <!-- Preference text for account title when there was an error syncing FxA -->
@@ -422,7 +424,7 @@
     a section where users see a list of tabs that they have visited in the past few days -->
     <string name="customize_toggle_recently_visited">Nedavno posjećeno</string>
     <!-- Title for the customize home screen section with Pocket. -->
-    <string name="customize_toggle_pocket">Pocket</string>
+    <string moz:RemovedIn="108" name="customize_toggle_pocket" tools:ignore="UnusedResources">Pocket</string>
 
     <!-- Title for the customize home screen section with sponsored Pocket stories. -->
     <string name="customize_toggle_pocket_sponsored">Sponzorirane priče</string>
@@ -438,11 +440,11 @@
     <string name="wallpaper_updated_snackbar_message">Pozadina ažurirana!</string>
     <!-- Snackbar label for action to view selected wallpaper -->
     <string name="wallpaper_updated_snackbar_action">Prikaži</string>
-    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string name="wallpaper_tap_to_change_switch_label_1">Promijeni sliku pozadine dodirom na logotip početne stranice Firefoxa</string>
-    <!-- This is the accessibility content description for the wallpapers functionality. Users are
-    able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
-    <string name="wallpaper_logo_content_description">Firefox logo - promijenite pozadinu, tipka</string>
+
+    <!-- Snackbar label for action to retry downloading the wallpaper -->
+    <string name="wallpaper_download_error_snackbar_action">Pokušaj ponovo</string>
+    <!-- Text displayed that links to website containing documentation about the "Limited Edition" wallpapers. -->
+    <string name="wallpaper_learn_more">Saznaj više</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -525,8 +527,6 @@
     <string name="preference_experiments_summary_2">Omogućuje Mozilli instalaciju i pokretanje istraživanja</string>
 
     <!-- Turn On Sync Preferences -->
-    <!-- Header of the Turn on Sync preference view -->
-    <string moz:RemovedIn="104" name="preferences_sync" tools:ignore="UnusedResources">Uključi sinkronizaciju</string>
     <!-- Header of the Sync and save your data preference view -->
     <string name="preferences_sync_2">Sinkronizirajte i spremite svoje podatke</string>
     <!-- Preference for reconnecting to FxA sync -->
@@ -588,6 +588,11 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Zatvori</string>
 
+    <!-- Dialog button text for confirming open all tabs -->
+    <string name="open_all_warning_confirm">Otvori kartice</string>
+    <!-- Dialog button text for canceling open all tabs -->
+    <string name="open_all_warning_cancel">Odustani</string>
+
     <!-- Text to show users they have one site in the history group section of the History fragment.
     %d is a placeholder for the number of sites in the group. -->
     <string name="history_search_group_site">%d stranica</string>
@@ -618,10 +623,6 @@
     <string name="tab_view_list">Popis</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Mreža</string>
-    <!-- Option for search term tab groups -->
-    <string moz:RemovedIn="105" name="tab_view_search_term_tab_groups" tools:ignore="UnusedResources">Grupe pretraživanja</string>
-    <!-- Summary text for search term tab groups -->
-    <string moz:RemovedIn="105" name="tab_view_search_term_tab_groups_summary" tools:ignore="UnusedResources">Grupiraj povezane web-stranice</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Zatvori kartice</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -727,8 +728,6 @@
     <string name="open_tabs_menu">Izbornik za otvorene kartice</string>
     <!-- Open tabs menu item to save tabs to collection -->
     <string name="tabs_menu_save_to_collection1">Spremi kartice u zbirku</string>
-    <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
-    <string moz:RemovedIn="103" name="tab_menu" tools:ignore="UnusedResources">Izbornik za kartice</string>
     <!-- Text for the menu button to delete a collection -->
     <string name="collection_delete">Izbriši zbirku</string>
     <!-- Text for the menu button to rename a collection -->
@@ -747,9 +746,6 @@
     <string name="delete_from_history">Izbriši iz povijesti</string>
     <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
     <string name="pwa_site_controls_title_private">%1$s (privatni modus)</string>
-
-    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string moz:removedIn="104" name="tab_tray_header_title_1" tools:ignore="UnusedResources">Ostale kartice</string>
 
     <!-- History -->
     <!-- Text for the button to search all history -->
@@ -780,15 +776,6 @@
 
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Nema povijesti</string>
-
-    <!-- Text for the button inside History screen that opens Synced History screen. History that is coming from other devices -->
-    <string name="history_synced_from_other_devices">Sinkronizirano s drugih uređaja</string>
-    <!-- The page title for browsing history coming from other devices. -->
-    <string name="history_from_other_devices">S drugih uređaja</string>
-    <!-- The synced history sign in dialog button text -->
-    <string name="history_sign_in_button">Prijava</string>
-    <!-- The synced history sign in dialog create a new account link -->
-    <string name="history_sign_in_create_account"><![CDATA[<u>Ili stvorite Firefox račun za početak sinkronizacije</u>]]></string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -1019,6 +1006,8 @@
     <!-- Content description (not visible, for screen readers etc.):
         "Share" button. Opens the share menu when pressed. -->
     <string name="share_button_content_description">Dijeli</string>
+    <!-- Text for the Save to PDF feature in the share menu -->
+    <string name="share_save_to_pdf">Spremi kao PDF</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Pošalji na uređaj</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1030,9 +1019,11 @@
     <!-- Toast shown after copying link to clipboard -->
     <string name="toast_copy_link_to_clipboard">Kopirano u međuspremnik</string>
     <!-- An option from the three dot menu to into sync -->
-    <string name="sync_menu_sign_in">Prijavi se za sinkronizaciju</string>
+    <string moz:removedIn="107" name="sync_menu_sign_in" tools:ignore="UnusedResources">Prijavi se za sinkronizaciju</string>
     <!-- An option from the share dialog to sign into sync -->
     <string name="sync_sign_in">Prijavi se za sinkronizaciju</string>
+     <!-- An option from the three dot menu to sync and save data -->
+    <string name="sync_menu_sync_and_save_data">Sinkroniziraj i spremi podatke</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
     <string name="sync_send_to_all">Pošalji na sve uređaje</string>
     <!-- An option from the share dialog to reconnect to sync -->
@@ -1157,9 +1148,6 @@
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Zatvori</string>
 
-    <!-- Dialog message to the user asking to delete browsing data. -->
-    <string moz:removedIn="104" name="delete_browsing_data_prompt_message" tools:ignore="UnusedResources">Ovo će izbrisati sve tvoje podatke pregledavanja.</string>
-
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">Vremenski opseg za brisanje</string>
     <!-- Body text of a delete browsing data dialog. -->
@@ -1194,16 +1182,18 @@
     <!-- Onboarding -->
     <!-- Text for onboarding welcome message
     The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_header">Dobro došao, dobro došla u %s!</string>
+    <string moz:RemovedIn="106" name="onboarding_header" tools:ignore="UnusedResources">Dobro došao, dobro došla u %s!</string>
     <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
-    <string name="onboarding_account_sign_in_header_1">Sinkroniziraj Firefox između uređaja</string>
+    <string moz:removedIn="106" name="onboarding_account_sign_in_header_1" tools:ignore="UnusedResources">Sinkroniziraj Firefox između uređaja</string>
     <!-- text for the button to manually sign into Firefox account. -->
-    <string name="onboarding_firefox_account_sign_in_1">Registriraj se</string>
+    <string moz:removedIn="106" name="onboarding_firefox_account_sign_in_1" tools:ignore="UnusedResources">Registriraj se</string>
+    <!-- Text for the button to manually sign into Firefox account. -->
+    <string name="onboarding_firefox_account_sign_in">Prijavi se</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Sinkronizacija je uključena</string>
 
     <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header_3">Uvijek uključena privatnost</string>
+    <string moz:removedIn="106" name="onboarding_tracking_protection_header_3" tools:ignore="UnusedResources">Uvijek uključena privatnost</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Standardno (zadano)</string>
     <!-- text for standard blocking option button description -->
@@ -1215,13 +1205,13 @@
     <!-- text for the toolbar position card header  -->
     <string name="onboarding_toolbar_placement_header_1">Odaberi položaj alatne trake</string>
     <!-- text for the toolbar position card description -->
-    <string name="onboarding_toolbar_placement_description_1">Stavi alatnu traku na dohvat ruke. Zadrži ju na dnu ili premjesti na vrh.</string>
+    <string moz:removedIn="106" name="onboarding_toolbar_placement_description_1" tools:ignore="UnusedResources">Stavi alatnu traku na dohvat ruke. Zadrži ju na dnu ili premjesti na vrh.</string>
     <!-- text for the privacy notice onboarding card header -->
-    <string name="onboarding_privacy_notice_header">Tvoja privatnost</string>
+    <string moz:removedIn="106" name="onboarding_privacy_notice_header" tools:ignore="UnusedResources">Tvoja privatnost</string>
 
     <!-- text for the privacy notice onboarding card description
     The first parameter is the name of the app (e.g. Firefox Preview) Substitute %s for long browser name. -->
-    <string name="onboarding_privacy_notice_description2">%s smo stvorili za jednostavno upravljanje podacima koje dijeliš na mreži i koje dijeliš s nama.</string>
+    <string moz:removedIn="106" name="onboarding_privacy_notice_description2" tools:ignore="UnusedResources">%s smo stvorili za jednostavno upravljanje podacima koje dijeliš na mreži i koje dijeliš s nama.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Pročitaj naša pravila privatnosti</string>
 
@@ -1512,6 +1502,11 @@
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Izbornik sortiranja prijava</string>
 
+    <!-- Autofill -->
+    <!-- Preference and title for managing the autofill settings -->
+    <string name="preferences_autofill">Automatsko ispunjavanje</string>
+    <!-- Preference and title for managing the settings for addresses -->
+    <string name="preferences_addresses">Adrese</string>
     <!-- Preference and title for managing the settings for credit cards -->
     <string name="preferences_credit_cards">Kreditne kartice</string>
     <!-- Preference for saving and autofilling credit cards -->
@@ -1527,6 +1522,11 @@
 
     <!-- Preference option for managing saved credit cards -->
     <string name="preferences_credit_cards_manage_saved_cards">Upravljaj spremljenim karticama</string>
+
+    <!-- Preference option for adding an address -->
+    <string name="preferences_addresses_add_address">Dodaj adresu</string>
+    <!-- Preference option for managing saved addresses -->
+    <string name="preferences_addresses_manage_addresses">Upravljaj adresama</string>
 
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Dodaj karticu</string>
@@ -1546,6 +1546,8 @@
     <string name="credit_cards_menu_delete_card">Izbriši karticu</string>
     <!-- The text for the "Delete card" button for deleting a credit card -->
     <string name="credit_cards_delete_card_button">Izbriši karticu</string>
+    <!-- The text for the positive button on "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_button">Izbriši</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
     <string name="credit_cards_menu_save">Spremi</string>
     <!-- The text for the "Save" button for saving a credit card -->
@@ -1576,6 +1578,52 @@
 
     <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
     <string name="credit_cards_biometric_prompt_unlock_message">Otključ za korištenje spremljenih podataka o kreditnim karticama</string>
+
+    <!-- Title of the "Add address" screen -->
+    <string name="addresses_add_address">Dodaj adresu</string>
+    <!-- Title of the "Edit address" screen -->
+    <string name="addresses_edit_address">Uredi adresu</string>
+    <!-- Title of the "Manage addresses" screen -->
+    <string name="addresses_manage_addresses">Upravljaj adresama</string>
+    <!-- The header for the first name of an address -->
+    <string name="addresses_first_name">Ime</string>
+    <!-- The header for the middle name of an address -->
+    <string name="addresses_middle_name">Srednje ime</string>
+    <!-- The header for the last name of an address -->
+    <string name="addresses_last_name">Prezime</string>
+    <!-- The header for the street address of an address -->
+    <string name="addresses_street_address">Ulica</string>
+    <!-- The header for the city of an address -->
+    <string name="addresses_city">Grad</string>
+    <!-- The header for the subregion of an address when "state" should be used -->
+    <string name="addresses_state">Država</string>
+    <!-- The header for the subregion of an address when "province" should be used -->
+    <string name="addresses_province">Pokrajina</string>
+    <!-- The header for the zip code of an address -->
+    <string name="addresses_zip">Poštanski broj</string>
+    <!-- The header for the country or region of an address -->
+    <string name="addresses_country">Zemlja ili regija</string>
+    <!-- The header for the phone number of an address -->
+    <string name="addresses_phone">Telefon</string>
+
+    <!-- The header for the email of an address -->
+    <string name="addresses_email">E-mail adresa</string>
+    <!-- The text for the "Save" button for saving an address -->
+    <string name="addresses_save_button">Spremi</string>
+    <!-- The text for the "Cancel" button for cancelling adding, updating or deleting an address -->
+    <string name="addresses_cancel_button">Odustani</string>
+    <!-- The text for the "Delete address" button for deleting an address -->
+    <string name="addressess_delete_address_button">Izbriši adresu</string>
+    <!-- The title for the "Delete address" confirmation dialog -->
+    <string name="addressess_confirm_dialog_message">Stvano želiš izbrisati ovu adresu?</string>
+    <!-- The text for the positive button on "Delete address" dialog -->
+    <string name="addressess_confirm_dialog_ok_button">Izbriši</string>
+    <!-- The text for the negative button on "Delete address" dialog -->
+    <string name="addressess_confirm_dialog_cancel_button">Odustani</string>
+    <!-- The text for the "Save address" menu item for saving an address -->
+    <string name="address_menu_save_address">Spremi adresu</string>
+    <!-- The text for the "Delete address" menu item for deleting an address -->
+    <string name="address_menu_delete_address">Izbriši adresu</string>
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Dodaj tražilicu</string>
@@ -1646,6 +1694,10 @@
     <string name="no_site_exceptions">Bez izuzetih web-stranica</string>
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">Sigurno želiš izbrisati ovu zabilješku?</string>
+    <!-- Browser menu button that adds a shortcut to the home fragment -->
+    <string name="browser_menu_add_to_shortcuts">Dodaj u prečace</string>
+    <!-- Browser menu button that removes a shortcut from the home fragment -->
+    <string name="browser_menu_remove_from_shortcuts">Ukloni iz prečaca</string>
     <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
      the certificate authority that verified the ticket-->
     <string name="certificate_info_verified_by">Potvrđuje: %1$s</string>
@@ -1657,6 +1709,8 @@
     <string name="login_deletion_confirmation">Sigurno izbrisati ovu prijavu?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Izbriši</string>
+    <!-- Negative action of a dialog asking to delete login -->
+    <string name="dialog_delete_negative">Odustani</string>
     <!--  The saved login options menu description. -->
     <string name="login_options_menu">Opcije prijave</string>
     <!--  The editable text field for a login's web address. -->
@@ -1717,7 +1771,9 @@
     <string name="top_sites_toggle_top_recent_sites_4">Prečaci</string>
 	<!-- Title text displayed in the rename top site dialog. -->
 	<string name="top_sites_rename_dialog_title">Naziv</string>
-    <!-- Button caption to confirm the renaming of the top site. -->
+    <!-- Hint for renaming title of a shortcut -->
+    <string name="shortcut_name_hint">Ime prečaca</string>
+	<!-- Button caption to confirm the renaming of the top site. -->
 	<string name="top_sites_rename_dialog_ok">U redu</string>
 	<!-- Dialog button text for canceling the rename top site prompt. -->
 	<string name="top_sites_rename_dialog_cancel">Odustani</string>
@@ -1734,6 +1790,11 @@
     <string name="inactive_tabs_title">Neaktivne kartice</string>
     <!-- Content description for closing all inactive tabs -->
     <string name="inactive_tabs_delete_all">Zatvori sve neaktivne kartice</string>
+
+    <!-- Content description for expanding the inactive tabs section. -->
+    <string name="inactive_tabs_expand_content_description">Rasklopi neaktivne kartice</string>
+    <!-- Content description for collapsing the inactive tabs section. -->
+    <string name="inactive_tabs_collapse_content_description">Sklopi neaktivne kartice</string>
 
     <!-- Inactive tabs auto-close message in the tabs tray -->
     <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
@@ -1769,10 +1830,22 @@
     <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
     <string name="pocket_stories_placeholder_text">Otkrij više</string>
     <!-- Title of an app feature. Smaller than a heading.-->
-    <string name="pocket_stories_feature_title">Pokreće Pocket.</string>
+    <string moz:removedIn="108" name="pocket_stories_feature_title" tools:ignore="UnusedResources">Pokreće Pocket.</string>
     <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
     <string name="pocket_stories_feature_caption">Dio Firefoxove obitelji. %s</string>
     <!-- Clickable text for opening an external link for more information about Pocket. -->
     <string name="pocket_stories_feature_learn_more">Saznaj više</string>
 
+    <!-- Text indicating that the Pocket story that also displays this text is a sponsored story by other 3rd party entity. -->
+    <string name="pocket_stories_sponsor_indication">Sponzorirano</string>
+
+    <!-- Snackbar button text to navigate to telemetry settings.-->
+    <string name="experiments_snackbar_button">Idi u postavke</string>
+    <string name="firefox_suggest_header">Firefox prijedlozi</string>
+
+    <!-- Accessibility services actions labels. These will be appended to accessibility actions like "Double tap to.." but not by or applications but by services like Talkback. -->
+    <!-- Action label for elements that can be collapsed if interacting with them. Talkback will append this to say "Double tap to collapse". -->
+    <string name="a11y_action_label_collapse">sklopi</string>
+    <!-- Action label for elements that can be expanded if interacting with them. Talkback will append this to say "Double tap to expand". -->
+    <string name="a11y_action_label_expand">rasklopi</string>
     </resources>

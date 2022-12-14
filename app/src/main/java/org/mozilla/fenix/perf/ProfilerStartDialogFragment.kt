@@ -37,7 +37,6 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
 import mozilla.components.concept.base.profiler.Profiler
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
@@ -56,7 +55,7 @@ class ProfilerStartDialogFragment : AppCompatDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         viewScope = MainScope()
 
@@ -77,9 +76,10 @@ class ProfilerStartDialogFragment : AppCompatDialogFragment() {
         profilerViewModel.setProfilerState(requireContext().components.core.engine.profiler!!.isProfilerActive())
         super.dismiss()
     }
+
     @Composable
     private fun StartProfileDialog(
-        startProfiler: (Array<String>, Array<String>) -> Unit
+        startProfiler: (Array<String>, Array<String>) -> Unit,
     ) {
         val viewStateObserver = remember { mutableStateOf(CardState.ChooseSettings) }
 
@@ -90,7 +90,7 @@ class ProfilerStartDialogFragment : AppCompatDialogFragment() {
                 if (viewStateObserver.value != CardState.WaitForProfilerToStart) {
                     this@ProfilerStartDialogFragment.dismiss()
                 }
-            }
+            },
         ) {
             if (viewStateObserver.value == CardState.ChooseSettings) {
                 StartCard(viewStateObserver, startProfiler)
@@ -103,7 +103,7 @@ class ProfilerStartDialogFragment : AppCompatDialogFragment() {
     @Composable
     private fun StartCard(
         viewStateObserver: MutableState<CardState>,
-        startProfiler: (Array<String>, Array<String>) -> Unit
+        startProfiler: (Array<String>, Array<String>) -> Unit,
     ) {
         val featureAndThreadsObserver = remember {
             mutableStateOf(requireContext().resources.getString(R.string.profiler_filter_firefox))
@@ -114,47 +114,47 @@ class ProfilerStartDialogFragment : AppCompatDialogFragment() {
                     text = stringResource(R.string.preferences_start_profiler),
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 20.sp,
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(8.dp),
                 )
                 Text(
                     text = stringResource(R.string.profiler_settings_title),
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp,
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(8.dp),
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 ProfilerLabeledRadioButton(
                     text = stringResource(R.string.profiler_filter_firefox),
                     subText = stringResource(R.string.profiler_filter_firefox_explain),
-                    state = featureAndThreadsObserver
+                    state = featureAndThreadsObserver,
                 )
 
                 ProfilerLabeledRadioButton(
                     text = stringResource(R.string.profiler_filter_graphics),
                     subText = stringResource(R.string.profiler_filter_graphics_explain),
-                    state = featureAndThreadsObserver
+                    state = featureAndThreadsObserver,
                 )
 
                 ProfilerLabeledRadioButton(
                     text = stringResource(R.string.profiler_filter_media),
                     subText = stringResource(R.string.profiler_filter_media_explain),
-                    state = featureAndThreadsObserver
+                    state = featureAndThreadsObserver,
                 )
 
                 ProfilerLabeledRadioButton(
                     text = stringResource(R.string.profiler_filter_networking),
                     subText = stringResource(R.string.profiler_filter_networking_explain),
-                    state = featureAndThreadsObserver
+                    state = featureAndThreadsObserver,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     horizontalArrangement = Arrangement.End,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     TextButton(
                         onClick = {
                             this@ProfilerStartDialogFragment.dismiss()
-                        }
+                        },
                     ) {
                         Text(text = stringResource(R.string.profiler_start_cancel))
                     }
@@ -164,9 +164,9 @@ class ProfilerStartDialogFragment : AppCompatDialogFragment() {
                             viewStateObserver.value = CardState.WaitForProfilerToStart
                             executeStartProfilerOnClick(
                                 ProfilerSettings.valueOf(featureAndThreadsObserver.value),
-                                startProfiler
+                                startProfiler,
                             )
-                        }
+                        },
                     ) {
                         Text(text = stringResource(R.string.preferences_start_profiler))
                     }
@@ -200,6 +200,6 @@ class ProfilerStartDialogFragment : AppCompatDialogFragment() {
      */
     enum class CardState {
         ChooseSettings,
-        WaitForProfilerToStart
+        WaitForProfilerToStart,
     }
 }

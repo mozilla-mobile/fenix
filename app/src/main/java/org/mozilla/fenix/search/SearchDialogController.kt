@@ -32,6 +32,7 @@ import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.crashes.CrashListActivity
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.search.toolbar.SearchSelectorInteractor
 import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
@@ -54,7 +55,7 @@ interface SearchController {
     fun handleSearchEngineSuggestionClicked(searchEngine: SearchEngine)
 
     /**
-     * @see [ToolbarInteractor.onMenuItemTapped]
+     * @see [SearchSelectorInteractor.onMenuItemTapped]
      */
     fun handleMenuItemTapped(item: SearchSelectorMenu.Item)
 }
@@ -70,7 +71,7 @@ class SearchDialogController(
     private val dismissDialog: () -> Unit,
     private val clearToolbarFocus: () -> Unit,
     private val focusToolbar: () -> Unit,
-    private val clearToolbar: () -> Unit
+    private val clearToolbar: () -> Unit,
 ) : SearchController {
 
     override fun handleUrlCommitted(url: String, fromHomeScreen: Boolean) {
@@ -93,7 +94,7 @@ class SearchDialogController(
             }
             "moz://a" -> openSearchOrUrl(
                 SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.MANIFESTO),
-                fromHomeScreen
+                fromHomeScreen,
             )
             else ->
                 if (url.isNotBlank()) {
@@ -113,7 +114,7 @@ class SearchDialogController(
             newTab = fragmentStore.state.tabId == null,
             from = BrowserDirection.FromSearchDialog,
             engine = searchEngine,
-            requestDesktopMode = fromHomeScreen && activity.settings().openNextTabInDesktopMode
+            requestDesktopMode = fromHomeScreen && activity.settings().openNextTabInDesktopMode,
         )
 
         if (url.isUrl() || searchEngine == null) {
@@ -127,7 +128,7 @@ class SearchDialogController(
             MetricsUtils.recordSearchMetrics(
                 searchEngine,
                 searchEngine == store.state.search.selectedOrDefaultSearchEngine,
-                searchAccessPoint
+                searchAccessPoint,
             )
         }
     }
@@ -144,17 +145,18 @@ class SearchDialogController(
         fragmentStore.dispatch(SearchFragmentAction.UpdateQuery(text))
         fragmentStore.dispatch(
             SearchFragmentAction.ShowSearchShortcutEnginePicker(
-                (textMatchesCurrentUrl || textMatchesCurrentSearch || text.isEmpty()) &&
-                    settings.shouldShowSearchShortcuts
-            )
+                !settings.showUnifiedSearchFeature &&
+                    (textMatchesCurrentUrl || textMatchesCurrentSearch || text.isEmpty()) &&
+                    settings.shouldShowSearchShortcuts,
+            ),
         )
         fragmentStore.dispatch(
             SearchFragmentAction.AllowSearchSuggestionsInPrivateModePrompt(
                 text.isNotEmpty() &&
                     activity.browsingModeManager.mode.isPrivate &&
                     !settings.shouldShowSearchSuggestionsInPrivate &&
-                    !settings.showSearchSuggestionsInPrivateOnboardingFinished
-            )
+                    !settings.showSearchSuggestionsInPrivateOnboardingFinished,
+            ),
         )
     }
 
@@ -165,7 +167,7 @@ class SearchDialogController(
             searchTermOrURL = url,
             newTab = fragmentStore.state.tabId == null,
             from = BrowserDirection.FromSearchDialog,
-            flags = flags
+            flags = flags,
         )
 
         Events.enteredUrl.record(Events.EnteredUrlExtra(autocomplete = false))
@@ -181,7 +183,7 @@ class SearchDialogController(
             newTab = fragmentStore.state.tabId == null,
             from = BrowserDirection.FromSearchDialog,
             engine = searchEngine,
-            forceSearch = true
+            forceSearch = true,
         )
 
         val searchAccessPoint = when (fragmentStore.state.searchAccessPoint) {
@@ -193,7 +195,7 @@ class SearchDialogController(
             MetricsUtils.recordSearchMetrics(
                 searchEngine,
                 searchEngine == store.state.search.selectedOrDefaultSearchEngine,
-                searchAccessPoint
+                searchAccessPoint,
             )
         }
     }
@@ -205,8 +207,8 @@ class SearchDialogController(
             searchEngine.type == SearchEngine.Type.APPLICATION && searchEngine.id == Core.HISTORY_SEARCH_ENGINE_ID -> {
                 fragmentStore.dispatch(SearchFragmentAction.SearchHistoryEngineSelected(searchEngine))
             }
-            searchEngine.type == SearchEngine.Type.APPLICATION
-                && searchEngine.id == Core.BOOKMARKS_SEARCH_ENGINE_ID -> {
+            searchEngine.type == SearchEngine.Type.APPLICATION &&
+                searchEngine.id == Core.BOOKMARKS_SEARCH_ENGINE_ID -> {
                 fragmentStore.dispatch(SearchFragmentAction.SearchBookmarksEngineSelected(searchEngine))
             }
             searchEngine.type == SearchEngine.Type.APPLICATION && searchEngine.id == Core.TABS_SEARCH_ENGINE_ID -> {
@@ -256,7 +258,7 @@ class SearchDialogController(
         tabsUseCases.selectTab(tabId)
 
         activity.openToBrowser(
-            from = BrowserDirection.FromSearchDialog
+            from = BrowserDirection.FromSearchDialog,
         )
     }
 
@@ -290,14 +292,14 @@ class SearchDialogController(
     fun buildDialog(): AlertDialog.Builder {
         return AlertDialog.Builder(activity).apply {
             val spannableText = SpannableString(
-                activity.resources.getString(R.string.camera_permissions_needed_message)
+                activity.resources.getString(R.string.camera_permissions_needed_message),
             )
             setMessage(spannableText)
             setNegativeButton(R.string.camera_permissions_needed_negative_button_text) { _, _ ->
                 dismissDialog()
             }
             setPositiveButton(R.string.camera_permissions_needed_positive_button_text) {
-                dialog: DialogInterface, _ ->
+                    dialog: DialogInterface, _ ->
                 val intent: Intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 } else {
@@ -305,8 +307,8 @@ class SearchDialogController(
                         activity,
                         SupportUtils.getSumoURLForTopic(
                             activity,
-                            SupportUtils.SumoTopic.QR_CAMERA_ACCESS
-                        )
+                            SupportUtils.SumoTopic.QR_CAMERA_ACCESS,
+                        ),
                     )
                 }
                 val uri = Uri.fromParts("package", activity.packageName, null)

@@ -10,10 +10,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import mozilla.components.lib.crash.CrashReporter
+import mozilla.components.lib.crash.sentry.SentryService
 import mozilla.components.lib.crash.service.CrashReporterService
 import mozilla.components.lib.crash.service.GleanCrashReporterService
 import mozilla.components.lib.crash.service.MozillaSocorroService
-import mozilla.components.lib.crash.sentry.SentryService
 import mozilla.components.service.nimbus.NimbusApi
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
@@ -22,15 +22,17 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ReleaseChannel
 import org.mozilla.fenix.components.metrics.AdjustMetricsService
+import org.mozilla.fenix.components.metrics.DefaultMetricsStorage
 import org.mozilla.fenix.components.metrics.GleanMetricsService
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.experiments.createNimbus
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.gleanplumb.CustomAttributeProvider
-import org.mozilla.fenix.gleanplumb.OnDiskMessageMetadataStorage
 import org.mozilla.fenix.gleanplumb.NimbusMessagingStorage
+import org.mozilla.fenix.gleanplumb.OnDiskMessageMetadataStorage
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.perf.lazyMonitored
+import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_BUILDID
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_VENDOR
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_VERSION
@@ -40,7 +42,7 @@ import org.mozilla.geckoview.BuildConfig.MOZ_UPDATE_CHANNEL
  * Component group for all functionality related to analytics e.g. crash reporting and telemetry.
  */
 class Analytics(
-    private val context: Context
+    private val context: Context,
 ) {
     val crashReporter: CrashReporter by lazyMonitored {
         val services = mutableListOf<CrashReporterService>()
@@ -67,7 +69,7 @@ class Analytics(
                 environment = BuildConfig.BUILD_TYPE,
                 sendEventForNativeCrashes = false, // Do not send native crashes to Sentry
                 sendCaughtExceptions = shouldSendCaughtExceptions,
-                sentryProjectUrl = getSentryProjectUrl()
+                sentryProjectUrl = getSentryProjectUrl(),
             )
 
             services.add(sentryService)
@@ -76,9 +78,13 @@ class Analytics(
         // The name "Fenix" here matches the product name on Socorro and is unrelated to the actual app name:
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1523284
         val socorroService = MozillaSocorroService(
-            context, appName = "Fenix",
-            version = MOZ_APP_VERSION, buildId = MOZ_APP_BUILDID, vendor = MOZ_APP_VENDOR,
-            releaseChannel = MOZ_UPDATE_CHANNEL, distributionId = distributionId
+            context,
+            appName = "Fenix",
+            version = MOZ_APP_VERSION,
+            buildId = MOZ_APP_BUILDID,
+            vendor = MOZ_APP_VENDOR,
+            releaseChannel = MOZ_UPDATE_CHANNEL,
+            distributionId = distributionId,
         )
         services.add(socorroService)
 
@@ -94,7 +100,7 @@ class Analytics(
             context,
             0,
             intent,
-            crashReportingIntentFlags
+            crashReportingIntentFlags,
         )
 
         CrashReporter(
@@ -104,10 +110,10 @@ class Analytics(
             shouldPrompt = CrashReporter.Prompt.ALWAYS,
             promptConfiguration = CrashReporter.PromptConfiguration(
                 appName = context.getString(R.string.app_name),
-                organizationName = "Mozilla"
+                organizationName = "Mozilla",
             ),
             enabled = true,
-            nonFatalCrashIntent = pendingIntent
+            nonFatalCrashIntent = pendingIntent,
         )
     }
 
@@ -115,11 +121,19 @@ class Analytics(
         MetricController.create(
             listOf(
                 GleanMetricsService(context),
-                AdjustMetricsService(context as Application)
+                AdjustMetricsService(
+                    application = context as Application,
+                    storage = DefaultMetricsStorage(
+                        context = context,
+                        settings = context.settings(),
+                        checkDefaultBrowser = { BrowsersCache.all(context).isDefaultBrowser },
+                    ),
+                    crashReporter = crashReporter,
+                ),
             ),
             isDataTelemetryEnabled = { context.settings().isTelemetryEnabled },
             isMarketingDataTelemetryEnabled = { context.settings().isMarketingTelemetryEnabled },
-            context.settings()
+            context.settings(),
         )
     }
 

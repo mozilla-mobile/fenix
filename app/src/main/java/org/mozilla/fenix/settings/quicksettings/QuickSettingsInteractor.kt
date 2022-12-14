@@ -4,6 +4,8 @@
 
 package org.mozilla.fenix.settings.quicksettings
 
+import org.mozilla.fenix.settings.quicksettings.protections.ProtectionsInteractor
+
 /**
  * [QuickSettingsSheetDialogFragment] interactor.
  *
@@ -14,8 +16,8 @@ package org.mozilla.fenix.settings.quicksettings
  * it expected to contain all business logic for how to act in response.
  */
 class QuickSettingsInteractor(
-    private val controller: QuickSettingsController
-) : WebsitePermissionInteractor, TrackingProtectionInteractor, WebSiteInfoInteractor, ClearSiteDataViewInteractor {
+    private val controller: QuickSettingsController,
+) : WebsitePermissionInteractor, ProtectionsInteractor, WebSiteInfoInteractor, ClearSiteDataViewInteractor {
     override fun onPermissionsShown() {
         controller.handlePermissionsShown()
     }
@@ -32,8 +34,12 @@ class QuickSettingsInteractor(
         controller.handleTrackingProtectionToggled(isEnabled)
     }
 
-    override fun onDetailsClicked() {
-        controller.handleDetailsClicked()
+    override fun onCookieBannerHandlingDetailsClicked() {
+        controller.handleCookieBannerHandlingDetailsClicked()
+    }
+
+    override fun onTrackingProtectionDetailsClicked() {
+        controller.handleTrackingProtectionDetailsClicked()
     }
 
     override fun onConnectionDetailsClicked() {

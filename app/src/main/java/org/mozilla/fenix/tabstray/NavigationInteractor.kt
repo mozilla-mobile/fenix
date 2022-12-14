@@ -12,7 +12,6 @@ import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.browser.storage.sync.Tab as SyncTab
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.service.fxa.manager.FxaAccountManager
 import mozilla.components.service.glean.private.NoExtras
@@ -29,6 +28,7 @@ import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.tabstray.ext.getTabSessionState
 import org.mozilla.fenix.tabstray.ext.isActiveDownload
 import kotlin.coroutines.CoroutineContext
+import mozilla.components.browser.storage.sync.Tab as SyncTab
 
 /**
  * An interactor that helps with navigating to different parts of the app from the tabs tray.
@@ -113,7 +113,7 @@ class DefaultNavigationInteractor(
     private val showBookmarkSnackbar: (tabSize: Int) -> Unit,
     private val showCancelledDownloadWarning: (downloadCount: Int, tabId: String?, source: String?) -> Unit,
     private val accountManager: FxaAccountManager,
-    private val ioDispatcher: CoroutineContext
+    private val ioDispatcher: CoroutineContext,
 ) : NavigationInteractor {
 
     override fun onTabTrayDismissed() {
@@ -134,13 +134,13 @@ class DefaultNavigationInteractor(
 
     override fun onTabSettingsClicked() {
         navController.navigate(
-            TabsTrayFragmentDirections.actionGlobalTabSettingsFragment()
+            TabsTrayFragmentDirections.actionGlobalTabSettingsFragment(),
         )
     }
 
     override fun onOpenRecentlyClosedClicked() {
         navController.navigate(
-            TabsTrayFragmentDirections.actionGlobalRecentlyClosed()
+            TabsTrayFragmentDirections.actionGlobalRecentlyClosed(),
         )
         Events.recentlyClosedTabsOpened.record(NoExtras())
     }
@@ -152,7 +152,7 @@ class DefaultNavigationInteractor(
             ShareData(url = it.content.url, title = it.content.title)
         }
         val directions = TabsTrayFragmentDirections.actionGlobalShareFragment(
-            data = data.toTypedArray()
+            data = data.toTypedArray(),
         )
         navController.navigate(directions)
     }
@@ -163,7 +163,7 @@ class DefaultNavigationInteractor(
             ShareData(url = it.content.url, title = it.content.title)
         }
         val directions = TabsTrayFragmentDirections.actionGlobalShareFragment(
-            data = data.toTypedArray()
+            data = data.toTypedArray(),
         )
         navController.navigate(directions)
     }
@@ -211,22 +211,22 @@ class DefaultNavigationInteractor(
                     Collections.saved.record(
                         Collections.SavedExtra(
                             browserStore.state.normalTabs.size.toString(),
-                            tabs.size.toString()
-                        )
+                            tabs.size.toString(),
+                        ),
                     )
                 } else {
                     Collections.tabsAdded.record(
                         Collections.TabsAddedExtra(
                             browserStore.state.normalTabs.size.toString(),
-                            tabs.size.toString()
-                        )
+                            tabs.size.toString(),
+                        ),
                     )
                 }
                 id?.apply {
                     showCollectionSnackbar(tabs.size, isNewCollection)
                 }
             },
-            onNegativeButtonClick = {}
+            onNegativeButtonClick = {},
         ).show(context)
     }
 
@@ -252,7 +252,7 @@ class DefaultNavigationInteractor(
         activity.openToBrowserAndLoad(
             searchTermOrURL = tab.active().url,
             newTab = true,
-            from = BrowserDirection.FromTabsTray
+            from = BrowserDirection.FromTabsTray,
         )
     }
 }

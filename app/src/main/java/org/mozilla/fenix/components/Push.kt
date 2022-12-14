@@ -7,8 +7,8 @@ package org.mozilla.fenix.components
 import android.content.Context
 import androidx.core.net.toUri
 import mozilla.components.feature.push.AutoPushFeature
-import mozilla.components.feature.push.PushConfig
 import mozilla.components.feature.push.Protocol
+import mozilla.components.feature.push.PushConfig
 import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.R
@@ -27,7 +27,7 @@ class Push(val context: Context, crashReporter: CrashReporter) {
                 context = context,
                 service = pushService,
                 config = config,
-                crashReporter = crashReporter
+                crashReporter = crashReporter,
             )
         }
     }
@@ -56,7 +56,7 @@ class Push(val context: Context, crashReporter: CrashReporter) {
                 } else {
                     // Treat any non "http" value as HTTPS, since those are the only 2 options.
                     Protocol.HTTPS
-                }
+                },
             )
         }
     }

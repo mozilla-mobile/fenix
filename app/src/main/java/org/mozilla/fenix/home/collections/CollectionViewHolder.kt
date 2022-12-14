@@ -67,7 +67,6 @@ class CollectionViewHolder(
                     menuItems = menuItems,
                     onToggleCollectionExpanded = interactor::onToggleCollectionExpanded,
                     onCollectionShareTabsClicked = interactor::onCollectionShareTabsClicked,
-                    onCollectionMenuOpened = interactor::onCollectionMenuOpened,
                 )
             }
         }
@@ -82,7 +81,7 @@ class CollectionViewHolder(
     fun bindSession(collection: TabCollection, expanded: Boolean) {
         collectionData = CollectionInfo(
             collection = collection,
-            isExpanded = expanded
+            isExpanded = expanded,
         )
     }
 

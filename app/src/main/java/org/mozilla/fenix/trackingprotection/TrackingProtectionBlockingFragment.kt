@@ -20,6 +20,7 @@ class TrackingProtectionBlockingFragment :
 
     private val args: TrackingProtectionBlockingFragmentArgs by navArgs()
     private val settings by lazy { requireContext().settings() }
+
     @VisibleForTesting
     internal lateinit var binding: FragmentTrackingProtectionBlockingBinding
 
@@ -29,7 +30,7 @@ class TrackingProtectionBlockingFragment :
         binding = FragmentTrackingProtectionBlockingBinding.bind(view)
 
         // Text for the updated "Total cookie protection" option should be updated as part of a staged rollout
-        if (requireContext().settings().enabledTotalCookieProtectionSetting) {
+        if (requireContext().settings().enabledTotalCookieProtection) {
             binding.categoryCookies.apply {
                 trackingProtectionCategoryTitle.text = getText(R.string.etp_cookies_title_2)
                 trackingProtectionCategoryItemDescription.text = getText(R.string.etp_cookies_description_2)

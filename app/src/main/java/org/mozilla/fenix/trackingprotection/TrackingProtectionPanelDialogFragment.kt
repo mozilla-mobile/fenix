@@ -23,9 +23,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.store.BrowserStore
@@ -55,17 +56,17 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
     private fun inflateRootView(container: ViewGroup? = null): View {
         val contextThemeWrapper = ContextThemeWrapper(
             activity,
-            (activity as HomeActivity).themeManager.currentThemeResource
+            (activity as HomeActivity).themeManager.currentThemeResource,
         )
         return LayoutInflater.from(contextThemeWrapper).inflate(
             R.layout.fragment_tracking_protection,
             container,
-            false
+            false,
         )
     }
 
     @VisibleForTesting
-    internal lateinit var trackingProtectionStore: TrackingProtectionStore
+    internal lateinit var protectionsStore: ProtectionsStore
     private lateinit var trackingProtectionView: TrackingProtectionPanelView
     private lateinit var trackingProtectionInteractor: TrackingProtectionPanelInteractor
     private lateinit var trackingProtectionUseCases: TrackingProtectionUseCases
@@ -78,34 +79,37 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         val store = requireComponents.core.store
         val view = inflateRootView(container)
         val tab = store.state.findTabOrCustomTab(provideCurrentTabId())
 
-        trackingProtectionStore = StoreProvider.get(this) {
-            TrackingProtectionStore(
-                TrackingProtectionState(
+        protectionsStore = StoreProvider.get(this) {
+            ProtectionsStore(
+                ProtectionsState(
                     tab = tab,
                     url = args.url,
                     isTrackingProtectionEnabled = args.trackingProtectionEnabled,
+                    isCookieBannerHandlingEnabled = args.cookieBannerHandlingEnabled,
                     listTrackers = listOf(),
-                    mode = TrackingProtectionState.Mode.Normal,
-                    lastAccessedCategory = ""
-                )
+                    mode = ProtectionsState.Mode.Normal,
+                    lastAccessedCategory = "",
+                ),
             )
         }
         trackingProtectionInteractor = TrackingProtectionPanelInteractor(
             context = requireContext(),
             fragment = this,
-            store = trackingProtectionStore,
+            store = protectionsStore,
+            ioScope = viewLifecycleOwner.lifecycleScope + Dispatchers.IO,
+            cookieBannersStorage = requireComponents.core.cookieBannersStorage,
             navController = { findNavController() },
             openTrackingProtectionSettings = ::openTrackingProtectionSettings,
             openLearnMoreLink = ::handleLearnMoreClicked,
             sitePermissions = args.sitePermissions,
             gravity = args.gravity,
-            getCurrentTab = ::getCurrentTab
+            getCurrentTab = ::getCurrentTab,
         )
         val binding = FragmentTrackingProtectionBinding.bind(view)
         trackingProtectionView =
@@ -119,11 +123,11 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
         trackingProtectionUseCases.fetchTrackingLogs(
             tab.id,
             onSuccess = {
-                trackingProtectionStore.dispatch(TrackingProtectionAction.TrackerLogChange(it))
+                protectionsStore.dispatch(ProtectionsAction.TrackerLogChange(it))
             },
             onError = {
                 Logger.error("TrackingProtectionUseCases - fetchTrackingLogs onError", it)
-            }
+            },
         )
     }
 
@@ -133,7 +137,7 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
 
         observeUrlChange(store)
         observeTrackersChange(store)
-        trackingProtectionStore.observe(view) {
+        protectionsStore.observe(view) {
             viewLifecycleOwner.lifecycleScope.launch {
                 whenStarted {
                     trackingProtectionView.update(it)
@@ -146,23 +150,24 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
         TrackingProtection.panelSettings.record(NoExtras())
         nav(
             R.id.trackingProtectionPanelDialogFragment,
-            TrackingProtectionPanelDialogFragmentDirections.actionGlobalTrackingProtectionFragment()
+            TrackingProtectionPanelDialogFragmentDirections.actionGlobalTrackingProtectionFragment(),
         )
     }
 
     private fun handleLearnMoreClicked() {
         (activity as HomeActivity).openToBrowserAndLoad(
             searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
-                SupportUtils.SumoTopic.SMARTBLOCK
+                SupportUtils.SumoTopic.SMARTBLOCK,
             ),
             newTab = true,
-            from = BrowserDirection.FromTrackingProtectionDialog
+            from = BrowserDirection.FromTrackingProtectionDialog,
         )
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return if (args.gravity == Gravity.BOTTOM) {
             object : BottomSheetDialog(requireContext(), this.theme) {
+                @Deprecated("Deprecated in Java")
                 override fun onBackPressed() {
                     this@TrackingProtectionPanelDialogFragment.onBackPressed()
                 }
@@ -176,6 +181,7 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
             }
         } else {
             object : Dialog(requireContext()) {
+                @Deprecated("Deprecated in Java")
                 override fun onBackPressed() {
                     this@TrackingProtectionPanelDialogFragment.onBackPressed()
                 }
@@ -188,8 +194,8 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
             rootView,
             LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT
-            )
+                LinearLayout.LayoutParams.MATCH_PARENT,
+            ),
         )
 
         window?.apply {
@@ -215,7 +221,7 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
                 state.findTabOrCustomTab(provideCurrentTabId())
             }.ifChanged { tab -> tab.content.url }
                 .collect {
-                    trackingProtectionStore.dispatch(TrackingProtectionAction.UrlChange(it.content.url))
+                    protectionsStore.dispatch(ProtectionsAction.UrlChange(it.content.url))
                 }
         }
     }
@@ -231,7 +237,7 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
             }.ifAnyChanged { tab ->
                 arrayOf(
                     tab.trackingProtection.blockedTrackers,
-                    tab.trackingProtection.loadedTrackers
+                    tab.trackingProtection.loadedTrackers,
                 )
             }.collect {
                 updateTrackers(it)

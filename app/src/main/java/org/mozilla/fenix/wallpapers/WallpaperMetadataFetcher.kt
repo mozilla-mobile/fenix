@@ -11,6 +11,7 @@ import mozilla.components.concept.fetch.Request
 import org.json.JSONArray
 import org.json.JSONObject
 import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.utils.toHexColor
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -21,7 +22,7 @@ import java.util.Locale
  * @property client The client that will be used to fetch metadata.
  */
 class WallpaperMetadataFetcher(
-    private val client: Client
+    private val client: Client,
 ) {
     private val metadataUrl = BuildConfig.WALLPAPER_URL.substringBefore("android") +
         "metadata/v$currentJsonVersion/wallpapers.json"
@@ -40,11 +41,12 @@ class WallpaperMetadataFetcher(
         }.getOrElse { listOf() }
     }
 
-    private fun JSONObject.parseAsWallpapers(): List<Wallpaper> = with(getJSONArray("collections")) {
-        (0 until length()).map { index ->
-            getJSONObject(index).toCollectionOfWallpapers()
-        }.flatten()
-    }
+    private fun JSONObject.parseAsWallpapers(): List<Wallpaper> =
+        with(getJSONArray("collections")) {
+            (0 until length()).map { index ->
+                getJSONObject(index).toCollectionOfWallpapers()
+            }.flatten()
+        }
 
     private fun JSONObject.toCollectionOfWallpapers(): List<Wallpaper> {
         val collectionId = getString("id")
@@ -81,7 +83,8 @@ class WallpaperMetadataFetcher(
                 Wallpaper(
                     name = getString("id"),
                     textColor = getArgbValueAsLong("text-color"),
-                    cardColor = getArgbValueAsLong("card-color"),
+                    cardColorLight = getArgbValueAsLong("card-color-light"),
+                    cardColorDark = getArgbValueAsLong("card-color-dark"),
                     collection = collection,
                     thumbnailFileState = Wallpaper.ImageFileState.Unavailable,
                     assetsFileState = Wallpaper.ImageFileState.Unavailable,
@@ -104,7 +107,7 @@ class WallpaperMetadataFetcher(
      * listed in the metadata.
      */
     private fun JSONObject.getArgbValueAsLong(propName: String): Long = "FF${getString(propName)}"
-        .toLong(radix = 16)
+        .toHexColor()
 
     companion object {
         internal const val currentJsonVersion = 1

@@ -110,7 +110,7 @@ internal fun normalModeAdapterItems(
 private fun showCollections(
     collections: List<TabCollection>,
     expandedCollections: Set<Long>,
-    items: MutableList<AdapterItem>
+    items: MutableList<AdapterItem>,
 ) {
     // If the collection is expanded, we want to add all of its tabs beneath it in the adapter
     items.add(AdapterItem.CollectionHeader)
@@ -133,18 +133,18 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
         listOf(
             AdapterItem.OnboardingThemePicker,
             AdapterItem.OnboardingToolbarPositionPicker,
-        )
+        ),
     )
     // Customize FxA items based on where we are with the account state:
     items.addAll(
         when (onboardingState) {
             OnboardingState.SignedOutNoAutoSignIn -> {
                 listOf(
-                    AdapterItem.OnboardingManualSignIn
+                    AdapterItem.OnboardingManualSignIn,
                 )
             }
             OnboardingState.SignedIn -> listOf()
-        }
+        },
     )
 
     items.addAll(
@@ -152,8 +152,8 @@ private fun onboardingAdapterItems(onboardingState: OnboardingState): List<Adapt
             AdapterItem.OnboardingTrackingProtection,
             AdapterItem.OnboardingPrivacyNotice,
             AdapterItem.OnboardingFinish,
-            AdapterItem.BottomSpacer
-        )
+            AdapterItem.BottomSpacer,
+        ),
     )
 
     return items
@@ -172,7 +172,7 @@ private fun AppState.toAdapterList(settings: Settings): List<AdapterItem> = when
         shouldShowRecentSyncedTabs(settings),
         recentHistory,
         pocketStories,
-        firstFrameDrawn
+        firstFrameDrawn,
     )
     is Mode.Private -> privateModeAdapterItems()
     is Mode.Onboarding -> onboardingAdapterItems(mode.state)
@@ -199,28 +199,43 @@ class SessionControlView(
 
     val view: RecyclerView = containerView as RecyclerView
 
+    // We want to limit feature recommendations to one per HomePage visit.
+    var featureRecommended = false
+
     private val sessionControlAdapter = SessionControlAdapter(
         interactor,
         viewLifecycleOwner,
-        containerView.context.components
+        containerView.context.components,
     )
 
     init {
+        @Suppress("NestedBlockDepth")
         view.apply {
             adapter = sessionControlAdapter
             layoutManager = object : LinearLayoutManager(containerView.context) {
                 override fun onLayoutCompleted(state: RecyclerView.State?) {
                     super.onLayoutCompleted(state)
 
-                    if (!context.settings().showHomeOnboardingDialog && (
-                        context.settings().showSyncCFR ||
-                            context.settings().shouldShowJumpBackInCFR
-                        )
-                    ) {
-                        HomeCFRPresenter(
-                            context = context,
-                            recyclerView = view,
-                        ).show()
+                    if (!featureRecommended && !context.settings().showHomeOnboardingDialog) {
+                        if (!context.settings().showHomeOnboardingDialog && (
+                            context.settings().showSyncCFR ||
+                                context.settings().shouldShowJumpBackInCFR
+                            )
+                        ) {
+                            featureRecommended = HomeCFRPresenter(
+                                context = context,
+                                recyclerView = view,
+                            ).show()
+                        }
+
+                        if (!context.settings().shouldShowJumpBackInCFR &&
+                            context.settings().showWallpaperOnboarding &&
+                            !featureRecommended
+                        ) {
+                            featureRecommended = interactor.showWallpapersOnboardingDialog(
+                                context.components.appStore.state.wallpaperState,
+                            )
+                        }
                     }
 
                     // We want some parts of the home screen UI to be rendered first if they are
@@ -229,7 +244,7 @@ class SessionControlView(
                     // layout and post an update for when it's best for non-visible parts of the
                     // home screen to render itself.
                     containerView.context.components.appStore.dispatch(
-                        AppAction.UpdateFirstFrameDrawn(true)
+                        AppAction.UpdateFirstFrameDrawn(true),
                     )
                 }
             }

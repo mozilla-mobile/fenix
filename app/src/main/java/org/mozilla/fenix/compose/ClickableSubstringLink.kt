@@ -13,16 +13,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.theme.Theme
 
 /**
  * [Text] containing a substring styled as an URL informing when this is clicked.
  *
  * @param text Full text that will be displayed
  * @param textColor [Color] of the normal text. The URL substring will have a default URL style applied.
+ * @param linkTextColor [Color] of the link text.
+ * @param linkTextDecoration The decorations to paint on the link text (e.g., an underline).
  * @param clickableStartIndex [text] index at which the URL substring starts.
  * @param clickableEndIndex [text] index at which the URL substring ends.
  * @param onClick Callback to be invoked only when the URL substring is clicked.
@@ -30,10 +32,12 @@ import org.mozilla.fenix.theme.Theme
 @Composable
 fun ClickableSubstringLink(
     text: String,
-    textColor: Color,
+    textColor: Color = FirefoxTheme.colors.textPrimary,
+    linkTextColor: Color = FirefoxTheme.colors.textAccent,
+    linkTextDecoration: TextDecoration? = null,
     clickableStartIndex: Int,
     clickableEndIndex: Int,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val annotatedText = buildAnnotatedString {
         append(text)
@@ -41,32 +45,35 @@ fun ClickableSubstringLink(
         addStyle(
             SpanStyle(textColor),
             start = 0,
-            end = clickableStartIndex
+            end = clickableStartIndex,
         )
 
         addStyle(
-            SpanStyle(color = FirefoxTheme.colors.textAccent),
+            SpanStyle(
+                color = linkTextColor,
+                textDecoration = linkTextDecoration,
+            ),
             start = clickableStartIndex,
-            end = clickableEndIndex
+            end = clickableEndIndex,
         )
 
         addStyle(
             SpanStyle(textColor),
             start = clickableEndIndex,
-            end = text.length
+            end = text.length,
         )
 
         addStyle(
             SpanStyle(fontSize = 12.sp),
             start = 0,
-            end = clickableEndIndex
+            end = clickableEndIndex,
         )
 
         addStringAnnotation(
             tag = "link",
             annotation = "",
             start = clickableStartIndex,
-            end = clickableEndIndex
+            end = clickableEndIndex,
         )
     }
 
@@ -78,7 +85,7 @@ fun ClickableSubstringLink(
                 .firstOrNull()?.let {
                     onClick()
                 }
-        }
+        },
     )
 }
 
@@ -87,13 +94,13 @@ fun ClickableSubstringLink(
 private fun ClickableSubstringTextPreview() {
     val text = "This text contains a link"
 
-    FirefoxTheme(theme = Theme.getTheme()) {
+    FirefoxTheme {
         Box(modifier = Modifier.background(color = FirefoxTheme.colors.layer1)) {
             ClickableSubstringLink(
                 text = text,
-                textColor = FirefoxTheme.colors.textPrimary,
+                linkTextDecoration = TextDecoration.Underline,
                 clickableStartIndex = text.indexOf("link"),
-                clickableEndIndex = text.length
+                clickableEndIndex = text.length,
             ) { }
         }
     }

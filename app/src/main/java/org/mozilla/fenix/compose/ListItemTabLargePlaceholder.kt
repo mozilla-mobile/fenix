@@ -22,7 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.theme.Theme
 
 /**
  * Placeholder of a [ListItemTabLarge] with the same dimensions but only a centered text.
@@ -43,7 +42,7 @@ import org.mozilla.fenix.theme.Theme
 @Composable
 fun ListItemTabLargePlaceholder(
     text: String,
-    onClick: () -> Unit = { }
+    onClick: () -> Unit = { },
 ) {
     Card(
         modifier = Modifier
@@ -57,7 +56,7 @@ fun ListItemTabLargePlaceholder(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 text = text,
@@ -74,7 +73,7 @@ fun ListItemTabLargePlaceholder(
 @Composable
 @Preview
 private fun ListItemTabLargePlaceholderPreview() {
-    FirefoxTheme(theme = Theme.getTheme()) {
+    FirefoxTheme {
         ListItemTabLargePlaceholder(text = "Item placeholder")
     }
 }

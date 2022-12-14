@@ -6,6 +6,7 @@ package org.mozilla.fenix.components.metrics
 
 import android.content.Context
 import android.content.pm.PackageManager
+import mozilla.components.support.utils.ext.getPackageInfoCompat
 import org.mozilla.fenix.utils.BrowsersCache
 
 object MozillaProductDetector {
@@ -24,7 +25,7 @@ object MozillaProductDetector {
         KLAR("org.mozilla.klar"),
 
         // Other products
-        LOCKWISE("mozilla.lockbox")
+        LOCKWISE("mozilla.lockbox"),
     }
 
     fun getInstalledMozillaProducts(context: Context): List<String> {
@@ -45,7 +46,7 @@ object MozillaProductDetector {
 
     fun packageIsInstalled(context: Context, packageName: String): Boolean {
         try {
-            context.packageManager.getPackageInfo(packageName, 0)
+            context.packageManager.getPackageInfoCompat(packageName, 0)
         } catch (e: PackageManager.NameNotFoundException) {
             return false
         }

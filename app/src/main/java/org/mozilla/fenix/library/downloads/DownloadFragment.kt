@@ -14,11 +14,13 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
-import mozilla.components.browser.state.state.BrowserState
 import kotlinx.coroutines.launch
+import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.content.DownloadState
 import mozilla.components.feature.downloads.AbstractFetchDownloadService
 import mozilla.components.lib.state.ext.consumeFrom
@@ -30,15 +32,15 @@ import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentDownloadsBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.filterNotExistsOnDisk
+import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.ext.showToolbar
-import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
-class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHandler {
+class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHandler, MenuProvider {
     private lateinit var downloadStore: DownloadFragmentStore
     private lateinit var downloadView: DownloadView
     private lateinit var downloadInteractor: DownloadInteractor
@@ -49,7 +51,7 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentDownloadsBinding.inflate(inflater, container, false)
 
@@ -61,18 +63,18 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
                     items = items,
                     mode = DownloadFragmentState.Mode.Normal,
                     pendingDeletionIds = emptySet(),
-                    isDeletingItems = false
-                )
+                    isDeletingItems = false,
+                ),
             )
         }
         val downloadController: DownloadController = DefaultDownloadController(
             downloadStore,
             ::openItem,
             ::invalidateOptionsMenu,
-            ::deleteDownloadItems
+            ::deleteDownloadItems,
         )
         downloadInteractor = DownloadInteractor(
-            downloadController
+            downloadController,
         )
         downloadView = DownloadView(binding.downloadsLayout, downloadInteractor)
 
@@ -101,7 +103,7 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
                     filePath = it.filePath,
                     size = it.contentLength?.toString() ?: "0",
                     contentType = it.contentType,
-                    status = it.status
+                    status = it.status,
                 )
             }.filter {
                 it.status == DownloadState.Status.COMPLETED
@@ -116,7 +118,6 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
     }
 
     /**
@@ -133,12 +134,14 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
             onCancel = {
                 undoPendingDeletion(items)
             },
-            operation = getDeleteDownloadItemsOperation(items)
+            operation = getDeleteDownloadItemsOperation(items),
         )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         consumeFrom(downloadStore) {
             downloadView.update(it)
@@ -150,7 +153,7 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
         showToolbar(getString(R.string.library_downloads))
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         val menuRes = when (downloadStore.state.mode) {
             is DownloadFragmentState.Mode.Normal -> R.menu.library_menu
             is DownloadFragmentState.Mode.Editing -> R.menu.download_select_multi
@@ -163,7 +166,7 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
             }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+    override fun onMenuItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.close_history -> {
             close()
             true
@@ -181,7 +184,8 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
             }
             true
         }
-        else -> super.onOptionsItemSelected(item)
+        // other options are not handled by this menu provider
+        else -> false
     }
 
     /**
@@ -193,9 +197,9 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
         } else {
             String.format(
                 requireContext().getString(
-                    R.string.download_delete_single_item_snackbar
+                    R.string.download_delete_single_item_snackbar,
                 ),
-                downloadItems.first().fileName
+                downloadItems.first().fileName,
             )
         }
     }
@@ -205,7 +209,6 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
     }
 
     private fun openItem(item: DownloadItem, mode: BrowsingMode? = null) {
-
         mode?.let { (activity as HomeActivity).browsingModeManager.mode = it }
         context?.let {
             val contentLength = if (item.size.isNotEmpty()) {
@@ -221,14 +224,14 @@ class DownloadFragment : LibraryPageFragment<DownloadItem>(), UserInteractionHan
                     fileName = item.fileName,
                     contentType = item.contentType,
                     status = item.status,
-                    contentLength = contentLength
-                )
+                    contentLength = contentLength,
+                ),
             )
         }
     }
 
     private fun getDeleteDownloadItemsOperation(
-        items: Set<DownloadItem>
+        items: Set<DownloadItem>,
     ): (suspend (context: Context) -> Unit) {
         return { context ->
             CoroutineScope(IO).launch {

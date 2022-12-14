@@ -18,9 +18,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.Onboarding
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.OnboardingToolbarPositionPickerBinding
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
@@ -76,7 +76,7 @@ class OnboardingToolbarPositionPickerViewHolderTest {
         assertEquals(
             OnboardingToolbarPositionPickerViewHolder.Companion.Position.TOP.name,
             Onboarding.prefToggledToolbarPosition.testGetValue()!!
-                .last().extra?.get("position")
+                .last().extra?.get("position"),
         )
     }
 
@@ -91,7 +91,7 @@ class OnboardingToolbarPositionPickerViewHolderTest {
         assertEquals(
             OnboardingToolbarPositionPickerViewHolder.Companion.Position.BOTTOM.name,
             Onboarding.prefToggledToolbarPosition.testGetValue()!!
-                .last().extra?.get("position")
+                .last().extra?.get("position"),
         )
     }
 }

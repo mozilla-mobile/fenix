@@ -16,8 +16,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.getSystemService
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
@@ -37,8 +39,8 @@ import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.base.feature.UserInteractionHandler
+import mozilla.components.support.ktx.kotlin.toShortUrl
 import mozilla.telemetry.glean.private.NoExtras
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.BookmarksManagement
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavHostActivity
@@ -53,7 +55,6 @@ import org.mozilla.fenix.ext.minus
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
-import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.utils.allowUndo
 
@@ -61,7 +62,7 @@ import org.mozilla.fenix.utils.allowUndo
  * The screen that displays the user's bookmark list in their Library.
  */
 @Suppress("TooManyFunctions", "LargeClass")
-class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHandler {
+class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHandler, MenuProvider {
 
     private lateinit var bookmarkStore: BookmarkFragmentStore
     private lateinit var bookmarkView: BookmarkView
@@ -82,7 +83,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentBookmarkBinding.inflate(inflater, container, false)
 
@@ -104,8 +105,9 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 deleteBookmarkNodes = ::deleteMulti,
                 deleteBookmarkFolder = ::showRemoveFolderDialog,
                 showTabTray = ::showTabTray,
+                warnLargeOpenAll = ::warnLargeOpenAll,
                 settings = requireComponents.settings,
-            )
+            ),
         )
 
         bookmarkView = BookmarkView(binding.bookmarkLayout, bookmarkInteractor, findNavController())
@@ -115,8 +117,8 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             BookmarkDeselectNavigationListener(
                 findNavController(),
                 sharedViewModel,
-                bookmarkInteractor
-            )
+                bookmarkInteractor,
+            ),
         )
 
         return binding.root
@@ -127,13 +129,16 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             FenixSnackbar.make(
                 view = it,
                 duration = FenixSnackbar.LENGTH_LONG,
-                isDisplayedWithBrowserToolbar = false
+                isDisplayedWithBrowserToolbar = false,
             ).setText(text).show()
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         val accountManager = requireComponents.backgroundServices.accountManager
         consumeFrom(bookmarkStore) {
             bookmarkView.update(it)
@@ -145,11 +150,6 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             bookmarkView.binding.bookmarkFoldersSignIn.isVisible =
                 it.tree?.guid == BookmarkRoot.Root.id && accountManager.authenticatedAccount() == null
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
     }
 
     override fun onResume() {
@@ -176,15 +176,11 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         when (val mode = bookmarkStore.state.mode) {
             is BookmarkFragmentState.Mode.Normal -> {
                 if (mode.showMenu) {
                     inflater.inflate(R.menu.bookmarks_menu, menu)
-                }
-
-                if (!FeatureFlags.historyImprovementFeatures) {
-                    menu.findItem(R.id.bookmark_search)?.isVisible = false
                 }
             }
             is BookmarkFragmentState.Mode.Selecting -> {
@@ -205,7 +201,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onMenuItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.bookmark_search -> {
                 bookmarkInteractor.onSearch()
@@ -218,7 +214,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             R.id.add_bookmark_folder -> {
                 navigateToBookmarkFragment(
                     BookmarkFragmentDirections
-                        .actionBookmarkFragmentToBookmarkAddFolderFragment()
+                        .actionBookmarkFragmentToBookmarkAddFolderFragment(),
                 )
                 true
             }
@@ -242,8 +238,8 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 }
                 navigateToBookmarkFragment(
                     BookmarkFragmentDirections.actionGlobalShareFragment(
-                        data = shareTabs.toTypedArray()
-                    )
+                        data = shareTabs.toTypedArray(),
+                    ),
                 )
                 true
             }
@@ -251,7 +247,8 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 deleteMulti(bookmarkStore.state.mode.selectedItems)
                 true
             }
-            else -> super.onOptionsItemSelected(item)
+            // other options are not handled by this menu provider
+            else -> false
         }
     }
 
@@ -262,7 +259,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
     private fun navigateToBookmarkFragment(directions: NavDirections) {
         findNavController().nav(
             R.id.bookmarkFragment,
-            directions
+            directions,
         )
     }
 
@@ -271,11 +268,11 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
         return bookmarkView.onBackPressed()
     }
 
-    private suspend fun loadBookmarkNode(guid: String): BookmarkNode? = withContext(IO) {
+    private suspend fun loadBookmarkNode(guid: String, recursive: Boolean = false): BookmarkNode? = withContext(IO) {
         // Only runs if the fragment is attached same as [runIfFragmentIsAttached]
         context?.let {
             requireContext().bookmarkStorage
-                .getTree(guid, false)
+                .getTree(guid, recursive)
                 ?.let { desktopFolders.withOptionalDesktopFolders(it) }
         }
     }
@@ -292,9 +289,30 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             }
     }
 
+    private fun warnLargeOpenAll(numberOfTabs: Int, function: () -> (Unit)) {
+        AlertDialog.Builder(requireContext()).apply {
+            setTitle(String.format(context.getString(R.string.open_all_warning_title), numberOfTabs))
+            setMessage(context.getString(R.string.open_all_warning_message, context.getString(R.string.app_name)))
+            setPositiveButton(
+                R.string.open_all_warning_confirm,
+            ) { dialog, _ ->
+                function()
+                dialog.dismiss()
+            }
+            setNegativeButton(
+                R.string.open_all_warning_cancel,
+            ) { dialog: DialogInterface, _ ->
+                dialog.dismiss()
+            }
+            setCancelable(false)
+            create()
+            show()
+        }
+    }
+
     private fun deleteMulti(
         selected: Set<BookmarkNode>,
-        eventType: BookmarkRemoveType = BookmarkRemoveType.MULTIPLE
+        eventType: BookmarkRemoveType = BookmarkRemoveType.MULTIPLE,
     ) {
         selected.iterator().forEach {
             if (it.type == BookmarkNodeType.FOLDER) {
@@ -309,12 +327,13 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 getRemoveBookmarksSnackBarMessage(selected, containsFolders = false)
             }
             BookmarkRemoveType.FOLDER,
-            BookmarkRemoveType.SINGLE -> {
+            BookmarkRemoveType.SINGLE,
+            -> {
                 val bookmarkNode = selected.first()
                 getString(
                     R.string.bookmark_deletion_snackbar_message,
                     bookmarkNode.url?.toShortUrl(requireContext().components.publicSuffixList)
-                        ?: bookmarkNode.title
+                        ?: bookmarkNode.title,
                 )
             }
         }
@@ -326,13 +345,13 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             {
                 undoPendingDeletion(selected)
             },
-            operation = getDeleteOperation(eventType)
+            operation = getDeleteOperation(eventType),
         )
     }
 
     private fun getRemoveBookmarksSnackBarMessage(
         selected: Set<BookmarkNode>,
-        containsFolders: Boolean
+        containsFolders: Boolean,
     ): String {
         return if (selected.size > 1) {
             return if (containsFolders) {
@@ -345,7 +364,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             getString(
                 R.string.bookmark_deletion_snackbar_message,
                 bookmarkNode.url?.toShortUrl(requireContext().components.publicSuffixList)
-                    ?: bookmarkNode.title
+                    ?: bookmarkNode.title,
             )
         }
     }
@@ -354,7 +373,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
         return if (selected.size > 1) {
             getString(
                 R.string.bookmark_delete_multiple_folders_confirmation_dialog,
-                getString(R.string.app_name)
+                getString(R.string.app_name),
             )
         } else {
             getString(R.string.bookmark_delete_folder_confirmation_dialog)
@@ -388,7 +407,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                         {
                             undoPendingDeletion(selected)
                         },
-                        operation = getDeleteOperation(BookmarkRemoveType.FOLDER)
+                        operation = getDeleteOperation(BookmarkRemoveType.FOLDER),
                     )
                 }
                 create()

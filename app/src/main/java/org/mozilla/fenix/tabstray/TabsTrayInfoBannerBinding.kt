@@ -8,7 +8,6 @@ import android.content.Context
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
-import kotlin.math.max
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -22,6 +21,7 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.infobanner.InfoBanner
 import org.mozilla.fenix.utils.Settings
+import kotlin.math.max
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TabsTrayInfoBannerBinding(
@@ -29,7 +29,7 @@ class TabsTrayInfoBannerBinding(
     store: BrowserStore,
     private val infoBannerView: ViewGroup,
     private val settings: Settings,
-    private val navigationInteractor: NavigationInteractor
+    private val navigationInteractor: NavigationInteractor,
 ) : AbstractBinding<BrowserState>(store) {
 
     @VisibleForTesting
@@ -68,7 +68,7 @@ class TabsTrayInfoBannerBinding(
                 dismissByHiding = true,
                 dismissAction = {
                     settings.shouldShowAutoCloseTabsBanner = false
-                }
+                },
             ) {
                 navigationInteractor.onTabSettingsClicked()
                 settings.shouldShowAutoCloseTabsBanner = false

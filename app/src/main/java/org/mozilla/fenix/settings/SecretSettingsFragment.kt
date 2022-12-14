@@ -5,9 +5,12 @@
 package org.mozilla.fenix.settings
 
 import android.os.Bundle
+import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
@@ -52,6 +55,11 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
             isVisible = FeatureFlags.unifiedSearchFeature
             isChecked = context.settings().showUnifiedSearchFeature
             onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        // for performance reasons, this is only available in Nightly or Debug builds
+        requirePreference<EditTextPreference>(R.string.pref_key_custom_glean_server_url).apply {
+            isVisible = Config.channel.isNightlyOrDebug && BuildConfig.GLEAN_CUSTOM_URL.isNullOrEmpty()
         }
     }
 }

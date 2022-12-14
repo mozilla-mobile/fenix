@@ -4,10 +4,6 @@
 
 package org.mozilla.fenix.ui
 
-import android.content.res.Configuration
-import androidx.test.espresso.IdlingRegistry
-import java.time.LocalDate
-import java.util.Locale
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
@@ -18,15 +14,15 @@ import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.getLoremIpsumAsset
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
-import org.mozilla.fenix.helpers.TestHelper.runWithSystemLocaleChanged
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestHelper.registerAndCleanupIdlingResources
+import org.mozilla.fenix.helpers.TestHelper.runWithSystemLocaleChanged
 import org.mozilla.fenix.ui.SettingsBasicsTest.CreditCard.MOCK_CREDIT_CARD_NUMBER
 import org.mozilla.fenix.ui.SettingsBasicsTest.CreditCard.MOCK_EXPIRATION_MONTH
 import org.mozilla.fenix.ui.SettingsBasicsTest.CreditCard.MOCK_EXPIRATION_YEAR
@@ -39,6 +35,8 @@ import org.mozilla.fenix.ui.util.FRENCH_LANGUAGE_HEADER
 import org.mozilla.fenix.ui.util.FRENCH_SYSTEM_LOCALE_OPTION
 import org.mozilla.fenix.ui.util.FR_SETTINGS
 import org.mozilla.fenix.ui.util.ROMANIAN_LANGUAGE_HEADER
+import java.time.LocalDate
+import java.util.Locale
 
 /**
  *  Tests for verifying the General section of the Settings menu
@@ -47,8 +45,6 @@ import org.mozilla.fenix.ui.util.ROMANIAN_LANGUAGE_HEADER
 class SettingsBasicsTest {
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
     private lateinit var mockWebServer: MockWebServer
-    private val featureSettingsHelper = FeatureSettingsHelper()
-    private var localeListIdlingResource: RecyclerViewIdlingResource? = null
 
     object CreditCard {
         const val MOCK_CREDIT_CARD_NUMBER = "5555555555554444"
@@ -59,7 +55,7 @@ class SettingsBasicsTest {
     }
 
     @get:Rule
-    val activityIntentTestRule = HomeActivityIntentTestRule()
+    val activityIntentTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
 
     @Before
     fun setUp() {
@@ -67,32 +63,11 @@ class SettingsBasicsTest {
             dispatcher = AndroidAssetDispatcher()
             start()
         }
-
-        featureSettingsHelper.setJumpBackCFREnabled(false)
-        featureSettingsHelper.setTCPCFREnabled(false)
     }
 
     @After
     fun tearDown() {
         mockWebServer.shutdown()
-
-        // resetting modified features enabled setting to default
-        featureSettingsHelper.resetAllFeatureFlags()
-
-        if (localeListIdlingResource != null) {
-            IdlingRegistry.getInstance().unregister(localeListIdlingResource)
-        }
-    }
-
-    private fun getUiTheme(): Boolean {
-        val mode =
-            activityIntentTestRule.activity.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)
-
-        return when (mode) {
-            Configuration.UI_MODE_NIGHT_YES -> true // dark theme is set
-            Configuration.UI_MODE_NIGHT_NO -> false // dark theme is not set, using light theme
-            else -> false // default option is light theme
-        }
     }
 
     @Test
@@ -111,21 +86,6 @@ class SettingsBasicsTest {
             verifyAccessibilityButton()
             verifyLanguageButton()
             verifySetAsDefaultBrowserButton()
-        }
-    }
-
-    @Test
-    fun changeThemeSetting() {
-        // Goes through the settings and changes the default search engine, then verifies it changes.
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openCustomizeSubMenu {
-            verifyThemes()
-            selectDarkMode()
-            verifyDarkThemeApplied(getUiTheme())
-            selectLightMode()
-            verifyLightThemeApplied(getUiTheme())
         }
     }
 
@@ -180,7 +140,7 @@ class SettingsBasicsTest {
                 "94105",
                 "United States",
                 "555-5555",
-                "foo@bar.com"
+                "foo@bar.com",
             )
         }.goBack {
         }.goBack {
@@ -212,7 +172,7 @@ class SettingsBasicsTest {
                 "94105",
                 "United States",
                 "555-5555",
-                "foo@bar.com"
+                "foo@bar.com",
             )
             clickManageAddressesButton()
             clickSavedAddress("Mozilla")
@@ -278,19 +238,19 @@ class SettingsBasicsTest {
         }.openThreeDotMenu {
         }.openSettings {
         }.openLanguageSubMenu {
-            localeListIdlingResource =
+            registerAndCleanupIdlingResources(
                 RecyclerViewIdlingResource(
                     activityIntentTestRule.activity.findViewById(R.id.locale_list),
-                    2
-                )
-            IdlingRegistry.getInstance().register(localeListIdlingResource)
-            selectLanguage("Romanian")
-            verifyLanguageHeaderIsTranslated(ROMANIAN_LANGUAGE_HEADER)
-            selectLanguage("Français")
-            verifyLanguageHeaderIsTranslated(FRENCH_LANGUAGE_HEADER)
-            selectLanguage(FRENCH_SYSTEM_LOCALE_OPTION)
-            verifyLanguageHeaderIsTranslated(enLanguageHeaderText)
-            IdlingRegistry.getInstance().unregister(localeListIdlingResource)
+                    2,
+                ),
+            ) {
+                selectLanguage("Romanian")
+                verifyLanguageHeaderIsTranslated(ROMANIAN_LANGUAGE_HEADER)
+                selectLanguage("Français")
+                verifyLanguageHeaderIsTranslated(FRENCH_LANGUAGE_HEADER)
+                selectLanguage(FRENCH_SYSTEM_LOCALE_OPTION)
+                verifyLanguageHeaderIsTranslated(enLanguageHeaderText)
+            }
         }
     }
 
@@ -315,6 +275,7 @@ class SettingsBasicsTest {
         }
     }
 
+    // Because it requires changing system prefs, this test will run only on Debug builds
     @Ignore("Failing due to app translation bug, see: https://github.com/mozilla-mobile/fenix/issues/26729")
     @Test
     fun frenchSystemLocaleTest() {

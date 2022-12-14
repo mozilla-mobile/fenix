@@ -17,8 +17,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
@@ -27,13 +29,14 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import mozilla.appservices.places.uniffi.PlacesException
+import mozilla.appservices.places.uniffi.PlacesApiException
 import mozilla.components.concept.storage.BookmarkInfo
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.android.view.showKeyboard
+import mozilla.components.support.ktx.kotlin.toShortUrl
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.GleanMetrics.BookmarksManagement
 import org.mozilla.fenix.NavHostActivity
@@ -46,14 +49,13 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.placeCursorAtEnd
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setToolbarColors
-import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import org.mozilla.fenix.library.bookmarks.friendlyRootTitle
 
 /**
  * Menu to edit the name, URL, and location of a bookmark item.
  */
-class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
+class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark), MenuProvider {
     private var _binding: FragmentEditBookmarkBinding? = null
     private val binding get() = _binding!!
 
@@ -63,13 +65,9 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
     private var bookmarkParent: BookmarkNode? = null
     private var initialParentGuid: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         _binding = FragmentEditBookmarkBinding.bind(view)
 
@@ -131,8 +129,8 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                             hideFolderGuid = when (bookmarkNode!!.type) {
                                 BookmarkNodeType.FOLDER -> bookmarkNode!!.guid
                                 else -> null
-                            }
-                        )
+                            },
+                        ),
                 )
             }
 
@@ -142,22 +140,34 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                 showKeyboard()
             }
 
-            binding.bookmarkUrlEdit.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                    // NOOP
-                }
+            binding.bookmarkUrlEdit.addTextChangedListener(
+                object : TextWatcher {
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int,
+                    ) {
+                        // NOOP
+                    }
 
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    binding.bookmarkUrlEdit.onTextChanged(s)
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int,
+                    ) {
+                        binding.bookmarkUrlEdit.onTextChanged(s)
 
-                    binding.inputLayoutBookmarkUrl.error = null
-                    binding.inputLayoutBookmarkUrl.errorIconDrawable = null
-                }
+                        binding.inputLayoutBookmarkUrl.error = null
+                        binding.inputLayoutBookmarkUrl.errorIconDrawable = null
+                    }
 
-                override fun afterTextChanged(s: Editable?) {
-                    // NOOP
-                }
-            })
+                    override fun afterTextChanged(s: Editable?) {
+                        // NOOP
+                    }
+                },
+            )
         }
     }
 
@@ -167,7 +177,7 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
         val toolbar = activity.findViewById<Toolbar>(R.id.navigationToolbar)
         toolbar?.setToolbarColors(
             foreground = activity.getColorFromAttr(R.attr.textPrimary),
-            background = activity.getColorFromAttr(R.attr.layer1)
+            background = activity.getColorFromAttr(R.attr.layer1),
         )
         actionBar.show()
     }
@@ -179,11 +189,11 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
         binding.progressBarBookmark.visibility = View.GONE
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.bookmarks_edit, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onMenuItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.delete_bookmark_button -> {
                 displayDeleteBookmarkDialog()
@@ -194,7 +204,8 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                 true
             }
 
-            else -> super.onOptionsItemSelected(item)
+            // other options are not handled by this menu provider
+            else -> false
         }
     }
 
@@ -218,14 +229,14 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                             bookmarkNode?.let { bookmark ->
                                 FenixSnackbar.make(
                                     view = activity.getRootView()!!,
-                                    isDisplayedWithBrowserToolbar = args.requiresSnackbarPaddingForToolbar
+                                    isDisplayedWithBrowserToolbar = args.requiresSnackbarPaddingForToolbar,
                                 )
                                     .setText(
                                         getString(
                                             R.string.bookmark_deletion_snackbar_message,
                                             bookmark.url?.toShortUrl(context.components.publicSuffixList)
-                                                ?: bookmark.title
-                                        )
+                                                ?: bookmark.title,
+                                        ),
                                     )
                                     .show()
                             }
@@ -252,7 +263,8 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                     if (title != bookmarkNode?.title || url != bookmarkNode?.url) {
                         BookmarksManagement.edited.record(NoExtras())
                     }
-                    val parentGuid = sharedViewModel.selectedFolder?.guid ?: bookmarkNode!!.parentGuid
+                    val parentGuid =
+                        sharedViewModel.selectedFolder?.guid ?: bookmarkNode!!.parentGuid
                     val parentChanged = initialParentGuid != parentGuid
                     // Only track the 'moved' event if new parent was selected.
                     if (parentChanged) {
@@ -265,8 +277,8 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
                             // Setting position to 'null' is treated as a 'move to the end' by the storage API.
                             if (parentChanged) null else bookmarkNode?.position,
                             title,
-                            if (bookmarkNode?.type == BookmarkNodeType.ITEM) url else null
-                        )
+                            if (bookmarkNode?.type == BookmarkNodeType.ITEM) url else null,
+                        ),
                     )
                 }
                 withContext(Main) {
@@ -275,14 +287,18 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark) {
 
                     findNavController().popBackStack()
                 }
-            } catch (e: PlacesException.UrlParseFailed) {
+            } catch (e: PlacesApiException.UrlParseFailed) {
                 withContext(Main) {
-                    binding.inputLayoutBookmarkUrl.error = getString(R.string.bookmark_invalid_url_error)
+                    binding.inputLayoutBookmarkUrl.error =
+                        getString(R.string.bookmark_invalid_url_error)
                     binding.inputLayoutBookmarkUrl.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
                     binding.inputLayoutBookmarkUrl.setErrorIconTintList(
                         ColorStateList.valueOf(
-                            ContextCompat.getColor(requireContext(), R.color.fx_mobile_text_color_warning)
-                        )
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.fx_mobile_text_color_warning,
+                            ),
+                        ),
                     )
                 }
             }

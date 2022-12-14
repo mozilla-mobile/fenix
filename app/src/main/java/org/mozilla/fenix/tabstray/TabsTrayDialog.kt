@@ -14,8 +14,9 @@ import org.mozilla.fenix.tabstray.browser.BrowserTrayInteractor
 class TabsTrayDialog(
     context: Context,
     theme: Int,
-    private val interactor: () -> BrowserTrayInteractor
+    private val interactor: () -> BrowserTrayInteractor,
 ) : Dialog(context, theme) {
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (interactor.invoke().onBackPressed()) {
             return

@@ -11,25 +11,27 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import mozilla.components.feature.top.sites.TopSite
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.home.sessioncontrol.AdapterItem.TopSitePagerPayload
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
 import org.mozilla.fenix.home.topsites.TopSitePagerViewHolder.Companion.TOP_SITES_PER_PAGE
 
 class TopSitesPagerAdapter(
+    private val appStore: AppStore,
     private val viewLifecycleOwner: LifecycleOwner,
-    private val interactor: TopSiteInteractor
+    private val interactor: TopSiteInteractor,
 ) : ListAdapter<List<TopSite>, TopSiteViewHolder>(TopSiteListDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopSiteViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(TopSiteViewHolder.LAYOUT_ID, parent, false)
-        return TopSiteViewHolder(view, viewLifecycleOwner, interactor)
+        return TopSiteViewHolder(view, appStore, viewLifecycleOwner, interactor)
     }
 
     override fun onBindViewHolder(
         holder: TopSiteViewHolder,
         position: Int,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
         if (payloads.isNullOrEmpty()) {
             onBindViewHolder(holder, position)
@@ -47,7 +49,7 @@ class TopSitesPagerAdapter(
     internal fun update(
         payload: TopSitePagerPayload,
         position: Int,
-        adapter: TopSitesAdapter
+        adapter: TopSitesAdapter,
     ) {
         // Only currently selected page items need to be updated
         val currentPageChangedItems = getCurrentPageChanges(payload, position)

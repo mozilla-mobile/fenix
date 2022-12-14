@@ -18,7 +18,9 @@ import android.widget.CompoundButton
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.Dispatchers.IO
@@ -45,7 +47,8 @@ import org.mozilla.fenix.settings.SupportUtils
 @SuppressWarnings("LargeClass", "TooManyFunctions")
 class AddSearchEngineFragment :
     Fragment(R.layout.fragment_add_search_engine),
-    CompoundButton.OnCheckedChangeListener {
+    CompoundButton.OnCheckedChangeListener,
+    MenuProvider {
     private var availableEngines: List<SearchEngine> = listOf()
     private var selectedIndex: Int = -1
     private val engineViews = mutableListOf<View>()
@@ -56,7 +59,6 @@ class AddSearchEngineFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
 
         availableEngines = requireContext()
             .components
@@ -71,10 +73,12 @@ class AddSearchEngineFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         val layoutInflater = LayoutInflater.from(context)
         val layoutParams = ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
+            ViewGroup.LayoutParams.WRAP_CONTENT,
         )
         _binding = FragmentAddSearchEngineBinding.bind(view)
         customSearchEngine = binding.customSearchEngine
@@ -84,7 +88,7 @@ class AddSearchEngineFragment :
             val engineItem = makeButtonFromSearchEngine(
                 engine = engine,
                 layoutInflater = layoutInflater,
-                res = requireContext().resources
+                res = requireContext().resources,
             )
             engineItem.root.id = index
             engineItem.root.tag = engineId
@@ -107,10 +111,10 @@ class AddSearchEngineFragment :
             (activity as HomeActivity).openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.getSumoURLForTopic(
                     requireContext(),
-                    SupportUtils.SumoTopic.CUSTOM_SEARCH_ENGINES
+                    SupportUtils.SumoTopic.CUSTOM_SEARCH_ENGINES,
                 ),
                 newTab = true,
-                from = BrowserDirection.FromAddSearchEngineFragment
+                from = BrowserDirection.FromAddSearchEngineFragment,
             )
         }
     }
@@ -125,11 +129,11 @@ class AddSearchEngineFragment :
         _binding = null
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.add_custom_searchengine_menu, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onMenuItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.add_search_engine -> {
                 when (selectedIndex) {
@@ -143,7 +147,8 @@ class AddSearchEngineFragment :
 
                 true
             }
-            else -> super.onOptionsItemSelected(item)
+            // other options are not handled by this menu provider
+            else -> false
         }
     }
 
@@ -163,7 +168,7 @@ class AddSearchEngineFragment :
             val result = withContext(IO) {
                 SearchStringValidator.isSearchStringValid(
                     requireComponents.core.client,
-                    searchString
+                    searchString,
                 )
             }
 
@@ -176,7 +181,7 @@ class AddSearchEngineFragment :
                     val searchEngine = createSearchEngine(
                         name,
                         searchString.toSearchUrl(),
-                        requireComponents.core.icons.loadIcon(IconRequest(searchString)).await().bitmap
+                        requireComponents.core.icons.loadIcon(IconRequest(searchString)).await().bitmap,
                     )
 
                     requireComponents.useCases.searchUseCases.addSearchEngine(searchEngine)
@@ -188,7 +193,7 @@ class AddSearchEngineFragment :
                         FenixSnackbar.make(
                             view = it,
                             duration = FenixSnackbar.LENGTH_SHORT,
-                            isDisplayedWithBrowserToolbar = false
+                            isDisplayedWithBrowserToolbar = false,
                         )
                             .setText(successMessage)
                             .show()
@@ -260,7 +265,7 @@ class AddSearchEngineFragment :
     private fun makeButtonFromSearchEngine(
         engine: SearchEngine,
         layoutInflater: LayoutInflater,
-        res: Resources
+        res: Resources,
     ): SearchEngineRadioButtonBinding {
         val wrapper = layoutInflater
             .inflate(R.layout.search_engine_radio_button, null) as LinearLayout

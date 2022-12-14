@@ -4,8 +4,6 @@
 
 package org.mozilla.fenix.home.recentvisits.controller
 
-import androidx.annotation.VisibleForTesting
-import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -78,9 +76,8 @@ class DefaultRecentVisitsController(
      * Shows the history fragment.
      */
     override fun handleHistoryShowAllClicked() {
-        dismissSearchDialogIfDisplayed()
         navController.navigate(
-            HomeFragmentDirections.actionGlobalHistoryFragment()
+            HomeFragmentDirections.actionGlobalHistoryFragment(),
         )
     }
 
@@ -94,8 +91,8 @@ class DefaultRecentVisitsController(
             HomeFragmentDirections.actionGlobalHistoryMetadataGroup(
                 title = recentHistoryGroup.title,
                 historyMetadataItems = recentHistoryGroup.historyMetadata
-                    .mapIndexed { index, item -> item.toHistoryMetadata(index) }.toTypedArray()
-            )
+                    .mapIndexed { index, item -> item.toHistoryMetadata(index) }.toTypedArray(),
+            ),
         )
     }
 
@@ -137,13 +134,6 @@ class DefaultRecentVisitsController(
         appStore.dispatch(AppAction.RemoveRecentHistoryHighlight(highlightUrl))
         scope.launch {
             storage.deleteHistoryMetadataForUrl(highlightUrl)
-        }
-    }
-
-    @VisibleForTesting(otherwise = PRIVATE)
-    fun dismissSearchDialogIfDisplayed() {
-        if (navController.currentDestination?.id == R.id.searchDialogFragment) {
-            navController.navigateUp()
         }
     }
 }

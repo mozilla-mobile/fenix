@@ -12,13 +12,10 @@ import android.os.Build
 import androidx.core.net.toUri
 import androidx.test.filters.SdkSuppress
 import androidx.test.rule.GrantPermissionRule
-import org.junit.After
 import org.junit.Assume.assumeTrue
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.MockLocationUpdatesRule
 import org.mozilla.fenix.helpers.RetryTestRule
@@ -34,18 +31,22 @@ class SitePermissionsTest {
     /* Test page created and handled by the Mozilla mobile test-eng team */
     private val testPage = "https://mozilla-mobile.github.io/testapp/permissions"
     private val testPageSubstring = "https://mozilla-mobile.github.io:443"
-    private val featureSettingsHelper = FeatureSettingsHelper()
     private val cameraManager = appContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private val micManager = appContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     @get:Rule
-    val activityTestRule = HomeActivityTestRule()
+    val activityTestRule = HomeActivityTestRule(
+        isJumpBackInCFREnabled = false,
+        isPWAsPromptEnabled = false,
+        isTCPCFREnabled = false,
+        isDeleteSitePermissionsEnabled = true,
+    )
 
     @get:Rule
     val grantPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(
         Manifest.permission.RECORD_AUDIO,
         Manifest.permission.CAMERA,
-        Manifest.permission.ACCESS_COARSE_LOCATION
+        Manifest.permission.ACCESS_COARSE_LOCATION,
     )
 
     @get: Rule
@@ -53,20 +54,6 @@ class SitePermissionsTest {
 
     @get: Rule
     val retryTestRule = RetryTestRule(3)
-
-    @Before
-    fun setUp() {
-        // disabling the new homepage pop-up that interferes with the tests.
-        featureSettingsHelper.setJumpBackCFREnabled(false)
-        featureSettingsHelper.setTCPCFREnabled(false)
-        featureSettingsHelper.deleteSitePermissions(true)
-        featureSettingsHelper.disablePwaCFR(true)
-    }
-
-    @After
-    fun tearDown() {
-        featureSettingsHelper.resetAllFeatureFlags()
-    }
 
     @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @SmokeTest
@@ -87,7 +74,6 @@ class SitePermissionsTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @SmokeTest
     @Test
     fun rememberBlockAudioVideoPermissionChoiceTest() {
@@ -111,7 +97,6 @@ class SitePermissionsTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @SmokeTest
     @Test
     fun rememberAllowAudioVideoPermissionChoiceTest() {
@@ -135,7 +120,6 @@ class SitePermissionsTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @Test
     fun microphonePermissionChoiceOnEachRequestTest() {
         assumeTrue(micManager.microphones.isNotEmpty())
@@ -153,7 +137,6 @@ class SitePermissionsTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @Test
     fun rememberBlockMicrophonePermissionChoiceTest() {
         assumeTrue(micManager.microphones.isNotEmpty())
@@ -175,7 +158,6 @@ class SitePermissionsTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @Test
     fun rememberAllowMicrophonePermissionChoiceTest() {
         assumeTrue(micManager.microphones.isNotEmpty())
@@ -197,7 +179,6 @@ class SitePermissionsTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @Test
     fun cameraPermissionChoiceOnEachRequestTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())
@@ -215,7 +196,6 @@ class SitePermissionsTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @Test
     fun rememberBlockCameraPermissionChoiceTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())
@@ -237,7 +217,6 @@ class SitePermissionsTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @Test
     fun rememberAllowCameraPermissionChoiceTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())

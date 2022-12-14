@@ -39,6 +39,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.GleanMetrics.CookieBanners
 import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.components.PermissionStorage
 import org.mozilla.fenix.ext.components
@@ -111,8 +112,8 @@ class DefaultQuickSettingsControllerTest {
                 reload = reload,
                 requestRuntimePermissions = requestPermissions,
                 engine = engine,
-                displayPermissions = {}
-            )
+                displayPermissions = {},
+            ),
         )
     }
 
@@ -123,7 +124,7 @@ class DefaultQuickSettingsControllerTest {
         createController(
             displayPermissions = {
                 displayPermissionsInvoked = true
-            }
+            },
         ).handlePermissionsShown()
 
         assertTrue(displayPermissionsInvoked)
@@ -162,7 +163,7 @@ class DefaultQuickSettingsControllerTest {
             store.dispatch(
                 match { action ->
                     PhoneFeature.CAMERA == (action as WebsitePermissionAction.TogglePermission).updatedFeature
-                }
+                },
             )
         }
     }
@@ -183,7 +184,7 @@ class DefaultQuickSettingsControllerTest {
             permissionStorage = permissionStorage,
             reload = reload,
             requestRuntimePermissions = requestPermissions,
-            displayPermissions = {}
+            displayPermissions = {},
         )
 
         every { websitePermission.phoneFeature } returns PhoneFeature.CAMERA
@@ -196,9 +197,9 @@ class DefaultQuickSettingsControllerTest {
             navController.navigate(
                 directionsEq(
                     QuickSettingsSheetDialogFragmentDirections.actionGlobalSitePermissionsManagePhoneFeature(
-                        PhoneFeature.CAMERA
-                    )
-                )
+                        PhoneFeature.CAMERA,
+                    ),
+                ),
             )
         }
     }
@@ -254,7 +255,7 @@ class DefaultQuickSettingsControllerTest {
                     assertEquals(featureGranted, action.updatedFeature)
                     assertEquals(permissionStatus, action.updatedStatus)
                     assertEquals(permissionEnabled, action.updatedEnabledStatus)
-                }
+                },
             )
         }
     }
@@ -269,7 +270,7 @@ class DefaultQuickSettingsControllerTest {
             requestPermissions = {
                 assertArrayEquals(testPermissions, it)
                 requestRuntimePermissionsInvoked = true
-            }
+            },
         ).handleAndroidPermissionRequest(testPermissions)
 
         assertTrue(requestRuntimePermissionsInvoked)
@@ -284,7 +285,7 @@ class DefaultQuickSettingsControllerTest {
             advanceUntilIdle()
 
             coVerifyOrder {
-                permissionStorage.updateSitePermissions(testPermissions)
+                permissionStorage.updateSitePermissions(testPermissions, tab.content.private)
                 reload(tab.id)
             }
         }
@@ -302,6 +303,23 @@ class DefaultQuickSettingsControllerTest {
                 reload(tab.id)
             }
         }
+
+    @Test
+    fun `handleCookieBannerHandlingDetailsClicked should call popBackStack and navigate to details page`() {
+        every { context.components.core.store } returns browserStore
+        every { store.state.protectionsState } returns mockk(relaxed = true)
+        every { context.components.settings } returns appSettings
+        every { context.components.settings.toolbarPosition.androidGravity } returns mockk(relaxed = true)
+
+        controller.handleCookieBannerHandlingDetailsClicked()
+
+        verify {
+            navController.popBackStack()
+
+            navController.navigate(any<NavDirections>())
+        }
+        assertNotNull(CookieBanners.visitedPanel.testGetValue())
+    }
 
     @Test
     fun `handleTrackingProtectionToggled should call the right use cases`() = runTestOnMain {
@@ -347,12 +365,13 @@ class DefaultQuickSettingsControllerTest {
             context = context,
             websiteUrl = tab.content.url,
             sessionId = tab.id,
-            isTrackingProtectionEnabled = isTrackingProtectionEnabled
+            isTrackingProtectionEnabled = isTrackingProtectionEnabled,
+            isCookieHandlingEnabled = isTrackingProtectionEnabled,
         )
 
-        every { store.state.trackingProtectionState } returns state
+        every { store.state.protectionsState } returns state
 
-        controller.handleDetailsClicked()
+        controller.handleTrackingProtectionDetailsClicked()
 
         verify {
             navController.popBackStack()
@@ -371,7 +390,7 @@ class DefaultQuickSettingsControllerTest {
             websiteUrl = tab.content.url,
             websiteTitle = tab.content.title,
             isSecured = true,
-            certificateName = "certificateName"
+            certificateName = "certificateName",
         )
 
         every { store.state.webInfoState } returns state
@@ -395,14 +414,14 @@ class DefaultQuickSettingsControllerTest {
                 data = Engine.BrowsingData.select(
                     Engine.BrowsingData.AUTH_SESSIONS,
                     Engine.BrowsingData.ALL_SITE_DATA,
-                )
+                ),
             )
         }
     }
 
     private fun createController(
         requestPermissions: (Array<String>) -> Unit = { _ -> },
-        displayPermissions: () -> Unit = {}
+        displayPermissions: () -> Unit = {},
     ): DefaultQuickSettingsController {
         return spyk(
             DefaultQuickSettingsController(
@@ -417,8 +436,8 @@ class DefaultQuickSettingsControllerTest {
                 permissionStorage = permissionStorage,
                 reload = reload,
                 requestRuntimePermissions = requestPermissions,
-                displayPermissions = displayPermissions
-            )
+                displayPermissions = displayPermissions,
+            ),
         )
     }
 }

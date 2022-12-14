@@ -14,7 +14,7 @@ import org.junit.Test
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
+import org.mozilla.fenix.helpers.FeatureSettingsHelperDelegate
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
@@ -30,6 +30,7 @@ class CustomTabsTest {
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
     private val customMenuItem = "TestMenuItem"
+
     /* Updated externalLinks.html to v2.0,
        changed the hypertext reference to mozilla-mobile.github.io/testapp/downloads for "External link"
      */
@@ -41,10 +42,12 @@ class CustomTabsTest {
 
     @get: Rule
     val intentReceiverActivityTestRule = ActivityTestRule(
-        IntentReceiverActivity::class.java, true, false
+        IntentReceiverActivity::class.java,
+        true,
+        false,
     )
 
-    private val featureSettingsHelper = FeatureSettingsHelper()
+    private val featureSettingsHelper = FeatureSettingsHelperDelegate()
 
     @Before
     fun setUp() {
@@ -54,7 +57,9 @@ class CustomTabsTest {
             start()
         }
 
-        featureSettingsHelper.setTCPCFREnabled(false)
+        featureSettingsHelper.apply {
+            isTCPCFREnabled = false
+        }.applyFlagUpdates()
     }
 
     @After
@@ -71,8 +76,8 @@ class CustomTabsTest {
         intentReceiverActivityTestRule.launchActivity(
             createCustomTabIntent(
                 externalLinksPWAPage.toUri().toString(),
-                customMenuItem
-            )
+                customMenuItem,
+            ),
         )
 
         customTabScreen {
@@ -86,12 +91,11 @@ class CustomTabsTest {
     @SmokeTest
     @Test
     fun customTabsSaveLoginTest() {
-
         intentReceiverActivityTestRule.launchActivity(
             createCustomTabIntent(
                 loginPage.toUri().toString(),
-                customMenuItem
-            )
+                customMenuItem,
+            ),
         )
 
         customTabScreen {
@@ -125,8 +129,8 @@ class CustomTabsTest {
         intentReceiverActivityTestRule.launchActivity(
             createCustomTabIntent(
                 customTabPage.url.toString(),
-                customMenuItem
-            )
+                customMenuItem,
+            ),
         )
 
         customTabScreen {
@@ -143,7 +147,7 @@ class CustomTabsTest {
             clickClearButton()
             longClickToolbar()
             clickPasteText()
-            verifyPastedToolbarText(customTabPage.url.toString())
+            verifyTypedToolbarText(customTabPage.url.toString())
         }
     }
 
@@ -155,8 +159,8 @@ class CustomTabsTest {
         intentReceiverActivityTestRule.launchActivity(
             createCustomTabIntent(
                 customTabPage.url.toString(),
-                customMenuItem
-            )
+                customMenuItem,
+            ),
         )
 
         customTabScreen {
@@ -179,8 +183,8 @@ class CustomTabsTest {
         intentReceiverActivityTestRule.launchActivity(
             createCustomTabIntent(
                 customTabPage.toUri().toString(),
-                customMenuItem
-            )
+                customMenuItem,
+            ),
         )
 
         customTabScreen {

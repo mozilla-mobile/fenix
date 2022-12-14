@@ -22,10 +22,10 @@ import org.mozilla.fenix.utils.Settings
  * The [Store] for holding the [SearchFragmentState] and applying [SearchFragmentAction]s.
  */
 class SearchFragmentStore(
-    initialState: SearchFragmentState
+    initialState: SearchFragmentState,
 ) : Store<SearchFragmentState, SearchFragmentAction>(
     initialState,
-    ::searchStateReducer
+    ::searchStateReducer,
 )
 
 /**
@@ -111,18 +111,20 @@ data class SearchFragmentState(
     val tabId: String?,
     val pastedText: String? = null,
     val searchAccessPoint: MetricsUtils.Source,
-    val clipboardHasUrl: Boolean = false
+    val clipboardHasUrl: Boolean = false,
 ) : State
 
 /**
  * Creates the initial state for the search fragment.
  */
+@Suppress("LongParameterList")
 fun createInitialSearchFragmentState(
     activity: HomeActivity,
     components: Components,
     tabId: String?,
     pastedText: String?,
-    searchAccessPoint: MetricsUtils.Source
+    searchAccessPoint: MetricsUtils.Source,
+    searchEngine: SearchEngine? = null,
 ): SearchFragmentState {
     val settings = components.settings
     val tab = tabId?.let { components.core.store.state.findTab(it) }
@@ -134,11 +136,17 @@ fun createInitialSearchFragmentState(
             settings.shouldShowSearchSuggestions && settings.shouldShowSearchSuggestionsInPrivate
     }
 
+    val searchEngineSource = if (searchEngine != null) {
+        SearchEngineSource.Shortcut(searchEngine)
+    } else {
+        SearchEngineSource.None
+    }
+
     return SearchFragmentState(
         query = url,
         url = url,
         searchTerms = tab?.content?.searchTerms.orEmpty(),
-        searchEngineSource = SearchEngineSource.None,
+        searchEngineSource = searchEngineSource,
         defaultEngine = null,
         showSearchSuggestions = shouldShowSearchSuggestions,
         showSearchSuggestionsHint = false,
@@ -152,7 +160,7 @@ fun createInitialSearchFragmentState(
         showSessionSuggestions = true,
         tabId = tabId,
         pastedText = pastedText,
-        searchAccessPoint = searchAccessPoint
+        searchAccessPoint = searchAccessPoint,
     )
 }
 
@@ -212,8 +220,9 @@ sealed class SearchFragmentAction : Action {
 
     /**
      * Updates the local `SearchFragmentState` from the global `SearchState` in `BrowserStore`.
+     * If the unified search is enabled, then search shortcuts should not be shown.
      */
-    data class UpdateSearchState(val search: SearchState) : SearchFragmentAction()
+    data class UpdateSearchState(val search: SearchState, val isUnifiedSearchEnabled: Boolean) : SearchFragmentAction()
 }
 
 /**
@@ -304,7 +313,8 @@ private fun searchStateReducer(state: SearchFragmentState, action: SearchFragmen
             state.copy(
                 defaultEngine = action.search.selectedOrDefaultSearchEngine,
                 areShortcutsAvailable = action.search.searchEngines.size > 1,
-                showSearchShortcuts = state.url.isEmpty() &&
+                showSearchShortcuts = !action.isUnifiedSearchEnabled &&
+                    state.url.isEmpty() &&
                     state.showSearchShortcutsSetting &&
                     action.search.searchEngines.size > 1,
                 searchEngineSource = when (state.searchEngineSource) {
@@ -315,12 +325,12 @@ private fun searchStateReducer(state: SearchFragmentState, action: SearchFragmen
                     else -> {
                         state.searchEngineSource
                     }
-                }
+                },
             )
         }
         is SearchFragmentAction.UpdateClipboardHasUrl -> {
             state.copy(
-                clipboardHasUrl = action.hasUrl
+                clipboardHasUrl = action.hasUrl,
             )
         }
     }

@@ -9,7 +9,9 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -32,7 +34,7 @@ import org.mozilla.fenix.settings.SupportUtils
 /**
  * Fragment to enter a custom search engine name and URL template.
  */
-class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine) {
+class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine), MenuProvider {
 
     private val args by navArgs<EditCustomSearchEngineFragmentArgs>()
     private lateinit var searchEngine: SearchEngine
@@ -43,17 +45,17 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
 
         searchEngine = requireNotNull(
             requireComponents.core.store.state.search.customSearchEngines.find { engine ->
                 engine.id == args.searchEngineIdentifier
-            }
+            },
         )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         val url = searchEngine.resultUrls[0]
 
@@ -67,10 +69,10 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
             (activity as HomeActivity).openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.getSumoURLForTopic(
                     requireContext(),
-                    SupportUtils.SumoTopic.CUSTOM_SEARCH_ENGINES
+                    SupportUtils.SumoTopic.CUSTOM_SEARCH_ENGINES,
                 ),
                 newTab = true,
-                from = BrowserDirection.FromEditCustomSearchEngineFragment
+                from = BrowserDirection.FromEditCustomSearchEngineFragment,
             )
         }
     }
@@ -85,17 +87,18 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
         _binding = null
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.edit_custom_searchengine_menu, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onMenuItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.save_button -> {
                 saveCustomEngine()
                 true
             }
-            else -> super.onOptionsItemSelected(item)
+            // other options are not handled by this menu provider
+            else -> false
         }
     }
 
@@ -115,7 +118,7 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
             val result = withContext(IO) {
                 SearchStringValidator.isSearchStringValid(
                     requireComponents.core.client,
-                    searchString
+                    searchString,
                 )
             }
 
@@ -130,7 +133,7 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
                         name = name,
                         resultUrls = listOf(searchString.toSearchUrl()),
                         icon = requireComponents.core.icons.loadIcon(IconRequest(searchString))
-                            .await().bitmap
+                            .await().bitmap,
                     )
 
                     requireComponents.useCases.searchUseCases.addSearchEngine(update)
@@ -142,7 +145,7 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
                         FenixSnackbar.make(
                             view = it,
                             duration = FenixSnackbar.LENGTH_SHORT,
-                            isDisplayedWithBrowserToolbar = false
+                            isDisplayedWithBrowserToolbar = false,
                         )
                             .setText(successMessage)
                             .show()

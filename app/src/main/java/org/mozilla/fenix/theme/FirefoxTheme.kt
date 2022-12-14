@@ -28,7 +28,8 @@ import org.mozilla.fenix.ext.settings
 enum class Theme {
     Light,
     Dark,
-    Private;
+    Private,
+    ;
 
     companion object {
         /**
@@ -62,7 +63,7 @@ enum class Theme {
 @Composable
 fun FirefoxTheme(
     theme: Theme = Theme.getTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colors = when (theme) {
         Theme.Light -> lightColorPalette
@@ -72,7 +73,7 @@ fun FirefoxTheme(
 
     ProvideFirefoxColors(colors) {
         MaterialTheme(
-            content = content
+            content = content,
         )
     }
 }
@@ -85,72 +86,6 @@ object FirefoxTheme {
     val typography: FenixTypography
         get() = defaultTypography
 }
-
-private val privateColorPalette = FirefoxColors(
-    layer1 = PhotonColors.Ink50,
-    layer2 = PhotonColors.Ink50,
-    layer3 = PhotonColors.Ink50,
-    layer4Start = PhotonColors.Purple70,
-    layer4Center = PhotonColors.Violet80,
-    layer4End = PhotonColors.Ink05,
-    layerAccent = PhotonColors.Violet40,
-    layerAccentNonOpaque = PhotonColors.Violet50A32,
-    layerAccentOpaque = Color(0xFF423262),
-    scrim = PhotonColors.DarkGrey90A95,
-    gradientStart = PhotonColors.Violet70,
-    gradientEnd = PhotonColors.Violet40,
-    actionPrimary = PhotonColors.Violet60,
-    actionSecondary = PhotonColors.LightGrey30,
-    actionTertiary = PhotonColors.DarkGrey10,
-    actionQuarternary = PhotonColors.DarkGrey80,
-    formDefault = PhotonColors.LightGrey05,
-    formSelected = PhotonColors.Violet40,
-    formSurface = PhotonColors.DarkGrey05,
-    formDisabled = PhotonColors.DarkGrey05,
-    formOn = PhotonColors.Violet40,
-    formOff = PhotonColors.LightGrey05,
-    indicatorActive = PhotonColors.LightGrey90,
-    indicatorInactive = PhotonColors.DarkGrey05,
-    textPrimary = PhotonColors.LightGrey05,
-    textSecondary = PhotonColors.LightGrey40,
-    textDisabled = PhotonColors.LightGrey05A40,
-    textWarning = PhotonColors.Red20,
-    textWarningButton = PhotonColors.Red70,
-    textAccent = PhotonColors.Violet20,
-    textAccentDisabled = PhotonColors.Violet20A60,
-    textOnColorPrimary = PhotonColors.LightGrey05,
-    textOnColorSecondary = PhotonColors.LightGrey40,
-    textActionPrimary = PhotonColors.LightGrey05,
-    textActionSecondary = PhotonColors.DarkGrey90,
-    textActionTertiary = PhotonColors.LightGrey05,
-    textActionTertiaryActive = PhotonColors.LightGrey05,
-    iconPrimary = PhotonColors.LightGrey05,
-    iconPrimaryInactive = PhotonColors.LightGrey05A60,
-    iconSecondary = PhotonColors.LightGrey40,
-    iconActive = PhotonColors.Violet40,
-    iconDisabled = PhotonColors.LightGrey05A40,
-    iconOnColor = PhotonColors.LightGrey05,
-    iconNotice = PhotonColors.Blue30,
-    iconButton = PhotonColors.LightGrey05,
-    iconWarning = PhotonColors.Red20,
-    iconWarningButton = PhotonColors.Red70,
-    iconAccentViolet = PhotonColors.Violet20,
-    iconAccentBlue = PhotonColors.Blue20,
-    iconAccentPink = PhotonColors.Pink20,
-    iconAccentGreen = PhotonColors.Green20,
-    iconAccentYellow = PhotonColors.Yellow20,
-    iconActionPrimary = PhotonColors.LightGrey05,
-    iconActionSecondary = PhotonColors.DarkGrey90,
-    iconActionTertiary = PhotonColors.LightGrey05,
-    iconGradientStart = PhotonColors.Violet20,
-    iconGradientEnd = PhotonColors.Blue20,
-    borderPrimary = PhotonColors.DarkGrey05,
-    borderInverted = PhotonColors.LightGrey30,
-    borderFormDefault = PhotonColors.LightGrey05,
-    borderAccent = PhotonColors.Violet40,
-    borderDisabled = PhotonColors.LightGrey05A40,
-    borderWarning = PhotonColors.Red40
-)
 
 private val darkColorPalette = FirefoxColors(
     layer1 = PhotonColors.DarkGrey60,
@@ -215,7 +150,7 @@ private val darkColorPalette = FirefoxColors(
     borderFormDefault = PhotonColors.LightGrey05,
     borderAccent = PhotonColors.Violet40,
     borderDisabled = PhotonColors.LightGrey05A40,
-    borderWarning = PhotonColors.Red40
+    borderWarning = PhotonColors.Red40,
 )
 
 private val lightColorPalette = FirefoxColors(
@@ -281,7 +216,13 @@ private val lightColorPalette = FirefoxColors(
     borderFormDefault = PhotonColors.DarkGrey90,
     borderAccent = PhotonColors.Ink20,
     borderDisabled = PhotonColors.DarkGrey90A40,
-    borderWarning = PhotonColors.Red70
+    borderWarning = PhotonColors.Red70,
+)
+
+private val privateColorPalette = darkColorPalette.copy(
+    layer1 = PhotonColors.Ink50,
+    layer2 = PhotonColors.Ink50,
+    layer3 = PhotonColors.Ink50,
 )
 
 /**
@@ -352,42 +293,52 @@ class FirefoxColors(
     borderFormDefault: Color,
     borderAccent: Color,
     borderDisabled: Color,
-    borderWarning: Color
+    borderWarning: Color,
 ) {
     // Layers
 
     // Default Screen background, Frontlayer background, App Bar Top, App Bar Bottom, Frontlayer header
     var layer1 by mutableStateOf(layer1)
         private set
+
     // Card background, Menu background, Dialog, Banner
     var layer2 by mutableStateOf(layer2)
         private set
+
     // Search
     var layer3 by mutableStateOf(layer3)
         private set
+
     // Homescreen background, Toolbar
     var layer4Start by mutableStateOf(layer4Start)
         private set
+
     // Homescreen background, Toolbar
     var layer4Center by mutableStateOf(layer4Center)
         private set
+
     // Homescreen background, Toolbar
     var layer4End by mutableStateOf(layer4End)
         private set
+
     // App Bar Top (edit), Text Cursor, Selected Tab Check
     var layerAccent by mutableStateOf(layerAccent)
         private set
+
     // Selected tab
     var layerAccentNonOpaque by mutableStateOf(layerAccentNonOpaque)
         private set
+
     // Selected tab
     var layerAccentOpaque by mutableStateOf(layerAccentOpaque)
         private set
     var scrim by mutableStateOf(scrim)
         private set
+
     // Tooltip
     var gradientStart by mutableStateOf(gradientStart)
         private set
+
     // Tooltip
     var gradientEnd by mutableStateOf(gradientEnd)
         private set
@@ -397,36 +348,47 @@ class FirefoxColors(
     // Primary button, Snackbar, Floating action button, Chip selected
     var actionPrimary by mutableStateOf(actionPrimary)
         private set
+
     // Secondary button
     var actionSecondary by mutableStateOf(actionSecondary)
         private set
+
     // Filter
     var actionTertiary by mutableStateOf(actionTertiary)
         private set
+
     // Chip
     var actionQuarternary by mutableStateOf(actionQuarternary)
         private set
+
     // Checkbox default, Radio button default
     var formDefault by mutableStateOf(formDefault)
         private set
+
     // Checkbox selected, Radio button selected
     var formSelected by mutableStateOf(formSelected)
         private set
+
     // Switch background OFF, Switch background ON
     var formSurface by mutableStateOf(formSurface)
         private set
+
     // Checkbox disabled, Radio disabled
     var formDisabled by mutableStateOf(formDisabled)
         private set
+
     // Switch thumb ON
     var formOn by mutableStateOf(formOn)
         private set
+
     // Switch thumb OFF
     var formOff by mutableStateOf(formOff)
         private set
+
     // Scroll indicator active
     var indicatorActive by mutableStateOf(indicatorActive)
         private set
+
     // Scroll indicator inactive
     var indicatorInactive by mutableStateOf(indicatorInactive)
         private set
@@ -436,39 +398,51 @@ class FirefoxColors(
     // Primary text
     var textPrimary by mutableStateOf(textPrimary)
         private set
+
     // Secondary text
     var textSecondary by mutableStateOf(textSecondary)
         private set
+
     // Disabled text
     var textDisabled by mutableStateOf(textDisabled)
         private set
+
     // Warning text
     var textWarning by mutableStateOf(textWarning)
         private set
+
     // Warning text on Secondary button
     var textWarningButton by mutableStateOf(textWarningButton)
         private set
+
     // Small heading, Text link
     var textAccent by mutableStateOf(textAccent)
         private set
+
     // Small heading, Text link
     var textAccentDisabled by mutableStateOf(textAccentDisabled)
         private set
+
     // Text Inverted/On Color
     var textOnColorPrimary by mutableStateOf(textOnColorPrimary)
         private set
+
     // Text Inverted/On Color
     var textOnColorSecondary by mutableStateOf(textOnColorSecondary)
         private set
+
     // Action Primary text
     var textActionPrimary by mutableStateOf(textActionPrimary)
         private set
+
     // Action Secondary text
     var textActionSecondary by mutableStateOf(textActionSecondary)
         private set
+
     // Action Tertiary text
     var textActionTertiary by mutableStateOf(textActionTertiary)
         private set
+
     // Action Tertiary Active text
     var textActionTertiaryActive by mutableStateOf(textActionTertiaryActive)
         private set
@@ -478,29 +452,37 @@ class FirefoxColors(
     // Primary icon
     var iconPrimary by mutableStateOf(iconPrimary)
         private set
+
     // Inactive tab
     var iconPrimaryInactive by mutableStateOf(iconPrimaryInactive)
         private set
+
     // Secondary icon
     var iconSecondary by mutableStateOf(iconSecondary)
         private set
+
     // Active tab
     var iconActive by mutableStateOf(iconActive)
         private set
+
     // Disabled icon
     var iconDisabled by mutableStateOf(iconDisabled)
         private set
+
     // Icon inverted (on color)
     var iconOnColor by mutableStateOf(iconOnColor)
         private set
+
     // New
     var iconNotice by mutableStateOf(iconNotice)
         private set
+
     // Icon button
     var iconButton by mutableStateOf(iconButton)
         private set
     var iconWarning by mutableStateOf(iconWarning)
         private set
+
     // Warning icon on Secondary button
     var iconWarningButton by mutableStateOf(iconWarningButton)
         private set
@@ -514,18 +496,23 @@ class FirefoxColors(
         private set
     var iconAccentYellow by mutableStateOf(iconAccentYellow)
         private set
+
     // Action primary icon
     var iconActionPrimary by mutableStateOf(iconActionPrimary)
         private set
+
     // Action secondary icon
     var iconActionSecondary by mutableStateOf(iconActionSecondary)
         private set
+
     // Action tertiary icon
     var iconActionTertiary by mutableStateOf(iconActionTertiary)
         private set
+
     // Reader, ETP Shield
     var iconGradientStart by mutableStateOf(iconGradientStart)
         private set
+
     // Reader, ETP Shield
     var iconGradientEnd by mutableStateOf(iconGradientEnd)
         private set
@@ -535,18 +522,23 @@ class FirefoxColors(
     // Default, Divider, Dotted
     var borderPrimary by mutableStateOf(borderPrimary)
         private set
+
     // Onboarding
     var borderInverted by mutableStateOf(borderInverted)
         private set
+
     // Form parts
     var borderFormDefault by mutableStateOf(borderFormDefault)
         private set
+
     // Active tab (Nav), Selected tab, Active form
     var borderAccent by mutableStateOf(borderAccent)
         private set
+
     // Form parts
     var borderDisabled by mutableStateOf(borderDisabled)
         private set
+
     // Form parts
     var borderWarning by mutableStateOf(borderWarning)
         private set
@@ -617,7 +609,74 @@ class FirefoxColors(
         borderWarning = other.borderWarning
     }
 
-    fun copy(): FirefoxColors = FirefoxColors(
+    /**
+     * Return a copy of this [FirefoxColors] and optionally overriding any of the provided values.
+     */
+    fun copy(
+        layer1: Color = this.layer1,
+        layer2: Color = this.layer2,
+        layer3: Color = this.layer3,
+        layer4Start: Color = this.layer4Start,
+        layer4Center: Color = this.layer4Center,
+        layer4End: Color = this.layer4End,
+        layerAccent: Color = this.layerAccent,
+        layerAccentNonOpaque: Color = this.layerAccentNonOpaque,
+        layerAccentOpaque: Color = this.layerAccentOpaque,
+        scrim: Color = this.scrim,
+        gradientStart: Color = this.gradientStart,
+        gradientEnd: Color = this.gradientEnd,
+        actionPrimary: Color = this.actionPrimary,
+        actionSecondary: Color = this.actionSecondary,
+        actionTertiary: Color = this.actionTertiary,
+        actionQuarternary: Color = this.actionQuarternary,
+        formDefault: Color = this.formDefault,
+        formSelected: Color = this.formSelected,
+        formSurface: Color = this.formSurface,
+        formDisabled: Color = this.formDisabled,
+        formOn: Color = this.formOn,
+        formOff: Color = this.formOff,
+        indicatorActive: Color = this.indicatorActive,
+        indicatorInactive: Color = this.indicatorInactive,
+        textPrimary: Color = this.textPrimary,
+        textSecondary: Color = this.textSecondary,
+        textDisabled: Color = this.textDisabled,
+        textWarning: Color = this.textWarning,
+        textWarningButton: Color = this.textWarningButton,
+        textAccent: Color = this.textAccent,
+        textAccentDisabled: Color = this.textAccentDisabled,
+        textOnColorPrimary: Color = this.textOnColorPrimary,
+        textOnColorSecondary: Color = this.textOnColorSecondary,
+        textActionPrimary: Color = this.textActionPrimary,
+        textActionSecondary: Color = this.textActionSecondary,
+        textActionTertiary: Color = this.textActionTertiary,
+        textActionTertiaryActive: Color = this.textActionTertiaryActive,
+        iconPrimary: Color = this.iconPrimary,
+        iconPrimaryInactive: Color = this.iconPrimaryInactive,
+        iconSecondary: Color = this.iconSecondary,
+        iconActive: Color = this.iconActive,
+        iconDisabled: Color = this.iconDisabled,
+        iconOnColor: Color = this.iconOnColor,
+        iconNotice: Color = this.iconNotice,
+        iconButton: Color = this.iconButton,
+        iconWarning: Color = this.iconWarning,
+        iconWarningButton: Color = this.iconWarningButton,
+        iconAccentViolet: Color = this.iconAccentViolet,
+        iconAccentBlue: Color = this.iconAccentBlue,
+        iconAccentPink: Color = this.iconAccentPink,
+        iconAccentGreen: Color = this.iconAccentGreen,
+        iconAccentYellow: Color = this.iconAccentYellow,
+        iconActionPrimary: Color = this.iconActionPrimary,
+        iconActionSecondary: Color = this.iconActionSecondary,
+        iconActionTertiary: Color = this.iconActionTertiary,
+        iconGradientStart: Color = this.iconGradientStart,
+        iconGradientEnd: Color = this.iconGradientEnd,
+        borderPrimary: Color = this.borderPrimary,
+        borderInverted: Color = this.borderInverted,
+        borderFormDefault: Color = this.borderFormDefault,
+        borderAccent: Color = this.borderAccent,
+        borderDisabled: Color = this.borderDisabled,
+        borderWarning: Color = this.borderWarning,
+    ): FirefoxColors = FirefoxColors(
         layer1 = layer1,
         layer2 = layer2,
         layer3 = layer3,
@@ -680,14 +739,14 @@ class FirefoxColors(
         borderFormDefault = borderFormDefault,
         borderAccent = borderAccent,
         borderDisabled = borderDisabled,
-        borderWarning = borderWarning
+        borderWarning = borderWarning,
     )
 }
 
 @Composable
 fun ProvideFirefoxColors(
     colors: FirefoxColors,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colorPalette = remember {
         // Explicitly creating a new object here so we don't mutate the initial [colors]

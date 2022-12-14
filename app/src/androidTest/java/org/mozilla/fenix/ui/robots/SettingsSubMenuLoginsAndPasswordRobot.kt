@@ -101,14 +101,14 @@ private fun assertDefaultValueAutofillLogins(context: Context) = onView(
     ViewMatchers.withText(
         context.getString(
             R.string.preferences_passwords_autofill2,
-            context.getString(R.string.app_name)
-        )
-    )
+            context.getString(R.string.app_name),
+        ),
+    ),
 )
     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
 private fun assertDefaultValueExceptions() = onView(ViewMatchers.withText("Exceptions"))
     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
-private fun assertDefaultValueSyncLogins() = onView(ViewMatchers.withText("Sign in to Sync"))
+private fun assertDefaultValueSyncLogins() = onView(ViewMatchers.withText("Sync and save data"))
     .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))

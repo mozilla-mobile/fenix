@@ -15,12 +15,12 @@ import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
 import org.mozilla.fenix.helpers.TestHelper.generateRandomString
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
+import org.mozilla.fenix.helpers.TestHelper.waitUntilSnackbarGone
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -37,10 +37,9 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
 class TopSitesTest {
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
-    private val featureSettingsHelper = FeatureSettingsHelper()
 
     @get:Rule
-    val activityIntentTestRule = HomeActivityIntentTestRule(skipOnboarding = true)
+    val activityIntentTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
 
     @get:Rule
     val retryTestRule = RetryTestRule(3)
@@ -52,15 +51,11 @@ class TopSitesTest {
             dispatcher = AndroidAssetDispatcher()
             start()
         }
-
-        featureSettingsHelper.setJumpBackCFREnabled(false)
-        featureSettingsHelper.setTCPCFREnabled(false)
     }
 
     @After
     fun tearDown() {
         mockWebServer.shutdown()
-        featureSettingsHelper.resetAllFeatureFlags()
     }
 
     @SmokeTest
@@ -72,7 +67,7 @@ class TopSitesTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
             expandMenu()
-            verifyAddToTopSitesButton()
+            verifyAddToShortcutsButton()
         }.addToFirefoxHome {
             verifySnackBarText(getStringResource(R.string.snackbar_added_to_shortcuts))
         }.goToHomescreen {
@@ -89,7 +84,7 @@ class TopSitesTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
             expandMenu()
-            verifyAddToTopSitesButton()
+            verifyAddToShortcutsButton()
         }.addToFirefoxHome {
             verifySnackBarText(getStringResource(R.string.snackbar_added_to_shortcuts))
         }.goToHomescreen {
@@ -116,7 +111,7 @@ class TopSitesTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
             expandMenu()
-            verifyAddToTopSitesButton()
+            verifyAddToShortcutsButton()
         }.addToFirefoxHome {
             verifySnackBarText(getStringResource(R.string.snackbar_added_to_shortcuts))
         }.goToHomescreen {
@@ -139,7 +134,7 @@ class TopSitesTest {
             waitForPageToLoad()
         }.openThreeDotMenu {
             expandMenu()
-            verifyAddToTopSitesButton()
+            verifyAddToShortcutsButton()
         }.addToFirefoxHome {
             verifySnackBarText(getStringResource(R.string.snackbar_added_to_shortcuts))
         }.goToHomescreen {
@@ -161,7 +156,7 @@ class TopSitesTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
             expandMenu()
-            verifyAddToTopSitesButton()
+            verifyAddToShortcutsButton()
         }.addToFirefoxHome {
             verifySnackBarText(getStringResource(R.string.snackbar_added_to_shortcuts))
         }.goToHomescreen {
@@ -175,6 +170,28 @@ class TopSitesTest {
     }
 
     @Test
+    fun verifyUndoRemoveTopSite() {
+        val defaultWebPage = getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openThreeDotMenu {
+            expandMenu()
+            verifyAddToShortcutsButton()
+        }.addToFirefoxHome {
+            verifySnackBarText(getStringResource(R.string.snackbar_added_to_shortcuts))
+        }.goToHomescreen {
+            verifyExistingTopSitesList()
+            verifyExistingTopSitesTabs(defaultWebPage.title)
+        }.openContextMenuOnTopSitesWithTitle(defaultWebPage.title) {
+            verifyTopSiteContextMenuItems()
+        }.removeTopSite {
+            clickUndoSnackBarButton()
+            verifyExistingTopSitesTabs(defaultWebPage.title)
+        }
+    }
+
+    @Test
     fun verifyRemoveTopSiteFromMainMenu() {
         val defaultWebPage = getGenericAsset(mockWebServer, 1)
 
@@ -182,7 +199,7 @@ class TopSitesTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
             expandMenu()
-            verifyAddToTopSitesButton()
+            verifyAddToShortcutsButton()
         }.addToFirefoxHome {
             verifySnackBarText(getStringResource(R.string.snackbar_added_to_shortcuts))
         }.goToHomescreen {
@@ -203,7 +220,7 @@ class TopSitesTest {
         val defaultTopSites = arrayOf(
             "Top Articles",
             "Wikipedia",
-            "Google"
+            "Google",
         )
 
         homeScreen { }.dismissOnboarding()
@@ -225,7 +242,6 @@ class TopSitesTest {
             navigationToolbar {
             }.enterURLAndEnterToBrowser(defaultWebPage.url) {
                 waitForPageToLoad()
-                verifyPageContent(defaultWebPage.content)
             }
         }
 
@@ -235,30 +251,78 @@ class TopSitesTest {
             verifyExistingTopSitesTabs(defaultWebPage.title)
         }.openContextMenuOnTopSitesWithTitle(defaultWebPage.title) {
         }.deleteTopSiteFromHistory {
+            verifySnackBarText(getStringResource(R.string.snackbar_top_site_removed))
+            waitUntilSnackbarGone()
         }.openThreeDotMenu {
         }.openHistory {
             verifyEmptyHistoryView()
         }
     }
 
-    @Ignore("Failing after updates to Top Sites UI. See: https://github.com/mozilla-mobile/fenix/issues/26698")
     @SmokeTest
     @Test
     fun verifySponsoredShortcutsListTest() {
-
         homeScreen {
+            var sponsoredShortcutTitle = getSponsoredShortcutTitle(2)
+            var sponsoredShortcutTitle2 = getSponsoredShortcutTitle(3)
+
+            verifyExistingSponsoredTopSitesTabs(sponsoredShortcutTitle, 2)
+            verifyExistingSponsoredTopSitesTabs(sponsoredShortcutTitle2, 3)
         }.openThreeDotMenu {
         }.openCustomizeHome {
             verifySponsoredShortcutsCheckBox(true)
-        }.goBack {
-            verifyExistingSponsoredTopSitesTabs(2)
-            verifyExistingSponsoredTopSitesTabs(3)
-        }.openThreeDotMenu {
-        }.openCustomizeHome {
             clickSponsoredShortcuts()
             verifySponsoredShortcutsCheckBox(false)
         }.goBack {
             verifyNotExistingSponsoredTopSitesList()
+        }
+    }
+
+    @Test
+    fun openSponsoredShortcutTest() {
+        var sponsoredShortcutTitle = ""
+
+        homeScreen {
+            sponsoredShortcutTitle = getSponsoredShortcutTitle(2)
+        }.openSponsoredShortcut(sponsoredShortcutTitle) {
+            verifyUrl(sponsoredShortcutTitle)
+        }
+    }
+
+    @Test
+    fun openSponsoredShortcutInPrivateBrowsingTest() {
+        var sponsoredShortcutTitle = ""
+
+        homeScreen {
+            sponsoredShortcutTitle = getSponsoredShortcutTitle(2)
+        }.openContextMenuOnSponsoredShortcut(sponsoredShortcutTitle) {
+        }.openTopSiteInPrivateTab {
+            verifyUrl(sponsoredShortcutTitle)
+        }
+    }
+
+    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/25926")
+    @Test
+    fun verifySponsoredShortcutsSponsorsAndPrivacyOptionTest() {
+        var sponsoredShortcutTitle = ""
+
+        homeScreen {
+            sponsoredShortcutTitle = getSponsoredShortcutTitle(2)
+        }.openContextMenuOnSponsoredShortcut(sponsoredShortcutTitle) {
+        }.clickSponsorsAndPrivacyButton {
+            verifyUrl("support.mozilla.org/en-US/kb/sponsor-privacy")
+        }
+    }
+
+    @Test
+    fun verifySponsoredShortcutsSettingsOptionTest() {
+        var sponsoredShortcutTitle = ""
+
+        homeScreen {
+            sponsoredShortcutTitle = getSponsoredShortcutTitle(2)
+        }.openContextMenuOnSponsoredShortcut(sponsoredShortcutTitle) {
+        }.clickSponsoredShortcutsSettingsButton {
+            verifyHomePageView()
         }
     }
 }

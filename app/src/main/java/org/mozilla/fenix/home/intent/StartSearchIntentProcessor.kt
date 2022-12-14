@@ -31,7 +31,8 @@ class StartSearchIntentProcessor : HomeIntentProcessor {
                 }
                 STATIC_SHORTCUT_NEW_TAB,
                 STATIC_SHORTCUT_NEW_PRIVATE_TAB,
-                PRIVATE_BROWSING_PINNED_SHORTCUT -> {
+                PRIVATE_BROWSING_PINNED_SHORTCUT,
+                -> {
                     MetricsUtils.Source.SHORTCUT
                 }
                 else -> null
@@ -42,12 +43,12 @@ class StartSearchIntentProcessor : HomeIntentProcessor {
             val directions = source?.let {
                 NavGraphDirections.actionGlobalSearchDialog(
                     sessionId = null,
-                    searchAccessPoint = it
+                    searchAccessPoint = it,
                 )
             }
             directions?.let {
                 val options = navOptions {
-                    popUpTo = R.id.homeFragment
+                    popUpTo(R.id.homeFragment)
                 }
                 navController.nav(null, it, options)
             }

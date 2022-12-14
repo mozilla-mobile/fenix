@@ -35,6 +35,7 @@ import mozilla.components.browser.state.state.recover.RecoverableTab
 import mozilla.components.concept.engine.Engine
 import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
+import org.mozilla.fenix.R
 import org.mozilla.fenix.R.drawable
 import org.mozilla.fenix.R.string
 import org.mozilla.fenix.compose.list.ExpandableListHeader
@@ -61,17 +62,15 @@ private val expandedCollectionShape = RoundedCornerShape(topStart = 8.dp, topEnd
  * @param menuItems List of [CollectionMenuItem] to be shown in a menu.
  * @param onToggleCollectionExpanded Invoked when the user clicks on the collection.
  * @param onCollectionShareTabsClicked Invoked when the user clicks to share the collection.
- * @param onCollectionMenuOpened Invoked when the user clicks to open a menu for the collection.
  */
 @Composable
-@Suppress("LongParameterList")
+@Suppress("LongMethod")
 fun Collection(
     collection: TabCollection,
     expanded: Boolean,
     menuItems: List<CollectionMenuItem>,
     onToggleCollectionExpanded: (TabCollection, Boolean) -> Unit,
     onCollectionShareTabsClicked: (TabCollection) -> Unit,
-    onCollectionMenuOpened: () -> Unit,
 ) {
     var isMenuExpanded by remember(collection) { mutableStateOf(false) }
     val isExpanded by remember(collection) { mutableStateOf(expanded) }
@@ -79,7 +78,14 @@ fun Collection(
     Card(
         modifier = Modifier
             .semantics(mergeDescendants = true) {}
-            .clickable { onToggleCollectionExpanded(collection, !isExpanded) }
+            .clickable(
+                onClickLabel = if (isExpanded) {
+                    stringResource(R.string.a11y_action_label_collapse)
+                } else {
+                    stringResource(R.string.a11y_action_label_expand)
+                },
+                onClick = { onToggleCollectionExpanded(collection, !isExpanded) },
+            )
             .height(48.dp),
         shape = if (isExpanded) expandedCollectionShape else collapsedCollectionShape,
         backgroundColor = FirefoxTheme.colors.layer2,
@@ -95,7 +101,7 @@ fun Collection(
                 contentDescription = null,
                 modifier = Modifier.padding(
                     start = 16.dp,
-                    end = 8.dp // (24.dp - 16.dp) hardcoded in ExpandableListHeader
+                    end = 8.dp, // (24.dp - 16.dp) hardcoded in ExpandableListHeader
                 ),
                 tint = Paint().apply {
                     color = Color(collection.getIconColor(LocalContext.current))
@@ -111,7 +117,7 @@ fun Collection(
                 if (isExpanded) {
                     Row {
                         IconButton(
-                            onClick = { onCollectionShareTabsClicked(collection) }
+                            onClick = { onCollectionShareTabsClicked(collection) },
                         ) {
                             Icon(
                                 painter = painterResource(drawable.ic_share),
@@ -123,13 +129,12 @@ fun Collection(
                         IconButton(
                             onClick = {
                                 isMenuExpanded = !isMenuExpanded
-                                onCollectionMenuOpened()
-                            }
+                            },
                         ) {
                             Icon(
                                 painter = painterResource(drawable.ic_menu),
                                 contentDescription = stringResource(
-                                    string.collection_menu_button_content_description
+                                    string.collection_menu_button_content_description,
                                 ),
                                 tint = FirefoxTheme.colors.iconPrimary,
                             )
@@ -157,7 +162,6 @@ private fun CollectionDarkPreview() {
             menuItems = emptyList(),
             onToggleCollectionExpanded = { _, _ -> },
             onCollectionShareTabsClicked = {},
-            onCollectionMenuOpened = {},
         )
     }
 }
@@ -172,7 +176,6 @@ private fun CollectionDarkExpandedPreview() {
             menuItems = emptyList(),
             onToggleCollectionExpanded = { _, _ -> },
             onCollectionShareTabsClicked = {},
-            onCollectionMenuOpened = {},
         )
     }
 }
@@ -187,7 +190,6 @@ private fun CollectionLightPreview() {
             menuItems = emptyList(),
             onToggleCollectionExpanded = { _, _ -> },
             onCollectionShareTabsClicked = {},
-            onCollectionMenuOpened = {},
         )
     }
 }
@@ -202,7 +204,6 @@ private fun CollectionLightExpandedPreview() {
             menuItems = emptyList(),
             onToggleCollectionExpanded = { _, _ -> },
             onCollectionShareTabsClicked = {},
-            onCollectionMenuOpened = {},
         )
     }
 }

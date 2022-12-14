@@ -37,13 +37,14 @@ class TrackingProtectionPanelViewTest {
     private lateinit var container: ViewGroup
     private lateinit var interactor: TrackingProtectionPanelInteractor
     private lateinit var view: TrackingProtectionPanelView
-    private val baseState = TrackingProtectionState(
+    private val baseState = ProtectionsState(
         tab = null,
         url = "",
         isTrackingProtectionEnabled = false,
+        isCookieBannerHandlingEnabled = false,
         listTrackers = emptyList(),
-        mode = TrackingProtectionState.Mode.Normal,
-        lastAccessedCategory = ""
+        mode = ProtectionsState.Mode.Normal,
+        lastAccessedCategory = "",
     )
 
     @get:Rule
@@ -61,7 +62,7 @@ class TrackingProtectionPanelViewTest {
         mockkStatic("org.mozilla.fenix.ext.ContextKt") {
             every { any<Context>().settings() } returns mockk(relaxed = true)
 
-            view.update(baseState.copy(mode = TrackingProtectionState.Mode.Normal))
+            view.update(baseState.copy(mode = ProtectionsState.Mode.Normal))
             assertFalse(view.binding.detailsMode.isVisible)
             assertTrue(view.binding.normalMode.isVisible)
             assertTrue(view.binding.protectionSettings.isVisible)
@@ -74,11 +75,11 @@ class TrackingProtectionPanelViewTest {
     fun testNormalModeUiCookiesWithTotalCookieProtectionEnabled() {
         mockkStatic("org.mozilla.fenix.ext.ContextKt") {
             every { any<Context>().settings() } returns mockk {
-                every { enabledTotalCookieProtectionSetting } returns true
+                every { enabledTotalCookieProtection } returns true
             }
             val expectedTitle = testContext.getString(R.string.etp_cookies_title_2)
 
-            view.update(baseState.copy(mode = TrackingProtectionState.Mode.Normal))
+            view.update(baseState.copy(mode = ProtectionsState.Mode.Normal))
 
             assertEquals(expectedTitle, view.binding.crossSiteTracking.text)
             assertEquals(expectedTitle, view.binding.crossSiteTrackingLoaded.text)
@@ -89,11 +90,11 @@ class TrackingProtectionPanelViewTest {
     fun testNormalModeUiCookiesWithTotalCookieProtectionDisabled() {
         mockkStatic("org.mozilla.fenix.ext.ContextKt") {
             every { any<Context>().settings() } returns mockk {
-                every { enabledTotalCookieProtectionSetting } returns false
+                every { enabledTotalCookieProtection } returns false
             }
             val expectedTitle = testContext.getString(R.string.etp_cookies_title)
 
-            view.update(baseState.copy(mode = TrackingProtectionState.Mode.Normal))
+            view.update(baseState.copy(mode = ProtectionsState.Mode.Normal))
 
             assertEquals(expectedTitle, view.binding.crossSiteTracking.text)
             assertEquals(expectedTitle, view.binding.crossSiteTrackingLoaded.text)
@@ -104,25 +105,25 @@ class TrackingProtectionPanelViewTest {
     fun testPrivateModeUi() {
         view.update(
             baseState.copy(
-                mode = TrackingProtectionState.Mode.Details(
+                mode = ProtectionsState.Mode.Details(
                     selectedCategory = TrackingProtectionCategory.TRACKING_CONTENT,
-                    categoryBlocked = false
-                )
-            )
+                    categoryBlocked = false,
+                ),
+            ),
         )
         assertTrue(view.binding.detailsMode.isVisible)
         assertFalse(view.binding.normalMode.isVisible)
         assertEquals(
             testContext.getString(R.string.etp_tracking_content_title),
-            view.binding.categoryTitle.text
+            view.binding.categoryTitle.text,
         )
         assertEquals(
             testContext.getString(R.string.etp_tracking_content_description),
-            view.binding.categoryDescription.text
+            view.binding.categoryDescription.text,
         )
         assertEquals(
             testContext.getString(R.string.enhanced_tracking_protection_allowed),
-            view.binding.detailsBlockingHeader.text
+            view.binding.detailsBlockingHeader.text,
         )
     }
 
@@ -130,18 +131,18 @@ class TrackingProtectionPanelViewTest {
     fun testPrivateModeUiCookiesWithTotalCookieProtectionEnabled() {
         mockkStatic("org.mozilla.fenix.ext.ContextKt") {
             every { any<Context>().settings() } returns mockk {
-                every { enabledTotalCookieProtectionSetting } returns true
+                every { enabledTotalCookieProtection } returns true
             }
             val expectedTitle = testContext.getString(R.string.etp_cookies_title_2)
             val expectedDescription = testContext.getString(R.string.etp_cookies_description_2)
 
             view.update(
                 baseState.copy(
-                    mode = TrackingProtectionState.Mode.Details(
+                    mode = ProtectionsState.Mode.Details(
                         selectedCategory = CROSS_SITE_TRACKING_COOKIES,
-                        categoryBlocked = false
-                    )
-                )
+                        categoryBlocked = false,
+                    ),
+                ),
             )
 
             assertEquals(expectedTitle, view.binding.categoryTitle.text)
@@ -153,18 +154,18 @@ class TrackingProtectionPanelViewTest {
     fun testPrivateModeUiCookiesWithTotalCookieProtectionDisabled() {
         mockkStatic("org.mozilla.fenix.ext.ContextKt") {
             every { any<Context>().settings() } returns mockk {
-                every { enabledTotalCookieProtectionSetting } returns false
+                every { enabledTotalCookieProtection } returns false
             }
             val expectedTitle = testContext.getString(R.string.etp_cookies_title)
             val expectedDescription = testContext.getString(R.string.etp_cookies_description)
 
             view.update(
                 baseState.copy(
-                    mode = TrackingProtectionState.Mode.Details(
+                    mode = ProtectionsState.Mode.Details(
                         selectedCategory = CROSS_SITE_TRACKING_COOKIES,
-                        categoryBlocked = false
-                    )
-                )
+                        categoryBlocked = false,
+                    ),
+                ),
             )
 
             assertEquals(expectedTitle, view.binding.categoryTitle.text)

@@ -4,24 +4,15 @@
 
 package org.mozilla.fenix.ui
 
-import android.os.Build
 import androidx.core.net.toUri
-import androidx.test.filters.SdkSuppress
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.runner.permission.PermissionRequester
-import androidx.test.uiautomator.UiDevice
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TestRule
-import org.junit.rules.TestWatcher
-import org.junit.runner.Description
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.helpers.FeatureSettingsHelper
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
-import org.mozilla.fenix.helpers.TestHelper.deleteDownloadFromStorage
+import org.mozilla.fenix.helpers.TestHelper.deleteDownloadedFileOnStorage
+import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.downloadRobot
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -36,40 +27,15 @@ import org.mozilla.fenix.ui.robots.notificationShade
  *  - Verifies managing downloads inside the Downloads listing.
  **/
 class DownloadTest {
-    private lateinit var mDevice: UiDevice
-    private val featureSettingsHelper = FeatureSettingsHelper()
     /* Remote test page managed by Mozilla Mobile QA team at https://github.com/mozilla-mobile/testapp */
     private val downloadTestPage = "https://storage.googleapis.com/mobile_test_assets/test_app/downloads.html"
     private var downloadFile: String = ""
 
     @get:Rule
-    val activityTestRule = HomeActivityIntentTestRule()
-
-    @get: Rule
-    // Making sure to grant storage access for this test running on API 28
-    var watcher: TestRule = object : TestWatcher() {
-        override fun starting(description: Description) {
-            if (description.methodName == "pauseResumeCancelDownloadTest") {
-                PermissionRequester().apply {
-                    addPermissions(
-                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        android.Manifest.permission.READ_EXTERNAL_STORAGE
-                    )
-                    requestPermissions()
-                }
-            }
-        }
-    }
+    val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
 
     @Before
     fun setUp() {
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        // disabling the jump-back-in pop-up that interferes with the tests.
-        featureSettingsHelper.setJumpBackCFREnabled(false)
-        // disable the TCP CFR that appears when loading webpages and interferes with the tests.
-        featureSettingsHelper.setTCPCFREnabled(false)
-        // disabling the PWA CFR on 3rd visit
-        featureSettingsHelper.disablePwaCFR(true)
         // clear all existing notifications
         notificationShade {
             mDevice.openNotification()
@@ -79,13 +45,11 @@ class DownloadTest {
 
     @After
     fun tearDown() {
-        featureSettingsHelper.resetAllFeatureFlags()
         notificationShade {
             cancelAllShownNotifications()
         }
     }
 
-    @Ignore("Failing with frequent ANR: https://github.com/mozilla-mobile/fenix/issues/25926")
     @Test
     fun testDownloadPrompt() {
         downloadFile = "web_icon.png"
@@ -138,7 +102,6 @@ class DownloadTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.P, codeName = "P")
     @SmokeTest
     @Test
     fun pauseResumeCancelDownloadTest() {
@@ -166,15 +129,16 @@ class DownloadTest {
         }
     }
 
-    @SmokeTest
-    @Test
-        /* Verifies downloads in the Downloads Menu:
+    /* Verifies downloads in the Downloads Menu:
           - downloads appear in the list
           - deleting a download from device storage, removes it from the Downloads Menu too
-        */
+    */
+    @SmokeTest
+    @Test
     fun manageDownloadsInDownloadsMenuTest() {
         // a long filename to verify it's correctly displayed on the prompt and in the Downloads menu
-        downloadFile = "tAJwqaWjJsXS8AhzSninBMCfIZbHBGgcc001lx5DIdDwIcfEgQ6vE5Gb5VgAled17DFZ2A7ZDOHA0NpQPHXXFt.svg"
+        downloadFile =
+            "tAJwqaWjJsXS8AhzSninBMCfIZbHBGgcc001lx5DIdDwIcfEgQ6vE5Gb5VgAled17DFZ2A7ZDOHA0NpQPHXXFt.svg"
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
@@ -190,14 +154,34 @@ class DownloadTest {
             waitForDownloadsListToExist()
             verifyDownloadedFileName(downloadFile)
             verifyDownloadedFileIcon()
-            openDownloadedFile(downloadFile)
-            verifyPhotosAppOpens()
-            deleteDownloadFromStorage()
-            waitForDownloadsListToExist()
+            deleteDownloadedFileOnStorage(downloadFile)
         }.exitDownloadsManagerToBrowser {
         }.openThreeDotMenu {
         }.openDownloadsManager {
             verifyEmptyDownloadsList()
+        }
+    }
+
+    @SmokeTest
+    @Test
+    fun openDownloadedFileTest() {
+        downloadFile = "web_icon.png"
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
+            waitForPageToLoad()
+        }.clickDownloadLink(downloadFile) {
+            verifyDownloadPrompt(downloadFile)
+        }.clickDownload {
+            verifyDownloadNotificationPopup()
+        }
+        browserScreen {
+        }.openThreeDotMenu {
+        }.openDownloadsManager {
+            verifyDownloadedFileName(downloadFile)
+            openDownloadedFile(downloadFile)
+            verifyPhotosAppOpens()
+            mDevice.pressBack()
         }
     }
 }

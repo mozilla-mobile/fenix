@@ -34,9 +34,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -49,7 +54,6 @@ import org.mozilla.fenix.compose.Image
 import org.mozilla.fenix.compose.inComposePreview
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.theme.Theme
 
 private val cardShape = RoundedCornerShape(8.dp)
 
@@ -64,22 +68,30 @@ private val imageModifier = Modifier
  *
  * @param bookmarks List of [RecentBookmark]s to display.
  * @param menuItems List of [RecentBookmarksMenuItem] shown when long clicking a [RecentBookmarkItem]
+ * @param backgroundColor The background [Color] of each bookmark.
  * @param onRecentBookmarkClick Invoked when the user clicks on a recent bookmark.
  */
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun RecentBookmarks(
     bookmarks: List<RecentBookmark>,
     menuItems: List<RecentBookmarksMenuItem>,
+    backgroundColor: Color,
     onRecentBookmarkClick: (RecentBookmark) -> Unit = {},
 ) {
     LazyRow(
+        modifier = Modifier.semantics {
+            testTagsAsResourceId = true
+            testTag = "recent.bookmarks"
+        },
         contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(bookmarks) { bookmark ->
             RecentBookmarkItem(
                 bookmark = bookmark,
                 menuItems = menuItems,
+                backgroundColor = backgroundColor,
                 onRecentBookmarkClick = onRecentBookmarkClick,
             )
         }
@@ -90,14 +102,20 @@ fun RecentBookmarks(
  * A recent bookmark item.
  *
  * @param bookmark The [RecentBookmark] to display.
+ * @param menuItems The list of [RecentBookmarksMenuItem] shown when long clicking on the recent bookmark item.
+ * @param backgroundColor The background [Color] of the recent bookmark item.
  * @param onRecentBookmarkClick Invoked when the user clicks on the recent bookmark item.
  */
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(
+    ExperimentalFoundationApi::class,
+    ExperimentalComposeUiApi::class,
+)
 @Composable
 private fun RecentBookmarkItem(
     bookmark: RecentBookmark,
     menuItems: List<RecentBookmarksMenuItem>,
-    onRecentBookmarkClick: (RecentBookmark) -> Unit = {}
+    backgroundColor: Color,
+    onRecentBookmarkClick: (RecentBookmark) -> Unit = {},
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
 
@@ -107,16 +125,16 @@ private fun RecentBookmarkItem(
             .combinedClickable(
                 enabled = true,
                 onClick = { onRecentBookmarkClick(bookmark) },
-                onLongClick = { isMenuExpanded = true }
+                onLongClick = { isMenuExpanded = true },
             ),
         shape = cardShape,
-        backgroundColor = FirefoxTheme.colors.layer2,
+        backgroundColor = backgroundColor,
         elevation = 6.dp,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
         ) {
             RecentBookmarkImage(bookmark)
 
@@ -124,6 +142,10 @@ private fun RecentBookmarkItem(
 
             Text(
                 text = bookmark.title ?: bookmark.url ?: "",
+                modifier = Modifier.semantics {
+                    testTagsAsResourceId = true
+                    testTag = "recent.bookmark.title"
+                },
                 color = FirefoxTheme.colors.textPrimary,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
@@ -134,7 +156,7 @@ private fun RecentBookmarkItem(
                 showMenu = isMenuExpanded,
                 menuItems = menuItems,
                 recentBookmark = bookmark,
-                onDismissRequest = { isMenuExpanded = false }
+                onDismissRequest = { isMenuExpanded = false },
             )
         }
     }
@@ -148,7 +170,7 @@ private fun RecentBookmarkImage(bookmark: RecentBookmark) {
                 url = bookmark.previewImageUrl,
                 modifier = imageModifier,
                 targetSize = imageWidth,
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
             )
         }
         !bookmark.url.isNullOrEmpty() && !inComposePreview -> {
@@ -163,7 +185,7 @@ private fun RecentBookmarkImage(bookmark: RecentBookmark) {
                             color = when (isSystemInDarkTheme()) {
                                 true -> PhotonColors.DarkGrey60
                                 false -> PhotonColors.LightGrey30
-                            }
+                            },
                         ),
                         contentAlignment = Alignment.Center,
                     ) {
@@ -192,8 +214,8 @@ private fun PlaceholderBookmarkImage() {
             color = when (isSystemInDarkTheme()) {
                 true -> PhotonColors.DarkGrey60
                 false -> PhotonColors.LightGrey30
-            }
-        )
+            },
+        ),
     )
 }
 
@@ -207,6 +229,7 @@ private fun PlaceholderBookmarkImage() {
  * @param recentBookmark The [RecentBookmark] for which this menu is shown.
  * @param onDismissRequest Called when the user chooses a menu option or requests to dismiss the menu.
  */
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun RecentBookmarksMenu(
     showMenu: Boolean,
@@ -219,6 +242,10 @@ private fun RecentBookmarksMenu(
         onDismissRequest = { onDismissRequest() },
         modifier = Modifier
             .background(color = FirefoxTheme.colors.layer2)
+            .semantics {
+                testTagsAsResourceId = true
+                testTag = "recent.bookmark.menu"
+            },
     ) {
         for (item in menuItems) {
             DropdownMenuItem(
@@ -233,7 +260,7 @@ private fun RecentBookmarksMenu(
                     maxLines = 1,
                     modifier = Modifier
                         .fillMaxHeight()
-                        .align(Alignment.CenterVertically)
+                        .align(Alignment.CenterVertically),
                 )
             }
         }
@@ -244,31 +271,32 @@ private fun RecentBookmarksMenu(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 private fun RecentBookmarksPreview() {
-    FirefoxTheme(theme = Theme.getTheme()) {
+    FirefoxTheme {
         RecentBookmarks(
             bookmarks = listOf(
                 RecentBookmark(
                     title = "Other Bookmark Title",
                     url = "https://www.example.com",
-                    previewImageUrl = null
+                    previewImageUrl = null,
                 ),
                 RecentBookmark(
                     title = "Other Bookmark Title",
                     url = "https://www.example.com",
-                    previewImageUrl = null
+                    previewImageUrl = null,
                 ),
                 RecentBookmark(
                     title = "Other Bookmark Title",
                     url = "https://www.example.com",
-                    previewImageUrl = null
+                    previewImageUrl = null,
                 ),
                 RecentBookmark(
                     title = "Other Bookmark Title",
                     url = "https://www.example.com",
-                    previewImageUrl = null
-                )
+                    previewImageUrl = null,
+                ),
             ),
-            menuItems = listOf()
+            menuItems = listOf(),
+            backgroundColor = FirefoxTheme.colors.layer2,
         )
     }
 }

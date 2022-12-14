@@ -23,13 +23,13 @@ class CustomEtpCookiesOptionsDropDownListPreferenceTest {
     @Test
     fun `GIVEN total cookie protection is enabled WHEN using this preference THEN show the total cookie protection option`() {
         val expectedEntries = arrayOf(
-            testContext.getString(R.string.preference_enhanced_tracking_protection_custom_cookies_5)
+            testContext.getString(R.string.preference_enhanced_tracking_protection_custom_cookies_5),
         ) + defaultEntries
         val expectedValues = arrayOf(testContext.getString(R.string.total_protection)) + defaultValues
 
         mockkStatic("org.mozilla.fenix.ext.ContextKt") {
             every { any<Context>().settings() } returns mockk {
-                every { enabledTotalCookieProtectionSetting } returns true
+                every { enabledTotalCookieProtection } returns true
             }
 
             val preference = CustomEtpCookiesOptionsDropDownListPreference(testContext)
@@ -44,7 +44,7 @@ class CustomEtpCookiesOptionsDropDownListPreferenceTest {
     fun `GIVEN total cookie protection is disabled WHEN using this preference THEN don't show the total cookie protection option`() {
         mockkStatic("org.mozilla.fenix.ext.ContextKt") {
             every { any<Context>().settings() } returns mockk {
-                every { enabledTotalCookieProtectionSetting } returns false
+                every { enabledTotalCookieProtection } returns false
             }
 
             val preference = CustomEtpCookiesOptionsDropDownListPreference(testContext)

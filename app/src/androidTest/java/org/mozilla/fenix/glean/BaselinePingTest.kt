@@ -24,8 +24,8 @@ import mozilla.components.service.glean.net.ConceptFetchHttpUploader
 import mozilla.components.service.glean.testing.GleanTestLocalServer
 import okhttp3.mockwebserver.RecordedRequest
 import org.json.JSONObject
-import org.junit.Assert.assertTrue
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -36,9 +36,9 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.MockWebServerHelper
-import java.util.concurrent.TimeUnit
 import java.io.BufferedReader
 import java.io.ByteArrayInputStream
+import java.util.concurrent.TimeUnit
 import java.util.zip.GZIPInputStream
 
 /**
@@ -91,7 +91,7 @@ class BaselinePingTest {
             val httpClient = ConceptFetchHttpUploader(
                 lazy {
                     GeckoViewFetchClient(ApplicationProvider.getApplicationContext())
-                }
+                },
             )
 
             // Fenix does not initialize the Glean SDK in tests/debug builds, but this test
@@ -102,7 +102,7 @@ class BaselinePingTest {
                     applicationContext = ApplicationProvider.getApplicationContext(),
                     uploadEnabled = true,
                     configuration = Configuration(httpClient = httpClient),
-                    buildInfo = GleanBuildInfo.buildInfo
+                    buildInfo = GleanBuildInfo.buildInfo,
                 )
             }
         }
@@ -119,7 +119,7 @@ class BaselinePingTest {
     private fun waitForPingContent(
         pingName: String,
         pingReason: String?,
-        maxAttempts: Int = 3
+        maxAttempts: Int = 3,
     ): JSONObject? {
         var attempts = 0
         do {
@@ -163,8 +163,8 @@ class BaselinePingTest {
         mDevice.pressRecentApps()
         mDevice.findObject(
             UiSelector().descriptionContains(
-                ApplicationProvider.getApplicationContext<Context>().getString(R.string.app_name)
-            )
+                ApplicationProvider.getApplicationContext<Context>().getString(R.string.app_name),
+            ),
         )
             .click()
 

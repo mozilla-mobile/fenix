@@ -29,6 +29,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.settings.quicksettings.protections.ProtectionsView
 
 @RunWith(FenixRobolectricTestRunner::class)
 class QuickSettingsSheetDialogFragmentTest {
@@ -107,17 +108,17 @@ class QuickSettingsSheetDialogFragmentTest {
     fun `GIVEN no trackers WHEN calling updateTrackers THEN hide the details section`() {
         val tab = createTab("mozilla.org")
         val trackingProtectionUseCases: TrackingProtectionUseCases = mockk(relaxed = true)
-        val trackingProtectionView: TrackingProtectionView = mockk(relaxed = true)
+        val protectionsView: ProtectionsView = mockk(relaxed = true)
 
         val onComplete = slot<(List<TrackerLog>) -> Unit>()
 
-        every { fragment.trackingProtectionView } returns trackingProtectionView
+        every { fragment.protectionsView } returns protectionsView
 
         every {
             trackingProtectionUseCases.fetchTrackingLogs.invoke(
                 any(),
                 capture(onComplete),
-                any()
+                any(),
             )
         }.answers { onComplete.captured.invoke(emptyList()) }
 
@@ -126,7 +127,7 @@ class QuickSettingsSheetDialogFragmentTest {
         fragment.updateTrackers(tab)
 
         verify {
-            trackingProtectionView.updateDetailsSection(false)
+            protectionsView.updateDetailsSection(false)
         }
     }
 
@@ -134,17 +135,17 @@ class QuickSettingsSheetDialogFragmentTest {
     fun `GIVEN trackers WHEN calling updateTrackers THEN show the details section`() {
         val tab = createTab("mozilla.org")
         val trackingProtectionUseCases: TrackingProtectionUseCases = mockk(relaxed = true)
-        val trackingProtectionView: TrackingProtectionView = mockk(relaxed = true)
+        val protectionsView: ProtectionsView = mockk(relaxed = true)
 
         val onComplete = slot<(List<TrackerLog>) -> Unit>()
 
-        every { fragment.trackingProtectionView } returns trackingProtectionView
+        every { fragment.protectionsView } returns protectionsView
 
         every {
             trackingProtectionUseCases.fetchTrackingLogs.invoke(
                 any(),
                 capture(onComplete),
-                any()
+                any(),
             )
         }.answers { onComplete.captured.invoke(listOf(TrackerLog(""))) }
 
@@ -153,7 +154,7 @@ class QuickSettingsSheetDialogFragmentTest {
         fragment.updateTrackers(tab)
 
         verify {
-            trackingProtectionView.updateDetailsSection(true)
+            protectionsView.updateDetailsSection(true)
         }
     }
 

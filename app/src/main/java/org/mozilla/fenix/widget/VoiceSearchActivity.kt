@@ -11,6 +11,7 @@ import android.os.StrictMode
 import android.speech.RecognizerIntent
 import androidx.appcompat.app.AppCompatActivity
 import mozilla.components.support.locale.LocaleManager
+import mozilla.components.support.utils.ext.getParcelableCompat
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.GleanMetrics.SearchWidget
 import org.mozilla.fenix.HomeActivity
@@ -42,7 +43,7 @@ class VoiceSearchActivity : AppCompatActivity() {
         }
 
         // Retrieve the previous intent from the saved state
-        previousIntent = savedInstanceState?.get(PREVIOUS_INTENT) as Intent?
+        previousIntent = savedInstanceState?.getParcelableCompat(PREVIOUS_INTENT, Intent::class.java)
         if (previousIntent.isForSpeechProcessing()) {
             // Don't reopen the speech recognizer
             return
@@ -68,13 +69,13 @@ class VoiceSearchActivity : AppCompatActivity() {
         val intentSpeech = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(
                 RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM,
             )
             putExtra(
                 RecognizerIntent.EXTRA_LANGUAGE,
                 components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
                     LocaleManager.getCurrentLocale(this@VoiceSearchActivity)
-                }
+                },
             )
         }
         SearchWidget.voiceButton.record(NoExtras())
@@ -112,6 +113,7 @@ class VoiceSearchActivity : AppCompatActivity() {
     companion object {
         internal const val SPEECH_REQUEST_CODE = 0
         internal const val PREVIOUS_INTENT = "org.mozilla.fenix.previous_intent"
+
         /**
          * In [VoiceSearchActivity] activity, used to store if the speech processing should start.
          * In [IntentReceiverActivity] activity, used to store the search terms.

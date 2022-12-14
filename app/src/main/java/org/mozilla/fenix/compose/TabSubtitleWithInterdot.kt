@@ -16,7 +16,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.theme.Theme
 
 /**
  * Special caption text for a tab layout shown on one line.
@@ -71,17 +70,17 @@ fun TabSubtitleWithInterdot(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
             )
-        }
+        },
     ) { items, constraints ->
 
         // We need to measure from the end to start to ensure the secondItem will always be on screen
         // and depending on secondItem's width and interdot's width the firstItem is automatically resized.
         val secondItem = items[2].measure(constraints)
         val interdot = items[1].measure(
-            constraints.copy(maxWidth = constraints.maxWidth - secondItem.width)
+            constraints.copy(maxWidth = constraints.maxWidth - secondItem.width),
         )
         val firstItem = items[0].measure(
-            constraints.copy(maxWidth = constraints.maxWidth - secondItem.width - interdot.width)
+            constraints.copy(maxWidth = constraints.maxWidth - secondItem.width - interdot.width),
         )
 
         layout(constraints.maxWidth, constraints.maxHeight) {
@@ -91,7 +90,7 @@ fun TabSubtitleWithInterdot(
                     constraints.maxWidth,
                     intArrayOf(firstItem.width, interdot.width, secondItem.width),
                     currentLayoutDirection,
-                    itemsPositions
+                    itemsPositions,
                 )
             }
 
@@ -106,7 +105,7 @@ fun TabSubtitleWithInterdot(
 @Composable
 @Preview
 private fun TabSubtitleWithInterdotPreview() {
-    FirefoxTheme(theme = Theme.getTheme()) {
+    FirefoxTheme {
         Box(Modifier.background(FirefoxTheme.colors.layer2)) {
             TabSubtitleWithInterdot(
                 firstText = "firstText",

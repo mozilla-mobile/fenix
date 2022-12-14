@@ -34,6 +34,7 @@ object Performance {
         disableOnboarding(context)
         disableTrackingProtectionPopups(context)
         disableFirstTimePWAPopup(context)
+        disableTCPPopup(context)
     }
 
     /**
@@ -57,7 +58,8 @@ object Performance {
 
             val isAdbEnabled = AndroidSettings.Global.getInt(
                 context.contentResolver,
-                AndroidSettings.Global.ADB_ENABLED, 0
+                AndroidSettings.Global.ADB_ENABLED,
+                0,
             ) == 1
             return isPhonePlugged && isAdbEnabled
         }
@@ -83,5 +85,12 @@ object Performance {
      */
     private fun disableFirstTimePWAPopup(context: Context) {
         context.components.settings.userKnowsAboutPwas = true
+    }
+
+    /**
+     * Disables the TCP popup.
+     */
+    private fun disableTCPPopup(context: Context) {
+        context.components.settings.shouldShowTotalCookieProtectionCFR = false
     }
 }

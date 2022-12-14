@@ -23,6 +23,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.TopSites
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.databinding.TopSiteItemBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -37,12 +38,13 @@ class TopSiteItemViewHolderTest {
     private lateinit var binding: TopSiteItemBinding
     private lateinit var interactor: TopSiteInteractor
     private lateinit var lifecycleOwner: LifecycleOwner
+    private lateinit var appStore: AppStore
 
     private val pocket = TopSite.Default(
         id = 1L,
         title = "Pocket",
         url = "https://getpocket.com",
-        createdAt = 0
+        createdAt = 0,
     )
 
     @Before
@@ -50,25 +52,17 @@ class TopSiteItemViewHolderTest {
         binding = TopSiteItemBinding.inflate(LayoutInflater.from(testContext))
         interactor = mockk(relaxed = true)
         lifecycleOwner = mockk(relaxed = true)
+        appStore = mockk(relaxed = true)
 
         every { testContext.components.core.icons } returns BrowserIcons(testContext, mockk(relaxed = true))
     }
 
     @Test
     fun `calls interactor on click`() {
-        TopSiteItemViewHolder(binding.root, lifecycleOwner, interactor).bind(pocket, position = 0)
+        TopSiteItemViewHolder(binding.root, appStore, lifecycleOwner, interactor).bind(pocket, position = 0)
 
-        binding.topSiteItem.performClick()
+        binding.root.performClick()
         verify { interactor.onSelectTopSite(pocket, position = 0) }
-    }
-
-    @Test
-    fun `calls interactor on long click`() {
-        every { testContext.components.analytics } returns mockk(relaxed = true)
-        TopSiteItemViewHolder(binding.root, lifecycleOwner, interactor).bind(pocket, position = 0)
-
-        binding.topSiteItem.performLongClick()
-        verify { interactor.onTopSiteMenuOpened() }
     }
 
     @Test
@@ -77,10 +71,10 @@ class TopSiteItemViewHolderTest {
             id = 1L,
             title = "Pocket",
             url = "https://getpocket.com",
-            createdAt = 0
+            createdAt = 0,
         )
 
-        TopSiteItemViewHolder(binding.root, lifecycleOwner, interactor).bind(defaultTopSite, position = 0)
+        TopSiteItemViewHolder(binding.root, appStore, lifecycleOwner, interactor).bind(defaultTopSite, position = 0)
         val pinIndicator = binding.topSiteTitle.compoundDrawables[0]
 
         assertNotNull(pinIndicator)
@@ -92,10 +86,10 @@ class TopSiteItemViewHolderTest {
             id = 1L,
             title = "Mozilla",
             url = "https://www.mozilla.org",
-            createdAt = 0
+            createdAt = 0,
         )
 
-        TopSiteItemViewHolder(binding.root, lifecycleOwner, interactor).bind(pinnedTopSite, position = 0)
+        TopSiteItemViewHolder(binding.root, appStore, lifecycleOwner, interactor).bind(pinnedTopSite, position = 0)
         val pinIndicator = binding.topSiteTitle.compoundDrawables[0]
 
         assertNotNull(pinIndicator)
@@ -107,10 +101,10 @@ class TopSiteItemViewHolderTest {
             id = 1L,
             title = "Mozilla",
             url = "https://www.mozilla.org",
-            createdAt = 0
+            createdAt = 0,
         )
 
-        TopSiteItemViewHolder(binding.root, lifecycleOwner, interactor).bind(frecentTopSite, position = 0)
+        TopSiteItemViewHolder(binding.root, appStore, lifecycleOwner, interactor).bind(frecentTopSite, position = 0)
         val pinIndicator = binding.topSiteTitle.compoundDrawables[0]
 
         assertNull(pinIndicator)
@@ -125,7 +119,7 @@ class TopSiteItemViewHolderTest {
             clickUrl = "https://mozilla.com/click",
             imageUrl = "https://test.com/image2.jpg",
             impressionUrl = "https://example.com",
-            createdAt = 3
+            createdAt = 3,
         )
         val position = 0
         assertNull(TopSites.contileImpression.testGetValue())
@@ -144,7 +138,7 @@ class TopSiteItemViewHolderTest {
             topSiteImpressionSubmitted = true
         }
 
-        TopSiteItemViewHolder(binding.root, lifecycleOwner, interactor).submitTopSitesImpressionPing(topSite, position)
+        TopSiteItemViewHolder(binding.root, appStore, lifecycleOwner, interactor).submitTopSitesImpressionPing(topSite, position)
 
         assertNotNull(TopSites.contileImpression.testGetValue())
 

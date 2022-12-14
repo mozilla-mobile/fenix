@@ -10,11 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import com.google.android.material.bottomsheet.BottomSheetDialog
+import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import androidx.appcompat.app.AppCompatDialogFragment
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
 import mozilla.components.service.fxa.manager.FxaAccountManager
 import org.mozilla.fenix.R
@@ -46,16 +46,16 @@ class SignOutFragment : AppCompatDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         accountManager = requireComponents.backgroundServices.accountManager
         _binding = FragmentSignOutBinding.inflate(inflater, container, false)
 
         binding.signOutMessage.text = String.format(
             binding.root.context.getString(
-                R.string.sign_out_confirmation_message_2
+                R.string.sign_out_confirmation_message_2,
             ),
-            binding.root.context.getString(R.string.app_name)
+            binding.root.context.getString(R.string.app_name),
         )
         return binding.root
     }

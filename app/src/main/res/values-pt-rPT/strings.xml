@@ -15,6 +15,12 @@
     <string name="content_description_disable_private_browsing_button">Desativar navegação privada</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="search_hint">Pesquise ou insira o endereço</string>
+    <!-- Placeholder text shown in search bar when using history search -->
+    <string name="history_search_hint">Pesquisar histórico</string>
+    <!-- Placeholder text shown in search bar when using bookmarks search -->
+    <string name="bookmark_search_hint">Pesquisar marcadores</string>
+    <!-- Placeholder text shown in search bar when using tabs search -->
+    <string name="tab_search_hint">Pesquisar separadores</string>
     <!-- Placeholder text shown in the search bar when using application search engines -->
     <string name="application_search_hint">Introduza os termos de pesquisa</string>
     <!-- No Open Tabs Message Description -->
@@ -41,7 +47,7 @@
 
     <!-- Home - Recently saved bookmarks -->
     <!-- Title for the home screen section with recently saved bookmarks. -->
-    <string name="recent_bookmarks_title">Marcadores recentes</string>
+    <string name="recently_saved_title">Recentemente guardados</string>
     <!-- Content description for the button which navigates the user to show all of their saved bookmarks. -->
     <string name="recently_saved_show_all_content_description_2">Mostrar todos os marcadores guardados</string>
 
@@ -77,6 +83,12 @@
 
     <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
     <string name="cfr_dismiss_button_default_content_description">Dispensar</string>
+
+    <!-- Total cookie protection "contextual feature recommendation" (CFR) -->
+    <!-- Text for the message displayed in the contextual feature recommendation popup promoting the total cookie protection feature. -->
+    <string name="tcp_cfr_message">A nossa funcionalidade de privacidade mais poderosa isola rastreadores inter-sites.</string>
+    <!-- Text displayed that links to website containing documentation about the "Total cookie protection" feature. -->
+    <string name="tcp_cfr_learn_more">Saber mais sobre a Proteção Total de Cookies</string>
 
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">É necessário acesso à câmara. Aceda às definições do Android, toque em permissões e toque em permitir.</string>
@@ -123,18 +135,13 @@
 
     <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
     <string name="recent_tabs_show_all_content_description_2">Mostrar botão todos os separadores recentes</string>
-    <!-- Title for showing a group item in the 'Jump back in' section of the new tab
-        The first parameter is the search term that the user used. (for example: your search for "cat")-->
-    <string moz:RemovedIn="105" name="recent_tabs_search_term" tools:ignore="UnusedResources">A sua pesquisa por \&quot;%1$s\&quot;</string>
-
-    <!-- Text for the number of tabs in a group in the 'Jump back in' section of the new tab
-        %d is a placeholder for the number of sites in the group. This number will always be more than one. -->
-    <string moz:RemovedIn="105" name="recent_tabs_search_term_count_2" tools:ignore="UnusedResources">%d sites</string>
 
     <!-- Text for button in synced tab card that opens synced tabs tray -->
     <string name="recent_tabs_see_all_synced_tabs_button_text">Ver todos os separadores sincronizados</string>
     <!-- Accessibility description for device icon used for recent synced tab -->
     <string name="recent_tabs_synced_device_icon_content_description">Dispositivo sincronizado</string>
+    <!-- Text for the dropdown menu to remove a recent synced tab from the homescreen -->
+    <string name="recent_synced_tab_menu_item_remove">Remover</string>
     <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
          in the Recently visited section -->
     <string name="recent_tab_menu_item_remove">Remover</string>
@@ -249,26 +256,35 @@
     <!-- Menu option in the search selector menu to open the search settings -->
     <string name="search_settings_menu_item">Definições de pesquisa</string>
 
-    <!-- Home onboarding -->
-    <!-- Onboarding home screen dialog title text. The first parameter is the name of the application.-->
-    <string name="onboarding_home_screen_title_3">Novidades do %s</string>
-    <!-- Onboarding home screen dialog description text. -->
-    <string name="onboarding_home_screen_description_2">Agora é mais simples continuar de onde parou.</string>
-    <!-- Onboarding home screen dialog title text for the home section. The first parameter is the name of the application.-->
-    <string name="onboarding_home_screen_section_home_title_3">Página inicial personalizada do %1$s</string>
-    <!-- Onboarding home screen dialog description text for the home section. -->
-    <string name="onboarding_home_screen_section_home_description_2">Aceda aos seus separadores abertos, marcadores e histórico de navegação.</string>
-    <!-- Onboarding home screen dialog description text for the tab tray section. -->
-    <string name="onboarding_home_screen_section_cleaner_tab_tray_title_2">Separadores limpos e organizados</string>
-    <!-- Onboarding home screen dialog description text for the tab tray section. -->
-    <string name="onboarding_home_screen_section_cleaner_tab_tray_description_2">Elimine a confusão de separadores com um esquema melhorado e encerramento automático de separadores.</string>
-    <!-- Onboarding home screen dialog description text for the history section. -->
-    <string name="onboarding_home_screen_section_useful_history_title_2">Pesquisas recentes</string>
-    <!-- Onboarding home screen dialog description text for the history section. -->
-    <string name="onboarding_home_screen_section_useful_history_description_2">Revisite as suas pesquisas mais recentes na sua página inicial e separadores.</string>
+    <!-- Header text for the search selector menu -->
+    <string moz:RemovedIn="109" name="search_header_menu_item" tools:ignore="UnusedResources">Pesquisa neste momento:</string>
 
-    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. Firefox is intentionally hardcoded. -->
-    <string name="onboarding_home_screen_jump_back_contextual_hint" tools:ignore="UnusedResources">A sua página inicial personalizada do Firefox faz com que agora seja mais simples continuar de onde parou. Encontre os seus separadores, marcadores e resultados de pesquisa recentes.</string>
+    <!-- Header text for the search selector menu -->
+    <string name="search_header_menu_item_2">Desta vez pesquisar em:</string>
+
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint_2">Conheça a sua página inicial personalizada. Aqui vão ser apresentados separadores recentes, marcadores e resultados de pesquisas.</string>
+    <!-- Home onboarding dialog welcome screen title text. -->
+    <string name="onboarding_home_welcome_title_2">Bem-vindo a uma internet mais pessoal</string>
+    <!-- Home onboarding dialog welcome screen description text. -->
+    <string name="onboarding_home_welcome_description">Mais cores. Melhor privacidade. O mesmo compromisso com as pessoas, acima dos lucros.</string>
+    <!-- Home onboarding dialog sign into sync screen title text. -->
+    <string name="onboarding_home_sync_title_3">Alterar entre ecrãs é mais fácil do que nunca</string>
+    <!-- Home onboarding dialog sign into sync screen description text. -->
+    <string name="onboarding_home_sync_description">Continue de onde parou com os separadores de outros dispositivos agora na sua página inicial.</string>
+    <!-- Text for the button to continue the onboarding on the home onboarding dialog. -->
+    <string name="onboarding_home_get_started_button">Começar</string>
+    <!-- Text for the button to navigate to the sync sign in screen on the home onboarding dialog. -->
+    <string name="onboarding_home_sign_in_button">Iniciar sessão</string>
+    <!-- Text for the button to skip the onboarding on the home onboarding dialog. -->
+    <string name="onboarding_home_skip_button">Saltar</string>
+
+    <!-- Onboarding home screen sync popup dialog message, shown on top of Recent Synced Tabs in the Jump back in section. -->
+    <string name="sync_cfr_message">Os seus separadores estão a ser sincronizados! Continue de onde parou no seu outro dispositivo.</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Close button for the home onboarding dialog -->
+    <string name="onboarding_home_content_description_close_button">Fechar</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -319,6 +335,14 @@
     <string name="preferences_add_private_browsing_shortcut">Adicionar um atalho de navegação privada</string>
     <!-- Preference for enabling "HTTPS-Only" mode -->
     <string name="preferences_https_only_title">Modo apenas HTTPS</string>
+
+    <!-- Preference for removing cookie/consent banners from sites automatically. See reduce_cookie_banner_summary for additional context. -->
+    <string name="preferences_cookie_banner_reduction">Redução de Faixas de Cookies</string>
+    <!-- Preference for rejecting or removing as many cookie/consent banners as possible on sites. See reduce_cookie_banner_summary for additional context. -->
+    <string name="reduce_cookie_banner_option">Reduzir faixas de cookies</string>
+    <!-- Summary for the preference for rejecting all cookies whenever possible. -->
+    <string name="reduce_cookie_banner_summary">O Firefox tenta rejeitar automaticamente pedidos de cookies em faixas de cookies. Se uma opção de rejeição não estiver disponível, o Firefox poderá aceitar todos os cookies para esconder a faixa.</string>
+
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Automaticamente tenta conectar-se a sites utilizando o protocolo de encriptação HTTPS para uma melhor segurança.</string>
     <!-- Summary of tracking protection preference if tracking protection is set to on -->
@@ -357,8 +381,6 @@
     <string name="preferences_gestures">Gestos</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Personalizar</string>
-    <!-- Preference description for banner about signing in -->
-    <string moz:RemovedIn="104" name="preferences_sign_in_description" tools:ignore="UnusedResources">Sincronize marcadores, histórico e muito mais com a sua conta do Firefox</string>
     <!-- Preference description for banner about signing in -->
     <string name="preferences_sign_in_description_2">Inicie sessão para sincronizar os separadores, marcadores, palavras-passe e mais.</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
@@ -427,8 +449,12 @@
     a section where users see a list of tabs that they have visited in the past few days -->
     <string name="customize_toggle_recently_visited">Visualizados recentemente</string>
     <!-- Title for the customize home screen section with Pocket. -->
-    <string name="customize_toggle_pocket">Pocket</string>
+    <string moz:RemovedIn="108" name="customize_toggle_pocket" tools:ignore="UnusedResources">Pocket</string>
 
+    <!-- Title for the customize home screen section with Pocket. -->
+    <string name="customize_toggle_pocket_2">Histórias que fazem pensar</string>
+    <!-- Summary for the customize home screen section with Pocket. The first parameter is product name Pocket -->
+    <string name="customize_toggle_pocket_summary">Artigos suportados pelo %s</string>
     <!-- Title for the customize home screen section with sponsored Pocket stories. -->
     <string name="customize_toggle_pocket_sponsored">Histórias patrocinadas</string>
     <!-- Title for the opening wallpaper settings screen -->
@@ -443,12 +469,30 @@
     <string name="wallpaper_updated_snackbar_message">Fundo atualizado!</string>
     <!-- Snackbar label for action to view selected wallpaper -->
     <string name="wallpaper_updated_snackbar_action">Ver</string>
-    <!-- Label for switch which toggles the "tap-to-switch" behavior on home screen logo -->
-    <string name="wallpaper_tap_to_change_switch_label_1">Altere o fundo ao tocar no logótipo da página principal do Firefox</string>
+    <!-- Snackbar message for when wallpaper couldn't be downloaded -->
+    <string name="wallpaper_download_error_snackbar_message">Não foi possível transferir o fundo</string>
+    <!-- Snackbar label for action to retry downloading the wallpaper -->
+    <string name="wallpaper_download_error_snackbar_action">Tentar novamente</string>
+    <!-- Snackbar message for when wallpaper couldn't be selected because of the disk error -->
+    <string name="wallpaper_select_error_snackbar_message">Não foi possível alterar o fundo</string>
+    <!-- Text displayed that links to website containing documentation about the "Limited Edition" wallpapers. -->
+    <string name="wallpaper_learn_more">Saber mais</string>
 
-    <!-- This is the accessibility content description for the wallpapers functionality. Users are
-    able to tap on the app logo in the home screen and can switch to different wallpapers by tapping. -->
-    <string name="wallpaper_logo_content_description">Logótipo do Firefox - altere o fundo, botão</string>
+    <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
+    <string name="wallpaper_classic_title">%s clássico</string>
+    <!-- Text for limited edition wallpapers title. -->
+    <string name="wallpaper_limited_edition_title">Edição limitada</string>
+
+    <!-- Description text for the limited edition wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more-->
+    <string name="wallpaper_limited_edition_description_with_learn_more">A nova coleção de vozes independentes. %s</string>
+    <!-- Description text for the limited edition wallpapers. -->
+    <string name="wallpaper_limited_edition_description">A nova coleção de vozes independentes.</string>
+    <!-- Wallpaper onboarding dialog header text. -->
+    <string name="wallpapers_onboarding_dialog_title_text">Experimente um toque de cor</string>
+    <!-- Wallpaper onboarding dialog body text. -->
+    <string name="wallpapers_onboarding_dialog_body_text">Escolha um fundo que lhe diga alguma coisa.</string>
+    <!-- Wallpaper onboarding dialog learn more button text. The button navigates to the wallpaper settings screen. -->
+    <string name="wallpapers_onboarding_dialog_explore_more_button_text">Explorar mais fundos</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -531,9 +575,6 @@
     <string name="preference_experiments_summary_2">Permitir que a Mozilla instale e faça estudos</string>
 
     <!-- Turn On Sync Preferences -->
-    <!-- Header of the Turn on Sync preference view -->
-    <string moz:RemovedIn="104" name="preferences_sync" tools:ignore="UnusedResources">Ligar Sync</string>
-
     <!-- Header of the Sync and save your data preference view -->
     <string name="preferences_sync_2">Sincronizar e guardar os seus dados</string>
     <!-- Preference for reconnecting to FxA sync -->
@@ -595,6 +636,17 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Fechar</string>
 
+    <!-- Title to show in alert when a lot of tabs are to be opened
+    %d is a placeholder for the number of tabs that will be opened -->
+    <string name="open_all_warning_title">Abrir %d separadores?</string>
+    <!-- Message to warn users that a large number of tabs will be opened
+    %s will be replaced by app name. -->
+    <string name="open_all_warning_message">Abrir tantos separadores poderá desacelerar o %s enquanto as páginas estiverem a carregar. Tem a certeza de que quer continuar?</string>
+    <!-- Dialog button text for confirming open all tabs -->
+    <string name="open_all_warning_confirm">Abrir separadores</string>
+    <!-- Dialog button text for canceling open all tabs -->
+    <string name="open_all_warning_cancel">Cancelar</string>
+
     <!-- Text to show users they have one site in the history group section of the History fragment.
     %d is a placeholder for the number of sites in the group. -->
     <string name="history_search_group_site">%d site</string>
@@ -624,10 +676,6 @@
     <string name="tab_view_list">Lista</string>
     <!-- Option for a grid tab view -->
     <string name="tab_view_grid">Grelha</string>
-    <!-- Option for search term tab groups -->
-    <string moz:RemovedIn="105" name="tab_view_search_term_tab_groups" tools:ignore="UnusedResources">Pesquisar grupos</string>
-    <!-- Summary text for search term tab groups -->
-    <string moz:RemovedIn="105" name="tab_view_search_term_tab_groups_summary" tools:ignore="UnusedResources">Agrupar sites relacionados</string>
     <!-- Title of preference that allows a user to auto close tabs after a specified amount of time -->
     <string name="preferences_close_tabs">Fechar separadores</string>
     <!-- Option for auto closing tabs that will never auto close tabs, always allows user to manually close tabs -->
@@ -732,8 +780,6 @@
     <string name="open_tabs_menu">Abrir menu dos separadores</string>
     <!-- Open tabs menu item to save tabs to collection -->
     <string name="tabs_menu_save_to_collection1">Guardar separadores na coleção</string>
-    <!-- Content description (not visible, for screen readers etc.): Opens the tab menu when pressed -->
-    <string moz:RemovedIn="103" name="tab_menu" tools:ignore="UnusedResources">Menu do separador</string>
     <!-- Text for the menu button to delete a collection -->
     <string name="collection_delete">Eliminar coleção</string>
     <!-- Text for the menu button to rename a collection -->
@@ -751,9 +797,6 @@
     <string name="delete_from_history">Eliminar do histórico</string>
     <!-- Postfix for private WebApp titles, placeholder is replaced with app name -->
     <string name="pwa_site_controls_title_private">%1$s (modo privado)</string>
-
-    <!-- Title text for the normal tabs header in the tabs tray which are not part of any tab grouping. -->
-    <string moz:removedIn="104" name="tab_tray_header_title_1" tools:ignore="UnusedResources">Outros separadores</string>
 
     <!-- History -->
     <!-- Text for the button to search all history -->
@@ -781,18 +824,6 @@
     <string name="history_older">Mais antigo</string>
     <!-- Text shown when no history exists -->
     <string name="history_empty_message">Sem histórico</string>
-
-    <!-- Text for the button inside History screen that opens Synced History screen. History that is coming from other devices -->
-    <string name="history_synced_from_other_devices">Sincronizado de outros dispositivos</string>
-    <!-- The page title for browsing history coming from other devices. -->
-    <string name="history_from_other_devices">De outros dispositivos</string>
-
-    <!-- The synced history sign in dialog message -->
-    <string name="history_sign_in_message">Inicie sessão para ver o histórico sincronizado dos seus outros dispositivos.</string>
-    <!-- The synced history sign in dialog button text -->
-    <string name="history_sign_in_button">Iniciar sessão</string>
-    <!-- The synced history sign in dialog create a new account link -->
-    <string name="history_sign_in_create_account"><![CDATA[<u>Ou crie uma conta Firefox para iniciar a sincronização</u>]]></string>
 
     <!-- Downloads -->
     <!-- Text for the snackbar to confirm that multiple downloads items have been removed -->
@@ -844,6 +875,10 @@
     <string name="bookmark_menu_open_in_new_tab_button">Abrir num separador novo</string>
     <!-- Bookmark overflow menu open in private tab button -->
     <string name="bookmark_menu_open_in_private_tab_button">Abrir num separador privado novo</string>
+    <!-- Bookmark overflow menu open all in tabs button -->
+    <string name="bookmark_menu_open_all_in_tabs_button">Abrir todos em novos separadores</string>
+    <!-- Bookmark overflow menu open all in private tabs button -->
+    <string name="bookmark_menu_open_all_in_private_tabs_button">Abrir todos em separadores privados</string>
     <!-- Bookmark overflow menu delete button -->
     <string name="bookmark_menu_delete_button">Eliminar</string>
     <!--Bookmark overflow menu save button -->
@@ -1021,6 +1056,10 @@
     <!-- Content description (not visible, for screen readers etc.):
         "Share" button. Opens the share menu when pressed. -->
     <string name="share_button_content_description">Partilhar</string>
+    <!-- Text for the Save to PDF feature in the share menu -->
+    <string name="share_save_to_pdf">Guardar como PDF</string>
+    <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
+    <string name="unable_to_save_to_pdf_error">Não foi possível gerar o PDF</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Enviar para o dispositivo</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1032,9 +1071,11 @@
     <!-- Toast shown after copying link to clipboard -->
     <string name="toast_copy_link_to_clipboard">Copiado para a área de transferência</string>
     <!-- An option from the three dot menu to into sync -->
-    <string name="sync_menu_sign_in">Iniciar sessão para sincronizar</string>
+    <string moz:removedIn="107" name="sync_menu_sign_in" tools:ignore="UnusedResources">Iniciar sessão para sincronizar</string>
     <!-- An option from the share dialog to sign into sync -->
     <string name="sync_sign_in">Iniciar sessão para sincronizar</string>
+     <!-- An option from the three dot menu to sync and save data -->
+    <string name="sync_menu_sync_and_save_data">Sincronizar e guardar os dados</string>
     <!-- An option from the share dialog to send link to all other sync devices -->
     <string name="sync_send_to_all">Enviar para todos os dispositivos</string>
     <!-- An option from the share dialog to reconnect to sync -->
@@ -1069,6 +1110,12 @@
     <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
     %1$s is a placeholder that will be replaced by the app name (Fenix). -->
     <string name="notification_default_browser_text">Escolher o %1$s como o seu navegador predefinido</string>
+
+    <!-- Title shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_title">Experimente a navegação privada</string>
+    <!-- Text shown in the notification that pops up to re-engage the user.
+    %1$s is a placeholder that will be replaced by the app name. -->
+    <string name="notification_re_engagement_text">Navegue sem guardar cookies nem histórico no %1$s</string>
 
     <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
@@ -1160,8 +1207,6 @@
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">Sair</string>
 
-    <!-- Dialog message to the user asking to delete browsing data. -->
-    <string moz:removedIn="104" name="delete_browsing_data_prompt_message" tools:ignore="UnusedResources">Isto irá eliminar todos os seus dados de navegação.</string>
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">Intervalo de tempo a eliminar</string>
     <!-- Body text of a delete browsing data dialog. -->
@@ -1194,23 +1239,23 @@
     <string name="delete_history_group_snackbar">Grupo eliminado</string>
 
     <!-- Onboarding -->
-    <!-- Text for onboarding welcome message
-    The first parameter is the name of the app (e.g. Firefox Preview) -->
-    <string name="onboarding_header">Bem-vindo ao %s!</string>
-
-    <!-- text for the Firefox account onboarding sign in card header. The word "Firefox" should not be translated -->
-    <string name="onboarding_account_sign_in_header_1">Sincronizar o Firefox entre dispositivos</string>
-    <!-- Text for the button to learn more about signing in to your Firefox account. The first parameter is the name of the application.-->
-    <string name="onboarding_manual_sign_in_description_2">Traga os marcadores, histórico e palavras-passe para o %1$s neste dispositivo.</string>
-    <!-- text for the button to manually sign into Firefox account. -->
-    <string name="onboarding_firefox_account_sign_in_1">Registar</string>
+    <!-- Text for onboarding welcome header. -->
+    <string name="onboarding_header_2">Bem-vindo a uma internet melhor</string>
+    <!-- Text for the onboarding welcome message. -->
+    <string name="onboarding_message">Um navegador feito para as pessoas e não para os lucros.</string>
+    <!-- Text for the Firefox account onboarding sign in card header. -->
+    <string name="onboarding_account_sign_in_header">Continue de onde ficou</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account. -->
+    <string name="onboarding_manual_sign_in_description">Sincronize separadores e palavras-passe entre dispositivos para uma troca transparente entre ecrãs.</string>
+    <!-- Text for the button to manually sign into Firefox account. -->
+    <string name="onboarding_firefox_account_sign_in">Iniciar sessão</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">A sincronização está ativada</string>
 
-    <!-- text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header_3">Privacidade sempre ativa</string>
-    <!-- text for the tracking protection card description. The first parameter is the name of the application.-->
-    <string name="onboarding_tracking_protection_description_4">O %1$s impede automaticamente que as empresas o sigam secretamente pela Internet.</string>
+    <!-- Text for the tracking protection onboarding card header -->
+    <string name="onboarding_tracking_protection_header">Proteção de privacidade por predefinição</string>
+    <!-- Text for the tracking protection card description. -->
+    <string name="onboarding_tracking_protection_description">A apresentar a Proteção total de cookies para parar os rastreadores de utilizar cookies que o/a perseguem na Internet.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Padrão (predefinição)</string>
     <!-- text for standard blocking option button description -->
@@ -1221,16 +1266,17 @@
     <string name="onboarding_tracking_protection_strict_button_description_3">Bloqueia mais rastreadores para que as páginas carreguem mais rapidamente, mas algumas funcionalidades das páginas podem ser perdidas.</string>
     <!-- text for the toolbar position card header  -->
     <string name="onboarding_toolbar_placement_header_1">Escolha o posicionamento da barra de ferramentas</string>
-    <!-- text for the toolbar position card description -->
-    <string name="onboarding_toolbar_placement_description_1">Facilite o acesso à barra de ferramentas. Mantenha a mesma na parte inferior ou mova-a para cima.</string>
-    <!-- text for the privacy notice onboarding card header -->
-    <string name="onboarding_privacy_notice_header">A sua privacidade</string>
-    <!-- text for the privacy notice onboarding card description
-    The first parameter is the name of the app (e.g. Firefox Preview) Substitute %s for long browser name. -->
-    <string name="onboarding_privacy_notice_description2">Nós desenhámos o %s para lhe dar mais controlo sobre o que partilha online e o que partilha connosco.</string>
+    <!-- Text for the toolbar position card description -->
+    <string name="onboarding_toolbar_placement_description">Manter na parte inferior ou mover para o topo.</string>
+    <!-- Text for the privacy notice onboarding card header -->
+    <string name="onboarding_privacy_notice_header_1">Você controla os seus dados</string>
+    <!-- Text for the privacy notice onboarding card description. -->
+    <string name="onboarding_privacy_notice_description">O Firefox dá-lhe mais controlo sobre o que partilha na Internet e o que partilha connosco.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Leia a nossa política de privacidade</string>
 
+    <!-- Text for the conclusion onboarding message -->
+    <string name="onboarding_conclusion_header">Pronto para abrir uma Internet incrível?</string>
     <!-- text for the button to finish onboarding -->
     <string name="onboarding_finish">Começar a navegar</string>
 
@@ -1319,6 +1365,8 @@
     <string name="preference_enhanced_tracking_protection_custom_cookies_3">Todos os cookies de terceiros (poderá resultar em falhas nos sites)</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies_4">Todos os cookies (irá causar falhas nos sites)</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_5">Isolar cookies inter-sites</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings for tracking content -->
     <string name="preference_enhanced_tracking_protection_custom_tracking_content">Conteúdo de monitorização</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
@@ -1342,8 +1390,12 @@
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_title">Cookies de monitorização entre sites</string>
 
+    <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_title_2">Cookies inter-sites</string>
     <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_description">Bloqueia os cookies que as redes de anúncios e empresas de análise utilizam para compilar os seus dados de navegação entre vários sites.</string>
+    <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_description_2">A Proteção Total de Cookies isola cookies para o site que estiver a visitar, para que rastreadores (como redes de anúncios) não possam utilizá-los para o/a monitorizar enquanto navega entre sites.</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_title">Criptomineradores</string>
     <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
@@ -1436,7 +1488,7 @@
     <!-- Preference option for never saving passwords in Fenix -->
     <string name="preferences_passwords_save_logins_never_save">Nunca guardar</string>
     <!-- Preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
-    <string name="preferences_passwords_autofill2">Auto-preenchimento em %1$s</string>
+    <string name="preferences_passwords_autofill2">Autopreenchimento do %1$s</string>
     <!-- Description for the preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
     <string name="preferences_passwords_autofill_description">Preencher e guardar nomes de utilizador e palavras-passe em site ao utilizar o %1$s.</string>
     <!-- Preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
@@ -1859,7 +1911,9 @@
     <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
     <string name="pocket_stories_placeholder_text">Descobrir mais</string>
     <!-- Title of an app feature. Smaller than a heading.-->
-    <string name="pocket_stories_feature_title">Com tecnologia do Pocket.</string>
+    <string moz:removedIn="108" name="pocket_stories_feature_title" tools:ignore="UnusedResources">Com tecnologia do Pocket.</string>
+    <!-- Title of an app feature. Smaller than a heading. The first parameter is product name Pocket -->
+    <string name="pocket_stories_feature_title_2">Suportado por %s.</string>
     <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
     <string name="pocket_stories_feature_caption">Membro da família Firefox. %s</string>
     <!-- Clickable text for opening an external link for more information about Pocket. -->
@@ -1873,4 +1927,14 @@
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">Ir para as definições</string>
     <string name="firefox_suggest_header">Sugestões Firefox</string>
+
+    <!-- Accessibility services actions labels. These will be appended to accessibility actions like "Double tap to.." but not by or applications but by services like Talkback. -->
+    <!-- Action label for elements that can be collapsed if interacting with them. Talkback will append this to say "Double tap to collapse". -->
+    <string name="a11y_action_label_collapse">colapsar</string>
+    <!-- Action label for elements that can be expanded if interacting with them. Talkback will append this to say "Double tap to expand". -->
+    <string name="a11y_action_label_expand">expandir</string>
+    <!-- Action label for links to a website containing documentation about a wallpaper collection. Talkback will append this to say "Double tap to open link to learn more about this collection". -->
+    <string name="a11y_action_label_wallpaper_collection_learn_more">abrir ligação para saber mais sobre esta coleção</string>
+    <!-- Action label for links that point to an article. Talkback will append this to say "Double tap to read the article". -->
+    <string name="a11y_action_label_read_article">ler o artigo</string>
 </resources>

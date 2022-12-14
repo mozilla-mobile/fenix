@@ -41,7 +41,7 @@ class WallpaperDownloaderTest {
         learnMoreUrl = null,
         availableLocales = null,
         startDate = null,
-        endDate = null
+        endDate = null,
     )
 
     private lateinit var downloader: WallpaperDownloader
@@ -128,13 +128,14 @@ class WallpaperDownloaderTest {
         name = name,
         collection = wallpaperCollection,
         textColor = null,
-        cardColor = null,
+        cardColorLight = null,
+        cardColorDark = null,
         thumbnailFileState = Wallpaper.ImageFileState.Unavailable,
         assetsFileState = Wallpaper.ImageFileState.Unavailable,
     )
 
     private fun Wallpaper.generateRequest(type: String) = Request(
         url = "$remoteHost/${collection.name}/$name/$type.png",
-        method = Request.Method.GET
+        method = Request.Method.GET,
     )
 }

@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -17,7 +18,9 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.switchmaterial.SwitchMaterial
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import mozilla.components.concept.engine.webextension.EnableSource
 import mozilla.components.feature.addons.Addon
+import mozilla.components.feature.addons.AddonManager
 import mozilla.components.feature.addons.AddonManagerException
 import mozilla.components.feature.addons.ui.translateName
 import org.mozilla.fenix.HomeActivity
@@ -32,14 +35,15 @@ import org.mozilla.fenix.ext.showToolbar
  */
 @Suppress("LargeClass", "TooManyFunctions")
 class InstalledAddonDetailsFragment : Fragment() {
-    private lateinit var addon: Addon
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal lateinit var addon: Addon
     private var _binding: FragmentInstalledAddOnDetailsBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         if (!::addon.isInitialized) {
             addon = AddonDetailsFragmentArgs.fromBundle(requireNotNull(arguments)).addon
@@ -48,7 +52,7 @@ class InstalledAddonDetailsFragment : Fragment() {
         _binding = FragmentInstalledAddOnDetailsBinding.inflate(
             inflater,
             container,
-            false
+            false,
         )
 
         bindUI()
@@ -96,7 +100,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                     runIfFragmentIsAttached {
                         showSnackBar(
                             binding.root,
-                            getString(R.string.mozac_feature_addons_failed_to_query_add_ons)
+                            getString(R.string.mozac_feature_addons_failed_to_query_add_ons),
                         )
                         findNavController().popBackStack()
                     }
@@ -124,8 +128,8 @@ class InstalledAddonDetailsFragment : Fragment() {
             switch.isClickable = false
             binding.removeAddOn.isEnabled = false
             if (isChecked) {
-                addonManager.enableAddon(
-                    addon,
+                enableAddon(
+                    addonManager,
                     onSuccess = {
                         runIfFragmentIsAttached {
                             this.addon = it
@@ -140,8 +144,8 @@ class InstalledAddonDetailsFragment : Fragment() {
                                     binding.root,
                                     getString(
                                         R.string.mozac_feature_addons_successfully_enabled,
-                                        addon.translateName(it)
-                                    )
+                                        addon.translateName(it),
+                                    ),
                                 )
                             }
                         }
@@ -156,12 +160,12 @@ class InstalledAddonDetailsFragment : Fragment() {
                                     binding.root,
                                     getString(
                                         R.string.mozac_feature_addons_failed_to_enable,
-                                        addon.translateName(it)
-                                    )
+                                        addon.translateName(it),
+                                    ),
                                 )
                             }
                         }
-                    }
+                    },
                 )
             } else {
                 binding.settings.isVisible = false
@@ -179,8 +183,8 @@ class InstalledAddonDetailsFragment : Fragment() {
                                     binding.root,
                                     getString(
                                         R.string.mozac_feature_addons_successfully_disabled,
-                                        addon.translateName(it)
-                                    )
+                                        addon.translateName(it),
+                                    ),
                                 )
                             }
                         }
@@ -196,14 +200,36 @@ class InstalledAddonDetailsFragment : Fragment() {
                                     binding.root,
                                     getString(
                                         R.string.mozac_feature_addons_failed_to_disable,
-                                        addon.translateName(it)
-                                    )
+                                        addon.translateName(it),
+                                    ),
                                 )
                             }
                         }
-                    }
+                    },
                 )
             }
+        }
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal fun enableAddon(
+        addonManager: AddonManager,
+        onSuccess: (Addon) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        // If the addon is migrated from Fennec and supported in Fenix, for the addon to be enabled,
+        // we need to also request the addon to be enabled as supported by the app
+        if (addon.isSupported() && addon.isDisabledAsUnsupported()) {
+            addonManager.enableAddon(
+                addon,
+                EnableSource.APP_SUPPORT,
+                { enabledAddon ->
+                    addonManager.enableAddon(enabledAddon, EnableSource.USER, onSuccess, onError)
+                },
+                onError,
+            )
+        } else {
+            addonManager.enableAddon(addon, EnableSource.USER, onSuccess, onError)
         }
     }
 
@@ -233,7 +259,7 @@ class InstalledAddonDetailsFragment : Fragment() {
         binding.details.setOnClickListener {
             val directions =
                 InstalledAddonDetailsFragmentDirections.actionInstalledAddonFragmentToAddonDetailsFragment(
-                    addon
+                    addon,
                 )
             Navigation.findNavController(binding.root).navigate(directions)
         }
@@ -243,7 +269,7 @@ class InstalledAddonDetailsFragment : Fragment() {
         binding.permissions.setOnClickListener {
             val directions =
                 InstalledAddonDetailsFragmentDirections.actionInstalledAddonFragmentToAddonPermissionsDetailsFragment(
-                    addon
+                    addon,
                 )
             Navigation.findNavController(binding.root).navigate(directions)
         }
@@ -273,7 +299,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                         switch.isClickable = true
                         binding.removeAddOn.isEnabled = true
                     }
-                }
+                },
             )
         }
     }
@@ -290,8 +316,8 @@ class InstalledAddonDetailsFragment : Fragment() {
                                 binding.root,
                                 getString(
                                     R.string.mozac_feature_addons_successfully_uninstalled,
-                                    addon.translateName(it)
-                                )
+                                    addon.translateName(it),
+                                ),
                             )
                         }
                         binding.root.findNavController().popBackStack()
@@ -305,19 +331,19 @@ class InstalledAddonDetailsFragment : Fragment() {
                                 binding.root,
                                 getString(
                                     R.string.mozac_feature_addons_failed_to_uninstall,
-                                    addon.translateName(it)
-                                )
+                                    addon.translateName(it),
+                                ),
                             )
                         }
                     }
-                }
+                },
             )
         }
     }
 
     private fun setAllInteractiveViewsClickable(
         binding: FragmentInstalledAddOnDetailsBinding,
-        clickable: Boolean
+        clickable: Boolean,
     ) {
         binding.enableSwitch.isClickable = clickable
         binding.settings.isClickable = clickable

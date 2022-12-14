@@ -119,6 +119,8 @@
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_normal</item>
+        <item name="fenixWordmarkText">@drawable/ic_wordmark_text_normal</item>
+        <item name="fenixWordmarkLogo">@drawable/ic_wordmark_logo</item>
         <item name="homeBackground">@color/fx_mobile_layer_color_1</item>
         <item name="bottomBarBackground">@drawable/home_bottom_bar_background</item>
         <item name="bottomBarBackgroundTop">@drawable/home_bottom_bar_background_top</item>
@@ -316,6 +318,7 @@
 
         <!-- Drawables -->
         <item name="fenixLogo">@drawable/ic_logo_wordmark_private</item>
+        <item name="fenixWordmarkText">@drawable/ic_wordmark_text_private</item>
         <item name="homeBackground">@drawable/private_home_background_gradient</item>
         <item name="bottomBarBackground">@drawable/private_home_bottom_bar_background_gradient</item>
         <item name="bottomBarBackgroundTop">@drawable/private_home_bottom_bar_background_gradient_top</item>
@@ -365,8 +368,8 @@
     </style>
 
     <style name="DestructiveButton" parent="NeutralButton">
-        <item name="iconTint">@color/fx_mobile_text_color_warning</item>
-        <item name="android:textColor">@color/fx_mobile_text_color_warning</item>
+        <item name="iconTint">@color/fx_mobile_icon_color_warning_button</item>
+        <item name="android:textColor">@color/fx_mobile_text_color_warning_button</item>
     </style>
 
     <style name="PositiveButton" parent="NeutralButton">
@@ -564,6 +567,10 @@
     <style name="CreateCollectionDialogStyle" parent="DialogStyleBase"/>
     <style name="CreateShortcutDialogStyle" parent="DialogStyleBase"/>
     <style name="HomeOnboardingDialogStyle" parent="DialogStyleBase"/>
+    <style name="WallpaperOnboardingDialogStyle" parent="DialogStyleBase">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimAmount">0.06</item>
+    </style>
     <style name="CreateShortcutDialogButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -637,7 +644,7 @@
         <item name="android:windowIsFloating">false</item>
     </style>
 
-    <style name="BottomSheetBase" parent="ThemeOverlay.MaterialComponents.Light.BottomSheetDialog">
+    <style name="BottomSheetBase" parent="ThemeOverlay.MaterialComponents.DayNight.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
     </style>
 
@@ -667,14 +674,11 @@
         <item name="behavior_halfExpandedRatio">0.001</item>
     </style>
 
-    <style name="TopSite.Card" parent="Mozac.Widgets.Favicon">
-        <item name="android:layout_width">@dimen/top_sites_card_width</item>
-        <item name="android:layout_height">@dimen/top_sites_card_height</item>
-        <item name="android:layout_marginTop">@dimen/top_sites_item_margin_top</item>
-        <item name="android:layout_marginBottom">@dimen/top_sites_item_margin_bottom</item>
-        <item name="android:layout_gravity">center_horizontal</item>
-        <item name="android:importantForAccessibility">noHideDescendants</item>
-        <item name="contentPadding">@dimen/top_sites_card_padding</item>
+    <style name="TopSite.FaviconCard" parent="Mozac.Widgets.Favicon">
+        <item name="android:layout_width">@dimen/top_sites_card_size</item>
+        <item name="android:layout_height">@dimen/top_sites_card_size</item>
+        <item name="android:layout_marginTop">@dimen/top_sites_card_margin_top</item>
+        <item name="android:padding">@dimen/top_sites_card_padding</item>
         <item name="cardBackgroundColor">?mozac_widget_favicon_background_color</item>
         <item name="cardCornerRadius">@dimen/top_sites_card_radius</item>
         <item name="cardElevation">@dimen/top_sites_card_elevation</item>

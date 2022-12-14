@@ -14,6 +14,7 @@ import android.util.Log.INFO
 import androidx.annotation.CallSuper
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Configuration.Builder
@@ -28,6 +29,7 @@ import mozilla.appservices.Megazord
 import mozilla.components.browser.state.action.SystemAction
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.browser.storage.sync.GlobalPlacesDependencyProvider
 import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.concept.engine.webextension.isUnsupported
@@ -48,7 +50,6 @@ import mozilla.components.service.glean.net.ConceptFetchHttpUploader
 import mozilla.components.support.base.facts.register
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.logger.Logger
-import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.ktx.android.content.isMainProcess
 import mozilla.components.support.ktx.android.content.runOnlyInMainProcess
 import mozilla.components.support.locale.LocaleAwareApplication
@@ -57,8 +58,6 @@ import mozilla.components.support.rusthttp.RustHttpConfig
 import mozilla.components.support.rustlog.RustLog
 import mozilla.components.support.utils.logElapsedTime
 import mozilla.components.support.webextensions.WebExtensionSupport
-import org.mozilla.experiments.nimbus.NimbusInterface
-import org.mozilla.experiments.nimbus.internal.EnrolledExperiment
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.AndroidAutofill
 import org.mozilla.fenix.GleanMetrics.CustomizeHome
@@ -75,10 +74,13 @@ import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.containsQueryParameters
+import org.mozilla.fenix.ext.getCustomGleanServerUrlIfAvailable
 import org.mozilla.fenix.ext.isCustomEngine
 import org.mozilla.fenix.ext.isKnownSearchDomain
+import org.mozilla.fenix.ext.setCustomEndpointIfAvailable
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.FxNimbus
+import org.mozilla.fenix.onboarding.ensureMarketingChannelExists
 import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
 import org.mozilla.fenix.perf.ProfilerMarkerFactProcessor
 import org.mozilla.fenix.perf.StartupTimeline
@@ -93,7 +95,7 @@ import org.mozilla.fenix.telemetry.TelemetryLifecycleObserver
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
-import org.mozilla.fenix.wallpapers.WallpaperManager
+import org.mozilla.fenix.wallpapers.Wallpaper
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
@@ -130,12 +132,9 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             return
         }
 
-        // We need to always initialize Glean and do it early here.
-        initializeGlean()
-
+        // DO NOT ADD ANYTHING ABOVE HERE.
         setupInMainProcessOnly()
-
-        downloadWallpapers()
+        // DO NOT ADD ANYTHING UNDER HERE.
 
         // DO NOT MOVE ANYTHING BELOW THIS elapsedRealtimeNanos CALL.
         val stop = SystemClock.elapsedRealtimeNanos()
@@ -154,16 +153,26 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
         logger.debug("Initializing Glean (uploadEnabled=$telemetryEnabled})")
 
+        // for performance reasons, this is only available in Nightly or Debug builds
+        val customEndpoint = if (Config.channel.isNightlyOrDebug) {
+            // for testing, if custom glean server url is set in the secret menu, use it to initialize Glean
+            getCustomGleanServerUrlIfAvailable(this)
+        } else {
+            null
+        }
+
+        val configuration = Configuration(
+            channel = BuildConfig.BUILD_TYPE,
+            httpClient = ConceptFetchHttpUploader(
+                lazy(LazyThreadSafetyMode.NONE) { components.core.client },
+            ),
+        )
+
         Glean.initialize(
             applicationContext = this,
-            configuration = Configuration(
-                channel = BuildConfig.BUILD_TYPE,
-                httpClient = ConceptFetchHttpUploader(
-                    lazy(LazyThreadSafetyMode.NONE) { components.core.client }
-                )
-            ),
+            configuration = configuration.setCustomEndpointIfAvailable(customEndpoint),
             uploadEnabled = telemetryEnabled,
-            buildInfo = GleanBuildInfo.buildInfo
+            buildInfo = GleanBuildInfo.buildInfo,
         )
 
         // We avoid blocking the main thread on startup by setting startup metrics on the background thread.
@@ -183,11 +192,22 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
     @CallSuper
     open fun setupInMainProcessOnly() {
+        // ⚠️ DO NOT ADD ANYTHING ABOVE THIS LINE.
+        // Especially references to the engine/BrowserStore which can alter the app initialization.
+        // See: https://github.com/mozilla-mobile/fenix/issues/26320
+        //
+        // We can initialize Nimbus before Glean because Glean will queue messages
+        // before it's initialized.
+        initializeNimbus()
+
         ProfilerMarkerFactProcessor.create { components.core.engine.profiler }.register()
 
         run {
+            // We need to always initialize Glean and do it early here.
+            initializeGlean()
+
             // Attention: Do not invoke any code from a-s in this scope.
-            val megazordSetup = setupMegazord()
+            val megazordSetup = finishSetupMegazord()
 
             setDayNightTheme()
             components.strictMode.enableStrictMode(true)
@@ -198,8 +218,17 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 components.core.engine.warmUp()
             }
             initializeWebExtensionSupport()
+            if (FeatureFlags.storageMaintenanceFeature) {
+                // Make sure to call this function before registering a storage worker
+                // (e.g. components.core.historyStorage.registerStorageMaintenanceWorker())
+                // as the storage maintenance worker needs a places storage globally when
+                // it is needed while the app is not running and WorkManager wakes up the app
+                // for the periodic task.
+                GlobalPlacesDependencyProvider.initialize(components.core.historyStorage)
+            }
             restoreBrowserState()
             restoreDownloads()
+            restoreMessaging()
 
             // Just to make sure it is impossible for any application-services pieces
             // to invoke parts of itself that require complete megazord initialization
@@ -217,17 +246,13 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
         registerActivityLifecycleCallbacks(MarkersActivityLifecycleCallbacks(components.core.engine))
 
-        // Storage maintenance disabled, for now, as it was interfering with background migrations.
-        // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.
-        // if ((System.currentTimeMillis() - settings().lastPlacesStorageMaintenance) > ONE_DAY_MILLIS) {
-        //    runStorageMaintenance()
-        // }
-
         components.appStartReasonProvider.registerInAppOnCreate(this)
         components.startupActivityLog.registerInAppOnCreate(this)
         initVisualCompletenessQueueAndQueueTasks()
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(TelemetryLifecycleObserver(components.core.store))
+
+        downloadWallpapers()
     }
 
     @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
@@ -275,15 +300,15 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                         components.core.topSitesStorage.getTopSites(
                             totalSites = components.settings.topSitesMaxLimit,
                             frecencyConfig = TopSitesFrecencyConfig(
-                                FrecencyThresholdOption.SKIP_ONE_TIME_PAGES
+                                FrecencyThresholdOption.SKIP_ONE_TIME_PAGES,
                             ) {
                                 !Uri.parse(it.url)
                                     .containsQueryParameters(components.settings.frecencyFilterQuery)
                             },
                             providerConfig = TopSitesProviderConfig(
                                 showProviderTopSites = components.settings.showContileFeature,
-                                maxThreshold = TOP_SITES_PROVIDER_MAX_THRESHOLD
-                            )
+                                maxThreshold = TOP_SITES_PROVIDER_MAX_THRESHOLD,
+                            ),
                         )
 
                         // This service uses `historyStorage`, and so we can only touch it when we know
@@ -291,7 +316,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                         // places library will be able to load, which requires first running Megazord.init().
                         // The visual completeness tasks are scheduled after the Megazord.init() call.
                         components.core.historyMetadataService.cleanup(
-                            System.currentTimeMillis() - Core.HISTORY_METADATA_MAX_AGE_IN_MS
+                            System.currentTimeMillis() - Core.HISTORY_METADATA_MAX_AGE_IN_MS,
                         )
                     }
                 }
@@ -331,6 +356,28 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             }
         }
 
+        fun queueStorageMaintenance() {
+            if (FeatureFlags.storageMaintenanceFeature) {
+                queue.runIfReadyOrQueue {
+                    // Make sure GlobalPlacesDependencyProvider.initialize(components.core.historyStorage)
+                    // is called before this call. When app is not running and WorkManager wakes up
+                    // the app for the periodic task, it will require a globally provided places storage
+                    // to run the maintenance on.
+                    components.core.historyStorage.registerStorageMaintenanceWorker()
+                }
+            }
+        }
+
+        // For Android 13 or above, prompt the user for notification permission at the start.
+        // Regardless if the user accepts or denies the permission prompt, the prompt will occur only once.
+        fun queueNotificationPermissionRequest() {
+            if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                queue.runIfReadyOrQueue {
+                    ensureMarketingChannelExists(this)
+                }
+            }
+        }
+
         initQueue()
 
         // We init these items in the visual completeness queue to avoid them initing in the critical
@@ -339,6 +386,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         queueMetrics()
         queueReviewPrompt()
         queueRestoreLocale()
+        queueStorageMaintenance()
+        queueNotificationPermissionRequest()
     }
 
     private fun startMetricsIfEnabled() {
@@ -350,20 +399,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             components.analytics.metrics.start(MetricServiceType.Marketing)
         }
     }
-
-    // See https://github.com/mozilla-mobile/fenix/issues/7227 for context.
-    // To re-enable this, we need to do so in a way that won't interfere with any startup operations
-    // which acquire reserved+ sqlite lock. Currently, Fennec migrations need to write to storage
-    // on startup, and since they run in a background service we can't simply order these operations.
-    // @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
-    // private fun runStorageMaintenance() {
-    //     GlobalScope.launch(Dispatchers.IO) {
-    //        // Bookmarks and history storage sit on top of the same db file so we only need to
-    //        // run maintenance on one - arbitrarily using bookmarks.
-    //        // components.core.bookmarksStorage.runMaintenance()
-    //     }
-    //     settings().lastPlacesStorageMaintenance = System.currentTimeMillis()
-    // }
 
     protected open fun setupLeakCanary() {
         // no-op, LeakCanary is disabled by default
@@ -400,6 +435,15 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             .install(this)
     }
 
+    protected open fun initializeNimbus() {
+        beginSetupMegazord()
+
+        // This lazily constructs the Nimbus object…
+        val nimbus = components.analytics.experiments
+        // … which we then can populate the feature configuration.
+        FxNimbus.initialize { nimbus }
+    }
+
     /**
      * Initiate Megazord sequence! Megazord Battle Mode!
      *
@@ -409,53 +453,43 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
      * Documentation on what megazords are, and why they're needed:
      * - https://github.com/mozilla/application-services/blob/master/docs/design/megazords.md
      * - https://mozilla.github.io/application-services/docs/applications/consuming-megazord-libraries.html
+     *
+     * This is the initialization of the megazord without setting up networking, i.e. needing the
+     * engine for networking. This should do the minimum work necessary as it is done on the main
+     * thread, early in the app startup sequence.
      */
-    @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
-    private fun setupMegazord(): Deferred<Unit> {
+    private fun beginSetupMegazord() {
         // Note: Megazord.init() must be called as soon as possible ...
         Megazord.init()
-        // Give the generated FxNimbus a closure to lazily get the Nimbus object
-        FxNimbus.initialize { components.analytics.experiments }
+
+        initializeRustErrors(components.analytics.crashReporter)
+        // ... but RustHttpConfig.setClient() and RustLog.enable() can be called later.
+
+        // Once application-services has switched to using the new
+        // error reporting system, RustLog shouldn't input a CrashReporter
+        // anymore.
+        // (https://github.com/mozilla/application-services/issues/4981).
+        RustLog.enable(components.analytics.crashReporter)
+    }
+
+    @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
+    private fun finishSetupMegazord(): Deferred<Unit> {
         return GlobalScope.async(Dispatchers.IO) {
-            initializeRustErrors(components.analytics.crashReporter)
-            // ... but RustHttpConfig.setClient() and RustLog.enable() can be called later.
-            RustHttpConfig.setClient(lazy { components.core.client })
-            // Once application-services has switched to using the new
-            // error reporting system, RustLog shouldn't input a CrashReporter
-            // anymore.
-            // (https://github.com/mozilla/application-services/issues/4981).
-            RustLog.enable(components.analytics.crashReporter)
-            // We want to ensure Nimbus is initialized as early as possible so we can
-            // experiment on features close to startup.
-            // But we need viaduct (the RustHttp client) to be ready before we do.
-            components.analytics.experiments.apply {
-                initialize()
-                setupNimbusObserver(this)
+            if (Config.channel.isDebug) {
+                RustHttpConfig.allowEmulatorLoopback()
             }
+            RustHttpConfig.setClient(lazy { components.core.client })
+
+            // Now viaduct (the RustHttp client) is initialized we can ask Nimbus to fetch
+            // experiments recipes from the server.
+            components.analytics.experiments.fetchExperiments()
         }
     }
 
-    private fun setupNimbusObserver(nimbus: Observable<NimbusInterface.Observer>) {
-        nimbus.register(object : NimbusInterface.Observer {
-            override fun onUpdatesApplied(updated: List<EnrolledExperiment>) {
-                onNimbusStartupAndUpdate()
-            }
-        })
-    }
-
-    private fun onNimbusStartupAndUpdate() {
-        // When Nimbus has successfully started up, we can apply our engine settings experiment.
-        // Any previous value that was set on the engine will be overridden from those set in
-        // Core.Engine.DefaultSettings.
-        // NOTE ⚠️: Any startup experiment we want to run needs to have it's value re-applied here.
-        components.core.engine.settings.trackingProtectionPolicy =
-            components.core.trackingProtectionPolicyFactory.createTrackingProtectionPolicy()
-
-        val settings = settings()
-        if (FeatureFlags.messagingFeature && settings.isExperimentationEnabled) {
+    private fun restoreMessaging() {
+        if (settings().isExperimentationEnabled) {
             components.appStore.dispatch(AppAction.MessagingAction.Restore)
         }
-        reportHomeScreenSectionMetrics(settings)
     }
 
     override fun onTrimMemory(level: Int) {
@@ -472,10 +506,10 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 message = "onTrimMemory()",
                 data = mapOf(
                     "level" to level.toString(),
-                    "main" to isMainProcess().toString()
+                    "main" to isMainProcess().toString(),
                 ),
-                level = Breadcrumb.Level.INFO
-            )
+                level = Breadcrumb.Level.INFO,
+            ),
         )
 
         runOnlyInMainProcess {
@@ -491,34 +525,34 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         when {
             settings.shouldUseLightTheme -> {
                 AppCompatDelegate.setDefaultNightMode(
-                    AppCompatDelegate.MODE_NIGHT_NO
+                    AppCompatDelegate.MODE_NIGHT_NO,
                 )
             }
             settings.shouldUseDarkTheme -> {
                 AppCompatDelegate.setDefaultNightMode(
-                    AppCompatDelegate.MODE_NIGHT_YES
+                    AppCompatDelegate.MODE_NIGHT_YES,
                 )
             }
             SDK_INT < Build.VERSION_CODES.P && settings.shouldUseAutoBatteryTheme -> {
                 AppCompatDelegate.setDefaultNightMode(
-                    AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
+                    AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY,
                 )
             }
             SDK_INT >= Build.VERSION_CODES.P && settings.shouldFollowDeviceTheme -> {
                 AppCompatDelegate.setDefaultNightMode(
-                    AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+                    AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
                 )
             }
             // First run of app no default set, set the default to Follow System for 28+ and Normal Mode otherwise
             else -> {
                 if (SDK_INT >= Build.VERSION_CODES.P) {
                     AppCompatDelegate.setDefaultNightMode(
-                        AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+                        AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
                     )
                     settings.shouldFollowDeviceTheme = true
                 } else {
                     AppCompatDelegate.setDefaultNightMode(
-                        AppCompatDelegate.MODE_NIGHT_NO
+                        AppCompatDelegate.MODE_NIGHT_NO,
                     )
                     settings.shouldUseLightTheme = true
                 }
@@ -542,13 +576,12 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 components.addonUpdater,
                 onCrash = { exception ->
                     components.analytics.crashReporter.submitCaughtException(exception)
-                }
+                },
             )
             WebExtensionSupport.initialize(
                 components.core.engine,
                 components.core.store,
-                onNewTabOverride = {
-                    _, engineSession, url ->
+                onNewTabOverride = { _, engineSession, url ->
                     val shouldCreatePrivateSession =
                         components.core.store.state.selectedTab?.content?.private
                             ?: components.settings.openLinksInAPrivateTab
@@ -557,22 +590,20 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                         url = url,
                         selectTab = true,
                         engineSession = engineSession,
-                        private = shouldCreatePrivateSession
+                        private = shouldCreatePrivateSession,
                     )
                 },
-                onCloseTabOverride = {
-                    _, sessionId ->
+                onCloseTabOverride = { _, sessionId ->
                     components.useCases.tabsUseCases.removeTab(sessionId)
                 },
-                onSelectTabOverride = {
-                    _, sessionId ->
+                onSelectTabOverride = { _, sessionId ->
                     components.useCases.tabsUseCases.selectTab(sessionId)
                 },
                 onExtensionsLoaded = { extensions ->
                     components.addonUpdater.registerForFutureUpdates(extensions)
                     subscribeForNewAddonsIfNeeded(components.supportedAddonsChecker, extensions)
                 },
-                onUpdatePermissionRequest = components.addonUpdater::onUpdatePermissionRequest
+                onUpdatePermissionRequest = components.addonUpdater::onUpdatePermissionRequest,
             )
         } catch (e: UnsupportedOperationException) {
             Logger.error("Failed to initialize web extension support", e)
@@ -582,7 +613,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     @VisibleForTesting
     internal fun subscribeForNewAddonsIfNeeded(
         checker: DefaultSupportedAddonsChecker,
-        installedExtensions: List<WebExtension>
+        installedExtensions: List<WebExtension>,
     ) {
         val hasUnsupportedAddons = installedExtensions.any { it.isUnsupported() }
         if (hasUnsupportedAddons) {
@@ -608,7 +639,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         browserStore: BrowserStore,
         settings: Settings,
         browsersCache: BrowsersCache = BrowsersCache,
-        mozillaProductDetector: MozillaProductDetector = MozillaProductDetector
+        mozillaProductDetector: MozillaProductDetector = MozillaProductDetector,
     ) {
         setPreferenceMetrics(settings)
         with(Metrics) {
@@ -617,7 +648,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 when (Config.channel.isMozillaOnline) {
                     true -> "MozillaOnline"
                     false -> "Mozilla"
-                }
+                },
             )
 
             defaultBrowser.set(browsersCache.all(applicationContext).isDefaultBrowser)
@@ -631,7 +662,11 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 TopSites.contextId.set(UUID.fromString(settings.contileContextId))
             }
 
-            mozillaProducts.set(mozillaProductDetector.getInstalledMozillaProducts(applicationContext))
+            mozillaProducts.set(
+                mozillaProductDetector.getInstalledMozillaProducts(
+                    applicationContext,
+                ),
+            )
 
             adjustCampaign.set(settings.adjustCampaignId)
             adjustAdGroup.set(settings.adjustAdGroup)
@@ -680,7 +715,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 when (settings.toolbarPosition) {
                     ToolbarPosition.BOTTOM -> CustomizationFragment.Companion.Position.BOTTOM.name
                     ToolbarPosition.TOP -> CustomizationFragment.Companion.Position.TOP.name
-                }
+                },
             )
 
             tabViewSetting.set(settings.getTabViewPingString())
@@ -694,7 +729,19 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             }
             installSource.set(installSourcePackage.orEmpty())
 
-            defaultWallpaper.set(WallpaperManager.isDefaultTheCurrentWallpaper(settings))
+            val isDefaultTheCurrentWallpaper =
+                Wallpaper.nameIsDefault(settings.currentWallpaperName)
+
+            defaultWallpaper.set(isDefaultTheCurrentWallpaper)
+
+            @Suppress("TooGenericExceptionCaught")
+            try {
+                notificationsAllowed.set(
+                    NotificationManagerCompat.from(applicationContext).areNotificationsEnabled(),
+                )
+            } catch (e: Exception) {
+                Logger.warn("Failed to check if notifications are enabled", e)
+            }
         }
 
         with(AndroidAutofill) {
@@ -725,7 +772,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
     @Suppress("ComplexMethod")
     private fun setPreferenceMetrics(
-        settings: Settings
+        settings: Settings,
     ) {
         with(Preferences) {
             searchSuggestionsEnabled.set(settings.shouldShowSearchSuggestions)
@@ -750,7 +797,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                     settings.shouldUseFixedTopToolbar -> "fixed_top"
                     settings.shouldUseBottomToolbar -> "bottom"
                     else -> "top"
-                }
+                },
             )
 
             enhancedTrackingProtection.set(
@@ -760,7 +807,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                     settings.useStrictTrackingProtection -> "strict"
                     settings.useCustomTrackingProtection -> "custom"
                     else -> ""
-                }
+                },
             )
             etpCustomCookiesSelection.set(settings.blockCookiesSelectionInCustomTrackingProtection)
 
@@ -783,7 +830,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                     settings.shouldFollowDeviceTheme -> "system"
                     settings.shouldUseAutoBatteryTheme -> "battery"
                     else -> ""
-                }
+                },
             )
 
             inactiveTabsEnabled.set(settings.inactiveTabsAreEnabled)
@@ -804,7 +851,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 settings.alwaysOpenTheLastTabWhenOpeningTheApp -> "last tab"
                 settings.openHomepageAfterFourHoursOfInactivity -> "homepage after four hours"
                 else -> ""
-            }
+            },
         )
     }
 

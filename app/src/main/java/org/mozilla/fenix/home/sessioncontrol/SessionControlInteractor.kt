@@ -27,6 +27,9 @@ import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryGrou
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryHighlight
 import org.mozilla.fenix.home.recentvisits.controller.RecentVisitsController
 import org.mozilla.fenix.home.recentvisits.interactor.RecentVisitsInteractor
+import org.mozilla.fenix.search.toolbar.SearchSelectorInteractor
+import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
+import org.mozilla.fenix.wallpapers.WallpaperState
 
 /**
  * Interface for tab related actions in the [SessionControlInteractor].
@@ -130,11 +133,6 @@ interface CollectionInteractor {
      * User has removed the collections placeholder from home.
      */
     fun onRemoveCollectionsPlaceholder()
-
-    /**
-     * User has opened collection 3 dot menu.
-     */
-    fun onCollectionMenuOpened()
 }
 
 interface ToolbarInteractor {
@@ -162,6 +160,15 @@ interface OnboardingInteractor {
      * Opens a custom tab to privacy notice url. Called when a user clicks on the "read our privacy notice" button.
      */
     fun onReadPrivacyNoticeClicked()
+
+    /**
+     * Show Wallpapers onboarding dialog to onboard users about the feature if conditions are met.
+     * Returns true if the call has been passed down to the controller.
+     *
+     * @param state The wallpaper state.
+     * @return Whether the onboarding dialog is currently shown.
+     */
+    fun showWallpapersOnboardingDialog(state: WallpaperState): Boolean
 }
 
 interface CustomizeHomeIteractor {
@@ -216,11 +223,6 @@ interface TopSiteInteractor {
      * "Our sponsors & your privacy" top site menu item.
      */
     fun onSponsorPrivacyClicked()
-
-    /**
-     * Called when top site menu is opened.
-     */
-    fun onTopSiteMenuOpened()
 }
 
 interface MessageCardInteractor {
@@ -248,7 +250,7 @@ class SessionControlInteractor(
     private val recentSyncedTabController: RecentSyncedTabController,
     private val recentBookmarksController: RecentBookmarksController,
     private val recentVisitsController: RecentVisitsController,
-    private val pocketStoriesController: PocketStoriesController
+    private val pocketStoriesController: PocketStoriesController,
 ) : CollectionInteractor,
     OnboardingInteractor,
     TopSiteInteractor,
@@ -260,7 +262,8 @@ class SessionControlInteractor(
     RecentBookmarksInteractor,
     RecentVisitsInteractor,
     CustomizeHomeIteractor,
-    PocketStoriesInteractor {
+    PocketStoriesInteractor,
+    SearchSelectorInteractor {
 
     override fun onCollectionAddTabTapped(collection: TabCollection) {
         controller.handleCollectionAddTabTapped(collection)
@@ -322,6 +325,10 @@ class SessionControlInteractor(
         controller.handleReadPrivacyNoticeClicked()
     }
 
+    override fun showWallpapersOnboardingDialog(state: WallpaperState): Boolean {
+        return controller.handleShowWallpapersOnboardingDialog(state)
+    }
+
     override fun onToggleCollectionExpanded(collection: TabCollection, expand: Boolean) {
         controller.handleToggleCollectionExpanded(collection, expand)
     }
@@ -348,14 +355,6 @@ class SessionControlInteractor(
 
     override fun onRemoveCollectionsPlaceholder() {
         controller.handleRemoveCollectionsPlaceholder()
-    }
-
-    override fun onCollectionMenuOpened() {
-        controller.handleMenuOpened()
-    }
-
-    override fun onTopSiteMenuOpened() {
-        controller.handleMenuOpened()
     }
 
     override fun onRecentTabClicked(tabId: String) {
@@ -400,7 +399,7 @@ class SessionControlInteractor(
 
     override fun onRecentHistoryGroupClicked(recentHistoryGroup: RecentHistoryGroup) {
         recentVisitsController.handleRecentHistoryGroupClicked(
-            recentHistoryGroup
+            recentHistoryGroup,
         )
     }
 
@@ -454,5 +453,9 @@ class SessionControlInteractor(
 
     override fun onMessageClosedClicked(message: Message) {
         controller.handleMessageClosed(message)
+    }
+
+    override fun onMenuItemTapped(item: SearchSelectorMenu.Item) {
+        controller.handleMenuItemTapped(item)
     }
 }

@@ -5,8 +5,8 @@
 package org.mozilla.fenix.perf
 
 import androidx.annotation.VisibleForTesting
-import androidx.annotation.VisibleForTesting.NONE
-import androidx.annotation.VisibleForTesting.PRIVATE
+import androidx.annotation.VisibleForTesting.Companion.NONE
+import androidx.annotation.VisibleForTesting.Companion.PRIVATE
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -37,7 +37,7 @@ private val logger = Logger("StartupTypeTelemetry")
  */
 class StartupTypeTelemetry(
     private val startupStateProvider: StartupStateProvider,
-    private val startupPathProvider: StartupPathProvider
+    private val startupPathProvider: StartupPathProvider,
 ) {
 
     fun attachOnHomeActivityOnCreate(lifecycle: Lifecycle) {
@@ -59,7 +59,8 @@ class StartupTypeTelemetry(
 
             // To avoid combinatorial explosion in label names, we bucket NOT_SET into UNKNOWN.
             StartupPath.NOT_SET,
-            StartupPath.UNKNOWN -> "unknown"
+            StartupPath.UNKNOWN,
+            -> "unknown"
         }
 
         return "${stateLabel}_$pathLabel"

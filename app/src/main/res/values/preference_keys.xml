@@ -38,7 +38,6 @@
     <string name="pref_key_addons" translatable="false">pref_key_addons</string>
     <string name="pref_key_override_amo_user" translatable="false">pref_key_override_amo_user</string>
     <string name="pref_key_override_amo_collection" translatable="false">pref_key_override_amo_collection</string>
-    <string name="pref_key_last_maintenance" translatable="false">pref_key_last_maintenance</string>
     <string name="pref_key_help" translatable="false">pref_key_help</string>
     <string name="pref_key_rate" translatable="false">pref_key_rate</string>
     <string name="pref_key_about" translatable="false">pref_key_about</string>
@@ -68,6 +67,8 @@
     <string name="pref_key_last_browse_activity_time" translatable="false">pref_key_last_browse_activity_time</string>
     <string name="pref_key_last_cfr_shown_time" translatable="false">pref_key_last_cfr_shown_time</string>
     <string name="pref_key_should_show_default_browser_notification" translatable="false">pref_key_should_show_default_browser_notification</string>
+    <string name="pref_key_re_engagement_notification_shown" translatable="false">pref_key_re_engagement_notification_shown</string>
+    <string name="pref_key_re_engagement_notification_enabled" translatable="false">pref_key_re_engagement_notification_enabled</string>
     <string name="pref_key_is_first_run" translatable="false">pref_key_is_first_run</string>
     <string name="pref_key_home_blocklist">pref_key_home_blocklist</string>
 
@@ -148,6 +149,10 @@
     <string name="pref_key_https_only_in_all_tabs" translatable="false">pref_key_https_only_in_all_tabs</string>
     <string name="pref_key_https_only_in_private_tabs" translatable="false">pref_key_https_only_in_private_tabs</string>
 
+    <!-- Cookie Banner Reduction Settings-->
+    <string name="pref_key_cookie_banner_settings" translatable="false">pref_key_cookie_banner_settings</string>
+    <string name="pref_key_cookie_banner_v1" translatable="false">pref_key_cookie_banner_v1</string>
+
     <!-- Tracking Protection Settings -->
     <string name="pref_key_etp_learn_more" translatable="false">pref_key_etp_learn_more</string>
     <string name="pref_key_tracking_protection_settings" translatable="false">pref_key_tracking_protection_settings</string>
@@ -205,8 +210,11 @@
     <string name="pref_key_wallpapers" translatable="false">pref_key_wallpapers</string>
     <string name="pref_key_current_wallpaper" translatable="false">pref_key_current_wallpaper</string>
     <string name="pref_key_current_wallpaper_text_color" translatable="false">pref_key_current_wallpaper_text_color</string>
-    <string name="pref_key_current_wallpaper_card_color" translatable="false">pref_key_current_wallpaper_card_color</string>
+    <string name="pref_key_current_wallpaper_card_color_light" translatable="false">pref_key_current_wallpaper_card_color_light</string>
+    <string name="pref_key_current_wallpaper_card_color_dark" translatable="false">pref_key_current_wallpaper_card_color_dark</string>
     <string name="pref_key_wallpapers_onboarding" translatable="false">pref_key_wallpapers_onboarding</string>
+    <string name="pref_key_should_migrate_wallpaper" translatable="false">pref_key_should_migrate_wallpaper</string>
+    <string name="pref_key_should_migrate_wallpaper_card_colors" translatable="false">pref_key_should_migrate_wallpaper_card_colors</string>
 
     <string name="pref_key_encryption_key_generated" translatable="false">pref_key_encryption_key_generated</string>
 
@@ -304,4 +312,12 @@
     <string name="pref_key_nimbus_use_preview" translatable="false">pref_key_nimbus_use_preview</string>
     <string name="pref_key_history_metadata_feature" translatable="false">pref_key_history_metadata_feature</string>
     <string name="pref_key_show_unified_search" translatable="false">pref_key_show_unified_search</string>
+    <string name="pref_key_custom_glean_server_url" translatable="false">pref_key_custom_glean_server_url</string>
+
+    <!-- Growth Data -->
+    <string name="pref_key_growth_set_as_default" translatable="false">pref_key_growth_set_as_default</string>
+    <string name="pref_key_growth_resume_last_sent" translatable="false">pref_key_growth_last_resumed</string>
+    <string name="pref_key_growth_uri_load_last_sent" translatable="false">pref_key_growth_uri_load_last_sent</string>
+    <string name="pref_key_growth_first_week_series_sent" translatable="false">pref_key_growth_first_week_series_sent</string>
+    <string name="pref_key_growth_first_week_days_of_use" translatable="false">pref_key_growth_first_week_days_of_use</string>
 </resources>

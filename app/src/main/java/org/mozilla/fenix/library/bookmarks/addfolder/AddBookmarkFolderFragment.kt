@@ -10,8 +10,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import kotlinx.coroutines.Dispatchers.IO
@@ -34,21 +36,18 @@ import org.mozilla.fenix.library.bookmarks.friendlyRootTitle
 /**
  * Menu to create a new bookmark folder.
  */
-class AddBookmarkFolderFragment : Fragment(R.layout.fragment_edit_bookmark) {
+class AddBookmarkFolderFragment : Fragment(R.layout.fragment_edit_bookmark), MenuProvider {
     private var _binding: FragmentEditBookmarkBinding? = null
     private val binding get() = _binding!!
 
     private val sharedViewModel: BookmarksSharedViewModel by activityViewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     /**
      * Hides fields for bookmark items present in the shared layout file.
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         _binding = FragmentEditBookmarkBinding.bind(view)
 
         binding.bookmarkUrlLabel.visibility = GONE
@@ -75,8 +74,8 @@ class AddBookmarkFolderFragment : Fragment(R.layout.fragment_edit_bookmark) {
                     R.id.bookmarkAddFolderFragment,
                     AddBookmarkFolderFragmentDirections
                         .actionBookmarkAddFolderFragmentToBookmarkSelectFolderFragment(
-                            allowCreatingNewFolder = true
-                        )
+                            allowCreatingNewFolder = true,
+                        ),
                 )
             }
         }
@@ -87,11 +86,11 @@ class AddBookmarkFolderFragment : Fragment(R.layout.fragment_edit_bookmark) {
         binding.bookmarkNameEdit.hideKeyboard()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.bookmarks_add_folder, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onMenuItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.confirm_add_folder_button -> {
                 if (binding.bookmarkNameEdit.text.isNullOrBlank()) {
@@ -104,7 +103,7 @@ class AddBookmarkFolderFragment : Fragment(R.layout.fragment_edit_bookmark) {
                     val newGuid = requireComponents.core.bookmarksStorage.addFolder(
                         sharedViewModel.selectedFolder!!.guid,
                         binding.bookmarkNameEdit.text.toString(),
-                        null
+                        null,
                     )
                     sharedViewModel.selectedFolder =
                         requireComponents.core.bookmarksStorage.getTree(newGuid)
@@ -116,7 +115,8 @@ class AddBookmarkFolderFragment : Fragment(R.layout.fragment_edit_bookmark) {
                 }
                 true
             }
-            else -> super.onOptionsItemSelected(item)
+            // other options are not handled by this menu provider
+            else -> false
         }
     }
 

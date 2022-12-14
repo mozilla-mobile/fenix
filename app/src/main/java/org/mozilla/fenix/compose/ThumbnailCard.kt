@@ -34,7 +34,6 @@ import mozilla.components.concept.base.images.ImageLoadRequest
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.theme.Theme
 
 /**
  * Card which will display a thumbnail. If a thumbnail is not available for [url], the favicon
@@ -59,28 +58,28 @@ fun ThumbnailCard(
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
     contentScale: ContentScale = ContentScale.FillWidth,
-    alignment: Alignment = Alignment.TopCenter
+    alignment: Alignment = Alignment.TopCenter,
 ) {
     Card(
         modifier = modifier,
-        backgroundColor = backgroundColor
+        backgroundColor = backgroundColor,
     ) {
         if (inComposePreview) {
             Box(
-                modifier = Modifier.background(color = FirefoxTheme.colors.layer3)
+                modifier = Modifier.background(color = FirefoxTheme.colors.layer3),
             )
         } else {
             components.core.icons.Loader(url) {
                 Placeholder {
                     Box(
-                        modifier = Modifier.background(color = FirefoxTheme.colors.layer3)
+                        modifier = Modifier.background(color = FirefoxTheme.colors.layer3),
                     )
                 }
 
                 WithIcon { icon ->
                     Box(
                         modifier = Modifier.size(36.dp),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Image(
                             painter = icon.painter,
@@ -88,7 +87,7 @@ fun ThumbnailCard(
                             modifier = Modifier
                                 .size(36.dp)
                                 .clip(RoundedCornerShape(8.dp)),
-                            contentScale = contentScale
+                            contentScale = contentScale,
                         )
                     }
                 }
@@ -99,7 +98,7 @@ fun ThumbnailCard(
                 size = size,
                 modifier = modifier,
                 contentScale = contentScale,
-                alignment = alignment
+                alignment = alignment,
             )
         }
     }
@@ -111,7 +110,7 @@ private fun ThumbnailImage(
     size: Dp,
     modifier: Modifier,
     contentScale: ContentScale,
-    alignment: Alignment
+    alignment: Alignment,
 ) {
     val rememberBitmap = remember(key) { mutableStateOf<ImageBitmap?>(null) }
     val thumbnailSize = LocalDensity.current.run { size.toPx().toInt() }
@@ -130,7 +129,7 @@ private fun ThumbnailImage(
             contentDescription = null,
             modifier = modifier,
             contentScale = contentScale,
-            alignment = alignment
+            alignment = alignment,
         )
     }
 }
@@ -138,13 +137,13 @@ private fun ThumbnailImage(
 @Preview
 @Composable
 private fun ThumbnailCardPreview() {
-    FirefoxTheme(theme = Theme.getTheme()) {
+    FirefoxTheme {
         ThumbnailCard(
             url = "https://mozilla.com",
             key = "123",
             modifier = Modifier
                 .size(108.dp, 80.dp)
-                .clip(RoundedCornerShape(8.dp))
+                .clip(RoundedCornerShape(8.dp)),
         )
     }
 }

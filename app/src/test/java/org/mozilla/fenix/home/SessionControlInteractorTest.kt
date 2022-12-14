@@ -46,7 +46,7 @@ class SessionControlInteractorTest {
             recentSyncedTabController,
             recentBookmarksController,
             recentVisitsController,
-            pocketStoriesController
+            pocketStoriesController,
         )
     }
 
@@ -141,18 +141,6 @@ class SessionControlInteractorTest {
     fun onRemoveCollectionsPlaceholder() {
         interactor.onRemoveCollectionsPlaceholder()
         verify { controller.handleRemoveCollectionsPlaceholder() }
-    }
-
-    @Test
-    fun onCollectionMenuOpened() {
-        interactor.onCollectionMenuOpened()
-        verify { controller.handleMenuOpened() }
-    }
-
-    @Test
-    fun onTopSiteMenuOpened() {
-        interactor.onTopSiteMenuOpened()
-        verify { controller.handleMenuOpened() }
     }
 
     @Test

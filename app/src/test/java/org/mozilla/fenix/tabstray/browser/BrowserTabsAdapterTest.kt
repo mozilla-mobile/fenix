@@ -10,18 +10,18 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.browser.state.state.createTab
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.tabstray.TabsAdapter.Companion.PAYLOAD_DONT_HIGHLIGHT_SELECTED_ITEM
 import mozilla.components.browser.tabstray.TabsAdapter.Companion.PAYLOAD_HIGHLIGHT_SELECTED_ITEM
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.databinding.TabTrayItemBinding
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.TabsTrayStore
-import mozilla.components.browser.state.state.createTab
-import mozilla.components.browser.state.store.BrowserStore
-import org.mozilla.fenix.ext.components
 
 @RunWith(FenixRobolectricTestRunner::class)
 class BrowserTabsAdapterTest {
@@ -38,10 +38,10 @@ class BrowserTabsAdapterTest {
 
         adapter.updateTabs(
             listOf(
-                createTab(url = "url", id = "tab1")
+                createTab(url = "url", id = "tab1"),
             ),
             null,
-            selectedTabId = "tab1"
+            selectedTabId = "tab1",
         )
 
         adapter.onBindViewHolder(holder, 0, listOf(PAYLOAD_HIGHLIGHT_SELECTED_ITEM))
@@ -68,8 +68,8 @@ class BrowserTabsAdapterTest {
                 store = store,
                 selectionHolder = null,
                 itemView = binding.root,
-                featureName = "Test"
-            )
+                featureName = "Test",
+            ),
         )
         val tab = createTab(url = "url", id = "tab1")
 
@@ -81,7 +81,7 @@ class BrowserTabsAdapterTest {
         adapter.updateTabs(
             listOf(tab),
             null,
-            selectedTabId = "tab1"
+            selectedTabId = "tab1",
         )
 
         adapter.onBindViewHolder(holder, 0, listOf(PAYLOAD_DONT_HIGHLIGHT_SELECTED_ITEM))

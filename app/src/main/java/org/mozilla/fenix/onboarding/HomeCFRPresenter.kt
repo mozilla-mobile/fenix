@@ -38,13 +38,17 @@ class HomeCFRPresenter(
      * Determine the CFR to be shown on the Home screen and show a CFR for the resultant view
      * if any.
      */
-    fun show() {
-        when (val result = getCFRToShow()) {
-            is Result.SyncedTab -> showSyncedTabCFR(view = result.view)
-            is Result.JumpBackIn -> showJumpBackInCFR(view = result.view)
-            else -> {
-                // no-op
+    fun show(): Boolean {
+        return when (val result = getCFRToShow()) {
+            is Result.SyncedTab -> {
+                showSyncedTabCFR(view = result.view)
+                true
             }
+            is Result.JumpBackIn -> {
+                showJumpBackInCFR(view = result.view)
+                true
+            }
+            else -> false
         }
     }
 
@@ -61,7 +65,7 @@ class HomeCFRPresenter(
                     true -> Onboarding.syncCfrExplicitDismissal.record(NoExtras())
                     false -> Onboarding.syncCfrImplicitDismissal.record(NoExtras())
                 }
-            }
+            },
         ).show()
 
         // Turn off both the recent tab and synced tab CFR after the recent synced tab CFR is shown.
@@ -85,7 +89,7 @@ class HomeCFRPresenter(
                     true -> RecentTabs.jumpBackInCfrDismissed.record(NoExtras())
                     false -> RecentTabs.jumpBackInCfrCancelled.record(NoExtras())
                 }
-            }
+            },
         ).show()
 
         // Users can still see the recent synced tab CFR after the recent tab CFR is shown in

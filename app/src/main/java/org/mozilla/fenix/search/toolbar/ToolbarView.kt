@@ -16,6 +16,7 @@ import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.search.SearchFragmentState
 import org.mozilla.fenix.utils.Settings
 
@@ -23,7 +24,7 @@ import org.mozilla.fenix.utils.Settings
  * Interface for the Toolbar Interactor. This interface is implemented by objects that want
  * to respond to user interaction on the [ToolbarView].
  */
-interface ToolbarInteractor {
+interface ToolbarInteractor : SearchSelectorInteractor {
 
     /**
      * Called when a user hits the return key while [ToolbarView] has focus.
@@ -44,13 +45,6 @@ interface ToolbarInteractor {
      * @param text The current text displayed by [ToolbarView].
      */
     fun onTextChanged(text: String)
-
-    /**
-     * Called when an user taps on a search selector menu item.
-     *
-     * @param item The [SearchSelectorMenu.Item] that was tapped.
-     */
-    fun onMenuItemTapped(item: SearchSelectorMenu.Item)
 }
 
 /**
@@ -63,7 +57,7 @@ class ToolbarView(
     private val interactor: ToolbarInteractor,
     private val isPrivate: Boolean,
     val view: BrowserToolbar,
-    fromHomeFragment: Boolean
+    fromHomeFragment: Boolean,
 ) {
 
     @VisibleForTesting
@@ -83,7 +77,8 @@ class ToolbarView(
             }
 
             background = AppCompatResources.getDrawable(
-                context, context.theme.resolveAttribute(R.attr.layer1)
+                context,
+                context.theme.resolveAttribute(R.attr.layer1),
             )
 
             edit.hint = context.getString(R.string.search_hint)
@@ -93,29 +88,31 @@ class ToolbarView(
                 hint = context.getColorFromAttr(R.attr.textSecondary),
                 suggestionBackground = ContextCompat.getColor(
                     context,
-                    R.color.suggestion_highlight_color
+                    R.color.suggestion_highlight_color,
                 ),
-                clear = context.getColorFromAttr(R.attr.textPrimary)
+                clear = context.getColorFromAttr(R.attr.textPrimary),
             )
 
             edit.setUrlBackground(
-                AppCompatResources.getDrawable(context, R.drawable.search_url_background)
+                AppCompatResources.getDrawable(context, R.drawable.search_url_background),
             )
 
             private = isPrivate
 
-            setOnEditListener(object : mozilla.components.concept.toolbar.Toolbar.OnEditListener {
-                override fun onCancelEditing(): Boolean {
-                    interactor.onEditingCanceled()
-                    // We need to return false to not show display mode
-                    return false
-                }
+            setOnEditListener(
+                object : mozilla.components.concept.toolbar.Toolbar.OnEditListener {
+                    override fun onCancelEditing(): Boolean {
+                        interactor.onEditingCanceled()
+                        // We need to return false to not show display mode
+                        return false
+                    }
 
-                override fun onTextChanged(text: String) {
-                    url = text
-                    interactor.onTextChanged(text)
-                }
-            })
+                    override fun onTextChanged(text: String) {
+                        url = text
+                        interactor.onTextChanged(text)
+                    }
+                },
+            )
         }
     }
 
@@ -144,11 +141,16 @@ class ToolbarView(
 
         val searchEngine = searchState.searchEngineSource.searchEngine
 
-        when (searchEngine?.type) {
+        view.edit.hint = when (searchEngine?.type) {
             SearchEngine.Type.APPLICATION ->
-                view.edit.hint = context.getString(R.string.application_search_hint)
+                when (searchEngine.id) {
+                    Core.HISTORY_SEARCH_ENGINE_ID -> context.getString(R.string.history_search_hint)
+                    Core.BOOKMARKS_SEARCH_ENGINE_ID -> context.getString(R.string.bookmark_search_hint)
+                    Core.TABS_SEARCH_ENGINE_ID -> context.getString(R.string.tab_search_hint)
+                    else -> context.getString(R.string.application_search_hint)
+                }
             else ->
-                view.edit.hint = context.getString(R.string.search_hint)
+                context.getString(R.string.search_hint)
         }
 
         if (!settings.showUnifiedSearchFeature && searchEngine != null) {
@@ -159,7 +161,7 @@ class ToolbarView(
                 searchEngine.icon,
                 iconSize,
                 iconSize,
-                true
+                true,
             )
 
             val icon = BitmapDrawable(context.resources, scaledIcon)

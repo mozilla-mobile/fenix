@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -35,12 +34,12 @@ import androidx.compose.ui.unit.sp
 import mozilla.components.browser.storage.sync.TabEntry
 import mozilla.components.feature.syncedtabs.view.SyncedTabsView
 import org.mozilla.fenix.R
+import org.mozilla.fenix.compose.Divider
 import org.mozilla.fenix.compose.button.PrimaryButton
 import org.mozilla.fenix.compose.ext.dashedBorder
 import org.mozilla.fenix.compose.list.ExpandableListHeader
 import org.mozilla.fenix.compose.list.FaviconListItem
 import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.theme.Theme
 import mozilla.components.browser.storage.sync.Tab as SyncTab
 
 private const val EXPANDED_BY_DEFAULT = true
@@ -103,7 +102,7 @@ fun SyncedTabsList(
                         item {
                             SyncedTabsErrorItem(
                                 errorText = syncedTabItem.errorText,
-                                errorButton = syncedTabItem.errorButton
+                                errorButton = syncedTabItem.errorButton,
                             )
                         }
                     }
@@ -118,7 +117,7 @@ fun SyncedTabsList(
                     is SyncedTabsListItem.Device -> SyncedTabsSectionHeader(headerText = syncedTabItem.displayName)
                     is SyncedTabsListItem.Error -> SyncedTabsErrorItem(
                         errorText = syncedTabItem.errorText,
-                        errorButton = syncedTabItem.errorButton
+                        errorButton = syncedTabItem.errorButton,
                     )
                     is SyncedTabsListItem.NoTabs -> SyncedTabsNoTabsItem()
                     is SyncedTabsListItem.Tab -> {
@@ -160,7 +159,7 @@ fun SyncedTabsSectionHeader(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(FirefoxTheme.colors.layer1)
+            .background(FirefoxTheme.colors.layer1),
     ) {
         ExpandableListHeader(
             headerText = headerText,
@@ -170,7 +169,7 @@ fun SyncedTabsSectionHeader(
             onClick = onClick,
         )
 
-        Divider(color = FirefoxTheme.colors.borderPrimary)
+        Divider()
     }
 }
 
@@ -183,7 +182,7 @@ fun SyncedTabsSectionHeader(
 @Composable
 fun SyncedTabsErrorItem(
     errorText: String,
-    errorButton: SyncedTabsListItem.ErrorButton? = null
+    errorButton: SyncedTabsListItem.ErrorButton? = null,
 ) {
     Box(
         Modifier
@@ -193,19 +192,19 @@ fun SyncedTabsErrorItem(
                 color = FirefoxTheme.colors.borderPrimary,
                 cornerRadius = 8.dp,
                 dashHeight = 2.dp,
-                dashWidth = 4.dp
-            )
+                dashWidth = 4.dp,
+            ),
     ) {
         Column(
             Modifier
                 .padding(all = 16.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
         ) {
             Text(
                 text = errorText,
                 color = FirefoxTheme.colors.textPrimary,
                 modifier = Modifier.fillMaxWidth(),
-                fontSize = 14.sp
+                fontSize = 14.sp,
             )
 
             errorButton?.let {
@@ -233,14 +232,14 @@ fun SyncedTabsNoTabsItem() {
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .fillMaxWidth(),
         fontSize = 16.sp,
-        maxLines = 1
+        maxLines = 1,
     )
 }
 
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun SyncedTabsListItemsPreview() {
-    FirefoxTheme(theme = Theme.getTheme()) {
+    FirefoxTheme {
         Column(Modifier.background(FirefoxTheme.colors.layer1)) {
             SyncedTabsSectionHeader(headerText = "Google Pixel Pro Max +Ultra 5000")
 
@@ -276,12 +275,12 @@ private fun SyncedTabsListItemsPreview() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun SyncedTabsErrorPreview() {
-    FirefoxTheme(theme = Theme.getTheme()) {
+    FirefoxTheme {
         Box(Modifier.background(FirefoxTheme.colors.layer1)) {
             SyncedTabsErrorItem(
                 errorText = stringResource(R.string.synced_tabs_no_tabs),
                 errorButton = SyncedTabsListItem.ErrorButton(
-                    buttonText = stringResource(R.string.synced_tabs_sign_in_button)
+                    buttonText = stringResource(R.string.synced_tabs_sign_in_button),
                 ) {
                     println("SyncedTabsErrorButton click")
                 },
@@ -293,7 +292,7 @@ private fun SyncedTabsErrorPreview() {
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun SyncedTabsListPreview() {
-    FirefoxTheme(theme = Theme.getTheme()) {
+    FirefoxTheme {
         Box(Modifier.background(FirefoxTheme.colors.layer1)) {
             SyncedTabsList(
                 syncedTabs = getFakeSyncedTabList(),
@@ -316,7 +315,7 @@ internal fun getFakeSyncedTabList(): List<SyncedTabsListItem> = listOf(
             generateFakeTab("Mozilla", "www.mozilla.org"),
             generateFakeTab("Google", "www.google.com"),
             generateFakeTab("", "www.google.com"),
-        )
+        ),
     ),
     SyncedTabsListItem.DeviceSection("Device 2", emptyList()),
     SyncedTabsListItem.Error("Please re-authenticate"),
@@ -333,5 +332,5 @@ private fun generateFakeTab(tabName: String, tabUrl: String): SyncedTabsListItem
             history = listOf(TabEntry(tabName, tabUrl, null)),
             active = 0,
             lastUsed = 0L,
-        )
+        ),
     )

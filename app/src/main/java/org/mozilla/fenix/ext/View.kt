@@ -12,7 +12,7 @@ import android.view.TouchDelegate
 import android.view.View
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.Dimension
-import androidx.annotation.Dimension.DP
+import androidx.annotation.Dimension.Companion.DP
 import androidx.annotation.VisibleForTesting
 import androidx.core.view.WindowInsetsCompat
 import mozilla.components.support.ktx.android.util.dpToPx
@@ -43,11 +43,11 @@ fun View.removeTouchDelegate() {
 fun View.setNewAccessibilityParent(newParent: View) {
     this.accessibilityDelegate = object : View.AccessibilityDelegate() {
         override fun onInitializeAccessibilityNodeInfo(
-            host: View?,
-            info: AccessibilityNodeInfo?
+            host: View,
+            info: AccessibilityNodeInfo,
         ) {
             super.onInitializeAccessibilityNodeInfo(host, info)
-            info?.setParent(newParent)
+            info.setParent(newParent)
         }
     }
 }
@@ -60,23 +60,35 @@ fun View.updateAccessibilityCollectionItemInfo(
     columnIndex: Int,
     isSelected: Boolean,
     rowSpan: Int = 1,
-    columnSpan: Int = 1
+    columnSpan: Int = 1,
 ) {
     this.accessibilityDelegate = object : View.AccessibilityDelegate() {
         override fun onInitializeAccessibilityNodeInfo(
-            host: View?,
-            info: AccessibilityNodeInfo?
+            host: View,
+            info: AccessibilityNodeInfo,
         ) {
             super.onInitializeAccessibilityNodeInfo(host, info)
-            info?.collectionItemInfo =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                info.collectionItemInfo =
+                    AccessibilityNodeInfo.CollectionItemInfo(
+                        rowIndex,
+                        rowSpan,
+                        columnIndex,
+                        columnSpan,
+                        false,
+                        isSelected,
+                    )
+            } else {
+                @Suppress("DEPRECATION")
                 AccessibilityNodeInfo.CollectionItemInfo.obtain(
                     rowIndex,
                     rowSpan,
                     columnIndex,
                     columnSpan,
                     false,
-                    isSelected
+                    isSelected,
                 )
+            }
         }
     }
 }
@@ -86,19 +98,28 @@ fun View.updateAccessibilityCollectionItemInfo(
  */
 fun View.updateAccessibilityCollectionInfo(
     rowCount: Int,
-    columnCount: Int
+    columnCount: Int,
 ) {
     this.accessibilityDelegate = object : View.AccessibilityDelegate() {
         override fun onInitializeAccessibilityNodeInfo(
-            host: View?,
-            info: AccessibilityNodeInfo?
+            host: View,
+            info: AccessibilityNodeInfo,
         ) {
             super.onInitializeAccessibilityNodeInfo(host, info)
-            info?.collectionInfo = AccessibilityNodeInfo.CollectionInfo.obtain(
-                rowCount,
-                columnCount,
-                false
-            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                info.collectionInfo = AccessibilityNodeInfo.CollectionInfo(
+                    rowCount,
+                    columnCount,
+                    false,
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                info.collectionInfo = AccessibilityNodeInfo.CollectionInfo.obtain(
+                    rowCount,
+                    columnCount,
+                    false,
+                )
+            }
         }
     }
 }
@@ -115,7 +136,7 @@ fun View.getRectWithScreenLocation(): Rect {
         locationOnScreen[0],
         locationOnScreen[1],
         locationOnScreen[0] + width,
-        locationOnScreen[1] + height
+        locationOnScreen[1] + height,
     )
 }
 
