@@ -6,7 +6,6 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
@@ -58,18 +57,22 @@ class CrashReportingTest {
         }
     }
 
-    @Ignore("Test failure caused by: https://github.com/mozilla-mobile/fenix/issues/19964")
+    // Existing bug: https://github.com/mozilla-mobile/fenix/issues/19964
     @Test
     fun restoreTabCrashedReporterTest() {
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         homeScreen {
         }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(website.url) {}
+        }.enterURLAndEnterToBrowser(website.url) {
+            waitForPageToLoad()
+            verifyPageContent(website.content)
+        }
 
         navigationToolbar {
         }.openTabCrashReporter {
             clickTabCrashedRestoreButton()
+            waitForPageToLoad()
             verifyPageContent(website.content)
         }
     }
