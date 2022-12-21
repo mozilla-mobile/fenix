@@ -149,12 +149,15 @@ internal class DefaultMetricsStorage(
          * - user is within 2-28 days of install
          * - tracking is still enabled through Nimbus
          */
-        fun shouldSendGenerally(context: Context): Boolean {
+        fun shouldSendGenerally(
+            context: Context,
+            activeNetworks: List<String> = listOf("Google Ads ACI"),
+        ): Boolean {
             val installedTime = getInstalledTime(context)
             val timeDifference = System.currentTimeMillis() - installedTime
             val withinWindow = timeDifference in windowStartMillis..windowEndMillis
 
-            return context.settings().adjustCampaignId.isNotEmpty() &&
+            return activeNetworks.contains(context.settings().adjustNetwork) &&
                 FxNimbus.features.growthData.value().enabled &&
                 withinWindow
         }
