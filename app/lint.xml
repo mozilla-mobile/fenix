@@ -66,5 +66,6 @@
 
     <!-- Correctness: checks with increased severity -->
     <issue id="PrivateResource" severity="error" />
+    <issue id="MissingPermission" severity="error" />
 </lint>
 
