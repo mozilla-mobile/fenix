@@ -21,6 +21,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/sign_in_with_camera"
+            android:textAlignment="center"
             android:textAppearance="@style/Header16TextStyle"
             android:textColor="?attr/textPrimary"
             android:textSize="20sp"
@@ -47,12 +48,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:gravity="center"
-            tools:text="@string/sign_in_instructions"
+            android:textAlignment="center"
             android:textColor="?attr/textPrimary"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sign_in_image" />
+            app:layout_constraintTop_toBottomOf="@+id/sign_in_image"
+            tools:text="@string/sign_in_instructions" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/signInScanButton"
@@ -78,13 +80,14 @@
             android:id="@+id/createAccount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginVertical="24dp"
             android:gravity="center"
+            android:textAlignment="center"
             android:textAppearance="@style/Body14TextStyle"
-            app:layout_constraintTop_toBottomOf="@id/signInEmailButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginVertical="24dp"
-            tools:text="@string/sign_in_create_account_text"/>
+            app:layout_constraintTop_toBottomOf="@id/signInEmailButton"
+            tools:text="@string/sign_in_create_account_text" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
