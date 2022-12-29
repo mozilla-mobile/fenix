@@ -4,7 +4,11 @@
 
 package org.mozilla.fenix.ext
 
+import android.app.Activity
+import android.content.Intent
 import android.view.WindowManager
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -127,4 +131,15 @@ fun Fragment.removeSecure() {
     this.activity?.window?.clearFlags(
         WindowManager.LayoutParams.FLAG_SECURE,
     )
+}
+
+/**
+ * Register a request to start an activity for result.
+ */
+fun Fragment.startForResult(intent: Intent, onSuccess: (result: ActivityResult) -> Unit) {
+    registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            onSuccess(result)
+        }
+    }.launch(intent)
 }

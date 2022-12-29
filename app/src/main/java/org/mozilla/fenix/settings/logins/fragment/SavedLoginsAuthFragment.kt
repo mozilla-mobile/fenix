@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.settings.logins.fragment
 
-import android.app.Activity.RESULT_OK
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.DialogInterface
@@ -34,6 +33,7 @@ import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.ext.startForResult
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
 import org.mozilla.fenix.settings.SyncPreferenceView
 import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
@@ -205,17 +205,14 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
         context.settings().incrementSecureWarningCount()
     }
 
-    @Suppress("Deprecation") // This is only used when BiometricPrompt is unavailable
+    @Suppress("Deprecation")
     private fun showPinVerification(manager: KeyguardManager) {
         val intent = manager.createConfirmDeviceCredentialIntent(
             getString(R.string.logins_biometric_prompt_message_pin),
             getString(R.string.logins_biometric_prompt_message),
         )
-        startActivityForResult(intent, PIN_REQUEST)
-    }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == PIN_REQUEST && resultCode == RESULT_OK) {
+        startForResult(intent) {
             navigateToSavedLoginsFragment()
         }
     }

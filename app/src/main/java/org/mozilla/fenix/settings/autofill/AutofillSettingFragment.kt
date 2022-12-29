@@ -34,6 +34,7 @@ import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.ext.startForResult
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
 import org.mozilla.fenix.settings.SyncPreferenceView
 import org.mozilla.fenix.settings.biometric.BiometricPromptPreferenceFragment
@@ -305,7 +306,10 @@ class AutofillSettingFragment : BiometricPromptPreferenceFragment() {
             getString(R.string.credit_cards_biometric_prompt_message_pin),
             getString(R.string.credit_cards_biometric_prompt_message),
         )
-        startActivityForResult(intent, PIN_REQUEST)
+
+        startForResult(intent) { result ->
+            pinRequestResult(PIN_REQUEST, result.resultCode)
+        }
     }
 
     private fun navigateToCreditCardManagementFragment() {

@@ -7,7 +7,6 @@ package org.mozilla.fenix.settings.biometric
 import android.app.Activity.RESULT_OK
 import android.app.KeyguardManager
 import android.content.Context
-import android.content.Intent
 import android.view.View
 import androidx.core.content.getSystemService
 import androidx.preference.Preference
@@ -108,7 +107,10 @@ abstract class BiometricPromptPreferenceFragment : PreferenceFragmentCompat() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    /**
+     * Use [BiometricPromptFeature] or [KeyguardManager] to handle pin request results.
+     */
+    fun pinRequestResult(requestCode: Int, resultCode: Int) {
         if (requestCode == PIN_REQUEST && resultCode == RESULT_OK) {
             navigateOnSuccess()
         }

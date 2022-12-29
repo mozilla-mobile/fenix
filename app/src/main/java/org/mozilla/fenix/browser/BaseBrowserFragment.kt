@@ -87,7 +87,6 @@ import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.service.sync.autofill.DefaultCreditCardValidationDelegate
 import mozilla.components.service.sync.logins.DefaultLoginValidationDelegate
-import mozilla.components.support.base.feature.ActivityResultHandler
 import mozilla.components.support.base.feature.PermissionsFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
@@ -132,6 +131,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.startForResult
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.SharedViewModel
 import org.mozilla.fenix.onboarding.FenixOnboarding
@@ -153,7 +153,6 @@ import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolb
 abstract class BaseBrowserFragment :
     Fragment(),
     UserInteractionHandler,
-    ActivityResultHandler,
     OnBackLongPressedListener,
     AccessibilityManager.AccessibilityStateChangeListener {
 
@@ -856,13 +855,19 @@ abstract class BaseBrowserFragment :
     /**
      * Shows a pin request prompt. This is only used when BiometricPrompt is unavailable.
      */
-    @Suppress("Deprecation")
+    @Suppress("DEPRECATION")
     private fun showPinVerification(manager: KeyguardManager) {
         val intent = manager.createConfirmDeviceCredentialIntent(
             getString(R.string.credit_cards_biometric_prompt_message_pin),
             getString(R.string.credit_cards_biometric_prompt_unlock_message),
         )
-        requireActivity().startActivityForResult(intent, PIN_REQUEST)
+
+        startForResult(intent) { result ->
+            listOf(
+                promptsFeature,
+                webAuthnFeature,
+            ).any { it.onActivityResult(PIN_REQUEST, result.data, result.resultCode) }
+        }
     }
 
     /**
@@ -1184,16 +1189,6 @@ abstract class BaseBrowserFragment :
             else -> null
         }
         feature?.onPermissionsResult(permissions, grantResults)
-    }
-
-    /**
-     * Forwards activity results to the [ActivityResultHandler] features.
-     */
-    override fun onActivityResult(requestCode: Int, data: Intent?, resultCode: Int): Boolean {
-        return listOf(
-            promptsFeature,
-            webAuthnFeature,
-        ).any { it.onActivityResult(requestCode, data, resultCode) }
     }
 
     /**

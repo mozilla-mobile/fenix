@@ -9,6 +9,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.StrictMode
 import android.speech.RecognizerIntent
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import mozilla.components.support.locale.LocaleManager
 import mozilla.components.support.utils.ext.getParcelableCompat
@@ -60,11 +62,26 @@ class VoiceSearchActivity : AppCompatActivity() {
         }
     }
 
+    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            result: ActivityResult ->
+        if (result.resultCode == RESULT_OK) {
+            val spokenText = result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.first()
+            val context = this
+
+            previousIntent?.apply {
+                component = ComponentName(context, IntentReceiverActivity::class.java)
+                putExtra(SPEECH_PROCESSING, spokenText)
+                putExtra(HomeActivity.OPEN_TO_BROWSER_AND_LOAD, true)
+                startActivity(this)
+            }
+        }
+
+        finish()
+    }
+
     /**
      * Displays a speech recognizer popup that listens for input from the user.
      */
-    @Suppress("DEPRECATION")
-    // https://github.com/mozilla-mobile/fenix/issues/19919
     private fun displaySpeechRecognizer() {
         val intentSpeech = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(
@@ -80,27 +97,7 @@ class VoiceSearchActivity : AppCompatActivity() {
         }
         SearchWidget.voiceButton.record(NoExtras())
 
-        startActivityForResult(intentSpeech, SPEECH_REQUEST_CODE)
-    }
-
-    @Suppress("DEPRECATION")
-    // https://github.com/mozilla-mobile/fenix/issues/19919
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
-            val spokenText = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.first()
-            val context = this
-
-            previousIntent?.apply {
-                component = ComponentName(context, IntentReceiverActivity::class.java)
-                putExtra(SPEECH_PROCESSING, spokenText)
-                putExtra(HomeActivity.OPEN_TO_BROWSER_AND_LOAD, true)
-                startActivity(this)
-            }
-        }
-
-        finish()
+        startForResult.launch(intentSpeech)
     }
 
     /**
