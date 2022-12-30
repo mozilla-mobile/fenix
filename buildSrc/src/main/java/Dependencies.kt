@@ -50,6 +50,7 @@ object FenixVersions {
 
     const val junit = "5.5.2"
     const val mockk = "1.12.0"
+    const val cashapp_turbine = "0.12.1"
 
     const val mockwebserver = "4.10.0"
     const val uiautomator = "2.2.0"
@@ -72,6 +73,7 @@ object FenixDependencies {
     const val kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect:${FenixVersions.kotlin}"
     const val kotlin_coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${FenixVersions.coroutines}"
     const val kotlin_coroutines_test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${FenixVersions.coroutines}"
+    const val cashapp_turbine = "app.cash.turbine:turbine:${FenixVersions.cashapp_turbine}"
     const val kotlin_coroutines_android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${FenixVersions.coroutines}"
 
     const val osslicenses_plugin = "com.google.android.gms:oss-licenses-plugin:${FenixVersions.osslicenses_plugin}"
