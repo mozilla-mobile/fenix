@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.compose.inComposePreview
@@ -71,9 +72,17 @@ fun FirefoxTheme(
         Theme.Private -> privateColorPalette
     }
 
+    val configuration = LocalConfiguration.current
+    val dimensions = if (configuration.screenWidthDp <= SCREEN_WIDTH_THRESHOLD) smallDimensions else sw360Dimensions
+
     ProvideFirefoxColors(colors) {
         MaterialTheme(
-            content = content,
+            content = {
+                ProvideFirefoxDimens(
+                    dimens = dimensions,
+                    content = content,
+                )
+            },
         )
     }
 }
@@ -85,6 +94,21 @@ object FirefoxTheme {
 
     val typography: FenixTypography
         get() = defaultTypography
+
+    val dimens: FirefoxDimens
+        @Composable
+        get() = LocalDimens.current
+}
+
+private val LocalDimens = staticCompositionLocalOf { sw360Dimensions }
+
+@Composable
+private fun ProvideFirefoxDimens(
+    dimens: FirefoxDimens,
+    content: @Composable () -> Unit,
+) {
+    val dimensionSet = remember { dimens }
+    CompositionLocalProvider(LocalDimens provides dimensionSet, content = content)
 }
 
 private val darkColorPalette = FirefoxColors(
