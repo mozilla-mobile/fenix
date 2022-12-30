@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,75 +25,96 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
+import kotlinx.coroutines.flow.collectLatest
 import mozilla.telemetry.glean.private.NoExtras
+import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.button.PrimaryButton
 import org.mozilla.fenix.compose.button.SecondaryButton
 import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.GleanMetrics.Onboarding as OnboardingMetrics
-
-/**
- * Enum that represents the onboarding screen that is displayed.
- */
-private enum class OnboardingState {
-    Welcome,
-    SyncSignIn,
-}
 
 /**
  * A screen for displaying a welcome and sync sign in onboarding.
  *
- * @param isSyncSignIn Whether or not the user is signed into their Firefox Sync account.
+ * @param isUserSignedIn Whether or not the user is signed into their Firefox Sync account.
  * @param onDismiss Invoked when the user clicks on the close or "Skip" button.
  * @param onSignInButtonClick Invoked when the user clicks on the "Sign In" button
+ * @param viewModel [OnboardingViewModel] holding the screen state.
  */
 @Composable
-fun Onboarding(
-    isSyncSignIn: Boolean,
+fun OnboardingScreen(
+    isUserSignedIn: Boolean,
     onDismiss: () -> Unit,
     onSignInButtonClick: () -> Unit,
+    viewModel: OnboardingViewModel,
 ) {
-    var onboardingState by remember { mutableStateOf(OnboardingState.Welcome) }
+    val onboardingState by viewModel.state.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .background(FirefoxTheme.colors.layer1)
-            .fillMaxSize()
-            .padding(bottom = 32.dp)
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
+    // Only show Content when the state is Content
+    if (onboardingState is OnboardingScreenState.Content) {
+        OnboardingContent(
+            content = onboardingState as OnboardingScreenState.Content,
+            onDismiss = onDismiss,
+            onPrimaryButtonClick = viewModel::onPrimaryButtonClick,
+            onSecondaryButtonClick = viewModel::onSecondaryButtonClick,
+        )
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.onLaunch(isUserSignedIn)
+
+        viewModel.navigationEvent.collectLatest {
+            when (it) {
+                OnboardingNavigationEvent.DISMISS -> onDismiss()
+                OnboardingNavigationEvent.SIGN_IN -> onSignInButtonClick()
+            }
+        }
+    }
+}
+
+@Composable
+private fun OnboardingContent(
+    content: OnboardingScreenState.Content,
+    onDismiss: () -> Unit,
+    onPrimaryButtonClick: () -> Unit,
+    onSecondaryButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val boxWithConstraintsScope = this
+        Column(
+            modifier = modifier
+                .background(FirefoxTheme.colors.layer1)
+                .fillMaxSize()
+                .padding(bottom = FirefoxTheme.dimens.grid_4)
+                .statusBarsPadding()
+                .navigationBarsPadding(),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             IconButton(
                 onClick = {
-                    if (onboardingState == OnboardingState.Welcome) {
-                        OnboardingMetrics.welcomeCloseClicked.record(NoExtras())
-                    } else {
-                        OnboardingMetrics.syncCloseClicked.record(NoExtras())
+                    when (content.onboardingState) {
+                        OnboardingState.Welcome -> Onboarding.welcomeCloseClicked.record(NoExtras())
+                        OnboardingState.SyncSignIn -> Onboarding.syncCloseClicked.record(NoExtras())
                     }
                     onDismiss()
                 },
+                modifier = Modifier.align(Alignment.End),
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.mozac_ic_close),
@@ -100,151 +122,96 @@ fun Onboarding(
                     tint = FirefoxTheme.colors.iconPrimary,
                 )
             }
-        }
 
-        if (onboardingState == OnboardingState.Welcome) {
-            OnboardingWelcomeContent()
-
-            OnboardingWelcomeBottomContent(
-                onboardingState = onboardingState,
-                isSyncSignIn = isSyncSignIn,
-                onGetStartedButtonClick = {
-                    OnboardingMetrics.welcomeGetStartedClicked.record(NoExtras())
-                    if (isSyncSignIn) {
-                        onDismiss()
-                    } else {
-                        onboardingState = OnboardingState.SyncSignIn
-                    }
-                },
+            OnboardingPage(
+                content.pageUiState,
+                onPrimaryButtonClick = onPrimaryButtonClick,
+                onSecondaryButtonClick = onSecondaryButtonClick,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = FirefoxTheme.dimens.grid_2)
+                    .verticalScroll(rememberScrollState()),
+                imageModifier = Modifier
+                    .height(boxWithConstraintsScope.maxHeight.times(IMAGE_HEIGHT_RATIO)),
             )
 
-            OnboardingMetrics.welcomeCardImpression.record(NoExtras())
-        } else if (onboardingState == OnboardingState.SyncSignIn) {
-            OnboardingSyncSignInContent()
+            Spacer(modifier = Modifier.height(FirefoxTheme.dimens.grid_2))
 
-            OnboardingSyncSignInBottomContent(
-                onboardingState = onboardingState,
-                onSignInButtonClick = {
-                    OnboardingMetrics.syncSignInClicked.record(NoExtras())
-                    onSignInButtonClick()
-                },
-                onSkipButtonClick = {
-                    OnboardingMetrics.syncSkipClicked.record(NoExtras())
-                    onDismiss()
-                },
+            Indicators(
+                onboardingState = content.onboardingState,
+            )
+        }
+    }
+}
+
+@Composable
+private fun OnboardingPage(
+    onboardingPageUiState: OnboardingPageUiState,
+    onPrimaryButtonClick: () -> Unit,
+    onSecondaryButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    imageModifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.semantics(mergeDescendants = true) {},
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly,
+    ) {
+        // Since the vertical arrangement is SpaceEvenly, the text and buttons are wrapped
+        // their own containing Composables so the OuterColumn only has 3 children with
+        // space in between and around them
+        // Item 1
+        Image(
+            painter = painterResource(id = onboardingPageUiState.image),
+            contentDescription = null,
+            modifier = imageModifier,
+        )
+
+        // Item 2
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = stringResource(id = onboardingPageUiState.title),
+                color = FirefoxTheme.colors.textPrimary,
+                textAlign = TextAlign.Center,
+                style = FirefoxTheme.typography.headline5,
             )
 
-            OnboardingMetrics.syncCardImpression.record(NoExtras())
+            Spacer(modifier = Modifier.height(FirefoxTheme.dimens.grid_2))
+
+            Text(
+                text = stringResource(id = onboardingPageUiState.description),
+                color = FirefoxTheme.colors.textSecondary,
+                textAlign = TextAlign.Center,
+                style = FirefoxTheme.typography.body2,
+            )
+        }
+
+        // Item 3
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            PrimaryButton(
+                text = stringResource(id = onboardingPageUiState.primaryButtonText),
+                onClick = onPrimaryButtonClick,
+            )
+
+            if (onboardingPageUiState.secondaryButtonText != null) {
+                Spacer(modifier = Modifier.height(FirefoxTheme.dimens.grid_1))
+                SecondaryButton(
+                    text = stringResource(id = onboardingPageUiState.secondaryButtonText),
+                    onClick = onSecondaryButtonClick,
+                )
+            }
         }
     }
-}
 
-@Composable
-private fun OnboardingWelcomeBottomContent(
-    onboardingState: OnboardingState,
-    isSyncSignIn: Boolean,
-    onGetStartedButtonClick: () -> Unit,
-) {
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        PrimaryButton(
-            text = stringResource(id = R.string.onboarding_home_get_started_button),
-            onClick = onGetStartedButtonClick,
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        if (isSyncSignIn) {
-            Spacer(modifier = Modifier.height(6.dp))
-        } else {
-            Indicators(onboardingState = onboardingState)
-        }
-    }
-}
-
-@Composable
-private fun OnboardingWelcomeContent() {
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_onboarding_welcome),
-            contentDescription = null,
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Text(
-            text = stringResource(id = R.string.onboarding_home_welcome_title_2),
-            color = FirefoxTheme.colors.textPrimary,
-            textAlign = TextAlign.Center,
-            style = FirefoxTheme.typography.headline5,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = stringResource(id = R.string.onboarding_home_welcome_description),
-            color = FirefoxTheme.colors.textSecondary,
-            textAlign = TextAlign.Center,
-            style = FirefoxTheme.typography.body2,
-        )
-    }
-}
-
-@Composable
-private fun OnboardingSyncSignInContent() {
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_onboarding_sync),
-            contentDescription = null,
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Text(
-            text = stringResource(id = R.string.onboarding_home_sync_title_3),
-            color = FirefoxTheme.colors.textPrimary,
-            textAlign = TextAlign.Center,
-            style = FirefoxTheme.typography.headline5,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = stringResource(id = R.string.onboarding_home_sync_description),
-            color = FirefoxTheme.colors.textSecondary,
-            textAlign = TextAlign.Center,
-            style = FirefoxTheme.typography.body2,
-        )
-    }
-}
-
-@Composable
-private fun OnboardingSyncSignInBottomContent(
-    onboardingState: OnboardingState,
-    onSignInButtonClick: () -> Unit,
-    onSkipButtonClick: () -> Unit,
-) {
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        PrimaryButton(
-            text = stringResource(id = R.string.onboarding_home_sign_in_button),
-            onClick = onSignInButtonClick,
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        SecondaryButton(
-            text = stringResource(id = R.string.onboarding_home_skip_button),
-            onClick = onSkipButtonClick,
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Indicators(onboardingState = onboardingState)
+    LaunchedEffect(onboardingPageUiState) {
+        // record impression event for onboarding page
+        onboardingPageUiState.recordImpressionEvent()
     }
 }
 
@@ -284,14 +251,20 @@ private fun Indicator(color: Color) {
     )
 }
 
-@Composable
+private const val IMAGE_HEIGHT_RATIO = 0.4f
+
 @Preview
-private fun OnboardingPreview() {
+@Composable
+private fun PreviewOnboardingScreen() {
     FirefoxTheme {
-        Onboarding(
-            isSyncSignIn = false,
-            onDismiss = {},
-            onSignInButtonClick = {},
+        OnboardingContent(
+            content = OnboardingScreenState.Content(
+                onboardingState = OnboardingState.SyncSignIn,
+                isUserSignedIn = false,
+            ),
+            onDismiss = { },
+            onPrimaryButtonClick = {},
+            onSecondaryButtonClick = {},
         )
     }
 }

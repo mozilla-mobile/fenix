@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import mozilla.components.lib.state.ext.observeAsComposableState
@@ -20,13 +21,17 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.onboarding.view.Onboarding
+import org.mozilla.fenix.onboarding.view.OnboardingScreen
+import org.mozilla.fenix.onboarding.view.OnboardingViewModel
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
  * Dialog displaying a welcome and sync sign in onboarding.
  */
 class HomeOnboardingDialogFragment : DialogFragment() {
+
+    private val viewModel: OnboardingViewModel by activityViewModels()
+
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,8 +57,8 @@ class HomeOnboardingDialogFragment : DialogFragment() {
                     val account =
                         components.backgroundServices.syncStore.observeAsComposableState { state -> state.account }
 
-                    Onboarding(
-                        isSyncSignIn = account.value != null,
+                    OnboardingScreen(
+                        isUserSignedIn = account.value != null,
                         onDismiss = ::onDismiss,
                         onSignInButtonClick = {
                             findNavController().nav(
@@ -62,6 +67,7 @@ class HomeOnboardingDialogFragment : DialogFragment() {
                             )
                             onDismiss()
                         },
+                        viewModel = viewModel,
                     )
                 }
             }
