@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.onboarding.view
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,7 +21,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,22 +32,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import mozilla.telemetry.glean.private.NoExtras
+import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.R
-import org.mozilla.fenix.compose.button.PrimaryButton
-import org.mozilla.fenix.compose.button.SecondaryButton
 import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.GleanMetrics.Onboarding as OnboardingMetrics
 
 /**
- * Enum that represents the onboarding screen that is displayed.
+ * Enum that represents the onboarding page that is displayed.
  */
-private enum class OnboardingState {
+private enum class UpgradeOnboardingState {
     Welcome,
     SyncSignIn,
 }
@@ -57,205 +52,128 @@ private enum class OnboardingState {
 /**
  * A screen for displaying a welcome and sync sign in onboarding.
  *
- * @param isSyncSignIn Whether or not the user is signed into their Firefox Sync account.
+ * @param isUserSignedIn Whether or not the user is signed into their Firefox Sync account.
  * @param onDismiss Invoked when the user clicks on the close or "Skip" button.
  * @param onSignInButtonClick Invoked when the user clicks on the "Sign In" button
  */
 @Composable
-fun Onboarding(
-    isSyncSignIn: Boolean,
+fun UpgradeOnboardingScreen(
+    isUserSignedIn: Boolean,
     onDismiss: () -> Unit,
     onSignInButtonClick: () -> Unit,
 ) {
-    var onboardingState by remember { mutableStateOf(OnboardingState.Welcome) }
+    var onboardingState by remember { mutableStateOf(UpgradeOnboardingState.Welcome) }
 
+    OnboardingContent(
+        onboardingState = onboardingState,
+        onCloseClick = {
+            when (onboardingState) {
+                UpgradeOnboardingState.Welcome -> Onboarding.welcomeCloseClicked.record(NoExtras())
+                UpgradeOnboardingState.SyncSignIn -> Onboarding.syncCloseClicked.record(NoExtras())
+            }
+            onDismiss()
+        },
+        onPrimaryButtonClick = {
+            when (onboardingState) {
+                UpgradeOnboardingState.Welcome -> {
+                    Onboarding.welcomeGetStartedClicked.record(NoExtras())
+                    if (isUserSignedIn) {
+                        onDismiss()
+                    } else {
+                        onboardingState = UpgradeOnboardingState.SyncSignIn
+                    }
+                }
+                UpgradeOnboardingState.SyncSignIn -> {
+                    Onboarding.syncSignInClicked.record(NoExtras())
+                    onSignInButtonClick()
+                }
+            }
+        },
+        onSecondaryButtonClick = {
+            when (onboardingState) {
+                UpgradeOnboardingState.Welcome -> {
+                    // nothing as welcome doesn't have a secondary button
+                }
+                UpgradeOnboardingState.SyncSignIn -> {
+                    Onboarding.syncSkipClicked.record(NoExtras())
+                    onDismiss()
+                }
+            }
+        },
+    )
+}
+
+@Composable
+private fun OnboardingContent(
+    onboardingState: UpgradeOnboardingState,
+    onCloseClick: () -> Unit,
+    onPrimaryButtonClick: () -> Unit,
+    onSecondaryButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .background(FirefoxTheme.colors.layer1)
             .fillMaxSize()
             .padding(bottom = 32.dp)
             .statusBarsPadding()
-            .navigationBarsPadding()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.SpaceBetween,
+            .navigationBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
+        IconButton(
+            onClick = onCloseClick,
+            modifier = Modifier.align(Alignment.End),
         ) {
-            IconButton(
-                onClick = {
-                    if (onboardingState == OnboardingState.Welcome) {
-                        OnboardingMetrics.welcomeCloseClicked.record(NoExtras())
-                    } else {
-                        OnboardingMetrics.syncCloseClicked.record(NoExtras())
-                    }
-                    onDismiss()
-                },
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.mozac_ic_close),
-                    contentDescription = stringResource(R.string.onboarding_home_content_description_close_button),
-                    tint = FirefoxTheme.colors.iconPrimary,
+            Icon(
+                painter = painterResource(id = R.drawable.mozac_ic_close),
+                contentDescription = stringResource(R.string.onboarding_home_content_description_close_button),
+                tint = FirefoxTheme.colors.iconPrimary,
+            )
+        }
+
+        OnboardingPage(
+            onboardingPageState = when (onboardingState) {
+                UpgradeOnboardingState.Welcome -> OnboardingPageState(
+                    image = R.drawable.ic_onboarding_welcome,
+                    title = R.string.onboarding_home_welcome_title_2,
+                    description = R.string.onboarding_home_welcome_description,
+                    primaryButtonText = R.string.onboarding_home_get_started_button,
+                    onRecordImpressionEvent = { Onboarding.welcomeCardImpression.record(NoExtras()) },
                 )
-            }
-        }
-
-        if (onboardingState == OnboardingState.Welcome) {
-            OnboardingWelcomeContent()
-
-            OnboardingWelcomeBottomContent(
-                onboardingState = onboardingState,
-                isSyncSignIn = isSyncSignIn,
-                onGetStartedButtonClick = {
-                    OnboardingMetrics.welcomeGetStartedClicked.record(NoExtras())
-                    if (isSyncSignIn) {
-                        onDismiss()
-                    } else {
-                        onboardingState = OnboardingState.SyncSignIn
-                    }
-                },
-            )
-
-            OnboardingMetrics.welcomeCardImpression.record(NoExtras())
-        } else if (onboardingState == OnboardingState.SyncSignIn) {
-            OnboardingSyncSignInContent()
-
-            OnboardingSyncSignInBottomContent(
-                onboardingState = onboardingState,
-                onSignInButtonClick = {
-                    OnboardingMetrics.syncSignInClicked.record(NoExtras())
-                    onSignInButtonClick()
-                },
-                onSkipButtonClick = {
-                    OnboardingMetrics.syncSkipClicked.record(NoExtras())
-                    onDismiss()
-                },
-            )
-
-            OnboardingMetrics.syncCardImpression.record(NoExtras())
-        }
-    }
-}
-
-@Composable
-private fun OnboardingWelcomeBottomContent(
-    onboardingState: OnboardingState,
-    isSyncSignIn: Boolean,
-    onGetStartedButtonClick: () -> Unit,
-) {
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        PrimaryButton(
-            text = stringResource(id = R.string.onboarding_home_get_started_button),
-            onClick = onGetStartedButtonClick,
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        if (isSyncSignIn) {
-            Spacer(modifier = Modifier.height(6.dp))
-        } else {
-            Indicators(onboardingState = onboardingState)
-        }
-    }
-}
-
-@Composable
-private fun OnboardingWelcomeContent() {
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_onboarding_welcome),
-            contentDescription = null,
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Text(
-            text = stringResource(id = R.string.onboarding_home_welcome_title_2),
-            color = FirefoxTheme.colors.textPrimary,
-            textAlign = TextAlign.Center,
-            style = FirefoxTheme.typography.headline5,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = stringResource(id = R.string.onboarding_home_welcome_description),
-            color = FirefoxTheme.colors.textSecondary,
-            textAlign = TextAlign.Center,
-            style = FirefoxTheme.typography.body2,
-        )
-    }
-}
-
-@Composable
-private fun OnboardingSyncSignInContent() {
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_onboarding_sync),
-            contentDescription = null,
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Text(
-            text = stringResource(id = R.string.onboarding_home_sync_title_3),
-            color = FirefoxTheme.colors.textPrimary,
-            textAlign = TextAlign.Center,
-            style = FirefoxTheme.typography.headline5,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = stringResource(id = R.string.onboarding_home_sync_description),
-            color = FirefoxTheme.colors.textSecondary,
-            textAlign = TextAlign.Center,
-            style = FirefoxTheme.typography.body2,
-        )
-    }
-}
-
-@Composable
-private fun OnboardingSyncSignInBottomContent(
-    onboardingState: OnboardingState,
-    onSignInButtonClick: () -> Unit,
-    onSkipButtonClick: () -> Unit,
-) {
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        PrimaryButton(
-            text = stringResource(id = R.string.onboarding_home_sign_in_button),
-            onClick = onSignInButtonClick,
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        SecondaryButton(
-            text = stringResource(id = R.string.onboarding_home_skip_button),
-            onClick = onSkipButtonClick,
+                UpgradeOnboardingState.SyncSignIn -> OnboardingPageState(
+                    image = R.drawable.ic_onboarding_sync,
+                    title = R.string.onboarding_home_sync_title_3,
+                    description = R.string.onboarding_home_sync_description,
+                    primaryButtonText = R.string.onboarding_home_sign_in_button,
+                    secondaryButtonText = R.string.onboarding_home_skip_button,
+                    onRecordImpressionEvent = { Onboarding.syncCardImpression.record(NoExtras()) },
+                )
+            },
+            onPrimaryButtonClick = onPrimaryButtonClick,
+            onSecondaryButtonClick = onSecondaryButtonClick,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState()),
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Indicators(onboardingState = onboardingState)
+        Indicators(
+            onboardingState = onboardingState,
+        )
     }
 }
 
 @Composable
-private fun Indicators(onboardingState: OnboardingState) {
+private fun Indicators(onboardingState: UpgradeOnboardingState) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
     ) {
         Indicator(
-            color = if (onboardingState == OnboardingState.Welcome) {
+            color = if (onboardingState == UpgradeOnboardingState.Welcome) {
                 FirefoxTheme.colors.indicatorActive
             } else {
                 FirefoxTheme.colors.indicatorInactive
@@ -265,7 +183,7 @@ private fun Indicators(onboardingState: OnboardingState) {
         Spacer(modifier = Modifier.width(8.dp))
 
         Indicator(
-            color = if (onboardingState == OnboardingState.SyncSignIn) {
+            color = if (onboardingState == UpgradeOnboardingState.SyncSignIn) {
                 FirefoxTheme.colors.indicatorActive
             } else {
                 FirefoxTheme.colors.indicatorInactive
@@ -286,10 +204,10 @@ private fun Indicator(color: Color) {
 
 @Composable
 @Preview
-private fun OnboardingPreview() {
+private fun UpgradeOnboardingScreenPreview() {
     FirefoxTheme {
-        Onboarding(
-            isSyncSignIn = false,
+        UpgradeOnboardingScreen(
+            isUserSignedIn = false,
             onDismiss = {},
             onSignInButtonClick = {},
         )
