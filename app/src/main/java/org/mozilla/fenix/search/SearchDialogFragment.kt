@@ -15,6 +15,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.speech.RecognizerIntent
@@ -31,6 +32,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintProperties.BOTTOM
 import androidx.constraintlayout.widget.ConstraintProperties.PARENT_ID
 import androidx.constraintlayout.widget.ConstraintProperties.TOP
@@ -81,6 +83,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Core.Companion.BOOKMARKS_SEARCH_ENGINE_ID
 import org.mozilla.fenix.components.Core.Companion.HISTORY_SEARCH_ENGINE_ID
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentSearchDialogBinding
 import org.mozilla.fenix.databinding.SearchSuggestionsHintBinding
@@ -376,23 +379,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         binding.qrScanButton.increaseTapArea(TAP_INCREASE_DPS)
 
         binding.qrScanButton.setOnClickListener {
-            if (!requireContext().hasCamera()) { return@setOnClickListener }
-            view.hideKeyboard()
-            toolbarView.view.clearFocus()
-
-            if (requireContext().settings().shouldShowCameraPermissionPrompt) {
-                qrFeature.get()?.scan(binding.searchWrapper.id)
-            } else {
-                if (requireContext().isPermissionGranted(Manifest.permission.CAMERA)) {
-                    qrFeature.get()?.scan(binding.searchWrapper.id)
-                } else {
-                    interactor.onCameraPermissionsNeeded()
-                    resetFocus()
-                    view.hideKeyboard()
-                    toolbarView.view.requestFocus()
-                }
-            }
-            requireContext().settings().setCameraPermissionNeededState = false
+            launchQr()
         }
 
         binding.fillLinkFromClipboard.setOnClickListener {
@@ -592,7 +579,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
     override fun onPause() {
         super.onPause()
-        view?.hideKeyboard()
+//        view?.hideKeyboard()
     }
 
     override fun onDestroyView() {
@@ -724,9 +711,49 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             REQUEST_CODE_CAMERA_PERMISSIONS -> qrFeature.withFeature {
                 it.onPermissionsResult(permissions, grantResults)
                 if (grantResults.contains(PackageManager.PERMISSION_DENIED)) {
-                    resetFocus()
+//                    resetFocus()
+//                    view?.hideKeyboard()
+//                    toolbarView.view.requestFocus()
+
+//                    interactor.onCameraPermissionsNeeded()
+//                    resetFocus()
+//                    view?.hideKeyboard()
+//                    toolbarView.view.requestFocus()
+
+                    if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+                        FenixSnackbar.make(
+                            view = requireView() as ConstraintLayout,
+                            duration = FenixSnackbar.LENGTH_LONG,
+                            isDisplayedWithBrowserToolbar = true,
+                        )
+                            .setText("Camera permission required for reading a QR-code")
+                            .show()
+                    } else {
+                        FenixSnackbar.make(
+                            view = requireView() as ConstraintLayout,
+                            duration = FenixSnackbar.LENGTH_LONG,
+                            isDisplayedWithBrowserToolbar = true,
+                        )
+                            .setText("Camera access required.")
+                            .setAction("Settings") {
+                                val intent: Intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                } else {
+                                    SupportUtils.createCustomTabIntent(
+                                        requireActivity(),
+                                        SupportUtils.getSumoURLForTopic(
+                                            requireActivity(),
+                                            SupportUtils.SumoTopic.QR_CAMERA_ACCESS,
+                                        ),
+                                    )
+                                }
+                                val uri = Uri.fromParts("package", requireActivity().packageName, null)
+                                intent.data = uri
+                                requireActivity().startActivity(intent)
+                            }
+                            .show()
+                    }
                 }
-                requireContext().settings().setCameraPermissionNeededState = false
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
@@ -901,20 +928,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         view?.hideKeyboard()
         toolbarView.view.clearFocus()
 
-        when {
-            requireContext().settings().shouldShowCameraPermissionPrompt ->
-                qrFeature.get()?.scan(binding.searchWrapper.id)
-            requireContext().isPermissionGranted(Manifest.permission.CAMERA) ->
-                qrFeature.get()?.scan(binding.searchWrapper.id)
-            else -> {
-                interactor.onCameraPermissionsNeeded()
-                resetFocus()
-                view?.hideKeyboard()
-                toolbarView.view.requestFocus()
-            }
-        }
-
-        requireContext().settings().setCameraPermissionNeededState = false
+        qrFeature.get()?.scan(binding.searchWrapper.id)
     }
 
     private fun isSpeechAvailable(): Boolean = speechIntent.resolveActivity(requireContext().packageManager) != null
