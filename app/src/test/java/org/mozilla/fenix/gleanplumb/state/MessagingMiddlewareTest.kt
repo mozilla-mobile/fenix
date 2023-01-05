@@ -37,6 +37,7 @@ import org.mozilla.fenix.gleanplumb.MessagingState
 import org.mozilla.fenix.gleanplumb.NimbusMessagingStorage
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.nimbus.MessageData
+import org.mozilla.fenix.nimbus.MessageSurfaceId
 import org.mozilla.fenix.nimbus.StyleData
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -69,7 +70,7 @@ class MessagingMiddlewareTest {
     fun `WHEN Restore THEN get messages from the storage and UpdateMessages`() = runTestOnMain {
         val messages: List<Message> = emptyList()
 
-        coEvery { messagingStorage.getMessages() } returns messages
+        coEvery { messagingStorage.getMessages(MessageSurfaceId.HOMESCREEN) } returns messages
 
         middleware.invoke(middlewareContext, {}, Restore)
 

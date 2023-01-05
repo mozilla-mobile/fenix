@@ -13,6 +13,7 @@ import org.mozilla.experiments.nimbus.GleanPlumbMessageHelper
 import org.mozilla.experiments.nimbus.internal.FeatureHolder
 import org.mozilla.experiments.nimbus.internal.NimbusException
 import org.mozilla.fenix.nimbus.ControlMessageBehavior
+import org.mozilla.fenix.nimbus.MessageSurfaceId
 import org.mozilla.fenix.nimbus.Messaging
 import org.mozilla.fenix.nimbus.StyleData
 
@@ -54,7 +55,7 @@ class NimbusMessagingStorage(
     /**
      * Returns a list of available messages descending sorted by their priority.
      */
-    suspend fun getMessages(): List<Message> {
+    suspend fun getMessages(surface: MessageSurfaceId): List<Message> {
         val nimbusTriggers = nimbusFeature.triggers
         val nimbusStyles = nimbusFeature.styles
         val nimbusActions = nimbusFeature.actions
@@ -63,24 +64,26 @@ class NimbusMessagingStorage(
         val defaultStyle = StyleData()
         val storageMetadata = metadataStorage.getMetadata()
 
-        return nimbusMessages.mapNotNull { (key, value) ->
-            val action = sanitizeAction(key, value.action, nimbusActions, value.isControl) ?: return@mapNotNull null
-            Message(
-                id = key,
-                data = value,
-                action = action,
-                style = nimbusStyles[value.style] ?: defaultStyle,
-                metadata = storageMetadata[key] ?: addMetadata(key),
-                triggers = sanitizeTriggers(key, value.trigger, nimbusTriggers)
-                    ?: return@mapNotNull null,
-            )
-        }.filter {
-            it.maxDisplayCount >= it.metadata.displayCount &&
-                !it.metadata.dismissed &&
-                !it.metadata.pressed
-        }.sortedByDescending {
-            it.style.priority
-        }
+        return nimbusMessages
+            .filterValues { surface == it.surface }
+            .mapNotNull { (key, value) ->
+                val action = sanitizeAction(key, value.action, nimbusActions, value.isControl) ?: return@mapNotNull null
+                Message(
+                    id = key,
+                    data = value,
+                    action = action,
+                    style = nimbusStyles[value.style] ?: defaultStyle,
+                    metadata = storageMetadata[key] ?: addMetadata(key),
+                    triggers = sanitizeTriggers(key, value.trigger, nimbusTriggers)
+                        ?: return@mapNotNull null,
+                )
+            }.filter {
+                it.maxDisplayCount >= it.metadata.displayCount &&
+                    !it.metadata.dismissed &&
+                    !it.metadata.pressed
+            }.sortedByDescending {
+                it.style.priority
+            }
     }
 
     /**

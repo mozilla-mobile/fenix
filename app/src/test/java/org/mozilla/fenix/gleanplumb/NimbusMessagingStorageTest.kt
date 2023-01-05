@@ -64,7 +64,7 @@ class NimbusMessagingStorageTest {
 
     @Test
     fun `WHEN calling getMessages THEN provide a list of available messages`() = runTest {
-        val message = storage.getMessages().first()
+        val message = storage.getMessages(MessageSurfaceId.HOMESCREEN).first()
 
         assertEquals("message-1", message.id)
         assertEquals("message-1", message.metadata.id)
@@ -103,7 +103,7 @@ class NimbusMessagingStorageTest {
                 messagingFeature,
             )
 
-            val results = storage.getMessages()
+            val results = storage.getMessages(MessageSurfaceId.HOMESCREEN)
 
             assertEquals("high-message", results[0].id)
             assertEquals("medium-message", results[1].id)
@@ -140,7 +140,7 @@ class NimbusMessagingStorageTest {
                 messagingFeature,
             )
 
-            val results = storage.getMessages()
+            val results = storage.getMessages(MessageSurfaceId.HOMESCREEN)
 
             assertEquals(1, results.size)
             assertEquals("normal-message", results[0].id)
@@ -176,7 +176,7 @@ class NimbusMessagingStorageTest {
                 messagingFeature,
             )
 
-            val results = storage.getMessages()
+            val results = storage.getMessages(MessageSurfaceId.HOMESCREEN)
 
             assertEquals(1, results.size)
             assertEquals("normal-message", results[0].id)
@@ -217,7 +217,7 @@ class NimbusMessagingStorageTest {
                 messagingFeature,
             )
 
-            val results = storage.getMessages()
+            val results = storage.getMessages(MessageSurfaceId.HOMESCREEN)
 
             assertEquals(1, results.size)
             assertEquals("normal-message", results[0].id)
@@ -225,7 +225,7 @@ class NimbusMessagingStorageTest {
 
     @Test
     fun `GIVEN a malformed message WHEN calling getMessages THEN provide a list of messages ignoring the malformed one`() = runTest {
-        val messages = storage.getMessages()
+        val messages = storage.getMessages(MessageSurfaceId.HOMESCREEN)
         val firstMessage = messages.first()
 
         assertEquals("message-1", firstMessage.id)
