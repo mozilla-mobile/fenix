@@ -36,6 +36,7 @@ import org.mozilla.fenix.gleanplumb.state.MessagingMiddleware
 import org.mozilla.fenix.home.PocketUpdatesMiddleware
 import org.mozilla.fenix.home.blocklist.BlocklistHandler
 import org.mozilla.fenix.home.blocklist.BlocklistMiddleware
+import org.mozilla.fenix.nimbus.MessageSurfaceId
 import org.mozilla.fenix.perf.AppStartReasonProvider
 import org.mozilla.fenix.perf.StartupActivityLog
 import org.mozilla.fenix.perf.StartupStateProvider
@@ -207,7 +208,10 @@ class Components(private val context: Context) {
                     core.pocketStoriesService,
                     context.pocketStoriesSelectedCategoriesDataStore,
                 ),
-                MessagingMiddleware(messagingStorage = analytics.messagingStorage),
+                MessagingMiddleware(
+                    surface = MessageSurfaceId.HOMESCREEN,
+                    messagingStorage = analytics.messagingStorage
+                ),
                 MetricsMiddleware(metrics = analytics.metrics),
             ),
         )

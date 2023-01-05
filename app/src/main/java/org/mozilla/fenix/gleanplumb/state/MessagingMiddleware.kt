@@ -27,6 +27,7 @@ import org.mozilla.fenix.nimbus.MessageSurfaceId
 typealias AppStoreMiddlewareContext = MiddlewareContext<AppState, AppAction>
 
 class MessagingMiddleware(
+    private val surface: MessageSurfaceId,
     private val messagingStorage: NimbusMessagingStorage,
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
 ) : Middleware<AppState, AppAction> {
@@ -39,7 +40,7 @@ class MessagingMiddleware(
         when (action) {
             is Restore -> {
                 coroutineScope.launch {
-                    val messages = messagingStorage.getMessages(MessageSurfaceId.HOMESCREEN)
+                    val messages = messagingStorage.getMessages(surface)
                     context.store.dispatch(UpdateMessages(messages))
                 }
             }

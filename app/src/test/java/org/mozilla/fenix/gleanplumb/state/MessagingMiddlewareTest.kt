@@ -61,6 +61,7 @@ class MessagingMiddlewareTest {
         every { middlewareContext.store } returns appStore
 
         middleware = MessagingMiddleware(
+            surface = MessageSurfaceId.HOMESCREEN,
             messagingStorage,
             coroutineScope,
         )
