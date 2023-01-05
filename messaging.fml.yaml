@@ -155,6 +155,11 @@ objects:
           The style as described in a
           `StyleData` from the styles table.
         default: DEFAULT
+      surface:
+        description:
+          The surface identifier for this message.
+        type: MessageSurfaceId
+        default: homescreen
       trigger:
         type: List<String>
         description: >
@@ -197,3 +202,10 @@ enums:
         description: The next eligible message should be shown.
       show-none:
         description: The surface should show no message.
+  MessageSurfaceId:
+    description: The identity of a message surface
+    variants:
+      homescreen:
+        description: A banner in the homescreen.
+      notification:
+        description: A local notification in the background, like a push notification.

@@ -20,20 +20,19 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.experiments.nimbus.GleanPlumbInterface
 import org.mozilla.experiments.nimbus.GleanPlumbMessageHelper
+import org.mozilla.experiments.nimbus.NullVariables
+import org.mozilla.experiments.nimbus.Res
 import org.mozilla.experiments.nimbus.internal.FeatureHolder
 import org.mozilla.experiments.nimbus.internal.NimbusException
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.nimbus.ControlMessageBehavior.SHOW_NEXT_MESSAGE
 import org.mozilla.fenix.nimbus.MessageData
+import org.mozilla.fenix.nimbus.MessageSurfaceId
 import org.mozilla.fenix.nimbus.Messaging
 import org.mozilla.fenix.nimbus.StyleData
 
 @RunWith(FenixRobolectricTestRunner::class)
 class NimbusMessagingStorageTest {
-
-    private val activity: HomeActivity = mockk(relaxed = true)
-    private val storageNimbus: NimbusMessagingStorage = mockk(relaxed = true)
     private lateinit var storage: NimbusMessagingStorage
     private lateinit var metadataStorage: MessageMetadataStorage
     private lateinit var gleanPlumb: GleanPlumbInterface
@@ -49,6 +48,7 @@ class NimbusMessagingStorageTest {
         gleanPlumb = mockk(relaxed = true)
         metadataStorage = mockk(relaxed = true)
         malformedWasReported = false
+        NullVariables.instance.setContext(testContext)
         messagingFeature = createMessagingFeature()
 
         coEvery { metadataStorage.getMetadata() } returns mapOf("message-1" to Message.Metadata(id = "message-1"))
@@ -581,13 +581,13 @@ class NimbusMessagingStorageTest {
         action: String = "action-1",
         style: String = "style-1",
         triggers: List<String> = listOf("trigger-1"),
-    ): MessageData {
-        val messageData1: MessageData = mockk(relaxed = true)
-        every { messageData1.action } returns action
-        every { messageData1.style } returns style
-        every { messageData1.trigger } returns triggers
-        return messageData1
-    }
+        surface: MessageSurfaceId = MessageSurfaceId.HOMESCREEN,
+    ) = MessageData(
+        action = Res.string(action),
+        style = style,
+        trigger = triggers,
+        surface = surface,
+    )
 
     private fun createMessagingFeature(
         triggers: Map<String, String> = mapOf("trigger-1" to "trigger-1-expression"),
