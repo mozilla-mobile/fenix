@@ -63,11 +63,14 @@ class NimbusMessagingStorageTest {
     }
 
     @Test
-    fun `WHEN calling getMessages THEN provide a list of available messages`() = runTest {
-        val message = storage.getMessages(MessageSurfaceId.HOMESCREEN).first()
+    fun `WHEN calling getMessages THEN provide a list of available messages for a given surface`() = runTest {
+        val homescreenMessage = storage.getMessages(MessageSurfaceId.HOMESCREEN).first()
 
-        assertEquals("message-1", message.id)
-        assertEquals("message-1", message.metadata.id)
+        assertEquals("message-1", homescreenMessage.id)
+        assertEquals("message-1", homescreenMessage.metadata.id)
+
+        val notificationMessage = storage.getMessages(MessageSurfaceId.NOTIFICATION).first()
+        assertEquals("message-2", notificationMessage.id)
     }
 
     @Test
@@ -594,20 +597,20 @@ class NimbusMessagingStorageTest {
         styles: Map<String, StyleData> = mapOf("style-1" to createStyle()),
         actions: Map<String, String> = mapOf("action-1" to "action-1-url"),
         messages: Map<String, MessageData> = mapOf(
-            "message-1" to createMessageData(),
-            "malformed" to mockk(relaxed = true),
+            "message-1" to createMessageData(surface = MessageSurfaceId.HOMESCREEN),
+            "message-2" to createMessageData(surface = MessageSurfaceId.NOTIFICATION),
+            "malformed" to createMessageData(action = "malformed-action"),
         ),
     ): FeatureHolder<Messaging> {
         val messagingFeature: FeatureHolder<Messaging> = mockk(relaxed = true)
-
-        messaging = mockk(relaxed = true)
-
-        every { messaging.triggers } returns triggers
-        every { messaging.styles } returns styles
-        every { messaging.actions } returns actions
-        every { messaging.messages } returns messages
-
+        messaging = Messaging(
+            actions = actions,
+            triggers = triggers,
+            messages = messages,
+            styles = styles,
+        )
         every { messagingFeature.value() } returns messaging
+
         return messagingFeature
     }
 
