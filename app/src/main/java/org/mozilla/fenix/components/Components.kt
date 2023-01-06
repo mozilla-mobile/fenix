@@ -210,7 +210,7 @@ class Components(private val context: Context) {
                 ),
                 MessagingMiddleware(
                     surface = MessageSurfaceId.HOMESCREEN,
-                    messagingStorage = analytics.messagingStorage
+                    messagingStorage = analytics.messagingStorage,
                 ),
                 MetricsMiddleware(metrics = analytics.metrics),
             ),
