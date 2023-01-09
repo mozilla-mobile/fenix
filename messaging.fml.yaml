@@ -98,6 +98,7 @@ features:
           messages:
             default-browser:
               text: default_browser_experiment_card_text
+              surface: homescreen
               action: "MAKE_DEFAULT_BROWSER"
               trigger: [ "I_AM_NOT_DEFAULT_BROWSER","USER_ESTABLISHED_INSTALL" ]
               style: "PERSISTENT"
