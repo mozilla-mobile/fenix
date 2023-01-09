@@ -430,7 +430,6 @@ class SettingsSearchTest {
 
     // Expected for en-us defaults
     @Test
-    @Ignore("Failing after changing SearchDialog homescreen interaction. See: https://github.com/mozilla-mobile/fenix/issues/28182")
     fun toggleSearchEnginesShortcutListTest() {
         homeScreen {
         }.openThreeDotMenu {
@@ -454,6 +453,7 @@ class SettingsSearchTest {
                 "eBay",
                 "Wikipedia",
             )
+            scrollToSearchEngineSettings(activityTestRule)
         }.clickSearchEngineSettings(activityTestRule) {
             toggleShowSearchShortcuts()
             verifyShowSearchEnginesToggleState(false)

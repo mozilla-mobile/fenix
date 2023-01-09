@@ -20,6 +20,7 @@ import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewStub
@@ -67,6 +68,7 @@ import mozilla.components.support.ktx.android.content.hasCamera
 import mozilla.components.support.ktx.android.content.isPermissionGranted
 import mozilla.components.support.ktx.android.content.res.getSpanned
 import mozilla.components.support.ktx.android.net.isHttpOrHttps
+import mozilla.components.support.ktx.android.view.findViewInHierarchy
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
@@ -83,6 +85,7 @@ import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentSearchDialogBinding
 import org.mozilla.fenix.databinding.SearchSuggestionsHintBinding
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getRectWithScreenLocation
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
@@ -102,7 +105,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private var _binding: FragmentSearchDialogBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var interactor: SearchDialogInteractor
+    @VisibleForTesting internal lateinit var interactor: SearchDialogInteractor
     private lateinit var store: SearchDialogFragmentStore
     private lateinit var toolbarView: ToolbarView
     private lateinit var inlineAutocompleteEditText: InlineAutocompleteEditText
@@ -118,6 +121,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     private val qrFeature = ViewBoundFeatureWrapper<QrFeature>()
     private val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
 
+    private var isPrivateButtonClicked = false
     private var dialogHandledAction = false
     private var searchSelectorAlreadyAdded = false
     private var qrButtonAction: Toolbar.Action? = null
@@ -208,6 +212,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 clearToolbar = {
                     inlineAutocompleteEditText.setText("")
                 },
+                dismissDialogAndGoBack = ::dismissDialogAndGoBack,
             ),
         )
 
@@ -262,11 +267,30 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
         requireComponents.core.engine.speculativeCreateSession(isPrivate)
 
+        // Handle the scenario in which the user selects another search engine before starting a search.
+        maybeSelectShortcutEngine(args.searchEngine)
+
         when (getPreviousDestination()?.destination?.id) {
             R.id.homeFragment -> {
                 // When displayed above home, dispatches the touch events to scrim area to the HomeFragment
                 binding.searchWrapper.background = ColorDrawable(Color.TRANSPARENT)
                 dialog?.window?.decorView?.setOnTouchListener { _, event ->
+                    when (event?.action) {
+                        MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+                            isPrivateButtonClicked = isTouchingPrivateButton(event.x, event.y)
+                        }
+                        MotionEvent.ACTION_UP -> {
+                            if (!isTouchingPrivateButton(
+                                    event.x,
+                                    event.y,
+                                ) && !isPrivateButtonClicked
+                            ) {
+                                findNavController().popBackStack()
+                                isPrivateButtonClicked = false
+                            }
+                        }
+                        else -> isPrivateButtonClicked = false
+                    }
                     requireActivity().dispatchTouchEvent(event)
                     false
                 }
@@ -457,6 +481,33 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         }
     }
 
+    /**
+     * Check whether the search engine identified by [selectedSearchEngineId] is the default search engine
+     * and if not update the search state to reflect that a different search engine is currently selected.
+     *
+     * @param selectedSearchEngineId Id of the search engine currently selected for next searches.
+     */
+    @VisibleForTesting
+    internal fun maybeSelectShortcutEngine(selectedSearchEngineId: String?) {
+        if (selectedSearchEngineId == null) return
+
+        val searchState = requireComponents.core.store.state.search
+        searchState.searchEngines.firstOrNull {
+            it.id == selectedSearchEngineId
+        }?.let { selectedSearchEngine ->
+            if (selectedSearchEngine != searchState.selectedOrDefaultSearchEngine) {
+                interactor.onSearchShortcutEngineSelected(selectedSearchEngine)
+            }
+        }
+    }
+
+    private fun isTouchingPrivateButton(x: Float, y: Float): Boolean {
+        val view = parentFragmentManager.primaryNavigationFragment?.view?.findViewInHierarchy {
+            it.id == R.id.privateBrowsingButton
+        } ?: return false
+        return view.getRectWithScreenLocation().contains(x.toInt(), y.toInt())
+    }
+
     private fun hideClipboardSection() {
         binding.fillLinkFromClipboard.isVisible = false
         binding.fillLinkDivider.isVisible = false
@@ -586,22 +637,27 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 true
             }
             else -> {
-                // In case we're displaying search results, we wouldn't have navigated to home, and
-                // so we don't need to navigate "back to" browser fragment.
-                // See mirror of this logic in BrowserToolbarController#handleToolbarClick.
-                if (store.state.searchTerms.isBlank()) {
-                    val args by navArgs<SearchDialogFragmentArgs>()
-                    args.sessionId?.let {
-                        findNavController().navigate(
-                            SearchDialogFragmentDirections.actionGlobalBrowser(null),
-                        )
-                    }
-                }
-                view?.hideKeyboard()
-                dismissAllowingStateLoss()
+                dismissDialogAndGoBack()
                 true
             }
         }
+    }
+
+    private fun dismissDialogAndGoBack() {
+        // In case we're displaying search results, we wouldn't have navigated to home, and
+        // so we don't need to navigate "back to" browser fragment.
+        // See mirror of this logic in BrowserToolbarController#handleToolbarClick.
+        if (store.state.searchTerms.isBlank()) {
+            val args by navArgs<SearchDialogFragmentArgs>()
+            args.sessionId?.let {
+                findNavController().navigate(
+                    SearchDialogFragmentDirections.actionGlobalBrowser(null),
+                )
+            }
+        }
+
+        view?.hideKeyboard()
+        dismissAllowingStateLoss()
     }
 
     private fun historyStorageProvider(): HistoryStorage? {

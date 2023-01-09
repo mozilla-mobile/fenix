@@ -21,6 +21,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiObjectNotFoundException
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers.allOf
@@ -137,8 +138,8 @@ class ThreeDotMenuMainRobot {
         for (i in 1..RETRY_COUNT) {
             try {
                 assertTrue(
-                    "Addon not listed in the Add-ons menu",
-                    mDevice.findObject(UiSelector().text(addonName)).waitForExists(waitingTime),
+                    "Addon not listed in the Add-ons sub-menu",
+                    mDevice.findObject(UiSelector().textContains(addonName)).waitForExists(waitingTime),
                 )
                 break
             } catch (e: AssertionError) {
@@ -273,14 +274,6 @@ class ThreeDotMenuMainRobot {
             return ShareOverlayRobot.Transition()
         }
 
-        fun close(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
-            // Close three dot
-            mDevice.pressBack()
-
-            HomeScreenRobot().interact()
-            return HomeScreenRobot.Transition()
-        }
-
         fun closeBrowserMenuToBrowser(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             // Close three dot
             mDevice.pressBack()
@@ -340,7 +333,26 @@ class ThreeDotMenuMainRobot {
         }
 
         fun addToFirefoxHome(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            addToShortcutsButton.click()
+            for (i in 1..RETRY_COUNT) {
+                try {
+                    addToShortcutsButton.also {
+                        it.waitForExists(waitingTime)
+                        it.click()
+                    }
+
+                    break
+                } catch (e: UiObjectNotFoundException) {
+                    if (i == RETRY_COUNT) {
+                        throw e
+                    } else {
+                        mDevice.pressBack()
+                        navigationToolbar {
+                        }.openThreeDotMenu {
+                            expandMenu()
+                        }
+                    }
+                }
+            }
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
