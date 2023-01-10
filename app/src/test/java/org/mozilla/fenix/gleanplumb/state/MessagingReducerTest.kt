@@ -52,7 +52,7 @@ class MessagingReducerTest {
             action = action,
             style = StyleData(),
             triggers = listOf(),
-            metadata = Message.Metadata(id = id)
+            metadata = Message.Metadata(id = id),
         )
 
     @Test

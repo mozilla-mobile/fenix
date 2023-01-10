@@ -570,8 +570,10 @@ class NimbusMessagingStorageTest {
         every { spiedStorage.isMessageEligible(any(), any()) } returns true
         every { spiedStorage.isMessageUnderExperiment(any(), any()) } returns true
 
-        val result = spiedStorage.getNextMessage(MessageSurfaceId.HOMESCREEN,
-            listOf(controlMessage, message))
+        val result = spiedStorage.getNextMessage(
+            MessageSurfaceId.HOMESCREEN,
+            listOf(controlMessage, message),
+        )
 
         verify { messagingFeature.recordExposure() }
         assertEquals(message.id, result!!.id)

@@ -92,8 +92,7 @@ class NimbusMessagingStorage(
         val jexlCache = HashMap<String, Boolean>()
         val helper = gleanPlumb.createMessageHelper(customAttributes)
         val message = availableMessages.firstOrNull {
-            surface == it.surface &&
-            isMessageEligible(it, helper, jexlCache)
+            surface == it.surface && isMessageEligible(it, helper, jexlCache)
         } ?: return null
 
         // Check this isn't an experimental message. If not, we can go ahead and return it.

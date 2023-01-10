@@ -22,7 +22,6 @@ import org.mozilla.fenix.components.appstate.AppAction.MessagingAction.UpdateMes
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.gleanplumb.NimbusMessagingStorage
-import org.mozilla.fenix.nimbus.MessageSurfaceId
 
 typealias AppStoreMiddlewareContext = MiddlewareContext<AppState, AppAction>
 
@@ -47,7 +46,7 @@ class MessagingMiddleware(
             is Evaluate -> {
                 val message = messagingStorage.getNextMessage(
                     action.surface,
-                    context.state.messaging.messages
+                    context.state.messaging.messages,
                 )
                 if (message != null) {
                     context.dispatch(UpdateMessageToShow(message))
