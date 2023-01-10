@@ -32,7 +32,7 @@ object CookieBannerReEngagementDialogUtils {
             CONTROL_VARIANT -> CookieBannerDialogVariant(
                 title = context.getString(R.string.reduce_cookie_banner_control_experiment_dialog_title),
                 message = context.getString(
-                    R.string.reduce_cookie_banner_control_experiment_dialog_body,
+                    R.string.reduce_cookie_banner_control_experiment_dialog_body_2,
                 ),
                 positiveTextButton = context.getString(
                     R.string.reduce_cookie_banner_control_experiment_dialog_change_setting_button,
@@ -62,7 +62,7 @@ object CookieBannerReEngagementDialogUtils {
                 CookieBannerDialogVariant(
                     title = context.getString(R.string.reduce_cookie_banner_control_experiment_dialog_title),
                     message = context.getString(
-                        R.string.reduce_cookie_banner_control_experiment_dialog_body,
+                        R.string.reduce_cookie_banner_control_experiment_dialog_body_2,
                     ),
                     positiveTextButton = context.getString(
                         R.string.reduce_cookie_banner_control_experiment_dialog_change_setting_button,

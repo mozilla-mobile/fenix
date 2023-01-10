@@ -338,7 +338,8 @@
     <!-- Preference for rejecting or removing as many cookie/consent banners as possible on sites. See reduce_cookie_banner_summary for additional context. -->
     <string name="reduce_cookie_banner_option">Reduce cookie banners</string>
     <!-- Summary for the preference for rejecting all cookies whenever possible. -->
-    <string name="reduce_cookie_banner_summary">Firefox automatically tries to reject cookie requests on cookie banners. If a reject option isn’t available, Firefox may accept all cookies to dismiss the banner.</string>
+    <string name="reduce_cookie_banner_summary" tools:ignore="UnusedResources" moz:RemovedIn="110">Firefox automatically tries to reject cookie requests on cookie banners. If a reject option isn’t available, Firefox may accept all cookies to dismiss the banner.</string>
+    <string name="reduce_cookie_banner_summary_2">Firefox automatically tries to reject cookie requests on cookie banners.</string>
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_off_for_site">Off for this site</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
@@ -350,11 +351,13 @@
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s will clear this site’s cookies and refresh the page. Clearing all cookies may sign you out or empty shopping carts.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first and second parameter are the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site">%1$s can try to automatically reject cookie requests. If a reject option isn’t available, %2$s may accept all cookies to dismiss the banner.</string>
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site" tools:ignore="UnusedResources" moz:RemovedIn="110">%1$s can try to automatically reject cookie requests. If a reject option isn’t available, %2$s may accept all cookies to dismiss the banner.</string>
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">%1$s can try to automatically reject cookie requests.</string>
     <!-- Title text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
     <string name="reduce_cookie_banner_control_experiment_dialog_title" tools:ignore="UnusedResources">Cookie banners begone!</string>
     <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body" tools:ignore="UnusedResources">Automatically reject cookie requests, when possible. Otherwise, accept all cookies to dismiss cookie banners.</string>
+    <string name="reduce_cookie_banner_control_experiment_dialog_body" tools:ignore="UnusedResources" moz:RemovedIn="110">Automatically reject cookie requests, when possible. Otherwise, accept all cookies to dismiss cookie banners.</string>
+    <string name="reduce_cookie_banner_control_experiment_dialog_body_2" tools:ignore="UnusedResources">Automatically reject cookie requests, when possible.</string>
     <!-- Remind me later text button for the onboarding dialog -->
     <string name="reduce_cookie_banner_dialog_not_now_button">Not Now</string>
     <!-- Change setting text button, for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
