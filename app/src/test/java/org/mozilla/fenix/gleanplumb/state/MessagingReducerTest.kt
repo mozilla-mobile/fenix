@@ -31,7 +31,7 @@ class MessagingReducerTest {
             ),
         )
 
-        val m = createMessage("message-1")
+        val m = createMessage("message1")
 
         var updatedState = MessagingReducer.reduce(
             initialState,
