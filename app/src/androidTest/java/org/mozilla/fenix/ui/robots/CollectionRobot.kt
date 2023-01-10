@@ -7,6 +7,7 @@ package org.mozilla.fenix.ui.robots
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
@@ -15,6 +16,7 @@ import androidx.compose.ui.test.swipeRight
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
+import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiScrollable
@@ -23,10 +25,12 @@ import androidx.test.uiautomator.Until
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
+import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 
 class CollectionRobot {
@@ -57,7 +61,8 @@ class CollectionRobot {
     // names a collection saved from tab drawer
     fun typeCollectionNameAndSave(collectionName: String) {
         collectionNameTextField().text = collectionName
-        mDevice.findObject(UiSelector().textContains("OK")).click()
+        addCollectionButtonPanel.waitForExists(waitingTime)
+        addCollectionOkButton.click()
     }
 
     fun verifyTabsSelectedCounterText(numOfTabs: Int) {
@@ -289,3 +294,7 @@ private fun backButton() =
     mDevice.findObject(
         UiSelector().resourceId("$packageName:id/back_button"),
     )
+private val addCollectionButtonPanel =
+    itemWithResId("$packageName:id/buttonPanel")
+
+private val addCollectionOkButton = onView(withId(android.R.id.button1)).inRoot(RootMatchers.isDialog())

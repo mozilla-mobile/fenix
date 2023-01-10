@@ -10,55 +10,51 @@ import org.mozilla.fenix.tabstray.TrayPagerAdapter
 /**
  * Interactor for all things related to inactive tabs in the tabs tray.
  */
-interface InactiveTabsInteractor : InactiveTabsAutoCloseDialogInteractor {
+interface InactiveTabsInteractor {
     /**
-     * Invoked when the header is clicked.
+     * Invoked when the inactive tabs header is clicked.
      *
-     * @param activated true when the tap should expand the inactive section.
+     * @param expanded true when the tap should expand the inactive section.
      */
-    fun onHeaderClicked(activated: Boolean)
+    fun onInactiveTabsHeaderClicked(expanded: Boolean)
 
     /**
      * Invoked when an inactive tab is clicked.
      *
      * @param tab [TabSessionState] that was clicked.
      */
-    fun onTabClicked(tab: TabSessionState)
+    fun onInactiveTabClicked(tab: TabSessionState)
 
     /**
      * Invoked when an inactive tab is closed.
      *
      * @param tab [TabSessionState] that was closed.
      */
-    fun onTabClosed(tab: TabSessionState)
+    fun onInactiveTabClosed(tab: TabSessionState)
 
     /**
      * Invoked when the user clicks on the delete all inactive tabs button.
      */
     fun onDeleteAllInactiveTabsClicked()
-}
-
-/**
- * Interactor for the auto-close dialog in the inactive tabs section.
- */
-interface InactiveTabsAutoCloseDialogInteractor {
 
     /**
-     * Invoked when the close button is clicked.
+     * Invoked when the user clicks the close button in the auto close dialog.
      */
-    fun onCloseClicked()
+    fun onAutoCloseDialogCloseButtonClicked()
 
     /**
-     * Invoked when the dialog is clicked.
+     * Invoked when the user clicks to enable the inactive tab auto-close feature.
      */
-    fun onEnabledAutoCloseClicked()
+    fun onEnableAutoCloseClicked()
 }
 
 /**
  * Interactor to be called for any user interactions with the Inactive Tabs feature.
  *
- * @param controller [InactiveTabsController] todo.
- * @param browserInteractor [BrowserTrayInteractor] used to respond to interactions with specific inactive tabs.
+ * @param controller An instance of [InactiveTabsController] which will be delegated for all
+ * user interactions.
+ * @param browserInteractor [BrowserTrayInteractor] used to respond to interactions with specific
+ * inactive tabs.
  */
 class DefaultInactiveTabsInteractor(
     private val controller: InactiveTabsController,
@@ -66,38 +62,38 @@ class DefaultInactiveTabsInteractor(
 ) : InactiveTabsInteractor {
 
     /**
-     * See [InactiveTabsInteractor.onHeaderClicked].
+     * See [InactiveTabsInteractor.onInactiveTabsHeaderClicked].
      */
-    override fun onHeaderClicked(activated: Boolean) {
-        controller.updateCardExpansion(activated)
+    override fun onInactiveTabsHeaderClicked(expanded: Boolean) {
+        controller.updateCardExpansion(expanded)
     }
 
     /**
-     * See [InactiveTabsAutoCloseDialogInteractor.onCloseClicked].
+     * See [InactiveTabsInteractor.onAutoCloseDialogCloseButtonClicked].
      */
-    override fun onCloseClicked() {
+    override fun onAutoCloseDialogCloseButtonClicked() {
         controller.dismissAutoCloseDialog()
     }
 
     /**
-     * See [InactiveTabsAutoCloseDialogInteractor.onEnabledAutoCloseClicked].
+     * See [InactiveTabsInteractor.onEnableAutoCloseClicked].
      */
-    override fun onEnabledAutoCloseClicked() {
+    override fun onEnableAutoCloseClicked() {
         controller.enableInactiveTabsAutoClose()
     }
 
     /**
-     * See [InactiveTabsInteractor.onTabClicked].
+     * See [InactiveTabsInteractor.onInactiveTabClicked].
      */
-    override fun onTabClicked(tab: TabSessionState) {
+    override fun onInactiveTabClicked(tab: TabSessionState) {
         controller.openInactiveTab(tab)
         browserInteractor.onTabSelected(tab, TrayPagerAdapter.INACTIVE_TABS_FEATURE_NAME)
     }
 
     /**
-     * See [InactiveTabsInteractor.onTabClosed].
+     * See [InactiveTabsInteractor.onInactiveTabClosed].
      */
-    override fun onTabClosed(tab: TabSessionState) {
+    override fun onInactiveTabClosed(tab: TabSessionState) {
         controller.closeInactiveTab(tab)
         browserInteractor.onTabClosed(tab, TrayPagerAdapter.INACTIVE_TABS_FEATURE_NAME)
     }

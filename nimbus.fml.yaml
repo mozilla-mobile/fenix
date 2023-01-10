@@ -113,6 +113,10 @@ features:
         type: ControlMessageBehavior
         description: What should be displayed when a control message is selected.
         default: show-next-message
+      notification-config:
+        description: Configuration of the notification worker for all notification messages.
+        type: NotificationConfig
+        default: {}
     defaults:
       - value:
           triggers:
@@ -181,6 +185,9 @@ features:
             EXPIRES_QUICKLY:
               priority: 100
               max-display-count: 1
+          notification-config:
+            polling-interval: 180 # 3 minutes
+
   mr2022:
     description: Features for MR 2022.
     variables:
@@ -212,25 +219,31 @@ features:
     variables:
       sections-enabled:
         description: "This property provides a lookup table of whether or not the given section should be enabled."
-        type: Map<CookieBannersSection, Boolean>
+        type: Map<CookieBannersSection, Int>
         default:
           {
-            "feature-ui": false,
-            "feature-setting-value": false,
+            "feature-ui": 0,
+            "feature-setting-value": 0,
+            "dialog-re-engage-time": 4,
+            "dialog-text-variant": 0,
           }
     defaults:
       - channel: developer
         value: {
           "sections-enabled": {
-            "feature-ui": true,
-            "feature-setting-value": false,
+            "feature-ui": 1,
+            "feature-setting-value": 0,
+            "dialog-re-engage-time": 4,
+            "dialog-text-variant": 0,
           }
         }
       - channel: nightly
         value: {
           "sections-enabled": {
-            "feature-ui": true,
-            "feature-setting-value": false,
+            "feature-ui": 1,
+            "feature-setting-value": 0,
+            "dialog-re-engage-time": 4,
+            "dialog-text-variant": 0,
           }
         }
   unified-search:
@@ -330,6 +343,15 @@ types:
             How many sessions will this message be shown to the user
             before it is expired.
           default: 5
+    NotificationConfig:
+      description: Attributes controlling the global configuration of notification messages.
+      fields:
+        polling-interval:
+          type: Int
+          description: >
+            How often, in seconds, the notification message worker will wake up and check for new
+            messages.
+          default: 3600
 
   enums:
     ControlMessageBehavior:
@@ -385,3 +407,7 @@ types:
           description: Indicates if the user interfaces should be visible.
         feature-setting-value:
           description: Indicates if the cookie handling setting should be enabled.
+        dialog-re-engage-time:
+          description: Indicates after how many hours of interaction, the dialog should show again.
+        dialog-text-variant:
+          description: Indicates which text variant should be used in the dialog.
