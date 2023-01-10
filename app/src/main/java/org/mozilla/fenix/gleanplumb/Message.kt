@@ -5,6 +5,7 @@
 package org.mozilla.fenix.gleanplumb
 
 import org.mozilla.fenix.nimbus.MessageData
+import org.mozilla.fenix.nimbus.MessageSurfaceId
 import org.mozilla.fenix.nimbus.StyleData
 
 /**

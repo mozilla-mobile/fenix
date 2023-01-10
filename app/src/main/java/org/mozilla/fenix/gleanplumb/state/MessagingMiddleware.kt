@@ -27,7 +27,6 @@ import org.mozilla.fenix.nimbus.MessageSurfaceId
 typealias AppStoreMiddlewareContext = MiddlewareContext<AppState, AppAction>
 
 class MessagingMiddleware(
-    private val surface: MessageSurfaceId,
     private val messagingStorage: NimbusMessagingStorage,
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
 ) : Middleware<AppState, AppAction> {
@@ -40,18 +39,21 @@ class MessagingMiddleware(
         when (action) {
             is Restore -> {
                 coroutineScope.launch {
-                    val messages = messagingStorage.getMessages(surface)
+                    val messages = messagingStorage.getMessages()
                     context.store.dispatch(UpdateMessages(messages))
                 }
             }
 
             is Evaluate -> {
-                val message = messagingStorage.getNextMessage(context.state.messaging.messages)
+                val message = messagingStorage.getNextMessage(
+                    action.surface,
+                    context.state.messaging.messages
+                )
                 if (message != null) {
                     context.dispatch(UpdateMessageToShow(message))
                     onMessagedDisplayed(message, context)
                 } else {
-                    context.dispatch(ConsumeMessageToShow)
+                    context.dispatch(ConsumeMessageToShow(action.surface))
                 }
             }
 
@@ -137,8 +139,9 @@ class MessagingMiddleware(
         context: AppStoreMiddlewareContext,
         message: Message,
     ) {
-        if (context.state.messaging.messageToShow?.id == message.id) {
-            context.dispatch(ConsumeMessageToShow)
+        val current = context.state.messaging.messageToShow[message.data.surface]
+        if (current?.id == message.id) {
+            context.dispatch(ConsumeMessageToShow(message.data.surface))
         }
     }
 
@@ -156,7 +159,7 @@ class MessagingMiddleware(
         oldMessage: Message,
         updatedMessage: Message,
     ): List<Message> {
-        val actualMessageToShow = context.state.messaging.messageToShow
+        val actualMessageToShow = context.state.messaging.messageToShow.get(updatedMessage.data.surface)
 
         if (actualMessageToShow?.id == oldMessage.id) {
             context.dispatch(UpdateMessageToShow(updatedMessage))

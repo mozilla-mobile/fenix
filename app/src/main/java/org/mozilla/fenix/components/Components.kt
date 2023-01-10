@@ -209,7 +209,6 @@ class Components(private val context: Context) {
                     context.pocketStoriesSelectedCategoriesDataStore,
                 ),
                 MessagingMiddleware(
-                    surface = MessageSurfaceId.HOMESCREEN,
                     messagingStorage = analytics.messagingStorage,
                 ),
                 MetricsMiddleware(metrics = analytics.metrics),

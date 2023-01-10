@@ -64,12 +64,12 @@ class NimbusMessagingStorageTest {
 
     @Test
     fun `WHEN calling getMessages THEN provide a list of available messages for a given surface`() = runTest {
-        val homescreenMessage = storage.getMessages(MessageSurfaceId.HOMESCREEN).first()
+        val homescreenMessage = storage.getMessages().first()
 
         assertEquals("message-1", homescreenMessage.id)
         assertEquals("message-1", homescreenMessage.metadata.id)
 
-        val notificationMessage = storage.getMessages(MessageSurfaceId.NOTIFICATION).first()
+        val notificationMessage = storage.getMessages().last()
         assertEquals("message-2", notificationMessage.id)
     }
 
@@ -106,7 +106,7 @@ class NimbusMessagingStorageTest {
                 messagingFeature,
             )
 
-            val results = storage.getMessages(MessageSurfaceId.HOMESCREEN)
+            val results = storage.getMessages()
 
             assertEquals("high-message", results[0].id)
             assertEquals("medium-message", results[1].id)
@@ -143,7 +143,7 @@ class NimbusMessagingStorageTest {
                 messagingFeature,
             )
 
-            val results = storage.getMessages(MessageSurfaceId.HOMESCREEN)
+            val results = storage.getMessages()
 
             assertEquals(1, results.size)
             assertEquals("normal-message", results[0].id)
@@ -179,7 +179,7 @@ class NimbusMessagingStorageTest {
                 messagingFeature,
             )
 
-            val results = storage.getMessages(MessageSurfaceId.HOMESCREEN)
+            val results = storage.getMessages()
 
             assertEquals(1, results.size)
             assertEquals("normal-message", results[0].id)
@@ -220,7 +220,7 @@ class NimbusMessagingStorageTest {
                 messagingFeature,
             )
 
-            val results = storage.getMessages(MessageSurfaceId.HOMESCREEN)
+            val results = storage.getMessages()
 
             assertEquals(1, results.size)
             assertEquals("normal-message", results[0].id)
@@ -228,12 +228,12 @@ class NimbusMessagingStorageTest {
 
     @Test
     fun `GIVEN a malformed message WHEN calling getMessages THEN provide a list of messages ignoring the malformed one`() = runTest {
-        val messages = storage.getMessages(MessageSurfaceId.HOMESCREEN)
+        val messages = storage.getMessages()
         val firstMessage = messages.first()
 
         assertEquals("message-1", firstMessage.id)
         assertEquals("message-1", firstMessage.metadata.id)
-        assertTrue(messages.size == 1)
+        assertTrue(messages.size == 2)
         assertTrue(malformedWasReported)
     }
 
@@ -493,7 +493,7 @@ class NimbusMessagingStorageTest {
 
         every { spiedStorage.isMessageEligible(any(), any()) } returns false
 
-        val result = spiedStorage.getNextMessage(listOf(message))
+        val result = spiedStorage.getNextMessage(MessageSurfaceId.HOMESCREEN, listOf(message))
 
         assertNull(result)
     }
@@ -503,7 +503,7 @@ class NimbusMessagingStorageTest {
         val spiedStorage = spyk(storage)
         val message = Message(
             "same-id",
-            mockk(relaxed = true),
+            createMessageData(surface = MessageSurfaceId.HOMESCREEN),
             action = "action",
             mockk(relaxed = true),
             listOf("trigger"),
@@ -513,7 +513,7 @@ class NimbusMessagingStorageTest {
         every { spiedStorage.isMessageEligible(any(), any()) } returns true
         every { spiedStorage.isMessageUnderExperiment(any(), any()) } returns false
 
-        val result = spiedStorage.getNextMessage(listOf(message))
+        val result = spiedStorage.getNextMessage(MessageSurfaceId.HOMESCREEN, listOf(message))
 
         assertEquals(message.id, result!!.id)
     }
@@ -521,9 +521,7 @@ class NimbusMessagingStorageTest {
     @Test
     fun `GIVEN a message under experiment WHEN calling getNextMessage THEN call recordExposure`() {
         val spiedStorage = spyk(storage)
-        val messageData: MessageData = mockk(relaxed = true)
-
-        every { messageData.isControl } returns false
+        val messageData: MessageData = createMessageData(isControl = false)
 
         val message = Message(
             "same-id",
@@ -537,7 +535,7 @@ class NimbusMessagingStorageTest {
         every { spiedStorage.isMessageEligible(any(), any()) } returns true
         every { spiedStorage.isMessageUnderExperiment(any(), any()) } returns true
 
-        val result = spiedStorage.getNextMessage(listOf(message))
+        val result = spiedStorage.getNextMessage(MessageSurfaceId.HOMESCREEN, listOf(message))
 
         verify { messagingFeature.recordExposure() }
         assertEquals(message.id, result!!.id)
@@ -546,12 +544,10 @@ class NimbusMessagingStorageTest {
     @Test
     fun `GIVEN a control message WHEN calling getNextMessage THEN return the next eligible message`() {
         val spiedStorage = spyk(storage)
-        val messageData: MessageData = mockk(relaxed = true)
-        val controlMessageData: MessageData = mockk(relaxed = true)
+        val messageData: MessageData = createMessageData()
+        val controlMessageData: MessageData = createMessageData(isControl = true)
 
-        every { messageData.isControl } returns false
         every { spiedStorage.getOnControlBehavior() } returns SHOW_NEXT_MESSAGE
-        every { controlMessageData.isControl } returns true
 
         val message = Message(
             "id",
@@ -574,7 +570,8 @@ class NimbusMessagingStorageTest {
         every { spiedStorage.isMessageEligible(any(), any()) } returns true
         every { spiedStorage.isMessageUnderExperiment(any(), any()) } returns true
 
-        val result = spiedStorage.getNextMessage(listOf(controlMessage, message))
+        val result = spiedStorage.getNextMessage(MessageSurfaceId.HOMESCREEN,
+            listOf(controlMessage, message))
 
         verify { messagingFeature.recordExposure() }
         assertEquals(message.id, result!!.id)
@@ -585,11 +582,13 @@ class NimbusMessagingStorageTest {
         style: String = "style-1",
         triggers: List<String> = listOf("trigger-1"),
         surface: MessageSurfaceId = MessageSurfaceId.HOMESCREEN,
+        isControl: Boolean = false,
     ) = MessageData(
         action = Res.string(action),
         style = style,
         trigger = triggers,
         surface = surface,
+        isControl = isControl,
     )
 
     private fun createMessagingFeature(

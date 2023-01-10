@@ -55,7 +55,7 @@ class NimbusMessagingStorage(
     /**
      * Returns a list of available messages descending sorted by their priority.
      */
-    suspend fun getMessages(surface: MessageSurfaceId): List<Message> {
+    suspend fun getMessages(): List<Message> {
         val nimbusTriggers = nimbusFeature.triggers
         val nimbusStyles = nimbusFeature.styles
         val nimbusActions = nimbusFeature.actions
@@ -65,7 +65,6 @@ class NimbusMessagingStorage(
         val storageMetadata = metadataStorage.getMetadata()
 
         return nimbusMessages
-            .filterValues { surface == it.surface }
             .mapNotNull { (key, value) ->
                 val action = sanitizeAction(key, value.action, nimbusActions, value.isControl) ?: return@mapNotNull null
                 Message(
@@ -89,10 +88,11 @@ class NimbusMessagingStorage(
     /**
      * Returns the next higher priority message which all their triggers are true.
      */
-    fun getNextMessage(availableMessages: List<Message>): Message? {
+    fun getNextMessage(surface: MessageSurfaceId, availableMessages: List<Message>): Message? {
         val jexlCache = HashMap<String, Boolean>()
         val helper = gleanPlumb.createMessageHelper(customAttributes)
         val message = availableMessages.firstOrNull {
+            surface == it.data.surface &&
             isMessageEligible(it, helper, jexlCache)
         } ?: return null
 
