@@ -38,11 +38,11 @@ class MessagingReducerTest {
             UpdateMessageToShow(m),
         )
 
-        assertNotNull(updatedState.messaging.messageToShow[m.data.surface])
+        assertNotNull(updatedState.messaging.messageToShow[m.surface])
 
-        updatedState = AppStoreReducer.reduce(updatedState, ConsumeMessageToShow(m.data.surface))
+        updatedState = AppStoreReducer.reduce(updatedState, ConsumeMessageToShow(m.surface))
 
-        assertNull(updatedState.messaging.messageToShow[m.data.surface])
+        assertNull(updatedState.messaging.messageToShow[m.surface])
     }
 
     private fun createMessage(id: String, action: String = "action-1", surface: MessageSurfaceId = MessageSurfaceId.HOMESCREEN): Message =

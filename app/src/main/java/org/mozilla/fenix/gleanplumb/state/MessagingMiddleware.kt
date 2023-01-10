@@ -139,9 +139,9 @@ class MessagingMiddleware(
         context: AppStoreMiddlewareContext,
         message: Message,
     ) {
-        val current = context.state.messaging.messageToShow[message.data.surface]
+        val current = context.state.messaging.messageToShow[message.surface]
         if (current?.id == message.id) {
-            context.dispatch(ConsumeMessageToShow(message.data.surface))
+            context.dispatch(ConsumeMessageToShow(message.surface))
         }
     }
 
@@ -159,7 +159,7 @@ class MessagingMiddleware(
         oldMessage: Message,
         updatedMessage: Message,
     ): List<Message> {
-        val actualMessageToShow = context.state.messaging.messageToShow.get(updatedMessage.data.surface)
+        val actualMessageToShow = context.state.messaging.messageToShow.get(updatedMessage.surface)
 
         if (actualMessageToShow?.id == oldMessage.id) {
             context.dispatch(UpdateMessageToShow(updatedMessage))

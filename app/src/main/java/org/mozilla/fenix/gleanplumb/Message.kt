@@ -34,6 +34,9 @@ data class Message(
     val priority: Int
         get() = style.priority
 
+    val surface: MessageSurfaceId
+        get() = data.surface
+
     /**
      * A data class that holds metadata that help to identify if a message should shown.
      *

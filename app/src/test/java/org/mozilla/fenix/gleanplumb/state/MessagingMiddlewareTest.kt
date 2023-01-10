@@ -228,13 +228,13 @@ class MessagingMiddlewareTest {
         val appState: AppState = mockk(relaxed = true)
         val messagingState: MessagingState = mockk(relaxed = true)
 
-        every { messagingState.messageToShow } returns mapOf(message.data.surface to message)
+        every { messagingState.messageToShow } returns mapOf(message.surface to message)
         every { appState.messaging } returns messagingState
         every { middlewareContext.state } returns appState
 
         middleware.consumeMessageToShowIfNeeded(middlewareContext, message)
 
-        verify { middlewareContext.dispatch(ConsumeMessageToShow(message.data.surface)) }
+        verify { middlewareContext.dispatch(ConsumeMessageToShow(message.surface)) }
     }
 
     @Test
@@ -262,7 +262,7 @@ class MessagingMiddlewareTest {
         val appState: AppState = mockk(relaxed = true)
         val messagingState: MessagingState = mockk(relaxed = true)
 
-        every { messagingState.messageToShow } returns mapOf(oldMessage.data.surface to oldMessage)
+        every { messagingState.messageToShow } returns mapOf(oldMessage.surface to oldMessage)
         every { appState.messaging } returns messagingState
         every { middlewareContext.state } returns appState
         every { spiedMiddleware.removeMessage(middlewareContext, oldMessage) } returns emptyList()

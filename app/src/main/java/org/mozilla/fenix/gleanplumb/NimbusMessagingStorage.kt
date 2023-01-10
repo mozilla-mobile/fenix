@@ -92,7 +92,7 @@ class NimbusMessagingStorage(
         val jexlCache = HashMap<String, Boolean>()
         val helper = gleanPlumb.createMessageHelper(customAttributes)
         val message = availableMessages.firstOrNull {
-            surface == it.data.surface &&
+            surface == it.surface &&
             isMessageEligible(it, helper, jexlCache)
         } ?: return null
 

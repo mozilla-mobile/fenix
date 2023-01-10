@@ -18,7 +18,7 @@ internal object MessagingReducer {
     fun reduce(state: AppState, action: AppAction.MessagingAction): AppState = when (action) {
         is UpdateMessageToShow -> {
             val messageToShow = state.messaging.messageToShow.toMutableMap()
-            messageToShow[action.message.data.surface] = action.message
+            messageToShow[action.message.surface] = action.message
             state.copy(
                 messaging = state.messaging.copy(
                     messageToShow = messageToShow,
