@@ -25,11 +25,17 @@ object CustomAttributeProvider {
      */
     fun getCustomAttributes(context: Context): JSONObject {
         val now = Calendar.getInstance()
+        val settings = context.settings()
         return JSONObject(
             mapOf(
-                "is_default_browser_string" to BrowsersCache.all(context).isDefaultBrowser.toString(),
+                "is_default_browser" to BrowsersCache.all(context).isDefaultBrowser,
                 "date_string" to formatter.format(now.time),
-                "number_of_app_launches" to context.settings().numberOfAppLaunches,
+                "number_of_app_launches" to settings.numberOfAppLaunches,
+
+                "adjust_campaign" to settings.adjustCampaignId,
+                "adjust_network" to settings.adjustNetwork,
+                "adjust_ad_group" to settings.adjustAdGroup,
+                "adjust_creative" to settings.adjustCreative,
             ),
         )
     }
