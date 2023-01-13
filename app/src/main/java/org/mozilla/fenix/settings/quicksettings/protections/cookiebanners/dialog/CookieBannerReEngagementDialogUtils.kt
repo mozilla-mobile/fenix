@@ -84,6 +84,7 @@ object CookieBannerReEngagementDialogUtils {
         if (status == CookieBannerHandlingStatus.DETECTED &&
             settings.shouldCookieBannerReEngagementDialog()
         ) {
+            settings.lastInteractionWithReEngageCookieBannerDialogInMs = System.currentTimeMillis()
             settings.cookieBannerDetectedPreviously = true
             val directions =
                 BrowserFragmentDirections.actionBrowserFragmentToCookieBannerDialogFragment()
