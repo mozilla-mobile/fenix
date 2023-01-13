@@ -5,6 +5,7 @@
 package org.mozilla.fenix.experiments
 
 import android.content.Context
+import android.os.Build
 import mozilla.components.service.nimbus.NimbusApi
 import mozilla.components.service.nimbus.NimbusAppInfo
 import mozilla.components.service.nimbus.NimbusBuilder
@@ -42,6 +43,7 @@ fun createNimbus(context: Context, urlString: String?): NimbusApi {
         // This camelCase attribute is a boolean value represented as a string.
         // This is left for backwards compatibility.
         put("isFirstRun", isAppFirstRun.toString())
+        put("android_version", Build.VERSION.SDK_INT)
     }
 
     // The name "fenix" here corresponds to the app_name defined for the family of apps
