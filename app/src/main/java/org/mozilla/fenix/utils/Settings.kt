@@ -1472,6 +1472,23 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
+     * Indicates if notification pre permission prompt feature is enabled.
+     */
+    var notificationPrePermissionPromptEnabled by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_notification_pre_permission_prompt_enabled),
+        default = { FxNimbus.features.prePermissionNotificationPrompt.value(appContext).enabled },
+        featureFlag = FeatureFlags.notificationPrePermissionPromptEnabled,
+    )
+
+    /**
+     * Indicates if notification permission prompt has been shown to the user.
+     */
+    var isNotificationPrePermissionShown by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_is_notification_pre_permission_prompt_shown),
+        default = false,
+    )
+
+    /**
      * Get the current mode for how https-only is enabled.
      */
     fun getHttpsOnlyMode(): HttpsOnlyMode {
@@ -1489,7 +1506,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     fun getCookieBannerHandling(): CookieBannerHandlingMode {
         return when (shouldUseCookieBanner) {
-            true -> CookieBannerHandlingMode.REJECT_OR_ACCEPT_ALL
+            true -> CookieBannerHandlingMode.REJECT_ALL
             false -> if (shouldShowCookieBannerUI && !userOptOutOfReEngageCookieBannerDialog) {
                 CookieBannerHandlingMode.DETECT_ONLY
             } else {
