@@ -35,6 +35,7 @@ import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.R
@@ -49,6 +50,7 @@ import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.dialog.CookieBannerReEngagementDialogUtils
+import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.safeHasException
 import org.mozilla.fenix.shortcut.PwaOnboardingObserver
 import org.mozilla.fenix.theme.ThemeManager
 
@@ -60,6 +62,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     private val windowFeature = ViewBoundFeatureWrapper<WindowFeature>()
     private val openInAppOnboardingObserver = ViewBoundFeatureWrapper<OpenInAppOnboardingObserver>()
+    private val logger = Logger("BaseBrowserFragment")
 
     private var readerModeAvailable = false
     private var pwaOnboardingObserver: PwaOnboardingObserver? = null
@@ -382,10 +385,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 val hasCookieBannerException =
                     if (requireContext().settings().shouldUseCookieBanner) {
                         withContext(Dispatchers.IO) {
-                            cookieBannersStorage.hasException(
-                                tab.content.url,
-                                tab.content.private,
-                            )
+                            cookieBannersStorage.safeHasException(tab, logger)
                         }
                     } else {
                         false

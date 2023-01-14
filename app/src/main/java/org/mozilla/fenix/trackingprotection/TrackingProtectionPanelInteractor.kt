@@ -14,10 +14,12 @@ import kotlinx.coroutines.withContext
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.concept.engine.cookiehandling.CookieBannersStorage
 import mozilla.components.concept.engine.permission.SitePermissions
+import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.safeHasException
 
 /**
  * Interactor for the tracking protection panel
@@ -37,6 +39,7 @@ class TrackingProtectionPanelInteractor(
     private val gravity: Int,
     private val getCurrentTab: () -> SessionState?,
 ) : TrackingProtectionPanelViewInteractor {
+    private val logger = Logger("TrackingProtectionPanelInteractor")
 
     override fun openDetails(category: TrackingProtectionCategory, categoryBlocked: Boolean) {
         store.dispatch(ProtectionsAction.EnterDetailsMode(category, categoryBlocked))
@@ -55,7 +58,7 @@ class TrackingProtectionPanelInteractor(
             context.components.useCases.trackingProtectionUseCases.containsException(tab.id) { contains ->
                 ioScope.launch {
                     val hasException = if (context.settings().shouldUseCookieBanner) {
-                        cookieBannersStorage.hasException(tab.content.url, tab.content.private)
+                        cookieBannersStorage.safeHasException(tab, logger)
                     } else {
                         false
                     }

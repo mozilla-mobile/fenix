@@ -27,18 +27,19 @@ import mozilla.components.feature.pwa.feature.WebAppHideToolbarFeature
 import mozilla.components.feature.pwa.feature.WebAppSiteControlsFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BaseBrowserFragment
 import org.mozilla.fenix.browser.CustomTabContextMenuCandidate
 import org.mozilla.fenix.browser.FenixSnackbarDelegate
-import org.mozilla.fenix.components.components
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.safeHasException
 
 /**
  * Fragment used for browsing the web within external apps.
@@ -50,6 +51,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
     private val customTabsIntegration = ViewBoundFeatureWrapper<CustomTabsIntegration>()
     private val windowFeature = ViewBoundFeatureWrapper<CustomTabWindowFeature>()
     private val hideToolbarFeature = ViewBoundFeatureWrapper<WebAppHideToolbarFeature>()
+    private val logger = Logger("ExternalAppBrowserFragment")
 
     @Suppress("LongMethod", "ComplexMethod")
     override fun initializeUI(view: View, tab: SessionState) {
@@ -168,7 +170,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
         requireComponents.useCases.trackingProtectionUseCases.containsException(tab.id) { contains ->
             lifecycleScope.launch(Dispatchers.IO) {
                 val hasException = if (requireContext().settings().shouldUseCookieBanner) {
-                    cookieBannersStorage.hasException(tab.content.url, tab.content.private)
+                    cookieBannersStorage.safeHasException(tab, logger)
                 } else {
                     false
                 }

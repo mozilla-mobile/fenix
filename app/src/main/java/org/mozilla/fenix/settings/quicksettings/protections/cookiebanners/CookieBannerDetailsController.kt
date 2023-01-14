@@ -22,6 +22,7 @@ import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.service.glean.private.NoExtras
+import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.GleanMetrics.CookieBanners
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.ext.components
@@ -68,13 +69,14 @@ class DefaultCookieBannerDetailsController(
     private val engine: Engine = context.components.core.engine,
     private val publicSuffixList: PublicSuffixList = context.components.publicSuffixList,
 ) : CookieBannerDetailsController {
+    private val logger = Logger("TrackingProtectionPanelInteractor")
 
     override fun handleBackPressed() {
         getCurrentTab()?.let { tab ->
             context.components.useCases.trackingProtectionUseCases.containsException(tab.id) { contains ->
                 ioScope.launch {
                     val hasException = if (context.settings().shouldUseCookieBanner) {
-                        cookieBannersStorage.hasException(tab.content.url, tab.content.private)
+                        cookieBannersStorage.safeHasException(tab, logger)
                     } else {
                         false
                     }
