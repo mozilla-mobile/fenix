@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_MAIN
@@ -23,6 +24,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.WindowManager.LayoutParams.FLAG_SECURE
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.CallSuper
 import androidx.annotation.IdRes
 import androidx.annotation.VisibleForTesting
@@ -114,7 +116,6 @@ import org.mozilla.fenix.onboarding.DefaultBrowserNotificationWorker
 import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.onboarding.MARKETING_CHANNEL_ID
 import org.mozilla.fenix.onboarding.ReEngagementNotificationWorker
-import org.mozilla.fenix.onboarding.ensureMarketingChannelExists
 import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.perf.Performance
@@ -211,6 +212,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private val startupPathProvider = StartupPathProvider()
     private lateinit var startupTypeTelemetry: StartupTypeTelemetry
+
+    private val notificationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
+            // we do not currently act on the result of this request, but we can choose to do something different here.
+        }
 
     @Suppress("ComplexMethod")
     final override fun onCreate(savedInstanceState: Bundle?) {
@@ -376,8 +382,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                     navHost.navController.navigate(NavGraphDirections.actionGlobalHomeNotificationPermissionDialog())
                 }
             } else {
-                // This will trigger the notification permission system dialog as app targets sdk 32.
-                ensureMarketingChannelExists(applicationContext)
+                notificationPermission.launch(POST_NOTIFICATIONS)
             }
         }
     }
