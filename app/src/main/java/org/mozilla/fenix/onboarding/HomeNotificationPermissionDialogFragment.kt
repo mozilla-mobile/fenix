@@ -4,12 +4,15 @@
 
 package org.mozilla.fenix.onboarding
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.DialogFragment
@@ -23,6 +26,11 @@ import org.mozilla.fenix.theme.FirefoxTheme
  * Dialog displaying notification pre-permission prompt.
  */
 class HomeNotificationPermissionDialogFragment : DialogFragment() {
+
+    private val notificationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
+            // we do not currently act on the result of this request, but we can choose to do something different here.
+        }
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +56,9 @@ class HomeNotificationPermissionDialogFragment : DialogFragment() {
                     NotificationPermissionDialogScreen(
                         onDismiss = ::onDismiss,
                         grantNotificationPermission = {
-                            ensureMarketingChannelExists(context.applicationContext)
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                notificationPermission.launch(POST_NOTIFICATIONS)
+                            }
                             onDismiss()
                         },
                     )
