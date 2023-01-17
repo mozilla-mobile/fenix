@@ -13,11 +13,11 @@
 
     <TextView
         android:id="@+id/tab_tray_empty_view"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
         android:paddingTop="80dp"
         android:text="@string/no_open_tabs_description"
         android:textColor="?attr/textSecondary"
