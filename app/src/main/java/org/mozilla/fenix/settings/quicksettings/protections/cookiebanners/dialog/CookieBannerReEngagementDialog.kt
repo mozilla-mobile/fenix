@@ -47,6 +47,7 @@ class CookieBannerReEngagementDialog : DialogFragment() {
                         requireContext().settings().shouldUseCookieBanner = true
                         getEngineSettings().cookieBannerHandlingModePrivateBrowsing = REJECT_ALL
                         getEngineSettings().cookieBannerHandlingMode = REJECT_ALL
+                        getEngineSettings().cookieBannerHandlingDetectOnlyMode = false
                         reload()
                         requireContext().getRootView()?.let {
                             FenixSnackbar.make(

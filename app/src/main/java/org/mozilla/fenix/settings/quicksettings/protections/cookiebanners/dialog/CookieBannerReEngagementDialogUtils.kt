@@ -6,6 +6,7 @@ package org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.dialo
 
 import android.content.Context
 import androidx.navigation.NavController
+import mozilla.components.concept.engine.EngineSession.CookieBannerHandlingMode.DISABLED
 import mozilla.components.concept.engine.EngineSession.CookieBannerHandlingStatus
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserFragmentDirections
@@ -90,6 +91,14 @@ object CookieBannerReEngagementDialogUtils {
                 BrowserFragmentDirections.actionBrowserFragmentToCookieBannerDialogFragment()
             navController.nav(R.id.browserFragment, directions)
         }
+    }
+
+    /**
+     * Indicates if the cookie banner detect only mode should be enabled.
+     */
+    fun shouldEnabledDetectOnlyMode(settings: Settings): Boolean {
+        return settings.shouldShowCookieBannerUI && !settings.userOptOutOfReEngageCookieBannerDialog && settings
+            .getCookieBannerHandling() == DISABLED
     }
 
     /**

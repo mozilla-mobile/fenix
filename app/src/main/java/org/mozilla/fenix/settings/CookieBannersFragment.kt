@@ -16,6 +16,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.dialog.CookieBannerReEngagementDialogUtils
 
 /**
  * Lets the user set up the cookie banners handling preferences.
@@ -53,6 +54,8 @@ class CookieBannersFragment : PreferenceFragmentCompat() {
                     requireContext().settings().shouldUseCookieBanner = newValue as Boolean
                     getEngineSettings().cookieBannerHandlingModePrivateBrowsing = mode
                     getEngineSettings().cookieBannerHandlingMode = mode
+                    getEngineSettings().cookieBannerHandlingDetectOnlyMode =
+                        CookieBannerReEngagementDialogUtils.shouldEnabledDetectOnlyMode(context.settings())
                     CookieBanners.settingChanged.record(CookieBanners.SettingChangedExtra(metricTag))
                     requireContext().components.useCases.sessionUseCases.reload()
                     return super.onPreferenceChange(preference, newValue)
