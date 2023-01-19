@@ -119,13 +119,25 @@ class NimbusMessagingStorage(
     }
 
     /**
-     * Returns a pair of uuid and valid action for the provided [message].
+     * Returns a pair of uuid and valid action for the provided [action].
+     *
+     * Uses Nimbus' targeting attributes to do basic string interpolation.
+     *
+     * e.g.
+     * `https://example.com/{locale}/whatsnew.html?version={app_version}`
+     *
+     * If the string `{uuid}` is detected in the [action] string, then it is
+     * replaced with a random UUID. This is returned as the first value of the returned
+     * [Pair].
+     *
+     * The fully resolved (with all substitutions) action is returned as the second value
+     * of the [Pair].
      */
-    fun getMessageAction(message: Message): Pair<String?, String> {
+    fun getMessageAction(action: String): Pair<String?, String> {
         val helper = gleanPlumb.createMessageHelper(customAttributes)
-        val uuid = helper.getUuid(message.action)
+        val uuid = helper.getUuid(action)
 
-        return Pair(uuid, helper.stringFormat(message.action, uuid))
+        return Pair(uuid, helper.stringFormat(action, uuid))
     }
 
     /**
