@@ -30,7 +30,6 @@ import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
@@ -103,36 +102,6 @@ class SmokeTest {
 
         // resetting modified features enabled setting to default
         featureSettingsHelper.resetAllFeatureFlags()
-    }
-
-    // Verifies the first run onboarding screen
-    @Test
-    fun firstRunScreenTest() {
-        homeScreen {
-            verifyHomeScreenAppBarItems()
-            verifyHomeScreenWelcomeItems()
-            verifyChooseYourThemeCard(
-                isDarkThemeChecked = false,
-                isLightThemeChecked = false,
-                isAutomaticThemeChecked = true,
-            )
-            verifyToolbarPlacementCard(isBottomChecked = true, isTopChecked = false)
-            verifySignInToSyncCard()
-            verifyPrivacyProtectionCard(isStandardChecked = true, isStrictChecked = false)
-            verifyPrivacyNoticeCard()
-            verifyStartBrowsingSection()
-            verifyNavigationToolbarItems("0")
-        }
-    }
-
-    // Verifies the functionality of the onboarding Start Browsing button
-    @Test
-    fun startBrowsingButtonTest() {
-        homeScreen {
-            verifyStartBrowsingButton()
-        }.clickStartBrowsingButton {
-            verifySearchView()
-        }
     }
 
     /* Verifies the nav bar:
@@ -393,38 +362,6 @@ class SmokeTest {
             }.submitQuery("mozilla ") {
                 verifyUrl(searchEngine)
             }.goToHomescreen { }
-        }
-    }
-
-    // Saves a login, then changes it and verifies the update
-    @Test
-    fun updateSavedLoginTest() {
-        val saveLoginTest =
-            TestAssetHelper.getSaveLoginAsset(mockWebServer)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(saveLoginTest.url) {
-            verifySaveLoginPromptIsShown()
-            // Click Save to save the login
-            saveLoginFromPrompt("Save")
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(saveLoginTest.url) {
-            enterPassword("test")
-            verifyUpdateLoginPromptIsShown()
-            // Click Update to change the saved password
-            saveLoginFromPrompt("Update")
-        }.openThreeDotMenu {
-        }.openSettings {
-            TestHelper.scrollToElementByText("Logins and passwords")
-        }.openLoginsAndPasswordSubMenu {
-        }.openSavedLogins {
-            verifySecurityPromptForLogins()
-            tapSetupLater()
-            // Verify that the login appears correctly
-            verifySavedLoginFromPrompt("test@example.com")
-            viewSavedLoginDetails("test@example.com")
-            revealPassword()
-            verifyPasswordSaved("test") // failing here locally
         }
     }
 

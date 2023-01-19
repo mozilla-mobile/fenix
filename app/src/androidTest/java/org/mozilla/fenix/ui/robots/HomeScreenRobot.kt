@@ -115,6 +115,15 @@ class HomeScreenRobot {
         assertItemWithResIdAndDescriptionExists(automaticThemeDescription)
     }
 
+    fun clickLightThemeButton() =
+        itemWithResId("$packageName:id/theme_light_radio_button").click()
+
+    fun clickDarkThemeButton() =
+        itemWithResId("$packageName:id/theme_dark_radio_button").click()
+
+    fun clickAutomaticThemeButton() =
+        itemWithResId("$packageName:id/theme_automatic_radio_button").click()
+
     fun verifyToolbarPlacementCard(isBottomChecked: Boolean, isTopChecked: Boolean) {
         scrollToElementByText(getStringResource(R.string.onboarding_toolbar_placement_header_1))
         assertItemContainingTextExists(toolbarPlacementHeader, toolbarPlacementDescription)
@@ -130,6 +139,12 @@ class HomeScreenRobot {
         )
     }
 
+    fun clickTopToolbarPlacementButton() =
+        itemWithResId("$packageName:id/toolbar_top_radio_button").click()
+
+    fun clickBottomToolbarPlacementButton() =
+        itemWithResId("$packageName:id/toolbar_bottom_radio_button").click()
+
     fun verifySignInToSyncCard() {
         scrollToElementByText(getStringResource(R.string.onboarding_account_sign_in_header))
         assertItemContainingTextExists(startSyncHeader, startSyncDescription)
@@ -137,13 +152,19 @@ class HomeScreenRobot {
     }
 
     fun verifyPrivacyProtectionCard(isStandardChecked: Boolean, isStrictChecked: Boolean) {
-        scrollToElementByText(getStringResource(R.string.onboarding_tracking_protection_header))
+        scrollToElementByText(getStringResource(R.string.onboarding_privacy_notice_header_1))
         assertItemContainingTextExists(privacyProtectionHeader, privacyProtectionDescription)
         assertCheckedItemWithResIdExists(
             standardTrackingProtectionToggle(isStandardChecked),
             strictTrackingProtectionToggle(isStrictChecked),
         )
     }
+
+    fun clickStandardTrackingProtectionButton() =
+        itemWithResId("$packageName:id/tracking_protection_standard_option").click()
+
+    fun clickStrictTrackingProtectionButton() =
+        itemWithResId("$packageName:id/tracking_protection_strict_default").click()
 
     fun verifyPrivacyNoticeCard() {
         scrollToElementByText(getStringResource(R.string.onboarding_privacy_notice_header_1))
@@ -784,6 +805,20 @@ class HomeScreenRobot {
 
         fun clickPocketLearnMoreLink(composeTestRule: ComposeTestRule, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             composeTestRule.onNodeWithTag("pocket.header.subtitle", true).performClick()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun clickSignInButton(interact: SyncSignInRobot.() -> Unit): SyncSignInRobot.Transition {
+            signInButton.clickAndWaitForNewWindow(waitingTimeShort)
+
+            SyncSignInRobot().interact()
+            return SyncSignInRobot.Transition()
+        }
+
+        fun clickPrivacyNoticeButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            privacyNoticeButton.clickAndWaitForNewWindow(waitingTimeShort)
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
