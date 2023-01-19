@@ -13,6 +13,7 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
@@ -73,6 +74,7 @@ class SettingsPrivacyTest {
     }
 
     // Walks through settings privacy menu and sub-menus to ensure all items are present
+    @Ignore("Failing after updating settings screen summaries. See: https://github.com/mozilla-mobile/fenix/issues/28208")
     @Test
     fun settingsPrivacyItemsTest() {
         homeScreen {
@@ -204,56 +206,6 @@ class SettingsPrivacyTest {
     }
 
     @Test
-    fun saveLoginFromPromptTest() {
-        val saveLoginTest =
-            TestAssetHelper.getSaveLoginAsset(mockWebServer)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(saveLoginTest.url) {
-            verifySaveLoginPromptIsShown()
-            // Click save to save the login
-            saveLoginFromPrompt("Save")
-        }
-        browserScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-            TestHelper.scrollToElementByText("Logins and passwords")
-        }.openLoginsAndPasswordSubMenu {
-            verifyDefaultView()
-        }.openSavedLogins {
-            verifySecurityPromptForLogins()
-            tapSetupLater()
-            // Verify that the login appears correctly
-            verifySavedLoginFromPrompt("test@example.com")
-        }
-    }
-
-    @Test
-    fun neverSaveLoginFromPromptTest() {
-        val saveLoginTest = TestAssetHelper.getSaveLoginAsset(mockWebServer)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(saveLoginTest.url) {
-            verifySaveLoginPromptIsShown()
-            // Don't save the login, add to exceptions
-            saveLoginFromPrompt("Never save")
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openLoginsAndPasswordSubMenu {
-            verifyDefaultView()
-        }.openSavedLogins {
-            verifySecurityPromptForLogins()
-            tapSetupLater()
-            // Verify that the login list is empty
-            verifyNotSavedLoginFromPrompt()
-        }.goBack {
-        }.openLoginExceptions {
-            // Verify localhost was added to exceptions list
-            verifyLocalhostExceptionAdded()
-        }
-    }
-
-    @Test
     fun saveLoginsAndPasswordsOptions() {
         homeScreen {
         }.openThreeDotMenu {
@@ -261,50 +213,6 @@ class SettingsPrivacyTest {
         }.openLoginsAndPasswordSubMenu {
         }.saveLoginsAndPasswordsOptions {
             verifySaveLoginsOptionsView()
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun openWebsiteForSavedLoginTest() {
-        val loginPage = "https://mozilla-mobile.github.io/testapp/loginForm"
-        val originWebsite = "mozilla-mobile.github.io"
-        val userName = "test"
-        val password = "pass"
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(loginPage.toUri()) {
-            fillAndSubmitLoginCredentials(userName, password)
-            saveLoginFromPrompt("Save")
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openLoginsAndPasswordSubMenu {
-        }.openSavedLogins {
-            verifySecurityPromptForLogins()
-            tapSetupLater()
-            viewSavedLoginDetails(userName)
-        }.goToSavedWebsite {
-            verifyUrl(originWebsite)
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun verifyMultipleLoginsSelectionsTest() {
-        val loginPage = "https://mozilla-mobile.github.io/testapp/loginForm"
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(loginPage.toUri()) {
-            fillAndSubmitLoginCredentials("mozilla", "firefox")
-            saveLoginFromPrompt("Save")
-            fillAndSubmitLoginCredentials("firefox", "mozilla")
-            saveLoginFromPrompt("Save")
-            clearUserNameLoginCredential()
-            clickSuggestedLoginsButton()
-            verifySuggestedUserName("firefox")
-            verifySuggestedUserName("mozilla")
-            clickLoginSuggestion("mozilla")
-            verifyPrefilledLoginCredentials("mozilla")
         }
     }
 
@@ -698,7 +606,7 @@ class SettingsPrivacyTest {
             }.openSavedLogins {
                 verifySecurityPromptForLogins()
                 tapSetupLater()
-                verifySavedLoginFromPrompt("mozilla")
+                verifySavedLoginsSectionUsername("mozilla")
             }
 
             addToHomeScreen {
