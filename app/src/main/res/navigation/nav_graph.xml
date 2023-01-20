@@ -34,6 +34,10 @@
         app:destination="@id/homeOnboardingDialogFragment" />
 
     <action
+        android:id="@+id/action_global_home_notification_permission_dialog"
+        app:destination="@id/homeNotificationPermissionDialogFragment" />
+
+    <action
         android:id="@+id/action_global_wallpaper_onboarding_dialog"
         app:destination="@id/wallpaperOnboardingDialogFragment"
         app:popUpTo="@id/homeFragment" />
@@ -197,6 +201,10 @@
         android:name="org.mozilla.fenix.onboarding.HomeOnboardingDialogFragment" />
 
     <dialog
+        android:id="@+id/homeNotificationPermissionDialogFragment"
+        android:name="org.mozilla.fenix.onboarding.HomeNotificationPermissionDialogFragment" />
+
+    <dialog
         android:id="@+id/wallpaperOnboardingDialogFragment"
         android:name="org.mozilla.fenix.onboarding.WallpaperOnboardingDialogFragment" />
 
@@ -259,6 +267,9 @@
         <action
             android:id="@+id/action_browserFragment_to_quickSettingsSheetDialogFragment"
             app:destination="@id/quickSettingsSheetDialogFragment" />
+        <action
+            android:id="@+id/action_browserFragment_to_cookieBannerDialogFragment"
+            app:destination="@id/cookieBannerDialogFragment" />
     </fragment>
 
     <fragment
@@ -960,6 +971,9 @@
             android:name="isCookieHandlingEnabled"
             app:argType="boolean" />
     </dialog>
+    <dialog
+        android:id="@+id/cookieBannerDialogFragment"
+        android:name="org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.dialog.CookieBannerReEngagementDialog" />
     <fragment
         android:id="@+id/accountProblemFragment"
         android:name="org.mozilla.fenix.settings.account.AccountProblemFragment">

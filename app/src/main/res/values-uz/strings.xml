@@ -63,10 +63,14 @@
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
-    <string name="cfr_message">Bosh ekrandan maxfiy varaqlarni ochish uchun tezkor buyruq qoʻshing.</string>
+    <string moz:removedIn="109" name="cfr_message" tools:ignore="UnusedResources">Bosh ekrandan maxfiy varaqlarni ochish uchun tezkor buyruq qoʻshing.</string>
+    <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
+    <string name="private_mode_cfr_message">Bir harakatda keyingi maxfiy varaqni oching.</string>
     <!-- Text for the positive button -->
-    <string name="cfr_pos_button_text">Tezkor buyruq qoʻshish</string>
-    <!-- Text for the negative button -->
+    <string moz:removedIn="109" name="cfr_pos_button_text" tools:ignore="UnusedResources">Tezkor buyruq qoʻshish</string>
+    <!-- Text for the positive button to accept adding a Private Browsing shortcut to the Home screen -->
+    <string name="private_mode_cfr_pos_button_text">Bosh ekranga qoʻshish</string>
+    <!-- Text for the negative button to decline adding a Private Browsing shortcut to the Home screen -->
     <string name="cfr_neg_button_text">Kerak emas</string>
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
@@ -283,6 +287,11 @@
     <!-- Content description (not visible, for screen readers etc.): Close button for the home onboarding dialog -->
     <string name="onboarding_home_content_description_close_button">Yopish</string>
 
+    <!-- Text for the button to request notification permission on the device -->
+    <string name="onboarding_home_enable_notifications_positive_button" tools:ignore="UnusedResources">Davom etish</string>
+    <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
+    <string name="onboarding_home_enable_notifications_negative_button" tools:ignore="UnusedResources">Hozir emas</string>
+
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
     <string name="search_widget_content_description_2">Yangi %1$s ta varaqni ochish</string>
@@ -339,6 +348,11 @@
     <string name="reduce_cookie_banner_option">Cookie bannerlarini kamaytirish</string>
     <!-- Summary for the preference for rejecting all cookies whenever possible. -->
     <string name="reduce_cookie_banner_summary">Firefox avtomatik ravishda cookie bannerlarida cookie soʻrovlarini rad etishga harakat qiladi. Agar rad etish tanlovi mavjud boʻlmasa, Firefox bannerni oʻchirish uchun barcha cookie fayllarni qabul qilishi mumkin.</string>
+
+    <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_off_for_site">Bu sayt uchun oʻchirilgan</string>
+    <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_on_for_site">Bu sayt uchun yoniq</string>
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Xavfsizlikni oshirish uchun HTTPS shifrlash protokoli yordamida saytlarga avtomatik ulanishga harakat qiladi.</string>
@@ -1074,8 +1088,6 @@
     <string name="share_copy_link_to_clipboard">Vaqtinchalik xotiraga nusxalash</string>
     <!-- Toast shown after copying link to clipboard -->
     <string name="toast_copy_link_to_clipboard">Vaqtinchalik xotiraga nusxalalandi</string>
-    <!-- An option from the three dot menu to into sync -->
-    <string moz:removedIn="107" name="sync_menu_sign_in" tools:ignore="UnusedResources">Sinxronlash uchun hisobingizga kiring</string>
     <!-- An option from the share dialog to sign into sync -->
     <string name="sync_sign_in">Sinxronlash uchun hisobingizga kiring</string>
      <!-- An option from the three dot menu to sync and save data -->
@@ -1880,6 +1892,10 @@
     <!-- Text for the snackbar to confirm auto-close is enabled for inactive tabs -->
     <string name="inactive_tabs_auto_close_message_snackbar">Avtomatik  yoqish yoniq</string>
 
+    <!-- Awesome bar suggestion's headers -->
+    <!-- Search suggestions title for Firefox Suggest. -->
+    <string name="firefox_suggest_header">Firefox Suggest</string>
+
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Saytlar, elektron pochta va xabarlar havolalarini Firefoxda avtomatik ravishda ochiladigan qilib sozlang.</string>
 
@@ -1917,7 +1933,6 @@
     <string name="experiments_snackbar">Maʼlumotlarni yuborish uchun telemetriyani yoqing.</string>
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">Sozlamalarni ochish</string>
-    <string name="firefox_suggest_header">Firefox Suggest</string>
 
     <!-- Accessibility services actions labels. These will be appended to accessibility actions like "Double tap to.." but not by or applications but by services like Talkback. -->
     <!-- Action label for elements that can be collapsed if interacting with them. Talkback will append this to say "Double tap to collapse". -->

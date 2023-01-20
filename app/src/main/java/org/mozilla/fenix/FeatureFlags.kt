@@ -44,7 +44,7 @@ object FeatureFlags {
      * Show Pocket sponsored stories in between Pocket recommended stories on home.
      */
     fun isPocketSponsoredStoriesFeatureEnabled(context: Context): Boolean {
-        return isPocketRecommendationsFeatureEnabled(context) && Config.channel.isDebug
+        return isPocketRecommendationsFeatureEnabled(context)
     }
 
     /**
@@ -68,9 +68,14 @@ object FeatureFlags {
     const val saveToPDF = true
 
     /**
+     * Enables the notification pre permission prompt.
+     */
+    val notificationPrePermissionPromptEnabled = Config.channel.isNightlyOrDebug || Config.channel.isBeta
+
+    /**
      * Enables storage maintenance feature.
      *
      * Feature flag tracking: https://github.com/mozilla-mobile/fenix/issues/27759
      * */
-    val storageMaintenanceFeature = Config.channel.isNightlyOrDebug
+    val storageMaintenanceFeature = Config.channel.isNightlyOrDebug || Config.channel.isBeta
 }

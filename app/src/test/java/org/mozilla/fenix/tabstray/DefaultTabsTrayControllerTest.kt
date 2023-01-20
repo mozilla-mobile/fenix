@@ -18,16 +18,21 @@ import io.mockk.verify
 import io.mockk.verifyOrder
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
+import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.content.DownloadState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.browser.storage.sync.Tab
+import mozilla.components.browser.storage.sync.TabEntry
 import mozilla.components.concept.base.profiler.Profiler
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.service.glean.testing.GleanTestRule
+import mozilla.components.support.test.libstate.ext.waitUntilIdle
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -35,11 +40,15 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.TabsTray
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeFragment
+import java.util.concurrent.TimeUnit
 
 @RunWith(FenixRobolectricTestRunner::class) // for gleanTestRule
 class DefaultTabsTrayControllerTest {
@@ -63,6 +72,9 @@ class DefaultTabsTrayControllerTest {
 
     @MockK(relaxed = true)
     private lateinit var tabsUseCases: TabsUseCases
+
+    @MockK(relaxed = true)
+    private lateinit var activity: HomeActivity
 
     @get:Rule
     val gleanTestRule = GleanTestRule(testContext)
@@ -475,6 +487,91 @@ class DefaultTabsTrayControllerTest {
         assertTrue(navigateToHomeAndDeleteSessionInvoked)
     }
 
+    @Test
+    fun `WHEN a synced tab is clicked THEN the metrics are reported and the tab is opened`() {
+        val tab = mockk<Tab>()
+        val entry = mockk<TabEntry>()
+        assertNull(Events.syncedTabOpened.testGetValue())
+
+        every { tab.active() }.answers { entry }
+        every { entry.url }.answers { "https://mozilla.org" }
+
+        var dismissTabTrayInvoked = false
+        createController(
+            dismissTray = {
+                dismissTabTrayInvoked = true
+            },
+        ).handleSyncedTabClicked(tab)
+
+        assertTrue(dismissTabTrayInvoked)
+        assertNotNull(Events.syncedTabOpened.testGetValue())
+
+        verify {
+            activity.openToBrowserAndLoad(
+                searchTermOrURL = "https://mozilla.org",
+                newTab = true,
+                from = BrowserDirection.FromTabsTray,
+            )
+        }
+    }
+
+    @Test
+    fun `GIVEN the user selects only the current tab WHEN the user forces tab to be inactive THEN tab does not become inactive`() {
+        val currentTab = TabSessionState(content = mockk(), id = "currentTab", createdAt = 11)
+        val secondTab = TabSessionState(content = mockk(), id = "secondTab", createdAt = 22)
+        browserStore = BrowserStore(
+            initialState = BrowserState(
+                tabs = listOf(currentTab, secondTab),
+                selectedTabId = currentTab.id,
+            ),
+        )
+
+        createController().forceTabsAsInactive(listOf(currentTab), 5)
+        browserStore.waitUntilIdle()
+
+        val updatedCurrentTab = browserStore.state.tabs.first { it.id == currentTab.id }
+        assertEquals(updatedCurrentTab, currentTab)
+        val updatedSecondTab = browserStore.state.tabs.first { it.id == secondTab.id }
+        assertEquals(updatedSecondTab, secondTab)
+    }
+
+    @Test
+    fun `GIVEN the user selects multiple tabs including the current tab WHEN the user forces them all to be inactive THEN all but current tab become inactive`() {
+        val currentTab = TabSessionState(content = mockk(), id = "currentTab", createdAt = 11)
+        val secondTab = TabSessionState(content = mockk(), id = "secondTab", createdAt = 22)
+        browserStore = BrowserStore(
+            initialState = BrowserState(
+                tabs = listOf(currentTab, secondTab),
+                selectedTabId = currentTab.id,
+            ),
+        )
+
+        createController().forceTabsAsInactive(listOf(currentTab, secondTab), 5)
+        browserStore.waitUntilIdle()
+
+        val updatedCurrentTab = browserStore.state.tabs.first { it.id == currentTab.id }
+        assertEquals(updatedCurrentTab, currentTab)
+        val updatedSecondTab = browserStore.state.tabs.first { it.id == secondTab.id }
+        assertNotEquals(updatedSecondTab, secondTab)
+        val expectedTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(5)
+        // Account for System.currentTimeMillis() giving different values in test vs the system under test
+        // and also for the waitUntilIdle to block for even hundreds of milliseconds.
+        assertTrue(updatedSecondTab.lastAccess in (expectedTime - 5000)..expectedTime)
+        assertTrue(updatedSecondTab.createdAt in (expectedTime - 5000)..expectedTime)
+    }
+
+    @Test
+    fun `GIVEN no value is provided for inactive days WHEN forcing tabs as inactive THEN set their last active time 15 days ago`() {
+        val controller = spyk(createController())
+        every { browserStore.state.selectedTabId } returns "test"
+
+        controller.forceTabsAsInactive(emptyList())
+
+        verify {
+            controller.forceTabsAsInactive(emptyList(), 15L)
+        }
+    }
+
     private fun createController(
         navigateToHomeAndDeleteSession: (String) -> Unit = { },
         selectTabPosition: (Int, Boolean) -> Unit = { _, _ -> },
@@ -483,6 +580,7 @@ class DefaultTabsTrayControllerTest {
         showCancelledDownloadWarning: (Int, String?, String?) -> Unit = { _, _, _ -> },
     ): DefaultTabsTrayController {
         return DefaultTabsTrayController(
+            activity,
             trayStore,
             browserStore,
             browsingModeManager,
