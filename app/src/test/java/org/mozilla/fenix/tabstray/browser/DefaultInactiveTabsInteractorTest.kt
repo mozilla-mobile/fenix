@@ -18,23 +18,23 @@ class DefaultInactiveTabsInteractorTest {
 
     @Test
     fun `WHEN the inactive tabs header is clicked THEN update the expansion state of the inactive tabs card`() {
-        createInteractor().onHeaderClicked(true)
+        createInteractor().onInactiveTabsHeaderClicked(true)
 
-        verify { controller.updateCardExpansion(true) }
+        verify { controller.handleInactiveTabsHeaderClicked(true) }
     }
 
     @Test
     fun `WHEN the inactive tabs auto close dialog's close button is clicked THEN dismiss the dialog`() {
-        createInteractor().onCloseClicked()
+        createInteractor().onAutoCloseDialogCloseButtonClicked()
 
-        verify { controller.dismissAutoCloseDialog() }
+        verify { controller.handleInactiveTabsAutoCloseDialogDismiss() }
     }
 
     @Test
     fun `WHEN the enable inactive tabs auto close button is clicked THEN turn on the auto close feature`() {
-        createInteractor().onEnabledAutoCloseClicked()
+        createInteractor().onEnableAutoCloseClicked()
 
-        verify { controller.enableInactiveTabsAutoClose() }
+        verify { controller.handleEnableInactiveTabsAutoCloseClicked() }
     }
 
     @Test
@@ -46,9 +46,9 @@ class DefaultInactiveTabsInteractorTest {
             ),
         )
 
-        createInteractor().onTabClicked(tab)
+        createInteractor().onInactiveTabClicked(tab)
 
-        verify { controller.openInactiveTab(tab) }
+        verify { controller.handleInactiveTabClicked(tab) }
         verify { browserInteractor.onTabSelected(tab, TrayPagerAdapter.INACTIVE_TABS_FEATURE_NAME) }
     }
 
@@ -61,9 +61,9 @@ class DefaultInactiveTabsInteractorTest {
             ),
         )
 
-        createInteractor().onTabClosed(tab)
+        createInteractor().onInactiveTabClosed(tab)
 
-        verify { controller.closeInactiveTab(tab) }
+        verify { controller.handleCloseInactiveTabClicked(tab) }
         verify { browserInteractor.onTabClosed(tab, TrayPagerAdapter.INACTIVE_TABS_FEATURE_NAME) }
     }
 
@@ -71,7 +71,7 @@ class DefaultInactiveTabsInteractorTest {
     fun `WHEN the close all inactive tabs button is clicked THEN delete all inactive tabs`() {
         createInteractor().onDeleteAllInactiveTabsClicked()
 
-        verify { controller.deleteAllInactiveTabs() }
+        verify { controller.handleDeleteAllInactiveTabsClicked() }
     }
 
     private fun createInteractor(): DefaultInactiveTabsInteractor {

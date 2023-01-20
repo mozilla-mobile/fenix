@@ -115,6 +115,15 @@ class HomeScreenRobot {
         assertItemWithResIdAndDescriptionExists(automaticThemeDescription)
     }
 
+    fun clickLightThemeButton() =
+        itemWithResId("$packageName:id/theme_light_radio_button").click()
+
+    fun clickDarkThemeButton() =
+        itemWithResId("$packageName:id/theme_dark_radio_button").click()
+
+    fun clickAutomaticThemeButton() =
+        itemWithResId("$packageName:id/theme_automatic_radio_button").click()
+
     fun verifyToolbarPlacementCard(isBottomChecked: Boolean, isTopChecked: Boolean) {
         scrollToElementByText(getStringResource(R.string.onboarding_toolbar_placement_header_1))
         assertItemContainingTextExists(toolbarPlacementHeader, toolbarPlacementDescription)
@@ -130,6 +139,12 @@ class HomeScreenRobot {
         )
     }
 
+    fun clickTopToolbarPlacementButton() =
+        itemWithResId("$packageName:id/toolbar_top_radio_button").click()
+
+    fun clickBottomToolbarPlacementButton() =
+        itemWithResId("$packageName:id/toolbar_bottom_radio_button").click()
+
     fun verifySignInToSyncCard() {
         scrollToElementByText(getStringResource(R.string.onboarding_account_sign_in_header))
         assertItemContainingTextExists(startSyncHeader, startSyncDescription)
@@ -137,13 +152,19 @@ class HomeScreenRobot {
     }
 
     fun verifyPrivacyProtectionCard(isStandardChecked: Boolean, isStrictChecked: Boolean) {
-        scrollToElementByText(getStringResource(R.string.onboarding_tracking_protection_header))
+        scrollToElementByText(getStringResource(R.string.onboarding_privacy_notice_header_1))
         assertItemContainingTextExists(privacyProtectionHeader, privacyProtectionDescription)
         assertCheckedItemWithResIdExists(
             standardTrackingProtectionToggle(isStandardChecked),
             strictTrackingProtectionToggle(isStrictChecked),
         )
     }
+
+    fun clickStandardTrackingProtectionButton() =
+        itemWithResId("$packageName:id/tracking_protection_standard_option").click()
+
+    fun clickStrictTrackingProtectionButton() =
+        itemWithResId("$packageName:id/tracking_protection_strict_default").click()
 
     fun verifyPrivacyNoticeCard() {
         scrollToElementByText(getStringResource(R.string.onboarding_privacy_notice_header_1))
@@ -245,9 +266,24 @@ class HomeScreenRobot {
 
     fun verifyExistingTopSitesList() = assertExistingTopSitesList()
     fun verifyNotExistingTopSitesList(title: String) = assertNotExistingTopSitesList(title)
+    fun verifySponsoredShortcutDoesNotExist(sponsoredShortcutTitle: String, position: Int) =
+        assertFalse(
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/top_site_item")
+                    .index(position - 1),
+            ).getChild(
+                UiSelector()
+                    .textContains(sponsoredShortcutTitle),
+            ).waitForExists(waitingTime),
+        )
     fun verifyNotExistingSponsoredTopSitesList() = assertSponsoredTopSitesNotDisplayed()
     fun verifyExistingTopSitesTabs(title: String) = assertExistingTopSitesTabs(title)
-    fun verifyExistingSponsoredTopSitesTabs(sponsoredShortcutTitle: String, position: Int) = assertSponsoredTopSiteIsDisplayed(sponsoredShortcutTitle, position)
+    fun verifySponsoredShortcutDetails(sponsoredShortcutTitle: String, position: Int) {
+        assertSponsoredShortcutLogoIsDisplayed(position)
+        assertSponsoredShortcutTitle(sponsoredShortcutTitle, position)
+        assertSponsoredSubtitleIsDisplayed(position)
+    }
     fun verifyTopSiteContextMenuItems() = assertTopSiteContextMenuItems()
 
     fun verifyJumpBackInSectionIsDisplayed() = assertJumpBackInSectionIsDisplayed()
@@ -432,19 +468,6 @@ class HomeScreenRobot {
                 ).waitForExists(waitingTime),
             )
         }
-    }
-
-    fun getSponsoredShortcutTitle(position: Int): String {
-        val sponsoredShortcut = mDevice.findObject(
-            UiSelector()
-                .resourceId("$packageName:id/top_site_item")
-                .index(position - 1),
-        ).getChild(
-            UiSelector()
-                .resourceId("$packageName:id/top_site_title"),
-        ).text
-
-        return sponsoredShortcut
     }
 
     fun verifyJumpBackInMessage() {
@@ -786,6 +809,20 @@ class HomeScreenRobot {
             BrowserRobot().interact()
             return BrowserRobot.Transition()
         }
+
+        fun clickSignInButton(interact: SyncSignInRobot.() -> Unit): SyncSignInRobot.Transition {
+            signInButton.clickAndWaitForNewWindow(waitingTimeShort)
+
+            SyncSignInRobot().interact()
+            return SyncSignInRobot.Transition()
+        }
+
+        fun clickPrivacyNoticeButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            privacyNoticeButton.clickAndWaitForNewWindow(waitingTimeShort)
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
     }
 }
 
@@ -880,10 +917,17 @@ private fun assertExistingTopSitesTabs(title: String) {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertSponsoredTopSiteIsDisplayed(sponsoredShortcutTitle: String, position: Int) {
-    assertSponsoredShortcutTitle(sponsoredShortcutTitle, position)
-    assertSponsoredSubtitleIsDisplayed(position)
-}
+private fun assertSponsoredShortcutLogoIsDisplayed(position: Int) =
+    assertTrue(
+        mDevice.findObject(
+            UiSelector()
+                .resourceId("$packageName:id/top_site_item")
+                .index(position - 1),
+        ).getChild(
+            UiSelector()
+                .resourceId("$packageName:id/favicon_card"),
+        ).waitForExists(waitingTime),
+    )
 
 private fun assertSponsoredSubtitleIsDisplayed(position: Int) =
     assertTrue(
@@ -897,7 +941,7 @@ private fun assertSponsoredSubtitleIsDisplayed(position: Int) =
         ).waitForExists(waitingTime),
     )
 
-private fun assertSponsoredShortcutTitle(sponsoredShortcutTitle: String, position: Int) {
+private fun assertSponsoredShortcutTitle(sponsoredShortcutTitle: String, position: Int) =
     assertTrue(
         mDevice.findObject(
             UiSelector()
@@ -908,7 +952,6 @@ private fun assertSponsoredShortcutTitle(sponsoredShortcutTitle: String, positio
                 .textContains(sponsoredShortcutTitle),
         ).waitForExists(waitingTime),
     )
-}
 
 private fun assertNotExistingTopSitesList(title: String) {
     mDevice.findObject(UiSelector().text(title)).waitUntilGone(waitingTime)

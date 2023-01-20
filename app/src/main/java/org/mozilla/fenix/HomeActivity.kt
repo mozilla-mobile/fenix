@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.SystemClock
+import android.text.TextUtils
 import android.text.format.DateUtils
 import android.util.AttributeSet
 import android.view.ActionMode
@@ -28,6 +29,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.Companion.PROTECTED
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
@@ -67,6 +69,7 @@ import mozilla.components.support.ktx.android.content.share
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.locale.LocaleAwareAppCompatActivity
+import mozilla.components.support.utils.ManufacturerCodes
 import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
 import mozilla.components.support.webextensions.WebExtensionPopupFeature
@@ -84,8 +87,10 @@ import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.databinding.ActivityHomeBinding
 import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExceptionsFragmentDirections
 import org.mozilla.fenix.ext.alreadyOnDestination
+import org.mozilla.fenix.ext.areNotificationsEnabledSafe
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.hasTopDestination
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.setNavigationIcon
 import org.mozilla.fenix.ext.settings
@@ -103,9 +108,11 @@ import org.mozilla.fenix.library.bookmarks.DesktopFolders
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.onboarding.DefaultBrowserNotificationWorker
 import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.onboarding.ReEngagementNotificationWorker
+import org.mozilla.fenix.onboarding.ensureMarketingChannelExists
 import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.perf.Performance
@@ -128,15 +135,16 @@ import org.mozilla.fenix.settings.search.EditCustomSearchEngineFragmentDirection
 import org.mozilla.fenix.settings.studies.StudiesFragmentDirections
 import org.mozilla.fenix.settings.wallpaper.WallpaperSettingsFragmentDirections
 import org.mozilla.fenix.share.AddNewDeviceFragmentDirections
+import org.mozilla.fenix.tabhistory.TabHistoryDialogFragment
 import org.mozilla.fenix.tabstray.TabsTrayFragment
 import org.mozilla.fenix.tabstray.TabsTrayFragmentDirections
 import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.trackingprotection.TrackingProtectionPanelDialogFragmentDirections
 import org.mozilla.fenix.utils.BrowsersCache
-import org.mozilla.fenix.utils.ManufacturerCodes
 import org.mozilla.fenix.utils.Settings
 import java.lang.ref.WeakReference
+import java.util.Locale
 
 /**
  * The main activity of the application. The application is primarily a single Activity (this one)
@@ -232,6 +240,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         components.publicSuffixList.prefetch()
 
+        // Changing a language on the Language screen restarts the activity, but the activity keeps
+        // the old layout direction. We have to update the direction manually.
+        window.decorView.layoutDirection = TextUtils.getLayoutDirectionFromLocale(Locale.getDefault())
+
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
         ProfilerMarkers.addListenerForOnGlobalLayout(components.core.engine, this, binding.root)
@@ -320,6 +332,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
         }
 
+        showNotificationPermissionPromptIfRequired()
+
         components.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
             lifecycleScope.launch(IO) {
                 // If we're authenticated, kick-off a sync and a device state refresh.
@@ -335,6 +349,30 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             "HomeActivity.onCreate",
         )
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
+    }
+
+    /**
+     * On Android 13 or above, prompt the user for notification permission at the start.
+     * Show the pre permission dialog to the user once if the notification are not enabled.
+     */
+    private fun showNotificationPermissionPromptIfRequired() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            !NotificationManagerCompat.from(applicationContext).areNotificationsEnabledSafe() &&
+            settings().numberOfAppLaunches <= 1
+        ) {
+            // Recording the exposure event here to capture all users who met all criteria to receive
+            // the pre permission notification prompt
+            FxNimbus.features.prePermissionNotificationPrompt.recordExposure()
+
+            if (settings().notificationPrePermissionPromptEnabled) {
+                if (!settings().isNotificationPrePermissionShown) {
+                    navHost.navController.navigate(NavGraphDirections.actionGlobalHomeNotificationPermissionDialog())
+                }
+            } else {
+                // This will trigger the notification permission system dialog as app targets sdk 32.
+                ensureMarketingChannelExists(applicationContext)
+            }
+        }
     }
 
     private fun checkAndExitPiP() {
@@ -685,9 +723,18 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         return super.onKeyDown(keyCode, event)
     }
 
-    final override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+    final override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         if (shouldUseCustomBackLongPress() && keyCode == KeyEvent.KEYCODE_BACK) {
             backLongPressJob?.cancel()
+
+            // check if the key has been pressed for longer than the time needed for a press to turn into a long press
+            // and if tab history is already visible we do not want to dismiss it.
+            if (event.eventTime - event.downTime >= ViewConfiguration.getLongPressTimeout() &&
+                navHost.navController.hasTopDestination(TabHistoryDialogFragment.NAME)
+            ) {
+                // returning true avoids further processing of the KeyUp event and avoids dismissing tab history.
+                return true
+            }
         }
         return super.onKeyUp(keyCode, event)
     }

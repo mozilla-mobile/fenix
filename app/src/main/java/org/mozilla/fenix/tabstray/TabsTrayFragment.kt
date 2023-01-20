@@ -197,7 +197,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         navigationInteractor =
             DefaultNavigationInteractor(
                 context = requireContext(),
-                activity = activity,
                 tabsTrayStore = tabsTrayStore,
                 browserStore = requireComponents.core.store,
                 navController = findNavController(),
@@ -213,6 +212,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             )
 
         tabsTrayController = DefaultTabsTrayController(
+            activity = activity,
             trayStore = tabsTrayStore,
             browserStore = requireComponents.core.store,
             browsingModeManager = activity.browsingModeManager,
@@ -332,7 +332,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             feature = FloatingActionButtonBinding(
                 store = tabsTrayStore,
                 actionButton = fabButtonBinding.newTabButton,
-                browserTrayInteractor = browserTrayInteractor,
+                interactor = browserTrayInteractor,
             ),
             owner = this,
             view = view,

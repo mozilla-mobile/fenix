@@ -44,6 +44,9 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
+import org.mozilla.fenix.helpers.MatcherHelper
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
@@ -400,12 +403,9 @@ class BrowserRobot {
         switchButton.clickAndWaitForNewWindow(waitingTime)
     }
 
-    fun verifySaveLoginPromptIsShown() = clickPageObject(webPageItemWithResourceId("submit"))
+    fun clickSubmitLoginButton() = clickPageObject(webPageItemWithResourceId("submit"))
 
-    fun verifyUpdateLoginPromptIsShown() {
-        clickPageObject(webPageItemWithResourceId("submit"))
-        mDevice.waitNotNull(Until.findObjects(text("Update")))
-    }
+    fun verifyUpdateLoginPromptIsShown() = mDevice.waitNotNull(Until.findObjects(text("Update")))
 
     fun saveLoginFromPrompt(optionToSaveLogin: String) {
         mDevice.waitForObjects(
@@ -501,6 +501,12 @@ class BrowserRobot {
         mDevice.waitForIdle(waitingTime)
     }
 
+    fun clickUsernameTextField() =
+        webPageItemWithResourceId("username").also {
+            it.waitForExists(waitingTime)
+            it.click()
+        }
+
     fun clickSuggestedLoginsButton() {
         var currentTries = 0
         while (currentTries++ < 3) {
@@ -561,28 +567,41 @@ class BrowserRobot {
         )
     }
 
-    fun verifyPrefilledLoginCredentials(userName: String) {
-        var currentTries = 0
+    fun verifyPrefilledLoginCredentials(userName: String, password: String, credentialsArePrefilled: Boolean) {
         // Sometimes the assertion of the pre-filled logins fails so we are re-trying after refreshing the page
-        while (currentTries++ < 3) {
+        for (i in 1..RETRY_COUNT) {
             try {
-                mDevice.waitForObjects(webPageItemWithResourceId("username"))
-                assertTrue(webPageItemWithResourceId("username").text.equals(userName))
+                if (credentialsArePrefilled) {
+                    mDevice.waitForObjects(webPageItemWithResourceId("username"))
+                    assertTrue(webPageItemWithResourceId("username").text.equals(userName))
+
+                    mDevice.waitForObjects(webPageItemWithResourceId("password"))
+                    assertTrue(webPageItemWithResourceId("password").text.equals(password))
+                } else {
+                    mDevice.waitForObjects(webPageItemWithResourceId("username"))
+                    assertFalse(webPageItemWithResourceId("username").text.equals(userName))
+
+                    mDevice.waitForObjects(webPageItemWithResourceId("password"))
+                    assertFalse(webPageItemWithResourceId("password").text.equals(password))
+                }
 
                 break
             } catch (e: AssertionError) {
-                browserScreen {
-                }.openThreeDotMenu {
-                }.refreshPage {
-                    clearUserNameLoginCredential()
-                    clickSuggestedLoginsButton()
-                    verifySuggestedUserName(userName)
-                    clickLoginSuggestion(userName)
+                if (i == RETRY_COUNT) {
+                    throw e
+                } else {
+                    browserScreen {
+                    }.openThreeDotMenu {
+                    }.refreshPage {
+                        clearUserNameLoginCredential()
+                        clickSuggestedLoginsButton()
+                        verifySuggestedUserName(userName)
+                        clickLoginSuggestion(userName)
+                        clickShowPasswordButton()
+                    }
                 }
             }
         }
-        mDevice.waitForObjects(webPageItemWithResourceId("username"))
-        assertTrue(webPageItemWithResourceId("username").text.equals(userName))
     }
 
     fun verifyAutofilledAddress(streetAddress: String) {
@@ -626,6 +645,12 @@ class BrowserRobot {
             ).waitForExists(waitingTime),
         )
     }
+
+    fun verifySaveLoginPromptIsNotDisplayed() =
+        assertItemWithResIdExists(
+            itemWithResId("$packageName:id/feature_prompt_login_fragment"),
+            exists = false,
+        )
 
     fun verifyTrackingProtectionWebContent(state: String) {
         for (i in 1..RETRY_COUNT) {
@@ -884,6 +909,33 @@ class BrowserRobot {
         )
     }
 
+    fun verifyCookieBannerExists(exists: Boolean) {
+        for (i in 1..RETRY_COUNT) {
+            try {
+                assertItemWithResIdExists(cookieBanner, exists = exists)
+
+                break
+            } catch (e: AssertionError) {
+                if (i == RETRY_COUNT) {
+                    throw e
+                } else {
+                    browserScreen {
+                    }.openThreeDotMenu {
+                    }.refreshPage {
+                        waitForPageToLoad()
+                    }
+                }
+            }
+        }
+        assertItemWithResIdExists(cookieBanner, exists = exists)
+    }
+
+    fun clickShowPasswordButton() =
+        itemWithResId("togglePassword").also {
+            it.waitForExists(waitingTime)
+            it.click()
+        }
+
     class Transition {
         private fun threeDotButton() = onView(
             allOf(
@@ -911,22 +963,32 @@ class BrowserRobot {
         }
 
         fun openTabDrawer(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
-            mDevice.waitForObjects(
-                mDevice.findObject(
-                    UiSelector()
-                        .resourceId("$packageName:id/mozac_browser_toolbar_browser_actions"),
-                ),
-                waitingTime,
-            )
+            for (i in 1..RETRY_COUNT) {
+                try {
+                    mDevice.waitForObjects(
+                        mDevice.findObject(
+                            UiSelector()
+                                .resourceId("$packageName:id/mozac_browser_toolbar_browser_actions"),
+                        ),
+                        waitingTime,
+                    )
 
-            tabsCounter().click()
+                    tabsCounter().click()
+                    assertTrue(
+                        MatcherHelper.itemWithResId("$packageName:id/new_tab_button")
+                            .waitForExists(waitingTime),
+                    )
 
-            mDevice.waitForObjects(
-                mDevice.findObject(
-                    UiSelector().resourceId("$packageName:id/new_tab_button"),
-                ),
-                waitingTime,
-            )
+                    break
+                } catch (e: AssertionError) {
+                    if (i == RETRY_COUNT) {
+                        throw e
+                    } else {
+                        mDevice.waitForIdle()
+                    }
+                }
+            }
+            assertTrue(MatcherHelper.itemWithResId("$packageName:id/new_tab_button").waitForExists(waitingTime))
 
             TabDrawerRobot().interact()
             return TabDrawerRobot.Transition()
@@ -1221,3 +1283,4 @@ private val currentDate = LocalDate.now()
 private val currentDay = currentDate.dayOfMonth
 private val currentMonth = currentDate.month
 private val currentYear = currentDate.year
+private val cookieBanner = itemWithResId("CybotCookiebotDialog")
