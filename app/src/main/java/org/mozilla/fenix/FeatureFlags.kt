@@ -70,7 +70,7 @@ object FeatureFlags {
     /**
      * Enables the notification pre permission prompt.
      */
-    val notificationPrePermissionPromptEnabled = Config.channel.isNightlyOrDebug || Config.channel.isBeta
+    val notificationPrePermissionPromptEnabled = Config.channel.isNightlyOrDebug
 
     /**
      * Enables storage maintenance feature.
