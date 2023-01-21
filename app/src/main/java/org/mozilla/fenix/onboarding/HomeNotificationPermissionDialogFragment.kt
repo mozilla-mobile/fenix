@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.onboarding
 
-import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,11 +23,9 @@ import org.mozilla.fenix.theme.FirefoxTheme
  */
 class HomeNotificationPermissionDialogFragment : DialogFragment() {
 
-    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NO_TITLE, R.style.HomeOnboardingDialogStyle)
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
     override fun onDestroy() {
