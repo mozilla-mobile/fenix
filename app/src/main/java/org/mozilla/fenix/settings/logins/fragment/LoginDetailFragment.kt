@@ -6,6 +6,7 @@ package org.mozilla.fenix.settings.logins.fragment
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.os.Build
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.Menu
@@ -226,17 +227,21 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail), Menu
                     clipboard.sensitiveText = value
                 }
             }
+
             showCopiedSnackbar(view.context.getString(snackbarText))
             Logins.copyLogin.record(NoExtras())
         }
 
         private fun showCopiedSnackbar(copiedItem: String) {
             view?.let {
-                FenixSnackbar.make(
-                    view = it,
-                    duration = Snackbar.LENGTH_SHORT,
-                    isDisplayedWithBrowserToolbar = false,
-                ).setText(copiedItem).show()
+                // Only show a toast for Android 12 and lower.
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+                    FenixSnackbar.make(
+                        view = it,
+                        duration = Snackbar.LENGTH_SHORT,
+                        isDisplayedWithBrowserToolbar = false,
+                    ).setText(copiedItem).show()
+                }
             }
         }
     }
