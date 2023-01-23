@@ -4,22 +4,16 @@
 
 package org.mozilla.fenix.gleanplumb
 
-import android.net.Uri
+import androidx.core.net.toUri
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.telemetry.glean.testing.GleanTestRule
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.BuildConfig
-import org.mozilla.fenix.GleanMetrics.Messaging
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
@@ -33,72 +27,39 @@ class DefaultMessageControllerTest {
     @get:Rule
     val gleanTestRule = GleanTestRule(testContext)
 
-    private val activity: HomeActivity = mockk(relaxed = true)
-    private val storageNimbus: NimbusMessagingStorage = mockk(relaxed = true)
-    private lateinit var controller: DefaultMessageController
+    private val homeActivity: HomeActivity = mockk(relaxed = true)
+    private val messagingController: NimbusMessagingController = mockk(relaxed = true)
+    private lateinit var defaultMessageController: DefaultMessageController
     private val appStore: AppStore = mockk(relaxed = true)
 
     @Before
     fun setup() {
-        controller = DefaultMessageController(
-            messagingStorage = storageNimbus,
+        defaultMessageController = DefaultMessageController(
+            messagingController = messagingController,
             appStore = appStore,
-            homeActivity = activity,
+            homeActivity = homeActivity,
         )
     }
 
     @Test
-    fun `WHEN calling onMessagePressed THEN update the app store and handle the action`() {
-        val customController = spyk(controller)
+    fun `WHEN calling onMessagePressed THEN process the action intent and update the app store`() {
         val message = mockMessage()
-        every { customController.handleAction(any()) } returns mockk()
-        every { storageNimbus.getMessageAction(message) } returns Pair("uuid", message.id)
-        assertNull(Messaging.messageClicked.testGetValue())
+        val uri = "action".toUri()
+        every { messagingController.processMessageActionToUri(message) }.returns(uri)
 
-        customController.onMessagePressed(message)
+        defaultMessageController.onMessagePressed(message)
 
-        assertNotNull(Messaging.messageClicked.testGetValue())
-        val event = Messaging.messageClicked.testGetValue()!!
-        assertEquals(1, event.size)
-        assertEquals(message.id, event.single().extra!!["message_key"])
-        assertEquals("uuid", event.single().extra!!["action_uuid"])
-        verify { customController.handleAction(any()) }
+        verify { messagingController.processMessageActionToUri(message) }
+        verify { homeActivity.processIntent(any()) }
         verify { appStore.dispatch(MessageClicked(message)) }
     }
 
     @Test
-    fun `GIVEN an URL WHEN calling handleAction THEN process the intent with an open uri`() {
-        val intent = controller.handleAction("http://mozilla.org")
-
-        verify { activity.processIntent(any()) }
-
-        val encodedUrl = Uri.encode("http://mozilla.org")
-        assertEquals(
-            "${BuildConfig.DEEP_LINK_SCHEME}://open?url=$encodedUrl",
-            intent.data.toString(),
-        )
-    }
-
-    @Test
-    fun `GIVEN an deeplink WHEN calling handleAction THEN process the intent with an deeplink uri`() {
-        val intent = controller.handleAction("://settings_privacy")
-
-        verify { activity.processIntent(any()) }
-
-        assertEquals("${BuildConfig.DEEP_LINK_SCHEME}://settings_privacy", intent.data.toString())
-    }
-
-    @Test
-    fun `WHEN calling onMessageDismissed THEN report to the messageManager`() {
+    fun `WHEN calling onMessageDismissed THEN update the app store`() {
         val message = mockMessage()
-        assertNull(Messaging.messageDismissed.testGetValue())
 
-        controller.onMessageDismissed(message)
+        defaultMessageController.onMessageDismissed(message)
 
-        assertNotNull(Messaging.messageDismissed.testGetValue())
-        val event = Messaging.messageDismissed.testGetValue()!!
-        assertEquals(1, event.size)
-        assertEquals(message.id, event.single().extra!!["message_key"])
         verify { appStore.dispatch(AppAction.MessagingAction.MessageDismissed(message)) }
     }
 

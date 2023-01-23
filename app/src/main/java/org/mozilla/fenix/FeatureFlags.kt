@@ -44,7 +44,7 @@ object FeatureFlags {
      * Show Pocket sponsored stories in between Pocket recommended stories on home.
      */
     fun isPocketSponsoredStoriesFeatureEnabled(context: Context): Boolean {
-        return isPocketRecommendationsFeatureEnabled(context) && Config.channel.isDebug
+        return isPocketRecommendationsFeatureEnabled(context)
     }
 
     /**
@@ -70,7 +70,7 @@ object FeatureFlags {
     /**
      * Enables the notification pre permission prompt.
      */
-    val notificationPrePermissionPromptEnabled = Config.channel.isNightlyOrDebug
+    val notificationPrePermissionPromptEnabled = Config.channel.isNightlyOrDebug || Config.channel.isBeta
 
     /**
      * Enables storage maintenance feature.

@@ -13,6 +13,7 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
@@ -92,7 +93,7 @@ class SettingsPrivacyTest {
 
             // ENHANCED TRACKING PROTECTION
             verifyEnhancedTrackingProtectionButton()
-            verifyEnhancedTrackingProtectionState("On")
+            verifyEnhancedTrackingProtectionState("Standard")
         }.openEnhancedTrackingProtectionSubMenu {
             verifyNavigationToolBarHeader()
             verifyEnhancedTrackingProtectionProtectionSubMenuItems()
@@ -204,107 +205,13 @@ class SettingsPrivacyTest {
     }
 
     @Test
-    fun saveLoginFromPromptTest() {
-        val saveLoginTest =
-            TestAssetHelper.getSaveLoginAsset(mockWebServer)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(saveLoginTest.url) {
-            verifySaveLoginPromptIsShown()
-            // Click save to save the login
-            saveLoginFromPrompt("Save")
-        }
-        browserScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-            TestHelper.scrollToElementByText("Logins and passwords")
-        }.openLoginsAndPasswordSubMenu {
-            verifyDefaultView()
-        }.openSavedLogins {
-            verifySecurityPromptForLogins()
-            tapSetupLater()
-            // Verify that the login appears correctly
-            verifySavedLoginFromPrompt("test@example.com")
-        }
-    }
-
-    @Test
-    fun neverSaveLoginFromPromptTest() {
-        val saveLoginTest = TestAssetHelper.getSaveLoginAsset(mockWebServer)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(saveLoginTest.url) {
-            verifySaveLoginPromptIsShown()
-            // Don't save the login, add to exceptions
-            saveLoginFromPrompt("Never save")
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openLoginsAndPasswordSubMenu {
-            verifyDefaultView()
-        }.openSavedLogins {
-            verifySecurityPromptForLogins()
-            tapSetupLater()
-            // Verify that the login list is empty
-            verifyNotSavedLoginFromPrompt()
-        }.goBack {
-        }.openLoginExceptions {
-            // Verify localhost was added to exceptions list
-            verifyLocalhostExceptionAdded()
-        }
-    }
-
-    @Test
     fun saveLoginsAndPasswordsOptions() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
-        }.saveLoginsAndPasswordsOptions {
+        }.openSaveLoginsAndPasswordsOptions {
             verifySaveLoginsOptionsView()
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun openWebsiteForSavedLoginTest() {
-        val loginPage = "https://mozilla-mobile.github.io/testapp/loginForm"
-        val originWebsite = "mozilla-mobile.github.io"
-        val userName = "test"
-        val password = "pass"
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(loginPage.toUri()) {
-            fillAndSubmitLoginCredentials(userName, password)
-            saveLoginFromPrompt("Save")
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openLoginsAndPasswordSubMenu {
-        }.openSavedLogins {
-            verifySecurityPromptForLogins()
-            tapSetupLater()
-            viewSavedLoginDetails(userName)
-        }.goToSavedWebsite {
-            verifyUrl(originWebsite)
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun verifyMultipleLoginsSelectionsTest() {
-        val loginPage = "https://mozilla-mobile.github.io/testapp/loginForm"
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(loginPage.toUri()) {
-            fillAndSubmitLoginCredentials("mozilla", "firefox")
-            saveLoginFromPrompt("Save")
-            fillAndSubmitLoginCredentials("firefox", "mozilla")
-            saveLoginFromPrompt("Save")
-            clearUserNameLoginCredential()
-            clickSuggestedLoginsButton()
-            verifySuggestedUserName("firefox")
-            verifySuggestedUserName("mozilla")
-            clickLoginSuggestion("mozilla")
-            verifyPrefilledLoginCredentials("mozilla")
         }
     }
 
@@ -698,13 +605,102 @@ class SettingsPrivacyTest {
             }.openSavedLogins {
                 verifySecurityPromptForLogins()
                 tapSetupLater()
-                verifySavedLoginFromPrompt("mozilla")
+                verifySavedLoginsSectionUsername("mozilla")
             }
 
             addToHomeScreen {
             }.searchAndOpenHomeScreenShortcut(shortcutTitle) {
                 verifyPrefilledPWALoginCredentials("mozilla", shortcutTitle)
             }
+        }
+    }
+
+    @SmokeTest
+    @Test
+    fun verifyCookieBannerReductionTest() {
+        val webSite = "voetbal24.be"
+
+        homeScreen {
+        }.openNavigationToolbar {
+        }.enterURLAndEnterToBrowser(webSite.toUri()) {
+            waitForPageToLoad()
+            verifyCookieBannerExists(exists = true)
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openCookieBannerReductionSubMenu {
+            verifyCookieBannerView(isCookieBannerReductionChecked = false)
+            clickCookieBannerReductionToggle()
+            verifyCheckedCookieBannerReductionToggle(isCookieBannerReductionChecked = true)
+        }
+
+        exitMenu()
+
+        browserScreen {
+            verifyCookieBannerExists(exists = false)
+        }
+
+        restartApp(activityTestRule)
+
+        browserScreen {
+            verifyCookieBannerExists(exists = false)
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openCookieBannerReductionSubMenu {
+            clickCookieBannerReductionToggle()
+            verifyCheckedCookieBannerReductionToggle(false)
+        }
+
+        exitMenu()
+
+        browserScreen {
+        }.openThreeDotMenu {
+        }.refreshPage {
+            verifyCookieBannerExists(exists = false)
+        }
+    }
+
+    @SmokeTest
+    @Test
+    @Ignore("This will be re-visited when addressing bug 1810745")
+    fun verifyCookieBannerReductionInPrivateBrowsingTest() {
+        val webSite = "voetbal24.be"
+
+        homeScreen {
+        }.togglePrivateBrowsingMode()
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(webSite.toUri()) {
+            waitForPageToLoad()
+            verifyCookieBannerExists(exists = true)
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openCookieBannerReductionSubMenu {
+            verifyCookieBannerView(isCookieBannerReductionChecked = false)
+            clickCookieBannerReductionToggle()
+            verifyCheckedCookieBannerReductionToggle(isCookieBannerReductionChecked = true)
+            exitMenu()
+        }
+        browserScreen {
+            verifyCookieBannerExists(exists = false)
+        }
+
+        restartApp(activityTestRule)
+
+        homeScreen {
+        }.openTabDrawer {
+        }.openTab("Voetbal24") {
+            verifyCookieBannerExists(exists = false)
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openCookieBannerReductionSubMenu {
+            clickCookieBannerReductionToggle()
+            verifyCheckedCookieBannerReductionToggle(false)
+            exitMenu()
+        }
+        browserScreen {
+        }.openThreeDotMenu {
+        }.refreshPage {
+            verifyCookieBannerExists(exists = false)
         }
     }
 }
