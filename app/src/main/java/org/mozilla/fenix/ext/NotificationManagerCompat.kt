@@ -58,3 +58,15 @@ private fun NotificationManagerCompat.getNotificationChannelSafe(channelId: Stri
         null
     }
 }
+
+/**
+ * Returns if the notification channel with the given [channelId], is important.
+ * It also returns false if the channel does not exist.
+ *
+ * @param channelId the id of the notification channel to check.
+ */
+@Suppress("TooGenericExceptionCaught")
+internal fun NotificationManagerCompat.isChannelImportant(channelId: String): Boolean {
+    return (getNotificationChannelSafe(channelId)?.importance ?: return false) !=
+        NotificationManagerCompat.IMPORTANCE_NONE
+}

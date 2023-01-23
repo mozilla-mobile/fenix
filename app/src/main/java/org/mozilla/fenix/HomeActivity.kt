@@ -92,6 +92,7 @@ import org.mozilla.fenix.ext.areNotificationsEnabledSafe
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hasTopDestination
+import org.mozilla.fenix.ext.isChannelImportant
 import org.mozilla.fenix.ext.isNotificationChannelEnabled
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.setNavigationIcon
@@ -216,6 +217,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     private val notificationPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
             // we do not currently act on the result of this request, but we can choose to do something different here.
+        }
+
+    private val notificationPermissionForWorkers =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) {
+                setupNotificationWorkers()
+            }
         }
 
     @Suppress("ComplexMethod")
@@ -439,9 +447,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 // Only set up Workers if notifications are enabled
                 val notificationManagerCompat = NotificationManagerCompat.from(this)
                 if (notificationManagerCompat.isNotificationChannelEnabled(MARKETING_CHANNEL_ID)) {
-                    DefaultBrowserNotificationWorker.setDefaultBrowserNotificationIfNeeded(this)
-                    ReEngagementNotificationWorker.setReEngagementNotificationIfNeeded(this)
-                    MessageNotificationWorker.setMessageNotificationWorker(this)
+                    setupNotificationWorkers()
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                        notificationManagerCompat.isChannelImportant(MARKETING_CHANNEL_ID)
+                    ) {
+                        notificationPermissionForWorkers.launch(POST_NOTIFICATIONS)
+                    }
                 }
             }
         }
@@ -450,6 +462,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         // and the user changes the system language
         // More details here: https://github.com/mozilla-mobile/fenix/pull/27793#discussion_r1029892536
         components.core.store.dispatch(SearchAction.RefreshSearchEnginesAction)
+    }
+
+    private fun setupNotificationWorkers() {
+        DefaultBrowserNotificationWorker.setDefaultBrowserNotificationIfNeeded(this)
+        ReEngagementNotificationWorker.setReEngagementNotificationIfNeeded(this)
+        MessageNotificationWorker.setMessageNotificationWorker(this)
     }
 
     override fun onStart() {
