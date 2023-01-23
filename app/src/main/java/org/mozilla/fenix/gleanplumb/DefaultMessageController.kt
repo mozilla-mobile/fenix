@@ -20,12 +20,10 @@ class DefaultMessageController(
 ) : MessageController {
 
     override fun onMessagePressed(message: Message) {
-        with(message) {
-            val actionUri = messagingController.processMessageActionToUri(this)
-            homeActivity.processIntent(Intent(Intent.ACTION_VIEW, actionUri))
+        val actionUri = messagingController.processMessageActionToUri(message)
+        homeActivity.processIntent(Intent(Intent.ACTION_VIEW, actionUri))
 
-            appStore.dispatch(MessageClicked(this))
-        }
+        appStore.dispatch(MessageClicked(message))
     }
 
     override fun onMessageDismissed(message: Message) {

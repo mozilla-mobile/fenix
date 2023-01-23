@@ -27,6 +27,7 @@ import org.mozilla.fenix.GleanMetrics.Messaging
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.nimbus.MessageData
 import org.mozilla.fenix.nimbus.StyleData
+import java.util.UUID
 
 private const val MOCK_TIME_MILLIS = 1000L
 
@@ -126,8 +127,9 @@ class NimbusMessagingControllerTest {
         }
 
     @Test
-    fun `GIVEN action is URL WHEN calling processMessageActionToUri THEN record clicked telemetry and return an open URI`() {
-        val message = createMessage("id-1", action = "http://mozilla.org")
+    fun `GIVEN action is URL WHEN calling processMessageActionToUri THEN record a clicked telemetry event and return an open URI`() {
+        val url = "http://mozilla.org"
+        val message = createMessage("id-1", action = url)
         every { storage.generateUuidAndFormatAction(message.action) } returns Pair(
             null,
             message.action,
@@ -135,7 +137,7 @@ class NimbusMessagingControllerTest {
         // Assert telemetry is initially null
         assertNull(Messaging.messageClicked.testGetValue())
 
-        val encodedUrl = Uri.encode("http://mozilla.org")
+        val encodedUrl = Uri.encode(url)
         val expectedUri = "${BuildConfig.DEEP_LINK_SCHEME}://open?url=$encodedUrl".toUri()
 
         val actualUri = controller.processMessageActionToUri(message)
@@ -145,6 +147,31 @@ class NimbusMessagingControllerTest {
         val clickedEvent = Messaging.messageClicked.testGetValue()!!
         assertEquals(1, clickedEvent.size)
         assertEquals(message.id, clickedEvent.single().extra!!["message_key"])
+
+        assertEquals(expectedUri, actualUri)
+    }
+
+    @Test
+    fun `GIVEN a URL with a {uuid} WHEN calling processMessageActionToUri THEN record a clicked telemetry event and return an open URI`() {
+        val url = "http://mozilla.org?uuid={uuid}"
+        val message = createMessage("id-1", action = url)
+        val uuid = UUID.randomUUID().toString()
+        every { storage.generateUuidAndFormatAction(any()) } returns Pair(uuid, message.action)
+
+        // Assert telemetry is initially null
+        assertNull(Messaging.messageClicked.testGetValue())
+
+        val encodedUrl = Uri.encode(url)
+        val expectedUri = "${BuildConfig.DEEP_LINK_SCHEME}://open?url=$encodedUrl".toUri()
+
+        val actualUri = controller.processMessageActionToUri(message)
+
+        // Updated telemetry
+        val clickedEvents = Messaging.messageClicked.testGetValue()
+        assertNotNull(clickedEvents)
+        val clickedEvent = clickedEvents!!.single()
+        assertEquals(message.id, clickedEvent.extra!!["message_key"])
+        assertEquals(uuid, clickedEvent.extra!!["action_uuid"])
 
         assertEquals(expectedUri, actualUri)
     }

@@ -46,26 +46,26 @@ class MessageNotificationWorker(
             val nextMessage =
                 messagingStorage.getNextMessage(MessageSurfaceId.NOTIFICATION, messages)
 
-            nextMessage?.apply {
-                if (shouldDisplayMessage()) {
-                    val nimbusMessagingController = NimbusMessagingController(messagingStorage)
-
-                    // Update message as displayed.
-                    val messageAsDisplayed =
-                        nimbusMessagingController.updateMessageAsDisplayed(this)
-                    nimbusMessagingController.onMessageDisplayed(messageAsDisplayed)
-
-                    // Generate the processed Message action
-                    val processedAction = nimbusMessagingController.processMessageActionToUri(this)
-                    val actionIntent = Intent(Intent.ACTION_VIEW, processedAction)
-
-                    NotificationManagerCompat.from(context).notify(
-                        MESSAGE_TAG,
-                        SharedIdsHelper.getNextIdForTag(context, id),
-                        buildNotification(this, actionIntent),
-                    )
-                }
+            if (nextMessage == null || !nextMessage.shouldDisplayMessage()) {
+                return@launch
             }
+
+            val nimbusMessagingController = NimbusMessagingController(messagingStorage)
+
+            // Update message as displayed.
+            val messageAsDisplayed =
+                nimbusMessagingController.updateMessageAsDisplayed(nextMessage)
+            nimbusMessagingController.onMessageDisplayed(messageAsDisplayed)
+
+            // Generate the processed Message action
+            val processedAction = nimbusMessagingController.processMessageActionToUri(nextMessage)
+            val actionIntent = Intent(Intent.ACTION_VIEW, processedAction)
+
+            NotificationManagerCompat.from(context).notify(
+                MESSAGE_TAG,
+                SharedIdsHelper.getNextIdForTag(context, nextMessage.id),
+                buildNotification(nextMessage, actionIntent),
+            )
         }
 
         return Result.success()
