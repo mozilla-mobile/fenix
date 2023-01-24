@@ -74,7 +74,6 @@ class SettingsPrivacyTest {
     }
 
     // Walks through settings privacy menu and sub-menus to ensure all items are present
-    @Ignore("Failing after updating settings screen summaries. See: https://github.com/mozilla-mobile/fenix/issues/28208")
     @Test
     fun settingsPrivacyItemsTest() {
         homeScreen {
@@ -94,7 +93,7 @@ class SettingsPrivacyTest {
 
             // ENHANCED TRACKING PROTECTION
             verifyEnhancedTrackingProtectionButton()
-            verifyEnhancedTrackingProtectionState("On")
+            verifyEnhancedTrackingProtectionState("Standard")
         }.openEnhancedTrackingProtectionSubMenu {
             verifyNavigationToolBarHeader()
             verifyEnhancedTrackingProtectionProtectionSubMenuItems()
@@ -211,7 +210,7 @@ class SettingsPrivacyTest {
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
-        }.saveLoginsAndPasswordsOptions {
+        }.openSaveLoginsAndPasswordsOptions {
             verifySaveLoginsOptionsView()
         }
     }
@@ -662,6 +661,7 @@ class SettingsPrivacyTest {
 
     @SmokeTest
     @Test
+    @Ignore("This will be re-visited when addressing bug 1810745")
     fun verifyCookieBannerReductionInPrivateBrowsingTest() {
         val webSite = "voetbal24.be"
 
