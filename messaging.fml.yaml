@@ -75,8 +75,9 @@ features:
             INACTIVE_4_DAYS:  "'app_launched'|eventLastSeen('Days', 0) >= 4"
             INACTIVE_5_DAYS:  "'app_launched'|eventLastSeen('Days', 0) >= 5"
 
-            # Has the user signed in the last 5 years
-            FXA_SIGNED_IN:    "'sync_auth.sign_in'|eventLastSeen('Years', 0) <= 5"
+            # Has the user signed in the last 4 years
+            FXA_SIGNED_IN:     "'sync_auth.sign_in'|eventLastSeen('Years', 0) <= 4"
+            FXA_NOT_SIGNED_IN: "'sync_auth.sign_in'|eventLastSeen('Years', 0) > 4"
 
             # https://mozilla-hub.atlassian.net/wiki/spaces/FJT/pages/11469471/Core+Active
             USER_INFREQUENT:  "'app_launched'|eventCountNonZero('Days', 28) >= 1 && 'app_launched'|eventCountNonZero('Days', 28) < 7"
