@@ -13,14 +13,18 @@ import android.os.Build.VERSION_CODES.P
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import io.mockk.Called
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.engine.EngineSession
+import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
@@ -28,23 +32,32 @@ import org.mozilla.fenix.BuildConfig.DEEP_LINK_SCHEME
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.gleanplumb.MESSAGE_ID
+import org.mozilla.fenix.gleanplumb.Message
+import org.mozilla.fenix.gleanplumb.NimbusMessagingController
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.nimbus.MessageData
 import org.mozilla.fenix.settings.SupportUtils
 import org.robolectric.annotation.Config
 
 @RunWith(FenixRobolectricTestRunner::class)
 class HomeDeepLinkIntentProcessorTest {
+    @get:Rule
+    val coroutinesTestRule = MainCoroutineRule()
+
     private lateinit var activity: HomeActivity
     private lateinit var navController: NavController
     private lateinit var out: Intent
     private lateinit var processorHome: HomeDeepLinkIntentProcessor
+    private lateinit var nimbusMessagingController: NimbusMessagingController
 
     @Before
     fun setup() {
         activity = mockk(relaxed = true)
         navController = mockk(relaxed = true)
         out = mockk()
-        processorHome = HomeDeepLinkIntentProcessor(activity)
+        nimbusMessagingController = mockk(relaxed = true)
+        processorHome = HomeDeepLinkIntentProcessor(activity, coroutinesTestRule.scope, nimbusMessagingController)
     }
 
     @Test
@@ -69,6 +82,34 @@ class HomeDeepLinkIntentProcessorTest {
     fun `return true if scheme is a fenix variant`() {
         assertTrue(processorHome.process(testIntent("fenix-beta://test"), navController, out))
 
+        verify { activity wasNot Called }
+        verify { navController wasNot Called }
+        verify { out wasNot Called }
+    }
+
+    @Test
+    fun `GIVEN intent is 'message notification click' WHEN processed THEN onMessageClicked is called with message metadata`() {
+        val message = mockMessage()
+        coEvery { nimbusMessagingController.getMessage(message.id) }.returns(message)
+        val testIntent = testIntent("fenix-beta://test")
+        testIntent.putExtra(MESSAGE_ID, message.id)
+
+        assertTrue(processorHome.process(testIntent, navController, out))
+
+        coVerify { nimbusMessagingController.onMessageClicked(message.metadata) }
+        verify { activity wasNot Called }
+        verify { navController wasNot Called }
+        verify { out wasNot Called }
+    }
+
+    @Test
+    fun `GIVEN intent is not 'message notification click' WHEN processed THEN onMessageClicked is never called`() {
+        val testIntent = testIntent("fenix-beta://test")
+        testIntent.putExtra("UNKNOWN_INTENT", "id")
+
+        assertTrue(processorHome.process(testIntent, navController, out))
+
+        coVerify { nimbusMessagingController wasNot Called }
         verify { activity wasNot Called }
         verify { navController wasNot Called }
         verify { out wasNot Called }
@@ -223,7 +264,7 @@ class HomeDeepLinkIntentProcessorTest {
 
     @Test
     fun `process invalid open deep link`() {
-        val invalidProcessor = HomeDeepLinkIntentProcessor(activity)
+        val invalidProcessor = HomeDeepLinkIntentProcessor(activity, coroutinesTestRule.scope, nimbusMessagingController)
 
         assertTrue(invalidProcessor.process(testIntent("open"), navController, out))
 
@@ -298,4 +339,15 @@ class HomeDeepLinkIntentProcessorTest {
     }
 
     private fun testIntent(uri: String) = Intent("", "$DEEP_LINK_SCHEME://$uri".toUri())
+
+    private fun mockMessage() = Message(
+        id = "id",
+        data = MessageData(),
+        style = mockk(relaxed = true),
+        action = "action",
+        triggers = emptyList(),
+        metadata = Message.Metadata(
+            id = "id",
+        ),
+    )
 }

@@ -320,6 +320,10 @@
                 android:exported="false" />
 
         <service
+            android:name=".gleanplumb.NotificationDismissedService"
+            android:exported="false" />
+
+        <service
             android:name=".push.FirebasePushService"
             android:exported="false">
             <intent-filter>
