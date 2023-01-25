@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.DialogFragment
@@ -27,9 +28,15 @@ import org.mozilla.fenix.theme.FirefoxTheme
  */
 class HomeNotificationPermissionDialogFragment : DialogFragment() {
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val notificationPermission =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
-            // we do not currently act on the result of this request, but we can choose to do something different here.
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) {
+                // we do not currently act on the result of this request,
+                // but we can choose to do something different here.
+            } else {
+                requireContext().settings().trackPermissionRequestDenied(POST_NOTIFICATIONS)
+            }
         }
 
     @SuppressLint("SourceLockedOrientationActivity")

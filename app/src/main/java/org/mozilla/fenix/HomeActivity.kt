@@ -27,6 +27,7 @@ import android.view.WindowManager.LayoutParams.FLAG_SECURE
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.CallSuper
 import androidx.annotation.IdRes
+import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.Companion.PROTECTED
 import androidx.appcompat.app.ActionBar
@@ -214,15 +215,24 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     private val startupPathProvider = StartupPathProvider()
     private lateinit var startupTypeTelemetry: StartupTypeTelemetry
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val notificationPermission =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
-            // we do not currently act on the result of this request, but we can choose to do something different here.
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) {
+                // we do not currently act on the result of this request,
+                // but we can choose to do something different here.
+            } else {
+                settings().trackPermissionRequestDenied(POST_NOTIFICATIONS)
+            }
         }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val notificationPermissionForWorkers =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) {
                 setupNotificationWorkers()
+            } else {
+                settings().trackPermissionRequestDenied(POST_NOTIFICATIONS)
             }
         }
 

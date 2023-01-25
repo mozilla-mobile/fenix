@@ -13,6 +13,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.concept.engine.EngineSession
@@ -134,6 +135,24 @@ fun Activity.setNavigationIcon(
         it.setHomeAsUpIndicator(icon)
         it.setHomeActionContentDescription(R.string.action_bar_up_description)
     }
+}
+
+/**
+ * Checks if you can request a permission.
+ * It returns true if the permission was not requested before or if it was not permanently rejected.
+ */
+fun Activity.canShowPermissionRequest(
+    permission: String,
+): Boolean {
+    // this returns false if the permission was permanently denied or has never been asked.
+    // it returns true only when the permission was previously denied.
+    val shouldShowRequestPermissionRationale =
+        ActivityCompat.shouldShowRequestPermissionRationale(this, permission)
+
+    val wasPermissionDeniedBefore = this.settings().wasPermissionDeniedBefore(permission)
+
+    return (shouldShowRequestPermissionRationale && wasPermissionDeniedBefore) ||
+        (!shouldShowRequestPermissionRationale && !wasPermissionDeniedBefore)
 }
 
 const val REQUEST_CODE_BROWSER_ROLE = 1

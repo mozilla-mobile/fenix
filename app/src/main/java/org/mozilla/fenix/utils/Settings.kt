@@ -1600,4 +1600,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         key = appContext.getPreferenceKey(R.string.pref_key_growth_uri_load_last_sent),
         default = 0,
     )
+
+    /**
+     * Used to keep track of denied permissions.
+     */fun trackPermissionRequestDenied(permission: String) =
+        preferences.edit().putBoolean(permission, true).apply()
+
+    /**
+     * Used to check fo the permission was previously denied.
+     */fun wasPermissionDeniedBefore(permission: String): Boolean =
+        preferences.getBoolean(permission, false)
 }
