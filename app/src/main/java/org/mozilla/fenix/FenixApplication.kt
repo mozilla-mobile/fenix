@@ -256,6 +256,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(TelemetryLifecycleObserver(components.core.store))
 
+        components.analytics.metricsStorage.tryRegisterAsUsageRecorder(this)
+
         downloadWallpapers()
     }
 
