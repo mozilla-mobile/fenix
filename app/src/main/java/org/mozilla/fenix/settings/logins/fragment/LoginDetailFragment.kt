@@ -150,12 +150,14 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail), Menu
         binding.copyUsername.setOnClickListener {
             interactor.onCopyUsername(args.savedLoginId)
             showCopiedSnackbar(view = it, copiedItem = it.context.getString(R.string.logins_username_copied))
+            Logins.copyLogin.record(NoExtras())
         }
 
         binding.passwordText.text = login?.password
         binding.copyPassword.setOnClickListener {
             interactor.onCopyPassword(args.savedLoginId)
             showCopiedSnackbar(view = it, copiedItem = it.context.getString(R.string.logins_password_copied))
+            Logins.copyLogin.record(NoExtras())
         }
     }
 
