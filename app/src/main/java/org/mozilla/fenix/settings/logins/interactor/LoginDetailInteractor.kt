@@ -4,6 +4,8 @@
 
 package org.mozilla.fenix.settings.logins.interactor
 
+import mozilla.components.service.glean.private.NoExtras
+import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
 
 /**
@@ -28,6 +30,7 @@ class LoginDetailInteractor(
      */
     fun onCopyUsername(loginId: String) {
         savedLoginsController.copyUsername(loginId)
+        Logins.copyLogin.record(NoExtras())
     }
 
     /**
@@ -36,5 +39,6 @@ class LoginDetailInteractor(
      */
     fun onCopyPassword(loginId: String) {
         savedLoginsController.copyPassword(loginId)
+        Logins.copyLogin.record(NoExtras())
     }
 }
