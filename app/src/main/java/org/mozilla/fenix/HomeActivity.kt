@@ -190,7 +190,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private val externalSourceIntentProcessors by lazy {
         listOf(
-            HomeDeepLinkIntentProcessor(this, lifecycleScope),
+            HomeDeepLinkIntentProcessor(this),
             SpeechProcessingIntentProcessor(this, components.core.store),
             AssistIntentProcessor(),
             StartSearchIntentProcessor(),

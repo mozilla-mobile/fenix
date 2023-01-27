@@ -67,15 +67,13 @@ class NimbusMessagingController(
     }
 
     /**
-     * Create and return the relevant [Intent] for the given [Message].
+     * Create and return the relevant [Intent] for the given [action].
      *
-     * We call this `process` as [processMessageActionToUri] is used to process the [Message.action].
-     *
-     * @param message the [Message] to create the [Intent] for.
+     * @param action the [Message.action] to create the [Intent] for.
      * @return an [Intent] using the processed [Message.action].
      */
-    fun processMessageActionToIntent(message: Message): Intent {
-        return Intent(Intent.ACTION_VIEW, processMessageActionToUri(message))
+    fun getIntentForMessageAction(action: String): Intent {
+        return Intent(Intent.ACTION_VIEW, action.toDeepLinkSchemeUri())
     }
 
     /**

@@ -11,8 +11,6 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.provider.Settings
 import androidx.navigation.NavController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.BrowserDirection
@@ -21,49 +19,23 @@ import org.mozilla.fenix.GlobalDirections
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.ext.alreadyOnDestination
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.openSetDefaultBrowserOption
-import org.mozilla.fenix.gleanplumb.MESSAGE_ID
-import org.mozilla.fenix.gleanplumb.MessageNotificationWorker.Companion.isMessageNotificationOnClickedIntent
-import org.mozilla.fenix.gleanplumb.NimbusMessagingController
 
 /**
  * Deep links in the form of `fenix://host` open different parts of the app.
  */
 class HomeDeepLinkIntentProcessor(
     private val activity: HomeActivity,
-    private val coroutineScope: CoroutineScope,
-    private val nimbusMessagingController: NimbusMessagingController = NimbusMessagingController(
-        activity.components.analytics.messagingStorage,
-    ),
 ) : HomeIntentProcessor {
     private val logger = Logger("DeepLinkIntentProcessor")
 
     override fun process(intent: Intent, navController: NavController, out: Intent): Boolean {
-        val scheme =
-            intent.scheme?.equals(BuildConfig.DEEP_LINK_SCHEME, ignoreCase = true) ?: return false
+        val scheme = intent.scheme?.equals(BuildConfig.DEEP_LINK_SCHEME, ignoreCase = true) ?: return false
         return if (scheme) {
-            intent.handleExtras()
             intent.data?.let { handleDeepLink(it, navController) }
             true
         } else {
             false
-        }
-    }
-
-    private fun Intent.handleExtras() {
-        when {
-            isMessageNotificationOnClickedIntent(this) -> {
-                // isMessageNotificationClickedIntent guarantees getStringExtra(MESSAGE_ID) is not null.
-                val messageId = getStringExtra(MESSAGE_ID)!!
-
-                coroutineScope.launch {
-                    val message = nimbusMessagingController.getMessage(messageId)
-                    if (message != null) {
-                        nimbusMessagingController.onMessageClicked(message.metadata)
-                    }
-                }
-            }
         }
     }
 

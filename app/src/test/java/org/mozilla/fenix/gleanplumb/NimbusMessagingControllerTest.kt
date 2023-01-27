@@ -235,14 +235,14 @@ class NimbusMessagingControllerTest {
         }
 
     @Test
-    fun `WHEN processMessageActionToIntent is called THEN return a generated Intent with the processed Message action`() {
+    fun `WHEN getIntentForMessageAction is called THEN return a generated Intent with the processed Message action`() {
         val message = createMessage("id-1", action = "unknown")
         every { storage.generateUuidAndFormatAction(message.action) } returns Pair(
             null,
             message.action,
         )
 
-        val actualIntent = controller.processMessageActionToIntent(message)
+        val actualIntent = controller.getIntentForMessageAction(message.action)
 
         // The processed Intent data
         assertEquals(Intent.ACTION_VIEW, actualIntent.action)

@@ -19,7 +19,7 @@ fun createBaseNotification(
     channelId: String,
     title: String?,
     text: String,
-    onClick: PendingIntent,
+    onClick: PendingIntent? = null,
     onDismiss: PendingIntent? = null,
 ): Notification {
     return NotificationCompat.Builder(context, channelId)

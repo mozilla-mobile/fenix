@@ -275,6 +275,10 @@
             android:exported="false"
             android:theme="@style/DialogActivityTheme" />
 
+        <activity
+            android:name=".gleanplumb.NotificationClickedReceiverActivity"
+            android:exported="false" />
+
         <service
             android:name=".autofill.AutofillService"
             android:exported="true"
