@@ -94,6 +94,7 @@ class CollectionTest {
         }
     }
 
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1812580")
     @SmokeTest
     @Test
     fun verifyExpandedCollectionItemsTest() {
@@ -175,6 +176,7 @@ class CollectionTest {
         }
     }
 
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1812580")
     @SmokeTest
     @Test
     fun shareCollectionTest() {
@@ -203,6 +205,7 @@ class CollectionTest {
 
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1812580")
     @SmokeTest
     @Test
     fun deleteCollectionTest() {
@@ -228,6 +231,7 @@ class CollectionTest {
     }
 
     // open a webpage, and add currently opened tab to existing collection
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1812580")
     @Test
     fun mainMenuSaveToExistingCollection() {
         val firstWebPage = getGenericAsset(mockWebServer, 1)
@@ -254,6 +258,7 @@ class CollectionTest {
         }
     }
 
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1812580")
     @Test
     fun verifyAddTabButtonOfCollectionMenu() {
         val firstWebPage = getGenericAsset(mockWebServer, 1)
@@ -280,6 +285,7 @@ class CollectionTest {
         }
     }
 
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1813048")
     @Test
     fun renameCollectionTest() {
         val webPage = getGenericAsset(mockWebServer, 1)
@@ -300,6 +306,7 @@ class CollectionTest {
         }
     }
 
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1812580")
     @Test
     fun createSecondCollectionTest() {
         val webPage = getGenericAsset(mockWebServer, 1)
@@ -322,6 +329,7 @@ class CollectionTest {
         }
     }
 
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1812580")
     @Test
     fun removeTabFromCollectionTest() {
         val webPage = getGenericAsset(mockWebServer, 1)
@@ -344,6 +352,7 @@ class CollectionTest {
         }
     }
 
+    @Ignore("Failing, see: Bugzilla tickets 1807289 and 1812997")
     @Test
     fun swipeLeftToRemoveTabFromCollectionTest() {
         val testPage = getGenericAsset(mockWebServer, 1)
@@ -370,6 +379,7 @@ class CollectionTest {
         }
     }
 
+    @Ignore("Failing, see: Bugzilla tickets 1807289 and 1813047")
     @Test
     fun swipeRightToRemoveTabFromCollectionTest() {
         val testPage = getGenericAsset(mockWebServer, 1)
