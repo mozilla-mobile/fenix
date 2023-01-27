@@ -285,6 +285,7 @@ class CollectionTest {
         }
     }
 
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1813048")
     @Test
     fun renameCollectionTest() {
         val webPage = getGenericAsset(mockWebServer, 1)
@@ -351,6 +352,7 @@ class CollectionTest {
         }
     }
 
+    @Ignore("Failing, see: Bugzilla tickets 1807289 and 1812997")
     @Test
     fun swipeLeftToRemoveTabFromCollectionTest() {
         val testPage = getGenericAsset(mockWebServer, 1)
@@ -377,6 +379,7 @@ class CollectionTest {
         }
     }
 
+    @Ignore("Failing, see: Bugzilla tickets 1807289 and 1813047")
     @Test
     fun swipeRightToRemoveTabFromCollectionTest() {
         val testPage = getGenericAsset(mockWebServer, 1)
