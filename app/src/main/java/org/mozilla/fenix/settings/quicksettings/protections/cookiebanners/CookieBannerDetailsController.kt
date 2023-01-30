@@ -73,11 +73,8 @@ class DefaultCookieBannerDetailsController(
         getCurrentTab()?.let { tab ->
             context.components.useCases.trackingProtectionUseCases.containsException(tab.id) { contains ->
                 ioScope.launch {
-                    val hasException = if (context.settings().shouldUseCookieBanner) {
-                        cookieBannersStorage.hasException(tab.content.url, tab.content.private)
-                    } else {
-                        false
-                    }
+                    val cookieBannerState =
+                        cookieBannersStorage.queryCookieBannerState(tab, context.settings())
                     withContext(Dispatchers.Main) {
                         fragment.runIfFragmentIsAttached {
                             navController().popBackStack()
@@ -93,7 +90,7 @@ class DefaultCookieBannerDetailsController(
                                     certificateName = tab.content.securityInfo.issuer,
                                     permissionHighlights = tab.content.permissionHighlights,
                                     isTrackingProtectionEnabled = isTrackingProtectionEnabled,
-                                    isCookieHandlingEnabled = !hasException,
+                                    cookieBannerState = cookieBannerState,
                                 )
                             navController().navigate(directions)
                         }
@@ -119,11 +116,7 @@ class DefaultCookieBannerDetailsController(
                 cookieBannersStorage.addException(uri = tab.content.url, privateBrowsing = tab.content.private)
                 CookieBanners.exceptionAdded.record(NoExtras())
             }
-            protectionsStore.dispatch(
-                ProtectionsAction.ToggleCookieBannerHandlingProtectionEnabled(
-                    isEnabled,
-                ),
-            )
+            protectionsStore.dispatch(ProtectionsAction.ToggleCookieBannerHandlingProtection)
             reload(tab.id)
         }
     }

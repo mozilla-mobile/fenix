@@ -18,6 +18,7 @@ import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.queryCookieBannerState
 
 /**
  * Interactor for the tracking protection panel
@@ -54,11 +55,8 @@ class TrackingProtectionPanelInteractor(
         getCurrentTab()?.let { tab ->
             context.components.useCases.trackingProtectionUseCases.containsException(tab.id) { contains ->
                 ioScope.launch {
-                    val hasException = if (context.settings().shouldUseCookieBanner) {
-                        cookieBannersStorage.hasException(tab.content.url, tab.content.private)
-                    } else {
-                        false
-                    }
+                    val cookieBannerState =
+                        cookieBannersStorage.queryCookieBannerState(tab, context.settings())
                     withContext(Dispatchers.Main) {
                         fragment.runIfFragmentIsAttached {
                             navController().popBackStack()
@@ -75,7 +73,7 @@ class TrackingProtectionPanelInteractor(
                                     certificateName = tab.content.securityInfo.issuer,
                                     permissionHighlights = tab.content.permissionHighlights,
                                     isTrackingProtectionEnabled = isTrackingProtectionEnabled,
-                                    isCookieHandlingEnabled = !hasException,
+                                    cookieBannerState = cookieBannerState,
                                 )
                             navController().navigate(directions)
                         }

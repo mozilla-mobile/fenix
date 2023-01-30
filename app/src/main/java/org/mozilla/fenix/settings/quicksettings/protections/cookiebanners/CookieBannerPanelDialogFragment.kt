@@ -58,7 +58,7 @@ class CookieBannerPanelDialogFragment : FenixDialogFragment() {
                     tab = tab,
                     url = args.url,
                     isTrackingProtectionEnabled = args.trackingProtectionEnabled,
-                    isCookieBannerHandlingEnabled = args.cookieBannerHandlingEnabled,
+                    cookieBannerState = args.cookieBannerState,
                     listTrackers = listOf(),
                     mode = ProtectionsState.Mode.Normal,
                     lastAccessedCategory = "",

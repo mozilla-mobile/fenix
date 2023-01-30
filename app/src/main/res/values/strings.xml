@@ -349,6 +349,8 @@
     <string name="reduce_cookie_banner_summary" moz:RemovedIn="110" tools:ignore="UnusedResources">Firefox automatically tries to reject cookie requests on cookie banners. If a reject option isn’t available, Firefox may accept all cookies to dismiss the banner.</string>
     <!-- Summary for the preference for rejecting all cookies whenever possible. The first parameter is the application name -->
     <string name="reduce_cookie_banner_summary_1">%1$s automatically tries to reject cookie requests on cookie banners.</string>
+    <!-- Text for indicating cookie banner handling is not supported this site, this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_not_supported_for_site">Site currently not supported</string>
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_off_for_site">Off for this site</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->

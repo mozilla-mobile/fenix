@@ -968,8 +968,8 @@
             android:name="isTrackingProtectionEnabled"
             app:argType="boolean" />
         <argument
-            android:name="isCookieHandlingEnabled"
-            app:argType="boolean" />
+            android:name="cookieBannerState"
+            app:argType="org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.CookieBannerState" />
     </dialog>
     <dialog
         android:id="@+id/cookieBannerDialogFragment"
@@ -999,8 +999,8 @@
             android:name="trackingProtectionEnabled"
             app:argType="boolean" />
         <argument
-            android:name="cookieBannerHandlingEnabled"
-            app:argType="boolean" />
+            android:name="cookieBannerState"
+            app:argType="org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.CookieBannerState" />
         <argument
             android:name="gravity"
             android:defaultValue="80"
@@ -1054,8 +1054,8 @@
             android:name="trackingProtectionEnabled"
             app:argType="boolean" />
         <argument
-            android:name="cookieBannerHandlingEnabled"
-            app:argType="boolean" />
+            android:name="cookieBannerState"
+            app:argType="org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.CookieBannerState" />
         <argument
             android:name="gravity"
             android:defaultValue="80"

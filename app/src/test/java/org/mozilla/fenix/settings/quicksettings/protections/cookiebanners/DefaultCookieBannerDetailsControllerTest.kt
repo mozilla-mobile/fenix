@@ -161,7 +161,7 @@ internal class DefaultCookieBannerDetailsControllerTest {
                     privateBrowsing = tab.content.private,
                 )
                 protectionsStore.dispatch(
-                    ProtectionsAction.ToggleCookieBannerHandlingProtectionEnabled(
+                    ProtectionsAction.ToggleCookieBannerHandlingProtection(
                         isEnabled,
                     ),
                 )
@@ -191,7 +191,7 @@ internal class DefaultCookieBannerDetailsControllerTest {
                     privateBrowsing = tab.content.private,
                 )
                 protectionsStore.dispatch(
-                    ProtectionsAction.ToggleCookieBannerHandlingProtectionEnabled(
+                    ProtectionsAction.ToggleCookieBannerHandlingProtection(
                         isEnabled,
                     ),
                 )

@@ -28,6 +28,7 @@ import androidx.core.view.isVisible
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.databinding.QuicksettingsProtectionsPanelBinding
+import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.CookieBannerState
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.trackingprotection.ProtectionsState
 import org.mozilla.fenix.utils.Settings
@@ -52,7 +53,7 @@ class ProtectionsView(
      */
     fun update(state: ProtectionsState) {
         bindTrackingProtectionInfo(state.isTrackingProtectionEnabled)
-        bindCookieBannerProtection(state.isCookieBannerHandlingEnabled)
+        bindCookieBannerProtection(state.cookieBannerState)
         binding.trackingProtectionSwitch.isVisible = settings.shouldUseTrackingProtection
         binding.cookieBannerItem.isVisible = shouldShowCookieBanner
 
@@ -83,32 +84,26 @@ class ProtectionsView(
     private val shouldShowCookieBanner: Boolean
         get() = settings.shouldShowCookieBannerUI && settings.shouldUseCookieBanner
 
-    private fun bindCookieBannerProtection(isCookieBannerHandlingEnabled: Boolean) {
+    private fun bindCookieBannerProtection(cookieBannerState: CookieBannerState) {
         val context = binding.cookieBannerItem.context
         val label = context.getString(R.string.preferences_cookie_banner_reduction)
-        val description = context.getString(
-            if (isCookieBannerHandlingEnabled) {
-                R.string.reduce_cookie_banner_on_for_site
-            } else {
-                R.string.reduce_cookie_banner_off_for_site
-            },
-        )
-        val icon = if (isCookieBannerHandlingEnabled) {
-            R.drawable.ic_cookies_enabled
-        } else {
-            R.drawable.ic_cookies_disabled
-        }
-
         binding.cookieBannerItem.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 FirefoxTheme {
                     CookieBannerItem(
                         label = label,
-                        description = description,
-                        startIconPainter = painterResource(icon),
-                        endIconPainter = painterResource(R.drawable.ic_arrowhead_right),
-                        onClick = { interactor.onCookieBannerHandlingDetailsClicked() },
+                        description = context.getString(cookieBannerState.description),
+                        startIconPainter = painterResource(cookieBannerState.iconRes),
+                        endIconPainter = when (cookieBannerState) {
+                            CookieBannerState.ON -> painterResource(R.drawable.ic_arrowhead_right)
+                            CookieBannerState.OFF, CookieBannerState.NO_SUPPORTED -> null
+                        },
+                        onClick = if (cookieBannerState == CookieBannerState.ON) {
+                            { interactor.onCookieBannerHandlingDetailsClicked() }
+                        } else {
+                            null
+                        },
                     )
                 }
             }
@@ -121,12 +116,16 @@ private fun CookieBannerItem(
     label: String,
     description: String,
     startIconPainter: Painter,
-    endIconPainter: Painter,
-    onClick: () -> Unit,
+    endIconPainter: Painter? = null,
+    onClick: (() -> Unit)? = null,
 ) {
+    val modifier = if (onClick != null) {
+        Modifier.clickable { onClick() }
+    } else {
+        Modifier
+    }
     Row(
-        modifier = Modifier
-            .clickable { onClick() }
+        modifier = modifier
             .defaultMinSize(minHeight = 48.dp)
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -155,14 +154,16 @@ private fun CookieBannerItem(
                 maxLines = 1,
             )
         }
-        Icon(
-            modifier = Modifier
-                .padding(end = 0.dp)
-                .size(24.dp),
-            painter = endIconPainter,
-            contentDescription = null,
-            tint = FirefoxTheme.colors.iconPrimary,
-        )
+        if (endIconPainter != null) {
+            Icon(
+                modifier = Modifier
+                    .padding(end = 0.dp)
+                    .size(24.dp),
+                painter = endIconPainter,
+                contentDescription = null,
+                tint = FirefoxTheme.colors.iconPrimary,
+            )
+        }
     }
 }
 
@@ -177,6 +178,20 @@ private fun CookieBannerItemPreview() {
                 startIconPainter = painterResource(R.drawable.ic_cookies_enabled),
                 endIconPainter = painterResource(R.drawable.ic_arrowhead_right),
                 onClick = { println("list item click") },
+            )
+        }
+    }
+}
+
+@Composable
+@LightDarkPreview
+private fun NoDetectedCookieBannerItemPreview() {
+    FirefoxTheme {
+        Box(Modifier.background(FirefoxTheme.colors.layer1)) {
+            CookieBannerItem(
+                label = "Cookie Banner Reduction",
+                description = "Site currently not supported",
+                startIconPainter = painterResource(R.drawable.ic_cookies_disabled),
             )
         }
     }

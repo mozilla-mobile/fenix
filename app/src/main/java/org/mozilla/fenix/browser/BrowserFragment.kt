@@ -17,7 +17,6 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.state.SessionState
@@ -49,6 +48,7 @@ import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.dialog.CookieBannerReEngagementDialogUtils
+import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.queryCookieBannerState
 import org.mozilla.fenix.shortcut.PwaOnboardingObserver
 import org.mozilla.fenix.theme.ThemeManager
 
@@ -379,17 +379,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         useCase.containsException(tab.id) { hasTrackingProtectionException ->
             lifecycleScope.launch(Dispatchers.Main) {
                 val cookieBannersStorage = requireComponents.core.cookieBannersStorage
-                val hasCookieBannerException =
-                    if (requireContext().settings().shouldUseCookieBanner) {
-                        withContext(Dispatchers.IO) {
-                            cookieBannersStorage.hasException(
-                                tab.content.url,
-                                tab.content.private,
-                            )
-                        }
-                    } else {
-                        false
-                    }
+                val cookieBannerState = cookieBannersStorage.queryCookieBannerState(tab, requireContext().settings())
                 runIfFragmentIsAttached {
                     val isTrackingProtectionEnabled =
                         tab.trackingProtection.enabled && !hasTrackingProtectionException
@@ -404,7 +394,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                             certificateName = tab.content.securityInfo.issuer,
                             permissionHighlights = tab.content.permissionHighlights,
                             isTrackingProtectionEnabled = isTrackingProtectionEnabled,
-                            isCookieHandlingEnabled = !hasCookieBannerException,
+                            cookieBannerState = cookieBannerState,
                         )
                     nav(R.id.browserFragment, directions)
                 }

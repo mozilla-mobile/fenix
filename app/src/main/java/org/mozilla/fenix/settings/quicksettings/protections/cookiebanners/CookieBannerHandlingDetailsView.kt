@@ -43,25 +43,20 @@ class CookieBannerHandlingDetailsView(
      * Allows changing what this View displays.
      */
     fun update(state: ProtectionsState) {
-        bindTitle(state.url, state.isCookieBannerHandlingEnabled)
+        bindTitle(state.url, state.cookieBannerState)
         bindBackButtonListener()
-        bindDescription(state.isCookieBannerHandlingEnabled)
-        bindSwitch(state.isCookieBannerHandlingEnabled)
+        bindDescription(state.cookieBannerState)
+        bindSwitch(state.cookieBannerState == CookieBannerState.ON)
     }
 
     @VisibleForTesting
-    internal fun bindTitle(url: String, isCookieBannerHandlingEnabled: Boolean) {
+    internal fun bindTitle(url: String, cookieBannerState: CookieBannerState) {
         ioScope.launch {
             val host = url.toUri().host.orEmpty()
             val domain = publicSuffixList.getPublicSuffixPlusOne(host).await()
 
             launch(Dispatchers.Main) {
-                val stringID =
-                    if (isCookieBannerHandlingEnabled) {
-                        R.string.reduce_cookie_banner_details_panel_title_off_for_site
-                    } else {
-                        R.string.reduce_cookie_banner_details_panel_title_on_for_site
-                    }
+                val stringID = cookieBannerState.longDescription
                 val data = domain ?: url
                 val shortUrl = data.toShortUrl(publicSuffixList)
                 binding.title.text = context.getString(stringID, shortUrl)
@@ -70,13 +65,8 @@ class CookieBannerHandlingDetailsView(
     }
 
     @VisibleForTesting
-    internal fun bindDescription(isCookieBannerHandlingEnabled: Boolean) {
-        val stringID =
-            if (isCookieBannerHandlingEnabled) {
-                R.string.reduce_cookie_banner_details_panel_description_off_for_site
-            } else {
-                R.string.reduce_cookie_banner_details_panel_description_on_for_site_2
-            }
+    internal fun bindDescription(cookieBannerState: CookieBannerState) {
+        val stringID = cookieBannerState.longDescription
         val appName = context.getString(R.string.app_name)
         binding.details.text = context.getString(stringID, appName)
     }

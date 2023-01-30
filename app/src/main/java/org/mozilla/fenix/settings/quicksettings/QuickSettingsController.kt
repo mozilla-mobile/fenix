@@ -218,7 +218,7 @@ class DefaultQuickSettingsController(
                 sessionId = sessionId,
                 url = state.url,
                 trackingProtectionEnabled = state.isTrackingProtectionEnabled,
-                cookieBannerHandlingEnabled = state.isCookieBannerHandlingEnabled,
+                cookieBannerState = state.cookieBannerState,
                 gravity = context.components.settings.toolbarPosition.androidGravity,
                 sitePermissions = sitePermissions,
             )
@@ -234,7 +234,7 @@ class DefaultQuickSettingsController(
                 sessionId = sessionId,
                 url = state.url,
                 trackingProtectionEnabled = state.isTrackingProtectionEnabled,
-                cookieBannerHandlingEnabled = state.isCookieBannerHandlingEnabled,
+                cookieBannerState = state.cookieBannerState,
                 gravity = context.components.settings.toolbarPosition.androidGravity,
                 sitePermissions = sitePermissions,
             )

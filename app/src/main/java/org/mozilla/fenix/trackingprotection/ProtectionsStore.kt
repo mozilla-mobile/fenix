@@ -11,6 +11,7 @@ import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 import org.mozilla.fenix.R
+import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.CookieBannerState
 
 /**
  * The [Store] for holding the [ProtectionsState] and applying [ProtectionsAction]s.
@@ -31,7 +32,7 @@ sealed class ProtectionsAction : Action {
     data class Change(
         val url: String,
         val isTrackingProtectionEnabled: Boolean,
-        val isCookieBannerHandlingEnabled: Boolean,
+        val cookieBannerState: CookieBannerState,
         val listTrackers: List<TrackerLog>,
         val mode: ProtectionsState.Mode,
     ) : ProtectionsAction()
@@ -41,8 +42,7 @@ sealed class ProtectionsAction : Action {
      *
      * @param isEnabled Whether or not cookie banner protection is enabled.
      */
-    data class ToggleCookieBannerHandlingProtectionEnabled(val isEnabled: Boolean) :
-        ProtectionsAction()
+    object ToggleCookieBannerHandlingProtection : ProtectionsAction()
 
     /**
      * Indicates the url has changed.
@@ -74,8 +74,7 @@ sealed class ProtectionsAction : Action {
  * @property url Current URL to display
  * @property isTrackingProtectionEnabled Current status of tracking protection for this session
  * (ie is an exception)
- * @property isCookieBannerHandlingEnabled Current status of cookie banner handling protection
- * for this session (ie is an exception).
+ * @property cookieBannerState Current status of cookie banner handling protection.
  * @property listTrackers Current Tracker Log list of blocked and loaded tracker categories
  * @property mode Current Mode of TrackingProtection
  * @property lastAccessedCategory Remembers the last accessed details category, used to move
@@ -85,7 +84,7 @@ data class ProtectionsState(
     val tab: SessionState?,
     val url: String,
     val isTrackingProtectionEnabled: Boolean,
-    val isCookieBannerHandlingEnabled: Boolean,
+    val cookieBannerState: CookieBannerState,
     val listTrackers: List<TrackerLog>,
     val mode: Mode,
     val lastAccessedCategory: String,
@@ -153,7 +152,7 @@ fun protectionsStateReducer(
         is ProtectionsAction.Change -> state.copy(
             url = action.url,
             isTrackingProtectionEnabled = action.isTrackingProtectionEnabled,
-            isCookieBannerHandlingEnabled = action.isCookieBannerHandlingEnabled,
+            cookieBannerState = action.cookieBannerState,
             listTrackers = action.listTrackers,
             mode = action.mode,
         )
@@ -171,8 +170,8 @@ fun protectionsStateReducer(
             ),
             lastAccessedCategory = action.category.name,
         )
-        is ProtectionsAction.ToggleCookieBannerHandlingProtectionEnabled -> state.copy(
-            isCookieBannerHandlingEnabled = action.isEnabled,
+        is ProtectionsAction.ToggleCookieBannerHandlingProtection -> state.copy(
+            cookieBannerState = state.cookieBannerState.toggle(),
         )
     }
 }

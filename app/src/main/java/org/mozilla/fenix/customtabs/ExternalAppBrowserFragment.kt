@@ -39,6 +39,7 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.queryCookieBannerState
 
 /**
  * Fragment used for browsing the web within external apps.
@@ -167,11 +168,8 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
         val cookieBannersStorage = requireComponents.core.cookieBannersStorage
         requireComponents.useCases.trackingProtectionUseCases.containsException(tab.id) { contains ->
             lifecycleScope.launch(Dispatchers.IO) {
-                val hasException = if (requireContext().settings().shouldUseCookieBanner) {
-                    cookieBannersStorage.hasException(tab.content.url, tab.content.private)
-                } else {
-                    false
-                }
+                val cookieBannerState =
+                    cookieBannersStorage.queryCookieBannerState(tab, requireContext().settings())
                 withContext(Dispatchers.Main) {
                     runIfFragmentIsAttached {
                         val directions = ExternalAppBrowserFragmentDirections
@@ -185,7 +183,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                                 certificateName = tab.content.securityInfo.issuer,
                                 permissionHighlights = tab.content.permissionHighlights,
                                 isTrackingProtectionEnabled = tab.trackingProtection.enabled && !contains,
-                                isCookieHandlingEnabled = !hasException,
+                                cookieBannerState = cookieBannerState,
                             )
                         nav(R.id.externalAppBrowserFragment, directions)
                     }
