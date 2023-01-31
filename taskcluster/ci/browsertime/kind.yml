@@ -136,7 +136,6 @@ tasks:
     speedometer3:
         description: "Raptor Speedometer 3 Benchmark tests on Fenix"
         test-name: speedometer3
-        run-on-tasks-for: [github-pull-request]
         run-visual-metrics: False
         chimera: False
 
