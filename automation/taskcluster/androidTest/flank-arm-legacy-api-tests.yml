@@ -4,7 +4,7 @@ gcloud:
   results-bucket: fenix_test_artifacts
   record-video: true
 
-  timeout: 30m
+  timeout: 15m
   async: false
   num-flaky-test-attempts: 2
 
@@ -35,7 +35,6 @@ gcloud:
     - class org.mozilla.fenix.ui.TabbedBrowsingTest#openNewPrivateTabTest
     - class org.mozilla.fenix.ui.TopSitesTest#verifyOpenTopSiteNormalTab
     - class org.mozilla.fenix.ui.BookmarksTest#addBookmarkTest
-    - class org.mozilla.fenix.ui.HomeScreenTest#homeScreenItemsTest
 
   device:
     - model: Pixel2.arm
@@ -45,6 +44,15 @@ gcloud:
       version: 27
       locale: en_US
     - model: dreamlte
+      version: 28
+      locale: en_US
+    - model: HWANE-LX2
+      version: 28
+      locale: en_US
+    - model: HWCOR
+      version: 27
+      locale: en_US
+    - model: blueline
       version: 28
       locale: en_US
 

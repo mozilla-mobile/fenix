@@ -10,7 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
-import org.mozilla.fenix.GleanMetrics.Messaging
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppAction.MessagingAction.ConsumeMessageToShow
 import org.mozilla.fenix.components.appstate.AppAction.MessagingAction.Evaluate
@@ -21,12 +20,14 @@ import org.mozilla.fenix.components.appstate.AppAction.MessagingAction.UpdateMes
 import org.mozilla.fenix.components.appstate.AppAction.MessagingAction.UpdateMessages
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.gleanplumb.Message
+import org.mozilla.fenix.gleanplumb.NimbusMessagingController
 import org.mozilla.fenix.gleanplumb.NimbusMessagingStorage
 
 typealias AppStoreMiddlewareContext = MiddlewareContext<AppState, AppAction>
 
 class MessagingMiddleware(
     private val messagingStorage: NimbusMessagingStorage,
+    private val controller: NimbusMessagingController = NimbusMessagingController(messagingStorage),
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
 ) : Middleware<AppState, AppAction> {
 
@@ -72,35 +73,17 @@ class MessagingMiddleware(
         oldMessage: Message,
         context: AppStoreMiddlewareContext,
     ) {
-        sendShownMessageTelemetry(oldMessage.id)
-        val newMetadata = oldMessage.metadata.copy(
-            displayCount = oldMessage.metadata.displayCount + 1,
-            lastTimeShown = now(),
-        )
-        val newMessage = oldMessage.copy(
-            metadata = newMetadata,
-        )
-        val newMessages = if (newMetadata.displayCount < oldMessage.maxDisplayCount) {
+        val newMessage = controller.updateMessageAsDisplayed(oldMessage)
+        val newMessages = if (!newMessage.isExpired) {
             updateMessage(context, oldMessage, newMessage)
         } else {
-            sendExpiredMessageTelemetry(newMessage.id)
             consumeMessageToShowIfNeeded(context, oldMessage)
             removeMessage(context, oldMessage)
         }
         context.dispatch(UpdateMessages(newMessages))
         coroutineScope.launch {
-            messagingStorage.updateMetadata(newMetadata)
+            controller.onMessageDisplayed(newMessage)
         }
-    }
-
-    @VisibleForTesting
-    internal fun sendShownMessageTelemetry(messageId: String) {
-        Messaging.messageShown.record(Messaging.MessageShownExtra(messageId))
-    }
-
-    @VisibleForTesting
-    internal fun sendExpiredMessageTelemetry(messageId: String) {
-        Messaging.messageExpired.record(Messaging.MessageExpiredExtra(messageId))
     }
 
     @VisibleForTesting
@@ -112,8 +95,7 @@ class MessagingMiddleware(
         context.dispatch(UpdateMessages(newMessages))
         consumeMessageToShowIfNeeded(context, message)
         coroutineScope.launch {
-            val updatedMetadata = message.metadata.copy(dismissed = true)
-            messagingStorage.updateMetadata(updatedMetadata)
+            controller.onMessageDismissed(message)
         }
     }
 
@@ -124,8 +106,7 @@ class MessagingMiddleware(
     ) {
         // Update Nimbus storage.
         coroutineScope.launch {
-            val updatedMetadata = message.metadata.copy(pressed = true)
-            messagingStorage.updateMetadata(updatedMetadata)
+            controller.onMessageClicked(message)
         }
         // Update app state.
         val newMessages = removeMessage(context, message)
@@ -158,14 +139,14 @@ class MessagingMiddleware(
         oldMessage: Message,
         updatedMessage: Message,
     ): List<Message> {
-        val actualMessageToShow = context.state.messaging.messageToShow.get(updatedMessage.surface)
+        val actualMessageToShow = context.state.messaging.messageToShow[updatedMessage.surface]
 
         if (actualMessageToShow?.id == oldMessage.id) {
             context.dispatch(UpdateMessageToShow(updatedMessage))
         }
-        return removeMessage(context, oldMessage) + updatedMessage
+        val oldMessageIndex = context.state.messaging.messages.indexOfFirst { it.id == updatedMessage.id }
+        val newList = context.state.messaging.messages.toMutableList()
+        newList[oldMessageIndex] = updatedMessage
+        return newList
     }
-
-    @VisibleForTesting
-    internal fun now(): Long = System.currentTimeMillis()
 }

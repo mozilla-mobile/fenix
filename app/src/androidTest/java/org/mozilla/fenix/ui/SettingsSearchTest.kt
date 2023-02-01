@@ -9,6 +9,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
@@ -17,6 +18,7 @@ import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
+import org.mozilla.fenix.helpers.TestHelper.runWithCondition
 import org.mozilla.fenix.helpers.TestHelper.setTextToClipBoard
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -383,23 +385,46 @@ class SettingsSearchTest {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSearchSubMenu {
-            deleteMultipleSearchEngines(
-                "Google",
-                "Bing",
-                "Amazon.com",
-                "DuckDuckGo",
-                "eBay",
-            )
-            verifyDefaultSearchEngine("Wikipedia")
-            verifyThreeDotButtonIsNotDisplayed("Wikipedia")
-            openAddSearchEngineMenu()
-            verifyAddSearchEngineListContains(
-                "Google",
-                "Bing",
-                "Amazon.com",
-                "DuckDuckGo",
-                "eBay",
-            )
+            runWithCondition(!appContext.settings().showUnifiedSearchFeature) {
+                // If the feature is disabled run old steps.
+                deleteMultipleSearchEngines(
+                    "Google",
+                    "Bing",
+                    "Amazon.com",
+                    "DuckDuckGo",
+                    "eBay",
+                )
+                verifyDefaultSearchEngine("Wikipedia")
+                verifyThreeDotButtonIsNotDisplayed("Wikipedia")
+                openAddSearchEngineMenu()
+                verifyAddSearchEngineListContains(
+                    "Google",
+                    "Bing",
+                    "Amazon.com",
+                    "DuckDuckGo",
+                    "eBay",
+                )
+            }
+            runWithCondition(appContext.settings().showUnifiedSearchFeature) {
+                // Run steps suitable for the enabled unified search feature.
+                deleteMultipleSearchEngines(
+                    "Google",
+                    "Bing",
+                    "Amazon.com",
+                    "eBay",
+                    "Wikipedia",
+                )
+                verifyDefaultSearchEngine("DuckDuckGo")
+                verifyThreeDotButtonIsNotDisplayed("DuckDuckGo")
+                openAddSearchEngineMenu()
+                verifyAddSearchEngineListContains(
+                    "Google",
+                    "Bing",
+                    "Amazon.com",
+                    "eBay",
+                    "Wikipedia",
+                )
+            }
         }
     }
 

@@ -70,7 +70,6 @@ class SettingsBasicsTest {
         mockWebServer.shutdown()
     }
 
-    @Ignore("Failing after updating settings screen summaries. See: https://github.com/mozilla-mobile/fenix/issues/28208")
     @Test
     fun settingsGeneralItemsTests() {
         homeScreen {
@@ -117,71 +116,6 @@ class SettingsBasicsTest {
         }.openAccessibilitySubMenu {
             clickFontSizingSwitch()
             verifyMenuItemsAreDisabled()
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun verifyAddressAutofillTest() {
-        val addressFormPage =
-            TestAssetHelper.getAddressFormAsset(mockWebServer)
-
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openAutofillSubMenu {
-            clickAddAddressButton()
-            fillAndSaveAddress(
-                "Mozilla",
-                "Fenix",
-                "Firefox",
-                "Harrison Street",
-                "San Francisco",
-                "Alaska",
-                "94105",
-                "United States",
-                "555-5555",
-                "foo@bar.com",
-            )
-        }.goBack {
-        }.goBack {
-        }
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(addressFormPage.url) {
-            clickStreetAddressTextBox()
-            clickSelectAddressButton()
-            clickAddressSuggestion("Harrison Street")
-            verifyAutofilledAddress("Harrison Street")
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun deleteSavedAddressTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openAutofillSubMenu {
-            clickAddAddressButton()
-            fillAndSaveAddress(
-                "Mozilla",
-                "Fenix",
-                "Firefox",
-                "Harrison Street",
-                "San Francisco",
-                "Alaska",
-                "94105",
-                "United States",
-                "555-5555",
-                "foo@bar.com",
-            )
-            clickManageAddressesButton()
-            clickSavedAddress("Mozilla")
-            clickDeleteAddressButton()
-            clickCancelDeleteAddressButton()
-            clickDeleteAddressButton()
-            clickConfirmDeleteAddressButton()
-            verifyAddAddressButton()
         }
     }
 

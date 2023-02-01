@@ -13,12 +13,10 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
@@ -55,7 +53,6 @@ class SettingsPrivacyTest {
     @Before
     fun setUp() {
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        appContext.settings().userOptOutOfReEngageCookieBannerDialog = true
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
             start()
@@ -74,7 +71,6 @@ class SettingsPrivacyTest {
     }
 
     // Walks through settings privacy menu and sub-menus to ensure all items are present
-    @Ignore("Failing after updating settings screen summaries. See: https://github.com/mozilla-mobile/fenix/issues/28208")
     @Test
     fun settingsPrivacyItemsTest() {
         homeScreen {
@@ -94,7 +90,7 @@ class SettingsPrivacyTest {
 
             // ENHANCED TRACKING PROTECTION
             verifyEnhancedTrackingProtectionButton()
-            verifyEnhancedTrackingProtectionState("On")
+            verifyEnhancedTrackingProtectionState("Standard")
         }.openEnhancedTrackingProtectionSubMenu {
             verifyNavigationToolBarHeader()
             verifyEnhancedTrackingProtectionProtectionSubMenuItems()
@@ -211,7 +207,7 @@ class SettingsPrivacyTest {
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
-        }.saveLoginsAndPasswordsOptions {
+        }.openSaveLoginsAndPasswordsOptions {
             verifySaveLoginsOptionsView()
         }
     }

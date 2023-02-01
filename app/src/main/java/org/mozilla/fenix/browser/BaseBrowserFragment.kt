@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityManager
+import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.CallSuper
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
@@ -122,12 +123,16 @@ import org.mozilla.fenix.crashes.CrashContentIntegration
 import org.mozilla.fenix.databinding.FragmentBrowserBinding
 import org.mozilla.fenix.downloads.DownloadService
 import org.mozilla.fenix.downloads.DynamicDownloadDialog
+import org.mozilla.fenix.downloads.FirstPartyDownloadDialog
+import org.mozilla.fenix.downloads.StartDownloadDialog
+import org.mozilla.fenix.downloads.ThirdPartyDownloadDialog
 import org.mozilla.fenix.ext.accessibilityManager
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.registerForActivityResult
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.secure
@@ -162,6 +167,7 @@ abstract class BaseBrowserFragment :
 
     private lateinit var browserFragmentStore: BrowserFragmentStore
     private lateinit var browserAnimator: BrowserAnimator
+    private lateinit var startForResult: ActivityResultLauncher<Intent>
 
     private var _browserToolbarInteractor: BrowserToolbarInteractor? = null
     protected val browserToolbarInteractor: BrowserToolbarInteractor
@@ -215,6 +221,8 @@ abstract class BaseBrowserFragment :
     @VisibleForTesting
     internal val onboarding by lazy { FenixOnboarding(requireContext()) }
 
+    private var currentStartDownloadDialog: StartDownloadDialog? = null
+
     @CallSuper
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -244,6 +252,15 @@ abstract class BaseBrowserFragment :
             BrowserFragmentStore(
                 BrowserFragmentState(),
             )
+        }
+
+        startForResult = registerForActivityResult { result ->
+            listOf(
+                promptsFeature,
+                webAuthnFeature,
+            ).any {
+                it.onActivityResult(PIN_REQUEST, result.data, result.resultCode)
+            }
         }
 
         // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL!
@@ -351,7 +368,7 @@ abstract class BaseBrowserFragment :
                 }
 
                 viewLifecycleOwner.lifecycleScope.allowUndo(
-                    binding.browserLayout,
+                    binding.dynamicSnackbarContainer,
                     snackbarMessage,
                     requireContext().getString(R.string.snackbar_deleted_undo),
                     {
@@ -430,7 +447,7 @@ abstract class BaseBrowserFragment :
             feature = ContextMenuFeature(
                 fragmentManager = parentFragmentManager,
                 store = store,
-                candidates = getContextMenuCandidates(context, binding.browserLayout),
+                candidates = getContextMenuCandidates(context, binding.dynamicSnackbarContainer),
                 engineView = binding.engineView,
                 useCases = context.components.useCases.contextMenuUseCases,
                 tabId = customTabSessionId,
@@ -502,6 +519,31 @@ abstract class BaseBrowserFragment :
             onNeedToRequestPermissions = { permissions ->
                 requestPermissions(permissions, REQUEST_CODE_DOWNLOAD_PERMISSIONS)
             },
+            customFirstPartyDownloadDialog = { filename, contentSize, positiveAction, negativeAction ->
+                FirstPartyDownloadDialog(
+                    activity = requireActivity(),
+                    filename = filename.value,
+                    contentSize = contentSize.value,
+                    positiveButtonAction = positiveAction.value,
+                    negativeButtonAction = negativeAction.value,
+                ).onDismiss {
+                    currentStartDownloadDialog = null
+                }.show(binding.startDownloadDialogContainer).also {
+                    currentStartDownloadDialog = it
+                }
+            },
+            customThirdPartyDownloadDialog = { downloaderApps, onAppSelected, negativeActionCallback ->
+                ThirdPartyDownloadDialog(
+                    activity = requireActivity(),
+                    downloaderApps = downloaderApps.value,
+                    onAppSelected = onAppSelected.value,
+                    negativeButtonAction = negativeActionCallback.value,
+                ).onDismiss {
+                    currentStartDownloadDialog = null
+                }.show(binding.startDownloadDialogContainer).also {
+                    currentStartDownloadDialog = it
+                }
+            },
         )
 
         downloadFeature.onDownloadStopped = { downloadState, _, downloadJobStatus ->
@@ -519,7 +561,7 @@ abstract class BaseBrowserFragment :
                     didFail = downloadJobStatus == DownloadState.Status.FAILED,
                     tryAgain = downloadFeature::tryAgain,
                     onCannotOpenFile = {
-                        showCannotOpenFileError(binding.browserLayout, context, it)
+                        showCannotOpenFileError(binding.dynamicSnackbarContainer, context, it)
                     },
                     binding = binding.viewDynamicDownloadDialog,
                     toolbarHeight = toolbarHeight,
@@ -856,13 +898,14 @@ abstract class BaseBrowserFragment :
     /**
      * Shows a pin request prompt. This is only used when BiometricPrompt is unavailable.
      */
-    @Suppress("Deprecation")
+    @Suppress("DEPRECATION")
     private fun showPinVerification(manager: KeyguardManager) {
         val intent = manager.createConfirmDeviceCredentialIntent(
             getString(R.string.credit_cards_biometric_prompt_message_pin),
             getString(R.string.credit_cards_biometric_prompt_unlock_message),
         )
-        requireActivity().startActivityForResult(intent, PIN_REQUEST)
+
+        startForResult.launch(intent)
     }
 
     /**
@@ -962,7 +1005,7 @@ abstract class BaseBrowserFragment :
             didFail = savedDownloadState.second,
             tryAgain = onTryAgain,
             onCannotOpenFile = {
-                showCannotOpenFileError(binding.browserLayout, context, it)
+                showCannotOpenFileError(binding.dynamicSnackbarContainer, context, it)
             },
             binding = binding.viewDynamicDownloadDialog,
             toolbarHeight = toolbarHeight,
@@ -1053,6 +1096,7 @@ abstract class BaseBrowserFragment :
                     it.selectedTab
                 }
                 .collect {
+                    currentStartDownloadDialog?.dismiss()
                     handleTabSelected(it)
                 }
         }
@@ -1121,6 +1165,7 @@ abstract class BaseBrowserFragment :
     override fun onStop() {
         super.onStop()
         initUIJob?.cancel()
+        currentStartDownloadDialog?.dismiss()
 
         requireComponents.core.store.state.findTabOrCustomTabOrSelectedTab(customTabSessionId)
             ?.let { session ->
@@ -1136,8 +1181,22 @@ abstract class BaseBrowserFragment :
         return findInPageIntegration.onBackPressed() ||
             fullScreenFeature.onBackPressed() ||
             promptsFeature.onBackPressed() ||
+            currentStartDownloadDialog?.let {
+                it.dismiss()
+                true
+            } ?: false ||
             sessionFeature.onBackPressed() ||
             removeSessionIfNeeded()
+    }
+
+    /**
+     * Forwards activity results to the [ActivityResultHandler] features.
+     */
+    override fun onActivityResult(requestCode: Int, data: Intent?, resultCode: Int): Boolean {
+        return listOf(
+            promptsFeature,
+            webAuthnFeature,
+        ).any { it.onActivityResult(requestCode, data, resultCode) }
     }
 
     override fun onBackLongPressed(): Boolean {
@@ -1184,16 +1243,6 @@ abstract class BaseBrowserFragment :
             else -> null
         }
         feature?.onPermissionsResult(permissions, grantResults)
-    }
-
-    /**
-     * Forwards activity results to the [ActivityResultHandler] features.
-     */
-    override fun onActivityResult(requestCode: Int, data: Intent?, resultCode: Int): Boolean {
-        return listOf(
-            promptsFeature,
-            webAuthnFeature,
-        ).any { it.onActivityResult(requestCode, data, resultCode) }
     }
 
     /**
@@ -1298,7 +1347,7 @@ abstract class BaseBrowserFragment :
                 withContext(Main) {
                     view?.let {
                         FenixSnackbar.make(
-                            view = binding.browserLayout,
+                            view = binding.dynamicSnackbarContainer,
                             duration = FenixSnackbar.LENGTH_LONG,
                             isDisplayedWithBrowserToolbar = true,
                         )
@@ -1319,7 +1368,7 @@ abstract class BaseBrowserFragment :
                 withContext(Main) {
                     view?.let {
                         FenixSnackbar.make(
-                            view = binding.browserLayout,
+                            view = binding.dynamicSnackbarContainer,
                             duration = FenixSnackbar.LENGTH_LONG,
                             isDisplayedWithBrowserToolbar = true,
                         )
@@ -1362,7 +1411,7 @@ abstract class BaseBrowserFragment :
             // Close find in page bar if opened
             findInPageIntegration.onBackPressed()
             FenixSnackbar.make(
-                view = binding.browserLayout,
+                view = binding.dynamicSnackbarContainer,
                 duration = Snackbar.LENGTH_SHORT,
                 isDisplayedWithBrowserToolbar = false,
             )
@@ -1443,12 +1492,12 @@ abstract class BaseBrowserFragment :
     }
 
     private fun showCannotOpenFileError(
-        view: View,
+        container: ViewGroup,
         context: Context,
         downloadState: DownloadState,
     ) {
         FenixSnackbar.make(
-            view = view,
+            view = container,
             duration = Snackbar.LENGTH_SHORT,
             isDisplayedWithBrowserToolbar = true,
         ).setText(DynamicDownloadDialog.getCannotOpenFileErrorMessage(context, downloadState))
