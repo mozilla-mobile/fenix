@@ -682,7 +682,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         super.getOnBackPressedDispatcher().onBackPressed()
     }
 
-    @Suppress("DEPRECATION")
+    @Deprecated("Deprecated in Java")
     // https://github.com/mozilla-mobile/fenix/issues/19919
     final override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.forEach {
@@ -690,6 +690,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 return
             }
         }
+        @Suppress("DEPRECATION")
         super.onActivityResult(requestCode, resultCode, data)
     }
 
