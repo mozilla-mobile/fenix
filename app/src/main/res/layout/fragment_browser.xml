@@ -66,6 +66,20 @@
                 android:layout_height="match_parent"
                 android:visibility="gone" />
 
+            <FrameLayout
+                android:id="@+id/startDownloadDialogContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:visibility="gone"
+                android:elevation="@dimen/browser_fragment_toolbar_elevation"/>
+
+            <FrameLayout
+                android:id="@+id/dynamicSnackbarContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="@dimen/browser_fragment_toolbar_elevation"/>
+
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <mozilla.components.feature.prompts.address.AddressSelectBar

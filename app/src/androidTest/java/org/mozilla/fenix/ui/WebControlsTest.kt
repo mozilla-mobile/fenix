@@ -170,6 +170,7 @@ class WebControlsTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(externalLinksPage.url) {
             clickLinkMatchingText("Email link")
+            clickOpenInAppPromptButton()
             assertNativeAppOpens(Constants.PackageName.GMAIL_APP, emailLink)
         }
     }
@@ -181,6 +182,7 @@ class WebControlsTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(externalLinksPage.url) {
             clickLinkMatchingText("Telephone link")
+            clickOpenInAppPromptButton()
             assertNativeAppOpens(Constants.PackageName.PHONE_APP, phoneLink)
         }
     }

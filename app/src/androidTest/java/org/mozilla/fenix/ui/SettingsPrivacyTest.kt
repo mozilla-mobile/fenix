@@ -13,12 +13,10 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
@@ -55,7 +53,6 @@ class SettingsPrivacyTest {
     @Before
     fun setUp() {
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        appContext.settings().userOptOutOfReEngageCookieBannerDialog = true
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
             start()
@@ -617,7 +614,6 @@ class SettingsPrivacyTest {
 
     @SmokeTest
     @Test
-    @Ignore("This will be re-visited when addressing bug 1810745")
     fun verifyCookieBannerReductionTest() {
         val webSite = "voetbal24.be"
 
@@ -662,7 +658,6 @@ class SettingsPrivacyTest {
 
     @SmokeTest
     @Test
-    @Ignore("This will be re-visited when addressing bug 1810745")
     fun verifyCookieBannerReductionInPrivateBrowsingTest() {
         val webSite = "voetbal24.be"
 
