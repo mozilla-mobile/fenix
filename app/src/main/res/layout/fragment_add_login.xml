@@ -144,15 +144,15 @@
     <ImageButton
         android:id="@+id/clearUsernameTextButton"
         android:layout_width="48dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="10dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="18dp"
         android:background="@null"
         android:contentDescription="@string/saved_login_clear_username"
         android:visibility="invisible"
         app:tint="@color/saved_login_clear_edit_text_tint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/inputLayoutUsername"
+        app:layout_constraintBottom_toBottomOf="@+id/inputLayoutUsername"
         app:srcCompat="@drawable/mozac_ic_clear" />
 
     <TextView
@@ -180,7 +180,6 @@
         android:colorControlActivated="?attr/textPrimary"
         android:colorControlHighlight="?attr/textPrimary"
         android:contentDescription="@string/saved_login_password_description"
-        android:paddingBottom="11dp"
         android:textColor="?attr/textPrimary"
         app:hintEnabled="false"
         app:layout_constraintEnd_toEndOf="@id/passwordHeader"
@@ -215,13 +214,13 @@
     <ImageButton
         android:id="@+id/clearPasswordTextButton"
         android:layout_width="48dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="10dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="18dp"
         android:background="@null"
         android:contentDescription="@string/saved_logins_clear_password"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/inputLayoutPassword"
         app:layout_constraintTop_toTopOf="@id/inputLayoutPassword"
         app:srcCompat="@drawable/mozac_ic_clear"
         app:tint="@color/saved_login_clear_edit_text_tint" />
