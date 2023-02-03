@@ -12,7 +12,7 @@
                 android:width="1dp"
                 android:color="?accentBright" />
 
-            <corners android:radius="16dp" />
+            <corners android:radius="24dp" />
         </shape>
     </item>
 </layer-list>

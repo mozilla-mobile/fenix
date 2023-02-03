@@ -93,7 +93,7 @@
     <dimen name="search_fragment_clipboard_item_height">56dp</dimen>
     <dimen name="search_fragment_clipboard_item_horizontal_margin">8dp</dimen>
     <dimen name="search_fragment_clipboard_item_title_margin_start">8dp</dimen>
-    <dimen name="search_fragment_pill_height">40dp</dimen>
+    <dimen name="search_fragment_pill_height">48dp</dimen>
     <dimen name="search_fragment_pill_padding_start">20dp</dimen>
     <dimen name="search_fragment_pill_padding_end">16dp</dimen>
     <dimen name="search_fragment_pill_padding_vertical">4dp</dimen>
