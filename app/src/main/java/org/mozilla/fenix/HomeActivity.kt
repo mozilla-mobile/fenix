@@ -101,6 +101,7 @@ import org.mozilla.fenix.home.intent.CrashReporterIntentProcessor
 import org.mozilla.fenix.home.intent.DefaultBrowserIntentProcessor
 import org.mozilla.fenix.home.intent.HomeDeepLinkIntentProcessor
 import org.mozilla.fenix.home.intent.OpenBrowserIntentProcessor
+import org.mozilla.fenix.home.intent.OpenPasswordManagerIntentProcessor
 import org.mozilla.fenix.home.intent.OpenSpecificTabIntentProcessor
 import org.mozilla.fenix.home.intent.SpeechProcessingIntentProcessor
 import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
@@ -198,6 +199,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             OpenBrowserIntentProcessor(this, ::getIntentSessionId),
             OpenSpecificTabIntentProcessor(this),
             DefaultBrowserIntentProcessor(this),
+            OpenPasswordManagerIntentProcessor(),
         )
     }
 
@@ -1153,6 +1155,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         const val OPEN_TO_SEARCH = "open_to_search"
         const val PRIVATE_BROWSING_MODE = "private_browsing_mode"
         const val START_IN_RECENTS_SCREEN = "start_in_recents_screen"
+        const val OPEN_PASSWORD_MANAGER = "open_password_manager"
 
         // PWA must have been used within last 30 days to be considered "recently used" for the
         // telemetry purposes.
