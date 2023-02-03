@@ -1052,7 +1052,7 @@ abstract class BaseBrowserFragment :
             if (context.settings().shouldUseBottomToolbar) {
                 swipeRefreshParams.bottomMargin = toolbarHeight
             } else {
-                swipeRefreshParams.topMargin = toolbarHeight
+                swipeRefreshParams.topMargin = 0
             }
         }
     }
