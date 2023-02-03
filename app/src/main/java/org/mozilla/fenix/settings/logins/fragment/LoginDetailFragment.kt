@@ -44,6 +44,7 @@ import org.mozilla.fenix.settings.logins.createInitialLoginsListState
 import org.mozilla.fenix.settings.logins.interactor.LoginDetailInteractor
 import org.mozilla.fenix.settings.logins.togglePasswordReveal
 import org.mozilla.fenix.settings.logins.view.LoginDetailsBindingDelegate
+import org.mozilla.fenix.utils.view.AsteriskPasswordTransformationMethod
 
 /**
  * Displays saved login information for a single website.
@@ -125,6 +126,7 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail), Menu
     }
 
     private fun setUpPasswordReveal() {
+        binding.passwordText.transformationMethod = AsteriskPasswordTransformationMethod()
         binding.passwordText.inputType =
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         binding.revealPasswordButton.increaseTapArea(BUTTON_INCREASE_DPS)

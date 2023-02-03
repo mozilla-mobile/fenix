@@ -39,6 +39,7 @@ import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
 import org.mozilla.fenix.settings.logins.createInitialLoginsListState
 import org.mozilla.fenix.settings.logins.interactor.EditLoginInteractor
 import org.mozilla.fenix.settings.logins.togglePasswordReveal
+import org.mozilla.fenix.utils.view.AsteriskPasswordTransformationMethod
 
 /**
  * Displays the editable saved login information for a single website
@@ -112,6 +113,7 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login), MenuProvider {
         binding.hostnameText.isFocusable = false
         binding.usernameText.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
         // TODO: extend PasswordTransformationMethod() to change bullets to asterisks
+        binding.passwordText.transformationMethod = AsteriskPasswordTransformationMethod()
         binding.passwordText.inputType =
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         binding.passwordText.compoundDrawablePadding =

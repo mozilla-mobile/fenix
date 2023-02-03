@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.settings.logins
 
+import android.graphics.Typeface
 import android.text.InputType
 import android.widget.ImageButton
 import android.widget.TextView
@@ -11,6 +12,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.R
+import org.mozilla.fenix.utils.view.AsteriskPasswordTransformationMethod
 
 fun togglePasswordReveal(passwordText: TextView, revealPasswordButton: ImageButton) {
     val context = passwordText.context
@@ -23,6 +25,7 @@ fun togglePasswordReveal(passwordText: TextView, revealPasswordButton: ImageButt
         revealPasswordButton.setImageDrawable(
             AppCompatResources.getDrawable(context, R.drawable.mozac_ic_password_hide),
         )
+        passwordText.transformationMethod = null
         revealPasswordButton.contentDescription =
             context.getString(R.string.saved_login_hide_password)
     } else {
@@ -31,9 +34,11 @@ fun togglePasswordReveal(passwordText: TextView, revealPasswordButton: ImageButt
         revealPasswordButton.setImageDrawable(
             AppCompatResources.getDrawable(context, R.drawable.mozac_ic_password_reveal),
         )
+        passwordText.transformationMethod = AsteriskPasswordTransformationMethod()
         revealPasswordButton.contentDescription =
             context.getString(R.string.saved_login_reveal_password)
     }
     // We need to reset to take effect
     passwordText.text = passwordText.text
+    passwordText.typeface = Typeface.MONOSPACE
 }
