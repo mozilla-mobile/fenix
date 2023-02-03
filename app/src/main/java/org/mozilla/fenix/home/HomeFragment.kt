@@ -643,6 +643,7 @@ class HomeFragment : Fragment() {
             profilerStartTime,
             "HomeFragment.onViewCreated",
         )
+        homeAppBarPadding()
     }
 
     private fun updateSearchSelectorMenu(searchEngines: List<SearchEngine>) {
@@ -882,6 +883,20 @@ class HomeFragment : Fragment() {
         // Counterpart to the update in onResume to keep the last access timestamp of the selected
         // tab up-to-date.
         requireComponents.useCases.sessionUseCases.updateLastAccess()
+    }
+
+    // Add padding to the homeAppBar when the toolbar position is set to top
+    private fun homeAppBarPadding() {
+        val settings = context?.components?.settings
+        when (settings?.toolbarPosition) {
+            ToolbarPosition.TOP -> {
+                binding.homeAppBar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    topMargin =
+                        resources.getDimensionPixelSize(R.dimen.home_fragment_top_appbar_header_margin)
+                }
+            }
+            else -> {}
+        }
     }
 
     @SuppressLint("InflateParams")
