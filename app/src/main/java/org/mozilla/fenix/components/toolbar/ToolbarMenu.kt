@@ -9,6 +9,7 @@ import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
 import org.mozilla.fenix.components.accounts.AccountState
 
 interface ToolbarMenu {
+    @Suppress("UndocumentedPublicClass")
     sealed class Item {
         object Settings : Item()
         data class RequestDesktop(val isChecked: Boolean) : Item()
@@ -35,6 +36,7 @@ interface ToolbarMenu {
         object History : Item()
         object Downloads : Item()
         object NewTab : Item()
+        object OpenInPrivate : Item()
     }
 
     val menuBuilder: BrowserMenuBuilder

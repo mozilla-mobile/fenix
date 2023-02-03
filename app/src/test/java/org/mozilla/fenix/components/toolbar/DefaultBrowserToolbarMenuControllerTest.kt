@@ -771,6 +771,28 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
+    fun `WHEN Open In Private menu item is pressed THEN navigate to a private tab`() = runTest {
+        val item = ToolbarMenu.Item.OpenInPrivate
+        val url = "https://www.mozilla.org"
+
+        val controller = createController(scope = this, store = browserStore)
+
+        controller.handleToolbarItemInteraction(item)
+
+        verify {
+            navController.navigate(
+                directionsEq(
+                    NavGraphDirections.actionGlobalHome(
+                        focusOnAddressBar = false,
+                        openInPrivate = true,
+                        url = url,
+                    ),
+                ),
+            )
+        }
+    }
+
+    @Test
     fun `GIVEN account exists and the user is signed in WHEN sign in to sync menu item is pressed THEN navigate to account settings`() = runTest {
         val item = ToolbarMenu.Item.SyncAccount(AccountState.AUTHENTICATED)
         val accountSettingsDirections = BrowserFragmentDirections.actionGlobalAccountSettingsFragment()

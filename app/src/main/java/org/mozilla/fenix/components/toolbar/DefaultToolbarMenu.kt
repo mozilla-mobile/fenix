@@ -202,6 +202,14 @@ open class DefaultToolbarMenu(
         onItemTapped.invoke(ToolbarMenu.Item.NewTab)
     }
 
+    private val openInPrivateItem = BrowserMenuImageText(
+        context.getString(R.string.library_open_in_private_mode),
+        R.drawable.private_browsing_button,
+        primaryTextColor(),
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.OpenInPrivate)
+    }
+
     private val historyItem = BrowserMenuImageText(
         context.getString(R.string.library_history),
         R.drawable.ic_history,
@@ -364,6 +372,7 @@ open class DefaultToolbarMenu(
             listOfNotNull(
                 if (shouldUseBottomToolbar) null else menuToolbar,
                 newTabItem,
+                if (selectedSession?.content?.private == false) openInPrivateItem else null,
                 BrowserMenuDivider(),
                 bookmarksItem,
                 historyItem,

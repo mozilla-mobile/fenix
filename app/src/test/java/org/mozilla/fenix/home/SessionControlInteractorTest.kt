@@ -201,6 +201,14 @@ class SessionControlInteractorTest {
     }
 
     @Test
+    fun `WHEN open in private is clicked THEN the click is handled`() {
+        val url = "https://mozilla.org"
+
+        interactor.onOpenInPrivateClicked(url)
+        verify { controller.handleOpenInPrivateClicked(sessionUrl = url) }
+    }
+
+    @Test
     fun `WHEN onSettingsClicked is called THEN handleTopSiteSettingsClicked is called`() {
         interactor.onSettingsClicked()
         verify { controller.handleTopSiteSettingsClicked() }

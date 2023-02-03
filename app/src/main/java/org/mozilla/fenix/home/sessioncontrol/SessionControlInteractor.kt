@@ -52,6 +52,11 @@ interface TabSessionInteractor {
      * * @param state The state the homepage from which to report desired metrics.
      */
     fun reportSessionMetrics(state: AppState)
+
+    /**
+     * Called when a user clicks open in Private.
+     */
+    fun onOpenInPrivateClicked(sessionUrl: String)
 }
 
 /**
@@ -445,6 +450,10 @@ class SessionControlInteractor(
 
     override fun reportSessionMetrics(state: AppState) {
         controller.handleReportSessionMetrics(state)
+    }
+
+    override fun onOpenInPrivateClicked(sessionUrl: String) {
+        controller.handleOpenInPrivateClicked(sessionUrl)
     }
 
     override fun onMessageClicked(message: Message) {

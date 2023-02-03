@@ -193,6 +193,11 @@ interface SessionControlController {
     fun handlePrivateModeButtonClicked(newMode: BrowsingMode, userHasBeenOnboarded: Boolean)
 
     /**
+     * @see [TabSessionInteractor.onOpenInPrivateClicked]
+     */
+    fun handleOpenInPrivateClicked(sessionUrl: String)
+
+    /**
      * @see [CustomizeHomeIteractor.openCustomizeHomePage]
      */
     fun handleCustomizeHomeTapped()
@@ -625,6 +630,17 @@ class DefaultSessionControlController(
         if (userHasBeenOnboarded) {
             appStore.dispatch(
                 AppAction.ModeChange(Mode.fromBrowsingMode(newMode)),
+            )
+        }
+    }
+
+    override fun handleOpenInPrivateClicked(sessionUrl: String) {
+        with(activity) {
+            browsingModeManager.mode = BrowsingMode.Private
+            openToBrowserAndLoad(
+                searchTermOrURL = sessionUrl,
+                newTab = true,
+                from = BrowserDirection.FromHome,
             )
         }
     }

@@ -77,6 +77,7 @@ import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
+import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.HomeScreen
@@ -627,6 +628,20 @@ class HomeFragment : Fragment() {
                     linearLayoutManager.startSmoothScroll(smoothScroller)
                 }
             }
+        } else if (bundleArgs.getBoolean(OPEN_IN_PRIVATE) &&
+            !bundleArgs.getString(SESSION_URL).isNullOrEmpty()
+        ) {
+            sessionControlInteractor.onOpenInPrivateClicked(
+                bundleArgs.getString(SESSION_URL).toString(),
+            )
+
+            removeTabAndShowSnackbar(store.state.selectedTabId.toString())
+
+            (activity as HomeActivity).openToBrowserAndLoad(
+                searchTermOrURL = bundleArgs.getString(SESSION_URL).toString(),
+                newTab = store.state.selectedTabId == null,
+                from = BrowserDirection.FromHome,
+            )
         }
 
         consumeFlow(requireComponents.core.store) { flow ->
@@ -1077,6 +1092,8 @@ class HomeFragment : Fragment() {
         const val ALL_PRIVATE_TABS = "all_private"
 
         private const val FOCUS_ON_ADDRESS_BAR = "focusOnAddressBar"
+        private const val OPEN_IN_PRIVATE = "openInPrivate"
+        private const val SESSION_URL = "url"
 
         private const val SCROLL_TO_COLLECTION = "scrollToCollection"
         private const val ANIM_SCROLL_DELAY = 100L

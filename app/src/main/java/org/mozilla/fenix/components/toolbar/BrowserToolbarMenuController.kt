@@ -358,6 +358,17 @@ class DefaultBrowserToolbarMenuController(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true),
                 )
             }
+
+            is ToolbarMenu.Item.OpenInPrivate -> {
+                store.state.selectedTab.let {
+                    getProperUrl(it)?.let { sessionUrl ->
+                        navController.navigate(
+                            BrowserFragmentDirections.actionGlobalHome(openInPrivate = true, url = sessionUrl),
+                        )
+                    }
+                }
+            }
+
             is ToolbarMenu.Item.SetDefaultBrowser -> {
                 activity.openSetDefaultBrowserOption()
             }
@@ -459,6 +470,8 @@ class DefaultBrowserToolbarMenuController(
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("set_default_browser"))
             is ToolbarMenu.Item.RemoveFromTopSites ->
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("remove_from_top_sites"))
+            is ToolbarMenu.Item.OpenInPrivate ->
+                Events.browserMenuAction.record(Events.BrowserMenuActionExtra("open_in_private"))
         }
     }
 

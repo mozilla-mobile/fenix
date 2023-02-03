@@ -1122,6 +1122,32 @@ class DefaultSessionControlControllerTest {
     }
 
     @Test
+    fun `WHEN open in private is selected from a normal window THEN handle opening new tab`() {
+        every { navController.currentDestination } returns mockk {
+            every { id } returns R.id.searchDialogFragment
+        }
+
+        val url = "https://mozilla.org"
+        val tab = createTab(
+            id = "otherTab",
+            url = url,
+            private = true,
+            engineSession = mockk(relaxed = true),
+        )
+        store.dispatch(TabListAction.AddTabAction(tab, select = true)).joinBlocking()
+
+        createController().handleOpenInPrivateClicked(url)
+
+        verify {
+            activity.openToBrowserAndLoad(
+                searchTermOrURL = url,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+            )
+        }
+    }
+
+    @Test
     fun `WHEN handleReportSessionMetrics is called AND there are zero recent tabs THEN report Event#RecentTabsSectionIsNotVisible`() {
         assertNull(RecentTabs.sectionVisible.testGetValue())
 

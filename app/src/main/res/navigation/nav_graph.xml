@@ -195,6 +195,15 @@
             android:name="scrollToCollection"
             android:defaultValue="false"
             app:argType="boolean" />
+        <argument
+            android:name="openInPrivate"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        <argument
+            android:name="url"
+            app:argType="string"
+            android:defaultValue=""
+            app:nullable="true" />
     </fragment>
     <dialog
         android:id="@+id/homeOnboardingDialogFragment"
