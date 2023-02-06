@@ -4,11 +4,13 @@
 
 package org.mozilla.fenix.settings.logins.view
 
+import android.content.res.Resources
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import mozilla.components.support.ktx.android.util.dpToPx
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.ComponentSavedLoginsBinding
 import org.mozilla.fenix.ext.addUnderline
@@ -38,6 +40,7 @@ class SavedLoginsListView(
         }
 
         with(binding.savedPasswordsEmptyLearnMore) {
+            height = 48.dpToPx(Resources.getSystem().displayMetrics)
             movementMethod = LinkMovementMethod.getInstance()
             addUnderline()
             setOnClickListener { interactor.onLearnMoreClicked() }
