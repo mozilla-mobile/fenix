@@ -36,7 +36,7 @@ import org.mozilla.fenix.ext.potentialInactiveTabs
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.browser.InactiveTabsController
-import org.mozilla.fenix.tabstray.browser.SelectTabUseCaseWrapper
+import org.mozilla.fenix.tabstray.browser.TabsTrayFabController
 import org.mozilla.fenix.tabstray.ext.isActiveDownload
 import org.mozilla.fenix.tabstray.ext.isSelect
 import org.mozilla.fenix.utils.Settings
@@ -46,12 +46,7 @@ import org.mozilla.fenix.GleanMetrics.Tab as GleanTab
 /**
  * Controller for handling any actions in the tabs tray.
  */
-interface TabsTrayController : SyncedTabsController, InactiveTabsController {
-
-    /**
-     * Called to open a new tab.
-     */
-    fun handleOpeningNewTab(isPrivate: Boolean)
+interface TabsTrayController : SyncedTabsController, InactiveTabsController, TabsTrayFabController {
 
     /**
      * Set the current tray item to the clamped [position].
@@ -208,13 +203,26 @@ class DefaultTabsTrayController(
     internal val showCancelledDownloadWarning: (downloadCount: Int, tabId: String?, source: String?) -> Unit,
 ) : TabsTrayController {
 
-    private val selectTabWrapper by lazy {
-        SelectTabUseCaseWrapper(tabsUseCases.selectTab) {
-            handleNavigateToBrowser()
+    override fun handleNormalTabsFabClick() {
+        openNewTab(isPrivate = false)
+    }
+
+    override fun handlePrivateTabsFabClick() {
+        openNewTab(isPrivate = true)
+    }
+
+    override fun handleSyncedTabsFabClick() {
+        if (!tabsTrayStore.state.syncing) {
+            tabsTrayStore.dispatch(TabsTrayAction.SyncNow)
         }
     }
 
-    override fun handleOpeningNewTab(isPrivate: Boolean) {
+    /**
+     * Opens a new tab.
+     *
+     * @param isPrivate [Boolean] indicating whether the new tab is private.
+     */
+    private fun openNewTab(isPrivate: Boolean) {
         val startTime = profiler?.getProfilerTime()
         browsingModeManager.mode = BrowsingMode.fromBoolean(isPrivate)
         navController.navigate(
@@ -419,7 +427,9 @@ class DefaultTabsTrayController(
     }
 
     override fun handleTabSelected(tab: TabSessionState, source: String?) {
-        selectTabWrapper.invoke(tab.id, source)
+        TabsTray.openedExistingTab.record(TabsTray.OpenedExistingTabExtra(source ?: "unknown"))
+        tabsUseCases.selectTab(tab.id)
+        handleNavigateToBrowser()
     }
 
     override fun handleTabUnselected(tab: TabSessionState) {
