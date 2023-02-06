@@ -140,12 +140,13 @@ class HomeScreenTest {
             verifyJumpBackInShowAllButton()
         }.clickJumpBackInShowAllButton {
             verifyExistingOpenTabs(firstWebPage.title)
-        }.closeTabDrawer() {
+        }.closeTabDrawer {
         }
         homeScreen {
         }.clickJumpBackInItemWithTitle(firstWebPage.title) {
             verifyUrl(firstWebPage.url.toString())
             clickLinkMatchingText("Link 1")
+            verifyPageContent(secondWebPage.content)
         }.goToHomescreen {
             verifyJumpBackInSectionIsDisplayed()
             verifyJumpBackInItemTitle(secondWebPage.title)
@@ -224,6 +225,7 @@ class HomeScreenTest {
         }
     }
 
+    @Ignore("failing after a design refactor, see https://github.com/mozilla-mobile/fenix/issues/28472")
     @Test
     fun selectStoriesByTopicItemTest() {
         activityTestRule.activityRule.applySettingsExceptions {

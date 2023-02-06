@@ -27,7 +27,9 @@ class MetricsMiddleware(
     private fun handleAction(action: AppAction) = when (action) {
         is AppAction.ResumedMetricsAction -> {
             metrics.track(Event.GrowthData.SetAsDefault)
+            metrics.track(Event.GrowthData.FirstAppOpenForDay)
             metrics.track(Event.GrowthData.FirstWeekSeriesActivity)
+            metrics.track(Event.GrowthData.UsageThreshold)
         }
         else -> Unit
     }

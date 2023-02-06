@@ -647,7 +647,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var reEngagementNotificationEnabled by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_re_engagement_notification_enabled),
-        default = { FxNimbus.features.reEngagementNotification.value(appContext).enabled },
+        default = { FxNimbus.features.reEngagementNotification.value().enabled },
         featureFlag = true,
     )
 
@@ -697,13 +697,16 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val enabledTotalCookieProtection: Boolean
         get() = Config.channel.isNightlyOrDebug || mr2022Sections[Mr2022Section.TCP_FEATURE] == true
 
+    private val enabledTotalCookieProtectionCFR: Boolean
+        get() = Config.channel.isNightlyOrDebug || mr2022Sections[Mr2022Section.TCP_CFR] == true
+
     /**
      * Indicates if the total cookie protection CRF should be shown.
      */
     var shouldShowTotalCookieProtectionCFR by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_should_show_total_cookie_protection_popup),
         featureFlag = true,
-        default = { Config.channel.isNightlyOrDebug || mr2022Sections[Mr2022Section.TCP_CFR] == true },
+        default = { enabledTotalCookieProtectionCFR },
     )
 
     val blockCookiesSelectionInCustomTrackingProtection by stringPreference(
@@ -1467,7 +1470,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var showUnifiedSearchFeature by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_show_unified_search),
-        default = { FxNimbus.features.unifiedSearch.value(appContext).enabled },
+        default = { FxNimbus.features.unifiedSearch.value().enabled },
         featureFlag = FeatureFlags.unifiedSearchFeature,
     )
 
@@ -1484,7 +1487,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var notificationPrePermissionPromptEnabled by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_notification_pre_permission_prompt_enabled),
-        default = { FxNimbus.features.prePermissionNotificationPrompt.value(appContext).enabled },
+        default = { FxNimbus.features.prePermissionNotificationPrompt.value().enabled },
         featureFlag = FeatureFlags.notificationPrePermissionPromptEnabled,
     )
 
@@ -1515,12 +1518,24 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     fun getCookieBannerHandling(): CookieBannerHandlingMode {
         return when (shouldUseCookieBanner) {
             true -> CookieBannerHandlingMode.REJECT_ALL
-            false -> if (shouldShowCookieBannerUI && !userOptOutOfReEngageCookieBannerDialog) {
-                CookieBannerHandlingMode.DETECT_ONLY
+            false -> if (shouldEnabledCookieBannerDetectOnlyMode()) {
+                CookieBannerHandlingMode.REJECT_ALL
             } else {
                 CookieBannerHandlingMode.DISABLED
             }
         }
+    }
+
+    /**
+     * Indicates if the cookie banner detect only mode should be enabled.
+     */
+    fun shouldEnabledCookieBannerDetectOnlyMode(): Boolean {
+        val tcpCFRAlreadyShown = if (enabledTotalCookieProtectionCFR) {
+            !userOptOutOfReEngageCookieBannerDialog
+        } else {
+            true
+        }
+        return shouldShowCookieBannerUI && tcpCFRAlreadyShown && !shouldUseCookieBanner
     }
 
     var setAsDefaultGrowthSent by booleanPreference(
@@ -1541,5 +1556,25 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var adClickGrowthSent by booleanPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_growth_ad_click_sent),
         default = false,
+    )
+
+    var usageTimeGrowthData by longPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_usage_time),
+        default = -1,
+    )
+
+    var usageTimeGrowthSent by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_usage_time_sent),
+        default = false,
+    )
+
+    var resumeGrowthLastSent by longPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_resume_last_sent),
+        default = 0,
+    )
+
+    var uriLoadGrowthLastSent by longPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_uri_load_last_sent),
+        default = 0,
     )
 }
