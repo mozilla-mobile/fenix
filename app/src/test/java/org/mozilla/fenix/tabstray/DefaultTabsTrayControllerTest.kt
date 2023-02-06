@@ -50,6 +50,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.maxActiveTime
 import org.mozilla.fenix.ext.potentialInactiveTabs
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -786,18 +787,19 @@ class DefaultTabsTrayControllerTest {
         showUndoSnackbarForTab: (Boolean) -> Unit = { _ -> },
         showCancelledDownloadWarning: (Int, String?, String?) -> Unit = { _, _, _ -> },
     ): DefaultTabsTrayController {
+        every { activity.components.appStore } returns appStore
+        every { activity.components.core.store } returns browserStore
+        every { activity.components.settings } returns settings
+        every { activity.browsingModeManager } returns browsingModeManager
+        every { activity.components.core.engine.profiler } returns profiler
+        every { activity.components.useCases.tabsUseCases } returns tabsUseCases
+
         return DefaultTabsTrayController(
             activity = activity,
-            appStore = appStore,
             tabsTrayStore = trayStore,
-            browserStore = browserStore,
-            settings = settings,
-            browsingModeManager = browsingModeManager,
             navController = navController,
             navigateToHomeAndDeleteSession = navigateToHomeAndDeleteSession,
-            profiler = profiler,
             navigationInteractor = navigationInteractor,
-            tabsUseCases = tabsUseCases,
             selectTabPosition = selectTabPosition,
             dismissTray = dismissTray,
             showUndoSnackbarForTab = showUndoSnackbarForTab,

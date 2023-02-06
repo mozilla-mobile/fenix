@@ -32,6 +32,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.ext.DEFAULT_ACTIVE_DAYS
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.potentialInactiveTabs
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.selection.SelectionHolder
@@ -187,21 +188,22 @@ interface TabsTrayController : SyncedTabsController, InactiveTabsController, Tab
 @Suppress("TooManyFunctions", "LongParameterList")
 class DefaultTabsTrayController(
     private val activity: HomeActivity,
-    private val appStore: AppStore,
     private val tabsTrayStore: TabsTrayStore,
-    private val browserStore: BrowserStore,
-    private val settings: Settings,
-    private val browsingModeManager: BrowsingModeManager,
     private val navController: NavController,
     private val navigateToHomeAndDeleteSession: (String) -> Unit,
-    private val profiler: Profiler?,
     private val navigationInteractor: NavigationInteractor,
-    private val tabsUseCases: TabsUseCases,
     private val selectTabPosition: (Int, Boolean) -> Unit,
     private val dismissTray: () -> Unit,
     private val showUndoSnackbarForTab: (Boolean) -> Unit,
     internal val showCancelledDownloadWarning: (downloadCount: Int, tabId: String?, source: String?) -> Unit,
 ) : TabsTrayController {
+
+    private val appStore: AppStore = activity.components.appStore
+    private val browserStore: BrowserStore = activity.components.core.store
+    private val settings: Settings = activity.components.settings
+    private val browsingModeManager: BrowsingModeManager = activity.browsingModeManager
+    private val profiler: Profiler? = activity.components.core.engine.profiler
+    private val tabsUseCases: TabsUseCases = activity.components.useCases.tabsUseCases
 
     override fun handleNormalTabsFabClick() {
         openNewTab(isPrivate = false)

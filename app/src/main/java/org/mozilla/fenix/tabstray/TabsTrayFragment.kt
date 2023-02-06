@@ -206,16 +206,10 @@ class TabsTrayFragment : AppCompatDialogFragment() {
 
         tabsTrayController = DefaultTabsTrayController(
             activity = activity,
-            appStore = requireComponents.appStore,
             tabsTrayStore = tabsTrayStore,
-            browserStore = requireComponents.core.store,
-            settings = requireContext().settings(),
-            browsingModeManager = activity.browsingModeManager,
             navController = findNavController(),
             navigateToHomeAndDeleteSession = ::navigateToHomeAndDeleteSession,
             navigationInteractor = navigationInteractor,
-            profiler = requireComponents.core.engine.profiler,
-            tabsUseCases = requireComponents.useCases.tabsUseCases,
             selectTabPosition = ::selectTabPosition,
             dismissTray = ::dismissTabsTray,
             showUndoSnackbarForTab = ::showUndoSnackbarForTab,
