@@ -383,7 +383,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             queue.runIfReadyOrQueue {
                 GlobalScope.launch(Dispatchers.IO) {
                     components.analytics.experiments.maybeFetchExperiments(
-                        context = this@FenixApplication
+                        context = this@FenixApplication,
                     )
                 }
             }

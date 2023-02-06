@@ -106,8 +106,8 @@ fun NimbusInterface.maybeFetchExperiments(
     val minimumPeriodMinutes = feature.refreshIntervalForeground
     val minimumPeriodMillis = minimumPeriodMinutes * Settings.ONE_MINUTE_MS
 
-    if (currentTimeMillis - lastFetchTimeMillis > minimumPeriodMillis) {
+    if (currentTimeMillis - lastFetchTimeMillis >= minimumPeriodMillis) {
         context.settings().nimbusLastFetchTime = currentTimeMillis
-        this.fetchExperiments()
+        fetchExperiments()
     }
 }

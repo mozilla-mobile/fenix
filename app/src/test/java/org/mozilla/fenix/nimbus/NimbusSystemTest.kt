@@ -5,8 +5,14 @@
 package org.mozilla.fenix.nimbus
 
 import android.content.Context
-import io.mockk.*
-import org.junit.Assert.*
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.runs
+import io.mockk.slot
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.experiments.nimbus.NimbusInterface
@@ -22,15 +28,16 @@ class NimbusSystemTest {
 
     private val lastTimeSlot = slot<Long>()
 
+    // By default this comes from the generated Nimbus features.
     val config = NimbusSystem(
-        refreshIntervalForeground = 60,
+        refreshIntervalForeground = 60, /* minutes */
     )
 
     class NimbusUnderTest(override val context: Context) : NimbusInterface {
-        var fetching = false
+        var isFetching = false
 
         override fun fetchExperiments() {
-            fetching = true
+            isFetching = true
         }
     }
 
@@ -45,29 +52,51 @@ class NimbusSystemTest {
         every { settings.nimbusLastFetchTime = capture(lastTimeSlot) } just runs
         every { settings.nimbusLastFetchTime } returns 0L
 
-        assertFalse(nimbus.fetching)
+        assertFalse(nimbus.isFetching)
     }
 
     @Test
     fun `GIVEN a nimbus object WHEN calling maybeFetchExperiments after an interval THEN call fetchExperiments`() {
-        val elapsedTime: Long = 60 * 60 * 1000 + 1
+        val elapsedTime: Long = Settings.ONE_HOUR_MS + 1
         nimbus.maybeFetchExperiments(
             context,
             config,
-            elapsedTime
+            elapsedTime,
         )
-        assertTrue(nimbus.fetching)
+        assertTrue(nimbus.isFetching)
+        assertEquals(elapsedTime, lastTimeSlot.captured)
+    }
+
+    @Test
+    fun `GIVEN a nimbus object WHEN calling maybeFetchExperiments at exactly an interval THEN call fetchExperiments`() {
+        val elapsedTime: Long = Settings.ONE_HOUR_MS
+        nimbus.maybeFetchExperiments(
+            context,
+            config,
+            elapsedTime,
+        )
+        assertTrue(nimbus.isFetching)
         assertEquals(elapsedTime, lastTimeSlot.captured)
     }
 
     @Test
     fun `GIVEN a nimbus object WHEN calling maybeFetchExperiments before an interval THEN do not call fetchExperiments`() {
-        val elapsedTime: Long = 60 * 60 * 1000 - 1
+        val elapsedTime: Long = Settings.ONE_HOUR_MS - 1
         nimbus.maybeFetchExperiments(
             context,
             config,
-            elapsedTime
+            elapsedTime,
         )
-        assertFalse(nimbus.fetching)
+        assertFalse(nimbus.isFetching)
+    }
+
+    @Test
+    fun `GIVEN a nimbus object WHEN calling maybeFetchExperiments at without an elapsedTime THEN call fetchExperiments`() {
+        // since elapsedTime = currentTimeMillis
+        nimbus.maybeFetchExperiments(
+            context,
+            config,
+        )
+        assertTrue(nimbus.isFetching)
     }
 }
