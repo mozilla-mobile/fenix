@@ -19,8 +19,13 @@ gcloud:
   performance-metrics: true
 
   test-targets:
-    - notPackage org.mozilla.fenix.screenshots
-    - notPackage org.mozilla.fenix.syncintegration
+    - class org.mozilla.fenix.ui.LoginsTest#updateSavedLoginTest
+    - class org.mozilla.fenix.ui.LoginsTest#verifyLoginWithoutPasswordCanNotBeSavedTest
+    - class org.mozilla.fenix.ui.LoginsTest#verifyEditModeDismissalDoesNotSaveLoginCredentialsTest
+    - class org.mozilla.fenix.ui.LoginsTest#verifyLoginWithNoUserNameCanBeSavedTest
+    - class org.mozilla.fenix.ui.LoginsTest#verifyEditedLoginsAreSavedTest
+#    - notPackage org.mozilla.fenix.screenshots
+#    - notPackage org.mozilla.fenix.syncintegration
 
   device:
     - model: Pixel2.arm
@@ -30,6 +35,6 @@ gcloud:
 flank:
   project: GOOGLE_PROJECT
   max-test-shards: 100
-  num-test-runs: 1
+  num-test-runs: 100
   output-style: compact
   full-junit-result: true
