@@ -8,6 +8,8 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import mozilla.components.browser.state.search.RegionState
 import mozilla.components.browser.state.search.SearchEngine
@@ -58,48 +60,59 @@ class SearchFragmentStoreTest {
         activity.browsingModeManager.mode = BrowsingMode.Normal
         every { components.core.store.state } returns BrowserState()
         every { settings.shouldShowSearchShortcuts } returns true
+        every { settings.showUnifiedSearchFeature } returns true
+        every { settings.shouldShowHistorySuggestions } returns true
 
-        val expected = SearchFragmentState(
-            query = "",
-            url = "",
-            searchTerms = "",
-            searchEngineSource = SearchEngineSource.None,
-            defaultEngine = null,
-            showSearchShortcutsSetting = true,
-            showSearchSuggestions = false,
-            showSearchSuggestionsHint = false,
-            showSearchShortcuts = false,
-            areShortcutsAvailable = false,
-            showClipboardSuggestions = false,
-            showHistorySuggestions = false,
-            showBookmarkSuggestions = false,
-            showSyncedTabsSuggestions = false,
-            showSessionSuggestions = true,
-            tabId = null,
-            pastedText = "pastedText",
-            searchAccessPoint = MetricsUtils.Source.ACTION,
-        )
-
-        assertEquals(
-            expected,
-            createInitialSearchFragmentState(
-                activity,
-                components,
+        mockkStatic("org.mozilla.fenix.search.SearchFragmentStoreKt") {
+            val expected = SearchFragmentState(
+                query = "",
+                url = "",
+                searchTerms = "",
+                searchEngineSource = SearchEngineSource.None,
+                defaultEngine = null,
+                showSearchShortcutsSetting = true,
+                showSearchSuggestions = false,
+                showSearchSuggestionsHint = false,
+                showSearchShortcuts = false,
+                areShortcutsAvailable = false,
+                showClipboardSuggestions = false,
+                showSearchTermHistory = true,
+                showHistorySuggestionsForCurrentEngine = false,
+                showAllHistorySuggestions = true,
+                showBookmarksSuggestionsForCurrentEngine = false,
+                showAllBookmarkSuggestions = false,
+                showSyncedTabsSuggestionsForCurrentEngine = false,
+                showAllSyncedTabsSuggestions = false,
+                showSessionSuggestionsForCurrentEngine = false,
+                showAllSessionSuggestions = true,
                 tabId = null,
                 pastedText = "pastedText",
                 searchAccessPoint = MetricsUtils.Source.ACTION,
-            ),
-        )
-        assertEquals(
-            expected.copy(tabId = "tabId"),
-            createInitialSearchFragmentState(
-                activity,
-                components,
-                tabId = "tabId",
-                pastedText = "pastedText",
-                searchAccessPoint = MetricsUtils.Source.ACTION,
-            ),
-        )
+            )
+
+            assertEquals(
+                expected,
+                createInitialSearchFragmentState(
+                    activity,
+                    components,
+                    tabId = null,
+                    pastedText = "pastedText",
+                    searchAccessPoint = MetricsUtils.Source.ACTION,
+                ),
+            )
+            assertEquals(
+                expected.copy(tabId = "tabId"),
+                createInitialSearchFragmentState(
+                    activity,
+                    components,
+                    tabId = "tabId",
+                    pastedText = "pastedText",
+                    searchAccessPoint = MetricsUtils.Source.ACTION,
+                ),
+            )
+
+            verify(exactly = 2) { shouldShowSearchSuggestions(BrowsingMode.Normal, settings) }
+        }
     }
 
     @Test
@@ -130,10 +143,15 @@ class SearchFragmentStoreTest {
                 showSearchShortcuts = false,
                 areShortcutsAvailable = false,
                 showClipboardSuggestions = false,
-                showHistorySuggestions = false,
-                showBookmarkSuggestions = false,
-                showSyncedTabsSuggestions = false,
-                showSessionSuggestions = true,
+                showSearchTermHistory = false,
+                showHistorySuggestionsForCurrentEngine = false,
+                showAllHistorySuggestions = false,
+                showBookmarksSuggestionsForCurrentEngine = false,
+                showAllBookmarkSuggestions = false,
+                showSyncedTabsSuggestionsForCurrentEngine = false,
+                showAllSyncedTabsSuggestions = false,
+                showSessionSuggestionsForCurrentEngine = false,
+                showAllSessionSuggestions = true,
                 tabId = "tabId",
                 pastedText = "",
                 searchAccessPoint = MetricsUtils.Source.SHORTCUT,
@@ -160,34 +178,336 @@ class SearchFragmentStoreTest {
     }
 
     @Test
-    fun selectSearchShortcutEngine() = runTest {
-        val initialState = emptyDefaultState()
+    fun `WHEN the search engine is the default one THEN search suggestions providers are updated`() = runTest {
+        val initialState = emptyDefaultState(showHistorySuggestionsForCurrentEngine = false)
         val store = SearchFragmentStore(initialState)
+        every { settings.shouldShowSearchShortcuts } returns false
+        every { settings.shouldShowSearchSuggestions } returns true
+        every { settings.shouldShowClipboardSuggestions } returns true
+        every { settings.shouldShowHistorySuggestions } returns true
+        every { settings.shouldShowBookmarkSuggestions } returns false
+        every { settings.shouldShowSyncedTabsSuggestions } returns false
+        every { settings.shouldShowSearchSuggestions } returns true
+        every { settings.shouldShowSearchSuggestionsInPrivate } returns true
 
-        store.dispatch(SearchFragmentAction.SearchShortcutEngineSelected(searchEngine, settings)).join()
-        assertNotSame(initialState, store.state)
-        assertEquals(SearchEngineSource.Shortcut(searchEngine), store.state.searchEngineSource)
-        assertEquals(false, store.state.showSearchShortcuts)
+        mockkStatic("org.mozilla.fenix.search.SearchFragmentStoreKt") {
+            store.dispatch(
+                SearchFragmentAction.SearchDefaultEngineSelected(
+                    engine = searchEngine,
+                    browsingMode = BrowsingMode.Private,
+                    settings = settings,
+                ),
+            ).join()
+
+            assertNotSame(initialState, store.state)
+            assertEquals(SearchEngineSource.Default(searchEngine), store.state.searchEngineSource)
+
+            assertTrue(store.state.showSearchSuggestions)
+            assertFalse(store.state.showSearchShortcuts)
+            assertTrue(store.state.showClipboardSuggestions)
+            assertFalse(store.state.showSearchTermHistory)
+            assertFalse(store.state.showHistorySuggestionsForCurrentEngine)
+            assertTrue(store.state.showAllHistorySuggestions)
+            assertFalse(store.state.showAllBookmarkSuggestions)
+            assertFalse(store.state.showAllSyncedTabsSuggestions)
+            assertTrue(store.state.showAllSessionSuggestions)
+            verify { shouldShowSearchSuggestions(BrowsingMode.Private, settings) }
+        }
     }
 
     @Test
-    fun `WHEN history engine selected action dispatched THEN update search engine source`() = runTest {
+    fun `GIVEN unified search is enabled WHEN the search engine is updated to a general engine shortcut THEN search suggestions providers are updated`() = runTest {
+        val initialState = emptyDefaultState(showHistorySuggestionsForCurrentEngine = false)
+        val store = SearchFragmentStore(initialState)
+        val topicSpecificEngine: SearchEngine = mockk {
+            every { isGeneral } returns false
+        }
+        every { settings.showUnifiedSearchFeature } returns true
+        every { settings.shouldShowSearchShortcuts } returns true
+        every { settings.shouldShowClipboardSuggestions } returns true
+        every { settings.shouldShowHistorySuggestions } returns true
+        every { settings.shouldShowBookmarkSuggestions } returns true
+        every { settings.shouldShowSyncedTabsSuggestions } returns true
+        every { settings.shouldShowSearchSuggestions } returns true
+
+        store.dispatch(
+            SearchFragmentAction.SearchShortcutEngineSelected(
+                engine = topicSpecificEngine,
+                browsingMode = BrowsingMode.Normal,
+                settings = settings,
+            ),
+        ).join()
+
+        assertNotSame(initialState, store.state)
+        assertEquals(SearchEngineSource.Shortcut(topicSpecificEngine), store.state.searchEngineSource)
+        assertTrue(store.state.showSearchSuggestions)
+        assertFalse(store.state.showSearchShortcuts)
+        assertTrue(store.state.showClipboardSuggestions)
+        assertTrue(store.state.showSearchTermHistory)
+        assertTrue(store.state.showHistorySuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllHistorySuggestions)
+        assertTrue(store.state.showBookmarksSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllBookmarkSuggestions)
+        assertTrue(store.state.showSyncedTabsSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllSyncedTabsSuggestions)
+        assertTrue(store.state.showSessionSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllSessionSuggestions)
+
+        every { settings.shouldShowSearchSuggestions } returns false
+        val generalEngine: SearchEngine = mockk {
+            every { isGeneral } returns true
+        }
+        store.dispatch(
+            SearchFragmentAction.SearchShortcutEngineSelected(
+                engine = generalEngine,
+                browsingMode = BrowsingMode.Normal,
+                settings = settings,
+            ),
+        ).join()
+        assertNotSame(initialState, store.state)
+        assertEquals(SearchEngineSource.Shortcut(generalEngine), store.state.searchEngineSource)
+        assertFalse(store.state.showSearchSuggestions)
+        assertFalse(store.state.showSearchShortcuts)
+        assertTrue(store.state.showClipboardSuggestions)
+        assertTrue(store.state.showSearchTermHistory)
+        assertFalse(store.state.showHistorySuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllHistorySuggestions)
+        assertFalse(store.state.showBookmarksSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllBookmarkSuggestions)
+        assertFalse(store.state.showSyncedTabsSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllSyncedTabsSuggestions)
+        assertFalse(store.state.showSessionSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllSessionSuggestions)
+    }
+
+    @Test
+    fun `GIVEN unified search is enabled WHEN the search engine is updated to a topic specific engine shortcut THEN search suggestions providers are updated`() = runTest {
+        val initialState = emptyDefaultState(showHistorySuggestionsForCurrentEngine = false)
+        val store = SearchFragmentStore(initialState)
+        every { searchEngine.isGeneral } returns false
+        every { settings.showUnifiedSearchFeature } returns true
+        every { settings.shouldShowSearchSuggestions } returns false
+        every { settings.shouldShowSearchShortcuts } returns false
+        every { settings.shouldShowClipboardSuggestions } returns false
+        every { settings.shouldShowHistorySuggestions } returns true
+        every { settings.shouldShowBookmarkSuggestions } returns false
+        every { settings.shouldShowSyncedTabsSuggestions } returns false
+
+        store.dispatch(
+            SearchFragmentAction.SearchShortcutEngineSelected(
+                engine = searchEngine,
+                browsingMode = BrowsingMode.Normal,
+                settings = settings,
+            ),
+        ).join()
+
+        assertNotSame(initialState, store.state)
+        assertEquals(SearchEngineSource.Shortcut(searchEngine), store.state.searchEngineSource)
+        assertFalse(store.state.showSearchSuggestions)
+        assertFalse(store.state.showSearchShortcuts)
+        assertFalse(store.state.showClipboardSuggestions)
+        assertTrue(store.state.showSearchTermHistory)
+        assertTrue(store.state.showHistorySuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllHistorySuggestions)
+        assertFalse(store.state.showBookmarksSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllBookmarkSuggestions)
+        assertFalse(store.state.showSyncedTabsSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllSyncedTabsSuggestions)
+        assertTrue(store.state.showSessionSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllSessionSuggestions)
+    }
+
+    @Test
+    fun `GIVEN unified search is disabled WHEN the search engine is updated to a shortcut THEN search suggestions providers are updated`() = runTest {
+        val initialState = emptyDefaultState(showHistorySuggestionsForCurrentEngine = false)
+        val store = SearchFragmentStore(initialState)
+        every { settings.showUnifiedSearchFeature } returns false
+        every { settings.shouldShowSearchShortcuts } returns true
+        every { settings.shouldShowClipboardSuggestions } returns false
+        every { settings.shouldShowHistorySuggestions } returns true
+        every { settings.shouldShowBookmarkSuggestions } returns false
+        every { settings.shouldShowSyncedTabsSuggestions } returns true
+        every { settings.shouldShowSearchSuggestions } returns true
+        every { settings.shouldShowSearchSuggestionsInPrivate } returns true
+
+        store.dispatch(
+            SearchFragmentAction.SearchShortcutEngineSelected(
+                engine = searchEngine,
+                browsingMode = BrowsingMode.Private,
+                settings = settings,
+            ),
+        ).join()
+
+        assertNotSame(initialState, store.state)
+        assertEquals(SearchEngineSource.Shortcut(searchEngine), store.state.searchEngineSource)
+        assertTrue(store.state.showSearchSuggestions)
+        assertTrue(store.state.showSearchShortcuts)
+        assertFalse(store.state.showClipboardSuggestions)
+        assertFalse(store.state.showSearchTermHistory)
+        assertFalse(store.state.showHistorySuggestionsForCurrentEngine)
+        assertTrue(store.state.showAllHistorySuggestions)
+        assertFalse(store.state.showAllBookmarkSuggestions)
+        assertTrue(store.state.showAllSyncedTabsSuggestions)
+        assertTrue(store.state.showAllSessionSuggestions)
+    }
+
+    @Test
+    fun `GIVEN unified search is enabled WHEN updating the search engine to a topic specific one THEN enable filtered bookmarks, history and tabs suggestions`() = runTest {
         val initialState = emptyDefaultState()
+        val store = SearchFragmentStore(initialState)
+        val topicSpecificEngine1: SearchEngine = mockk(relaxed = true) {
+            every { name } returns "1"
+            every { isGeneral } returns false
+        }
+        every { settings.showUnifiedSearchFeature } returns true
+
+        every { settings.shouldShowBookmarkSuggestions } returns false
+        every { settings.shouldShowSyncedTabsSuggestions } returns false
+        store.dispatch(
+            SearchFragmentAction.SearchShortcutEngineSelected(
+                engine = topicSpecificEngine1,
+                browsingMode = BrowsingMode.Private,
+                settings = settings,
+            ),
+        ).join()
+        assertNotSame(initialState, store.state)
+        assertEquals(SearchEngineSource.Shortcut(topicSpecificEngine1), store.state.searchEngineSource)
+        assertFalse(store.state.showBookmarksSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllBookmarkSuggestions)
+        assertFalse(store.state.showSyncedTabsSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllSyncedTabsSuggestions)
+        assertTrue(store.state.showSessionSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllSessionSuggestions)
+
+        val topicSpecificEngine2 = topicSpecificEngine1.copy(
+            name = "2",
+        )
+        every { settings.shouldShowBookmarkSuggestions } returns true
+        every { settings.shouldShowSyncedTabsSuggestions } returns true
+        store.dispatch(
+            SearchFragmentAction.SearchShortcutEngineSelected(
+                engine = topicSpecificEngine2,
+                browsingMode = BrowsingMode.Private,
+                settings = settings,
+            ),
+        ).join()
+        assertNotSame(initialState, store.state)
+        assertEquals(SearchEngineSource.Shortcut(topicSpecificEngine2), store.state.searchEngineSource)
+        assertTrue(store.state.showBookmarksSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllBookmarkSuggestions)
+        assertTrue(store.state.showSyncedTabsSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllSyncedTabsSuggestions)
+        assertTrue(store.state.showSessionSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllSessionSuggestions)
+    }
+
+    @Test
+    fun `GIVEN unified search is disabled WHEN updating the search engine to a topic specific one THEN enable bookmarks and tabs suggestions if user enabled`() = runTest {
+        val initialState = emptyDefaultState()
+        val store = SearchFragmentStore(initialState)
+        val topicSpecificEngine1: SearchEngine = mockk(relaxed = true) {
+            every { id } returns "1"
+            every { isGeneral } returns false
+        }
+        every { settings.showUnifiedSearchFeature } returns true
+
+        every { settings.shouldShowBookmarkSuggestions } returns false
+        every { settings.shouldShowSyncedTabsSuggestions } returns true
+        store.dispatch(
+            SearchFragmentAction.SearchShortcutEngineSelected(
+                engine = topicSpecificEngine1,
+                browsingMode = BrowsingMode.Private,
+                settings = settings,
+            ),
+        ).join()
+        assertNotSame(initialState, store.state)
+        assertEquals(SearchEngineSource.Shortcut(topicSpecificEngine1), store.state.searchEngineSource)
+        assertFalse(store.state.showAllBookmarkSuggestions)
+        assertTrue(store.state.showSyncedTabsSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllSyncedTabsSuggestions)
+        assertTrue(store.state.showSessionSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllSessionSuggestions)
+
+        val topicSpecificEngine2 = topicSpecificEngine1.copy(
+            id = "2",
+        )
+        every { settings.shouldShowBookmarkSuggestions } returns true
+        every { settings.shouldShowSyncedTabsSuggestions } returns false
+        store.dispatch(
+            SearchFragmentAction.SearchShortcutEngineSelected(
+                engine = topicSpecificEngine2,
+                browsingMode = BrowsingMode.Private,
+                settings = settings,
+            ),
+        ).join()
+        assertNotSame(initialState, store.state)
+        assertEquals(SearchEngineSource.Shortcut(topicSpecificEngine2), store.state.searchEngineSource)
+        assertTrue(store.state.showBookmarksSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllBookmarkSuggestions)
+        assertFalse(store.state.showSyncedTabsSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllSyncedTabsSuggestions)
+        assertTrue(store.state.showSessionSuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllSessionSuggestions)
+    }
+
+    @Test
+    fun `WHEN doing a history search THEN search suggestions providers are updated`() = runTest {
+        val initialState = emptyDefaultState(showHistorySuggestionsForCurrentEngine = true)
         val store = SearchFragmentStore(initialState)
 
         store.dispatch(SearchFragmentAction.SearchHistoryEngineSelected(searchEngine)).join()
+
         assertNotSame(initialState, store.state)
         assertEquals(SearchEngineSource.History(searchEngine), store.state.searchEngineSource)
+        assertFalse(store.state.showSearchSuggestions)
+        assertFalse(store.state.showSearchShortcuts)
+        assertFalse(store.state.showClipboardSuggestions)
+        assertFalse(store.state.showSearchTermHistory)
+        assertFalse(store.state.showHistorySuggestionsForCurrentEngine)
+        assertTrue(store.state.showAllHistorySuggestions)
+        assertFalse(store.state.showAllBookmarkSuggestions)
+        assertFalse(store.state.showAllSyncedTabsSuggestions)
+        assertFalse(store.state.showAllSessionSuggestions)
     }
 
     @Test
-    fun `WHEN bookmarks engine selected action dispatched THEN update search engine source`() = runTest {
-        val initialState = emptyDefaultState()
+    fun `WHEN doing a bookmarks search THEN search suggestions providers are updated`() = runTest {
+        val initialState = emptyDefaultState(showHistorySuggestionsForCurrentEngine = true)
         val store = SearchFragmentStore(initialState)
 
         store.dispatch(SearchFragmentAction.SearchBookmarksEngineSelected(searchEngine)).join()
+
         assertNotSame(initialState, store.state)
         assertEquals(SearchEngineSource.Bookmarks(searchEngine), store.state.searchEngineSource)
+        assertFalse(store.state.showSearchSuggestions)
+        assertFalse(store.state.showSearchShortcuts)
+        assertFalse(store.state.showClipboardSuggestions)
+        assertFalse(store.state.showSearchTermHistory)
+        assertFalse(store.state.showHistorySuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllHistorySuggestions)
+        assertTrue(store.state.showAllBookmarkSuggestions)
+        assertFalse(store.state.showAllSyncedTabsSuggestions)
+        assertFalse(store.state.showAllSessionSuggestions)
+    }
+
+    @Test
+    fun `WHEN doing a tabs search THEN search suggestions providers are updated`() = runTest {
+        val initialState = emptyDefaultState(showHistorySuggestionsForCurrentEngine = true)
+        val store = SearchFragmentStore(initialState)
+
+        store.dispatch(SearchFragmentAction.SearchTabsEngineSelected(searchEngine)).join()
+
+        assertNotSame(initialState, store.state)
+        assertEquals(SearchEngineSource.Tabs(searchEngine), store.state.searchEngineSource)
+        assertFalse(store.state.showSearchSuggestions)
+        assertFalse(store.state.showSearchShortcuts)
+        assertFalse(store.state.showClipboardSuggestions)
+        assertFalse(store.state.showSearchTermHistory)
+        assertFalse(store.state.showHistorySuggestionsForCurrentEngine)
+        assertFalse(store.state.showAllHistorySuggestions)
+        assertFalse(store.state.showAllBookmarkSuggestions)
+        assertTrue(store.state.showAllSyncedTabsSuggestions)
+        assertTrue(store.state.showAllSessionSuggestions)
     }
 
     @Test
@@ -407,11 +727,48 @@ class SearchFragmentStoreTest {
         assertFalse(store.state.showSearchShortcuts)
     }
 
+    @Test
+    fun `GIVEN normal browsing mode and search suggestions enabled WHEN checking if search suggedtions should be shown THEN return true`() {
+        var settings: Settings = mockk {
+            every { shouldShowSearchSuggestions } returns false
+            every { shouldShowSearchSuggestionsInPrivate } returns false
+        }
+        assertFalse(shouldShowSearchSuggestions(BrowsingMode.Normal, settings))
+
+        settings = mockk {
+            every { shouldShowSearchSuggestions } returns true
+            every { shouldShowSearchSuggestionsInPrivate } returns false
+        }
+        assertTrue(shouldShowSearchSuggestions(BrowsingMode.Normal, settings))
+    }
+
+    @Test
+    fun `GIVEN private browsing mode and search suggestions enabled WHEN checking if search suggedtions should be shown THEN return true`() {
+        var settings: Settings = mockk {
+            every { shouldShowSearchSuggestions } returns false
+            every { shouldShowSearchSuggestionsInPrivate } returns false
+        }
+        assertFalse(shouldShowSearchSuggestions(BrowsingMode.Private, settings))
+
+        settings = mockk {
+            every { shouldShowSearchSuggestions } returns false
+            every { shouldShowSearchSuggestionsInPrivate } returns true
+        }
+        assertFalse(shouldShowSearchSuggestions(BrowsingMode.Private, settings))
+
+        settings = mockk {
+            every { shouldShowSearchSuggestions } returns true
+            every { shouldShowSearchSuggestionsInPrivate } returns true
+        }
+        assertTrue(shouldShowSearchSuggestions(BrowsingMode.Private, settings))
+    }
+
     private fun emptyDefaultState(
         searchEngineSource: SearchEngineSource = mockk(),
         defaultEngine: SearchEngine? = mockk(),
         areShortcutsAvailable: Boolean = true,
         showSearchShortcutsSetting: Boolean = false,
+        showHistorySuggestionsForCurrentEngine: Boolean = true,
     ): SearchFragmentState = SearchFragmentState(
         tabId = null,
         url = "",
@@ -425,10 +782,15 @@ class SearchFragmentStoreTest {
         showSearchShortcuts = false,
         areShortcutsAvailable = areShortcutsAvailable,
         showClipboardSuggestions = false,
-        showHistorySuggestions = false,
-        showBookmarkSuggestions = false,
-        showSyncedTabsSuggestions = false,
-        showSessionSuggestions = false,
+        showSearchTermHistory = true,
+        showHistorySuggestionsForCurrentEngine = showHistorySuggestionsForCurrentEngine,
+        showAllHistorySuggestions = false,
+        showBookmarksSuggestionsForCurrentEngine = false,
+        showAllBookmarkSuggestions = false,
+        showSyncedTabsSuggestionsForCurrentEngine = false,
+        showAllSyncedTabsSuggestions = false,
+        showSessionSuggestionsForCurrentEngine = false,
+        showAllSessionSuggestions = false,
         searchAccessPoint = MetricsUtils.Source.NONE,
     )
 }

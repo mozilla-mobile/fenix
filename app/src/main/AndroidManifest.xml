@@ -32,6 +32,11 @@
     <!-- Needed to post notifications on devices with Android 13 and later-->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- Needed for uploading media files on devices with Android 13 and later. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
     <application
         android:name=".FenixApplication"
         android:allowBackup="false"
@@ -275,6 +280,10 @@
             android:exported="false"
             android:theme="@style/DialogActivityTheme" />
 
+        <activity
+            android:name=".gleanplumb.NotificationClickedReceiverActivity"
+            android:exported="false" />
+
         <service
             android:name=".autofill.AutofillService"
             android:exported="true"
@@ -289,6 +298,7 @@
         </service>
 
         <service android:name=".media.MediaSessionService"
+            android:foregroundServiceType="mediaPlayback"
             android:exported="false" />
 
         <service
@@ -318,6 +328,10 @@
 
         <service android:name=".session.PrivateNotificationService"
                 android:exported="false" />
+
+        <service
+            android:name=".gleanplumb.NotificationDismissedService"
+            android:exported="false" />
 
         <service
             android:name=".push.FirebasePushService"

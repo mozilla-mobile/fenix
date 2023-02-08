@@ -14,7 +14,7 @@ object FenixVersions {
     const val android_gradle_plugin = "7.3.0"
     const val android_lint_api = "30.3.0"
 
-    const val sentry = "6.11.0"
+    const val sentry = "6.13.1"
     const val leakcanary = "2.10"
     const val osslicenses_plugin = "0.10.4"
     const val detekt = "1.19.0"
@@ -77,6 +77,7 @@ object FenixDependencies {
     const val osslicenses_plugin = "com.google.android.gms:oss-licenses-plugin:${FenixVersions.osslicenses_plugin}"
 
     const val mozilla_compose_awesomebar = "org.mozilla.components:compose-awesomebar:${FenixVersions.mozilla_android_components}"
+    const val mozilla_compose_cfr = "org.mozilla.components:compose-cfr:${FenixVersions.mozilla_android_components}"
 
     const val mozilla_concept_awesomebar = "org.mozilla.components:concept-awesomebar:${FenixVersions.mozilla_android_components}"
     const val mozilla_concept_base = "org.mozilla.components:concept-base:${FenixVersions.mozilla_android_components}"

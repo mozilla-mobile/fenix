@@ -29,24 +29,24 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.ext.DEFAULT_ACTIVE_DAYS
+import org.mozilla.fenix.ext.potentialInactiveTabs
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.selection.SelectionHolder
-import org.mozilla.fenix.tabstray.browser.SelectTabUseCaseWrapper
+import org.mozilla.fenix.tabstray.browser.InactiveTabsController
+import org.mozilla.fenix.tabstray.browser.TabsTrayFabController
 import org.mozilla.fenix.tabstray.ext.isActiveDownload
 import org.mozilla.fenix.tabstray.ext.isSelect
+import org.mozilla.fenix.utils.Settings
 import java.util.concurrent.TimeUnit
 import org.mozilla.fenix.GleanMetrics.Tab as GleanTab
 
 /**
  * Controller for handling any actions in the tabs tray.
  */
-interface TabsTrayController : SyncedTabsController {
-
-    /**
-     * Called to open a new tab.
-     */
-    fun handleOpeningNewTab(isPrivate: Boolean)
+interface TabsTrayController : SyncedTabsController, InactiveTabsController, TabsTrayFabController {
 
     /**
      * Set the current tray item to the clamped [position].
@@ -170,7 +170,9 @@ interface TabsTrayController : SyncedTabsController {
  * Default implementation of [TabsTrayController].
  *
  * @property activity [HomeActivity] used to perform top-level app actions.
+ * @property appStore [AppStore] used to dispatch any [AppAction].
  * @property tabsTrayStore [TabsTrayStore] used to read/update the [TabsTrayState].
+ * @property settings [Settings] used to update any user preferences.
  * @property browserStore [BrowserStore] used to read/update the current [BrowserState].
  * @property browsingModeManager [BrowsingModeManager] used to read/update the current [BrowsingMode].
  * @property navController [NavController] used to navigate away from the tabs tray.
@@ -185,8 +187,10 @@ interface TabsTrayController : SyncedTabsController {
 @Suppress("TooManyFunctions", "LongParameterList")
 class DefaultTabsTrayController(
     private val activity: HomeActivity,
+    private val appStore: AppStore,
     private val tabsTrayStore: TabsTrayStore,
     private val browserStore: BrowserStore,
+    private val settings: Settings,
     private val browsingModeManager: BrowsingModeManager,
     private val navController: NavController,
     private val navigateToHomeAndDeleteSession: (String) -> Unit,
@@ -199,13 +203,26 @@ class DefaultTabsTrayController(
     internal val showCancelledDownloadWarning: (downloadCount: Int, tabId: String?, source: String?) -> Unit,
 ) : TabsTrayController {
 
-    private val selectTabWrapper by lazy {
-        SelectTabUseCaseWrapper(tabsUseCases.selectTab) {
-            handleNavigateToBrowser()
+    override fun handleNormalTabsFabClick() {
+        openNewTab(isPrivate = false)
+    }
+
+    override fun handlePrivateTabsFabClick() {
+        openNewTab(isPrivate = true)
+    }
+
+    override fun handleSyncedTabsFabClick() {
+        if (!tabsTrayStore.state.syncing) {
+            tabsTrayStore.dispatch(TabsTrayAction.SyncNow)
         }
     }
 
-    override fun handleOpeningNewTab(isPrivate: Boolean) {
+    /**
+     * Opens a new tab.
+     *
+     * @param isPrivate [Boolean] indicating whether the new tab is private.
+     */
+    private fun openNewTab(isPrivate: Boolean) {
         val startTime = profiler?.getProfilerTime()
         browsingModeManager.mode = BrowsingMode.fromBoolean(isPrivate)
         navController.navigate(
@@ -410,7 +427,9 @@ class DefaultTabsTrayController(
     }
 
     override fun handleTabSelected(tab: TabSessionState, source: String?) {
-        selectTabWrapper.invoke(tab.id, source)
+        TabsTray.openedExistingTab.record(TabsTray.OpenedExistingTabExtra(source ?: "unknown"))
+        tabsUseCases.selectTab(tab.id)
+        handleNavigateToBrowser()
     }
 
     override fun handleTabUnselected(tab: TabSessionState) {
@@ -423,5 +442,53 @@ class DefaultTabsTrayController(
             return true
         }
         return false
+    }
+
+    override fun handleInactiveTabClicked(tab: TabSessionState) {
+        TabsTray.openInactiveTab.add()
+        handleTabSelected(tab, TrayPagerAdapter.INACTIVE_TABS_FEATURE_NAME)
+    }
+
+    override fun handleCloseInactiveTabClicked(tab: TabSessionState) {
+        TabsTray.closeInactiveTab.add()
+        handleTabDeletion(tab.id, TrayPagerAdapter.INACTIVE_TABS_FEATURE_NAME)
+    }
+
+    override fun handleInactiveTabsHeaderClicked(expanded: Boolean) {
+        appStore.dispatch(AppAction.UpdateInactiveExpanded(expanded))
+
+        when (expanded) {
+            true -> TabsTray.inactiveTabsExpanded.record(NoExtras())
+            false -> TabsTray.inactiveTabsCollapsed.record(NoExtras())
+        }
+    }
+
+    override fun handleInactiveTabsAutoCloseDialogDismiss() {
+        markDialogAsShown()
+        TabsTray.autoCloseDimissed.record(NoExtras())
+    }
+
+    override fun handleEnableInactiveTabsAutoCloseClicked() {
+        markDialogAsShown()
+        settings.closeTabsAfterOneMonth = true
+        settings.closeTabsAfterOneWeek = false
+        settings.closeTabsAfterOneDay = false
+        settings.manuallyCloseTabs = false
+        TabsTray.autoCloseTurnOnClicked.record(NoExtras())
+    }
+
+    override fun handleDeleteAllInactiveTabsClicked() {
+        TabsTray.closeAllInactiveTabs.record(NoExtras())
+        browserStore.state.potentialInactiveTabs.map { it.id }.let {
+            tabsUseCases.removeTabs(it)
+        }
+        showUndoSnackbarForTab(false)
+    }
+
+    /**
+     * Marks the inactive tabs auto close dialog as shown and to not be displayed again.
+     */
+    private fun markDialogAsShown() {
+        settings.hasInactiveTabsAutoCloseDialogBeenDismissed = true
     }
 }

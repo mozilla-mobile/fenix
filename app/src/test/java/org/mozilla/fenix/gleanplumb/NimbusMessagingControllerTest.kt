@@ -4,8 +4,10 @@
 
 package org.mozilla.fenix.gleanplumb
 
+import android.content.Intent
 import android.net.Uri
 import androidx.core.net.toUri
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -49,17 +51,46 @@ class NimbusMessagingControllerTest {
     }
 
     @Test
-    fun `WHEN calling updateMessageAsDisplayed message THEN message metadata is updated`() =
+    fun `WHEN calling updateMessageAsDisplayed with message & no boot id THEN metadata for count and lastTimeShown is updated`() =
         coroutineScope.runTest {
             val message = createMessage("id-1")
             assertEquals(0, message.metadata.displayCount)
             assertEquals(0L, message.metadata.lastTimeShown)
+            assertNull(message.metadata.latestBootIdentifier)
 
             val expectedMessage = with(message) {
-                copy(metadata = metadata.copy(displayCount = 1, lastTimeShown = MOCK_TIME_MILLIS))
+                copy(
+                    metadata = metadata.copy(
+                        displayCount = 1,
+                        lastTimeShown = MOCK_TIME_MILLIS,
+                        latestBootIdentifier = null,
+                    ),
+                )
             }
 
             assertEquals(expectedMessage, controller.updateMessageAsDisplayed(message))
+        }
+
+    @Test
+    fun `WHEN calling updateMessageAsDisplayed with message & boot id THEN metadata for count, lastTimeShown & latestBootIdentifier is updated`() =
+        coroutineScope.runTest {
+            val message = createMessage("id-1")
+            assertEquals(0, message.metadata.displayCount)
+            assertEquals(0L, message.metadata.lastTimeShown)
+            assertNull(message.metadata.latestBootIdentifier)
+
+            val bootId = "test boot id"
+            val expectedMessage = with(message) {
+                copy(
+                    metadata = metadata.copy(
+                        displayCount = 1,
+                        lastTimeShown = MOCK_TIME_MILLIS,
+                        latestBootIdentifier = bootId,
+                    ),
+                )
+            }
+
+            assertEquals(expectedMessage, controller.updateMessageAsDisplayed(message, bootId))
         }
 
     @Test
@@ -116,7 +147,7 @@ class NimbusMessagingControllerTest {
             val message = createMessage("id-1")
             assertNull(Messaging.messageDismissed.testGetValue())
 
-            controller.onMessageDismissed(message)
+            controller.onMessageDismissed(message.metadata)
 
             assertNotNull(Messaging.messageDismissed.testGetValue())
             val event = Messaging.messageDismissed.testGetValue()!!
@@ -226,10 +257,69 @@ class NimbusMessagingControllerTest {
             val message = createMessage("id-1")
             assertFalse(message.metadata.pressed)
 
-            controller.onMessageClicked(message)
+            controller.onMessageClicked(message.metadata)
 
             val updatedMetadata = message.metadata.copy(pressed = true)
             coVerify { storage.updateMetadata(updatedMetadata) }
+        }
+
+    @Test
+    fun `WHEN getIntentForMessageAction is called THEN return a generated Intent with the processed Message action`() {
+        val message = createMessage("id-1", action = "unknown")
+        every { storage.generateUuidAndFormatAction(message.action) } returns Pair(
+            null,
+            message.action,
+        )
+
+        val actualIntent = controller.getIntentForMessageAction(message.action)
+
+        // The processed Intent data
+        assertEquals(Intent.ACTION_VIEW, actualIntent.action)
+        val expectedUri = message.action.toUri()
+        assertEquals(expectedUri, actualIntent.data)
+    }
+
+    @Test
+    fun `GIVEN stored messages contains a matching message WHEN calling getMessage THEN return the matching message`() =
+        coroutineScope.runTest {
+            val message1 = createMessage("1")
+            val message2 = createMessage("2")
+            val message3 = createMessage("3")
+            val messages = listOf(message1, message2, message3)
+            coEvery { storage.getMessages() }.returns(messages)
+
+            val actualMessage = controller.getMessage(message2.id)
+
+            assertEquals(message2, actualMessage)
+        }
+
+    @Test
+    fun `GIVEN stored messages contains multiple matching messages WHEN calling getMessage THEN return the first matching message`() =
+        coroutineScope.runTest {
+            val id = "same id"
+            val message1 = createMessage(id)
+            val message2 = createMessage(id)
+            val message3 = createMessage(id)
+            val messages = listOf(message1, message2, message3)
+            coEvery { storage.getMessages() }.returns(messages)
+
+            val actualMessage = controller.getMessage(id)
+
+            assertEquals(message1, actualMessage)
+        }
+
+    @Test
+    fun `GIVEN stored messages doesn't contain a matching message WHEN calling getMessage THEN return null`() =
+        coroutineScope.runTest {
+            val message1 = createMessage("1")
+            val message2 = createMessage("2")
+            val message3 = createMessage("3")
+            val messages = listOf(message1, message2, message3)
+            coEvery { storage.getMessages() }.returns(messages)
+
+            val actualMessage = controller.getMessage("unknown id")
+
+            assertNull(actualMessage)
         }
 
     private fun createMessage(

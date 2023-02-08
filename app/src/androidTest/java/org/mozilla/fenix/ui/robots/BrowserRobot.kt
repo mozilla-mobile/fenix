@@ -47,6 +47,7 @@ import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
 import org.mozilla.fenix.helpers.MatcherHelper
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
@@ -523,6 +524,9 @@ class BrowserRobot {
 
     fun clickStreetAddressTextBox() = clickPageObject(webPageItemWithResourceId("streetAddress"))
 
+    fun setTextForApartmentTextBox(apartment: String) =
+        webPageItemWithResourceId("apartment").setText(apartment)
+
     fun clearAddressForm() {
         webPageItemWithResourceId("streetAddress").clearTextField()
         webPageItemWithResourceId("city").clearTextField()
@@ -619,6 +623,14 @@ class BrowserRobot {
         mDevice.waitForObjects(webPageItemContainingTextAndResourceId("streetAddress", streetAddress))
         assertTrue(
             webPageItemContainingTextAndResourceId("streetAddress", streetAddress)
+                .waitForExists(waitingTime),
+        )
+    }
+
+    fun verifyManuallyFilledAddress(apartment: String) {
+        mDevice.waitForObjects(webPageItemContainingTextAndResourceId("apartment", apartment))
+        assertTrue(
+            webPageItemContainingTextAndResourceId("apartment", apartment)
                 .waitForExists(waitingTime),
         )
     }
@@ -946,6 +958,13 @@ class BrowserRobot {
             it.waitForExists(waitingTime)
             it.click()
         }
+
+    fun clickOpenInAppPromptButton() =
+        itemWithResIdAndText("android:id/button1", "OPEN")
+            .also {
+                it.waitForExists(waitingTime)
+                it.click()
+            }
 
     class Transition {
         private fun threeDotButton() = onView(
