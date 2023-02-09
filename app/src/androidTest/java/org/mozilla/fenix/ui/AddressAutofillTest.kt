@@ -275,4 +275,132 @@ class AddressAutofillTest {
             verifyAutofilledAddress("Fort Street")
         }
     }
+
+    @Test
+    fun verifySavedAddressCanBeEditedTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openAutofillSubMenu {
+            verifyAddressAutofillSection(true, false)
+            clickAddAddressButton()
+            fillAndSaveAddress(
+                "Mozilla",
+                "Fenix",
+                "Firefox",
+                "Harrison Street",
+                "San Francisco",
+                "Alaska",
+                "94105",
+                "United States",
+                "555-5555",
+                "foo@bar.com",
+            )
+            clickManageAddressesButton()
+            clickSavedAddress("Mozilla")
+            fillAndSaveAddress(
+                "Android",
+                "Test",
+                "Name",
+                "Fort Street",
+                "San Jose",
+                "Arizona",
+                "95141",
+                "United States",
+                "777-7777",
+                "fuu@bar.org",
+            )
+            verifyManageAddressesToolbarTitle()
+        }
+    }
+
+    @Test
+    fun verifyStateFieldUpdatesInAccordanceWithCountryFieldTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openAutofillSubMenu {
+            verifyAddressAutofillSection(true, false)
+            clickAddAddressButton()
+            verifyCountryOption("United States")
+            verifyStateOption("Alabama")
+            verifyCountryOptions("Canada", "United States")
+            clickCountryOption("Canada")
+            verifyStateOption("Alberta")
+        }
+    }
+
+    @Test
+    fun verifyFormFieldCanBeFilledManuallyTest() {
+        val addressFormPage =
+            TestAssetHelper.getAddressFormAsset(mockWebServer)
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openAutofillSubMenu {
+            clickAddAddressButton()
+            fillAndSaveAddress(
+                "Mozilla",
+                "Fenix",
+                "Firefox",
+                "Harrison Street",
+                "San Francisco",
+                "Alaska",
+                "94105",
+                "United States",
+                "555-5555",
+                "foo@bar.com",
+            )
+        }
+
+        exitMenu()
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(addressFormPage.url) {
+            clickStreetAddressTextBox()
+            clickSelectAddressButton()
+            clickAddressSuggestion("Harrison Street")
+            verifyAutofilledAddress("Harrison Street")
+            setTextForApartmentTextBox("Ap. 07")
+            verifyManuallyFilledAddress("Ap. 07")
+        }
+    }
+
+    @Test
+    fun verifyAutofillAddressSectionTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openAutofillSubMenu {
+            verifyAddressAutofillSection(true, false)
+            clickAddAddressButton()
+            fillAndSaveAddress(
+                "Mozilla",
+                "Fenix",
+                "Firefox",
+                "Harrison Street",
+                "San Francisco",
+                "Alaska",
+                "94105",
+                "United States",
+                "555-5555",
+                "foo@bar.com",
+            )
+            verifyAddressAutofillSection(true, true)
+            clickManageAddressesButton()
+            verifyManageAddressesSection(
+                "Mozilla",
+                "Fenix",
+                "Firefox",
+                "Harrison Street",
+                "San Francisco",
+                "Alaska",
+                "94105",
+                "US",
+                "555-5555",
+                "foo@bar.com",
+            )
+        }
+    }
 }

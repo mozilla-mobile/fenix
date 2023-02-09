@@ -67,10 +67,12 @@
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the main message -->
-    <string name="cfr_message">Vytvořte si zástupce pro otevření anonymního panelu z domovské obrazovky.</string>
+    <string name="cfr_message" moz:removedIn="109" tools:ignore="UnusedResources">Vytvořte si zástupce pro otevření anonymního panelu z domovské obrazovky.</string>
     <!-- Text for the positive button -->
-    <string name="cfr_pos_button_text">Přidat zkratku</string>
-    <!-- Text for the negative button -->
+    <string name="cfr_pos_button_text" moz:removedIn="109" tools:ignore="UnusedResources">Přidat zkratku</string>
+    <!-- Text for the positive button to accept adding a Private Browsing shortcut to the Home screen -->
+    <string name="private_mode_cfr_pos_button_text">Přidat na domovskou obrazovku</string>
+    <!-- Text for the negative button to decline adding a Private Browsing shortcut to the Home screen -->
     <string name="cfr_neg_button_text">Ne, děkuji</string>
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
@@ -82,8 +84,11 @@
     <string name="open_in_app_cfr_negative_button_text">Zavřít</string>
 
     <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
-    <string name="cfr_dismiss_button_default_content_description">Zavřít</string>
+    <string name="cfr_dismiss_button_default_content_description" moz:removedIn="110" tools:ignore="UnusedResources">Zavřít</string>
 
+    <!-- Total cookie protection "contextual feature recommendation" (CFR) -->
+    <!-- Text for the message displayed in the contextual feature recommendation popup promoting the total cookie protection feature. -->
+    <string name="tcp_cfr_message">Naše doposud nejmocnější funkce ochrany osobních údajů izoluje sledovací prvky třetích stran.</string>
     <!-- Text displayed that links to website containing documentation about the "Total cookie protection" feature. -->
     <string name="tcp_cfr_learn_more">Zjistit více o úplné ochraně před cookies</string>
 
@@ -138,6 +143,8 @@
     <!-- Accessibility description for device icon used for recent synced tab -->
     <string name="recent_tabs_synced_device_icon_content_description">Synchronizované zařízení</string>
 
+    <!-- Text for the dropdown menu to remove a recent synced tab from the homescreen -->
+    <string name="recent_synced_tab_menu_item_remove">Odebrat</string>
     <!-- Text for the menu button to remove a grouped highlight from the user's browsing history
          in the Recently visited section -->
     <string name="recent_tab_menu_item_remove">Odebrat</string>
@@ -164,6 +171,8 @@
     <string name="browser_menu_stop">Zastaví načítání stránky</string>
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Doplňky</string>
+    <!-- Browser menu button that opens account settings -->
+    <string name="browser_menu_account_settings">Informace o účtu</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Žádné doplňky</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -256,14 +265,37 @@
     <!-- Menu option in the search selector menu to open the search settings -->
     <string name="search_settings_menu_item">Nastavení vyhledávání</string>
 
+    <!-- Header text for the search selector menu -->
+    <string name="search_header_menu_item" moz:RemovedIn="109" tools:ignore="UnusedResources">Tentokrát hledat:</string>
+    <!-- Header text for the search selector menu -->
+    <string name="search_header_menu_item_2">Tentokrát hledat v:</string>
+
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint_2">Seznamte se se svou přizpůsobenou domovskou stránkou. Zobrazí se vám na ní nedávné panely, záložky a výsledky vyhledávání.</string>
+    <!-- Home onboarding dialog welcome screen title text. -->
+    <string name="onboarding_home_welcome_title_2">Vítejte na osobnějším internetu</string>
+    <!-- Home onboarding dialog welcome screen description text. -->
+    <string name="onboarding_home_welcome_description">Více barev. Lepší soukromí. Stále stejné nadřazení lidí nad ziskem.</string>
+    <!-- Home onboarding dialog sign into sync screen title text. -->
+    <string name="onboarding_home_sync_title_3">Přepínání obrazovek je jednodušší než kdy jindy</string>
+    <!-- Home onboarding dialog sign into sync screen description text. -->
+    <string name="onboarding_home_sync_description">Na své domovské stránce pokračujte s panely z jiných zařízení přesně tam, kde jste přestali.</string>
     <!-- Text for the button to continue the onboarding on the home onboarding dialog. -->
     <string name="onboarding_home_get_started_button">Začít</string>
     <!-- Text for the button to navigate to the sync sign in screen on the home onboarding dialog. -->
     <string name="onboarding_home_sign_in_button">Přihlásit se</string>
     <!-- Text for the button to skip the onboarding on the home onboarding dialog. -->
     <string name="onboarding_home_skip_button">Přeskočit</string>
+    <!-- Onboarding home screen sync popup dialog message, shown on top of Recent Synced Tabs in the Jump back in section. -->
+    <string name="sync_cfr_message">Vaše panely se synchronizují! Na druhém zařízení pokračujte tam, kde jste skončili.</string>
     <!-- Content description (not visible, for screen readers etc.): Close button for the home onboarding dialog -->
     <string name="onboarding_home_content_description_close_button">Zavřít</string>
+
+    <!-- Text for the button to request notification permission on the device -->
+    <string name="onboarding_home_enable_notifications_positive_button">Pokračovat</string>
+    <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
+    <string name="onboarding_home_enable_notifications_negative_button">Teď ne</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -315,12 +347,59 @@
     <!-- Preference for enabling "HTTPS-Only" mode -->
     <string name="preferences_https_only_title">Režim „pouze HTTPS“</string>
 
+    <!-- Preference for removing cookie/consent banners from sites automatically. See reduce_cookie_banner_summary for additional context. -->
+    <string name="preferences_cookie_banner_reduction">Omezení cookie lišt</string>
+    <!-- Summary of cookie banner handling preference if the setting disabled is set to off -->
+    <string name="reduce_cookie_banner_option_off">Vypnuto</string>
+    <!-- Summary of cookie banner handling preference if the setting enabled is set to on -->
+    <string name="reduce_cookie_banner_option_on">Zapnuto</string>
+    <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_off_for_site">Vypnuto pro tento web</string>
+    <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_on_for_site">Zapnuto pro tento web</string>
+    <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_unsupported_site" tools:ignore="UnusedResources">Server není aktuálně podporován</string>
+    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
+    <string name="reduce_cookie_banner_details_panel_title_on_for_site">Chcete zapnout omezení cookie lišt pro %1$s?</string>
+    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
+    <string name="reduce_cookie_banner_details_panel_title_off_for_site">Chcete vypnout omezení cookie lišt pro %1$s?</string>
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter are the application name -->
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_1" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s se může pokusit automaticky odmítnout žádosti o povolení cookies.</string>
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">%1$s se pokusí automaticky odmítnout všechny žádosti o povolení cookies na podporovaných serverech.</string>
+    <!-- Title text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
+    <string name="reduce_cookie_banner_control_experiment_dialog_title">Cookie lišty jsou fuč!</string>
+    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
+    <string name="reduce_cookie_banner_control_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">Automaticky odmítnout požadavky o povolení cookies, kdykoliv to bude možné. V opačném případě přijmout všechny cookies pro zavření cookie lišty.</string>
+    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
+    <string name="reduce_cookie_banner_control_experiment_dialog_body_1" moz:RemovedIn="111" tools:ignore="UnusedResources">Automaticky odmítat požadavky na cookies, kdykoliv je to možné.</string>
+    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most.The first parameter is the application name -->
+    <string name="reduce_cookie_banner_control_experiment_dialog_body_2">Chcete aplikaci %1$s povolit automaticky odmítat požadavky na cookies, kdykoliv je to možné?</string>
+    <!-- Remind me later text button for the onboarding dialog -->
+    <string name="reduce_cookie_banner_dialog_not_now_button">Teď ne</string>
+    <!-- Change setting text button, for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
+    <string name="reduce_cookie_banner_control_experiment_dialog_change_setting_button">Zavírat bannery</string>
+    <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
+    <string name="reduce_cookie_banner_dialog_snackbar_text">Uvidíte méně požadavků na cookies</string>
+    <!-- Title text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
+    <string name="reduce_cookie_banner_variant_1_experiment_dialog_title">Zobrazovat méně cookie lišt</string>
+    <!-- Change setting text button, for the onboarding dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
+    <string name="reduce_cookie_banner_variant_1_experiment_dialog_change_setting_button">Zavírat vyskakovací okna</string>
+    <!-- Title text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
+    <string name="reduce_cookie_banner_variant_2_experiment_dialog_title">Omezení cookie lišt</string>
+    <!-- Change setting text button, for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
+    <string name="reduce_cookie_banner_variant_2_experiment_dialog_change_setting_button">Povolit</string>
+
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Pro zvýšení zabezpečení se automaticky pokusí připojit k webům pomocí šifrovacího protokolu HTTPS.</string>
     <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="preferences_https_only_on">Zapnuto</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to off -->
+    <string name="preferences_https_only_on" moz:removedIn="111" tools:ignore="UnusedResources">Zapnuto</string>
+    <!-- Summary of https only preference if https only is set to off -->
     <string name="preferences_https_only_off">Vypnuto</string>
+    <!-- Summary of https only preference if https only is set to on in all tabs -->
+    <string name="preferences_https_only_on_all">Zapnuto pro všechny panely</string>
+    <!-- Summary of https only preference if https only is set to on in private tabs only -->
+    <string name="preferences_https_only_on_private">Zapnuto pro anonymní panely</string>
     <!-- Text displayed that links to website containing documentation about "HTTPS-Only" mode -->
     <string name="preferences_http_only_learn_more">Zjistit více</string>
     <!-- Option for the https only setting -->
@@ -399,6 +478,11 @@
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Oznámení</string>
 
+    <!-- Summary for notification preference indicating notifications are allowed -->
+    <string name="notifications_allowed_summary">Povoleno</string>
+    <!-- Summary for notification preference indicating notifications are not allowed -->
+    <string name="notifications_not_allowed_summary">Není povoleno</string>
+
     <!-- Add-on Preferences -->
     <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
     <string name="preferences_customize_amo_collection">Vlastní sbírka doplňků</string>
@@ -421,8 +505,6 @@
     <!-- Title for the customize home screen section with recently visited. Recently visited is
     a section where users see a list of tabs that they have visited in the past few days -->
     <string name="customize_toggle_recently_visited">Nedávno navštívené</string>
-    <!-- Title for the customize home screen section with Pocket. -->
-    <string moz:RemovedIn="108" name="customize_toggle_pocket" tools:ignore="UnusedResources">Pocket</string>
 
     <!-- Title for the customize home screen section with Pocket. -->
     <string name="customize_toggle_pocket_2">Podnětné články</string>
@@ -441,14 +523,26 @@
     <!-- Snackbar label for action to view selected wallpaper -->
     <string name="wallpaper_updated_snackbar_action">Zobrazit</string>
 
+    <!-- Snackbar message for when wallpaper couldn't be downloaded -->
+    <string name="wallpaper_download_error_snackbar_message">Tapetu se nepodařilo stáhnout</string>
     <!-- Snackbar label for action to retry downloading the wallpaper -->
     <string name="wallpaper_download_error_snackbar_action">Zkusit znovu</string>
+    <!-- Snackbar message for when wallpaper couldn't be selected because of the disk error -->
+    <string name="wallpaper_select_error_snackbar_message">Tapetu se nepodařilo změnit</string>
     <!-- Text displayed that links to website containing documentation about the "Limited Edition" wallpapers. -->
     <string name="wallpaper_learn_more">Zjistit více</string>
+    <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
+    <string name="wallpaper_classic_title">Klasický %s</string>
     <!-- Text for limited edition wallpapers title. -->
     <string name="wallpaper_limited_edition_title">Limitovaná edice</string>
+    <!-- Description text for the limited edition wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more-->
+    <string name="wallpaper_limited_edition_description_with_learn_more">Nová sbírka Nezávislé hlasy. %s</string>
+    <!-- Description text for the limited edition wallpapers. -->
+    <string name="wallpaper_limited_edition_description">Nová sbírka Nezávislé hlasy.</string>
     <!-- Wallpaper onboarding dialog header text. -->
     <string name="wallpapers_onboarding_dialog_title_text">Zkuste barevný nádech</string>
+    <!-- Wallpaper onboarding dialog body text. -->
+    <string name="wallpapers_onboarding_dialog_body_text">Vyberte si tapetu, která vás vyjadřuje.</string>
     <!-- Wallpaper onboarding dialog learn more button text. The button navigates to the wallpaper settings screen. -->
     <string name="wallpapers_onboarding_dialog_explore_more_button_text">Podívejte se na další tapety</string>
 
@@ -598,6 +692,9 @@
     <!-- Title to show in alert when a lot of tabs are to be opened
     %d is a placeholder for the number of tabs that will be opened -->
     <string name="open_all_warning_title">Otevřít %d panelů?</string>
+    <!-- Message to warn users that a large number of tabs will be opened
+    %s will be replaced by app name. -->
+    <string name="open_all_warning_message">Otevření tolika panelů může aplikaci %s zpomalit. Opravdu chcete pokračovat?</string>
     <!-- Dialog button text for confirming open all tabs -->
     <string name="open_all_warning_confirm">Otevřít panely</string>
     <!-- Dialog button text for canceling open all tabs -->
@@ -663,6 +760,13 @@
     <string name="close_tabs_after_one_week_summary">Zavírat po týdnu</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one month-->
     <string name="close_tabs_after_one_month_summary">Zavírat po měsíci</string>
+
+    <!-- Summary for homepage preference indicating always opening the homepage when re-opening the app -->
+    <string name="opening_screen_homepage_summary">Otevře domovskou stránku</string>
+    <!-- Summary for homepage preference indicating always opening the last-open tab when re-opening the app -->
+    <string name="opening_screen_last_tab_summary">Otevře poslední panel</string>
+    <!-- Summary for homepage preference indicating opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity_summary">Otevře domovskou stránku po 4 hodinách</string>
 
     <!-- Inactive tabs -->
     <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
@@ -937,10 +1041,16 @@
     <!-- Preference for showing a list of websites that the default configurations won't apply to them -->
     <string name="preference_exceptions">Výjimky</string>
     <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="tracking_protection_on">Zapnuta</string>
+    <string name="tracking_protection_on" moz:removedIn="111" tools:ignore="UnusedResources">Zapnuta</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Vypnuta</string>
 
+    <!-- Summary of tracking protection preference if tracking protection is set to standard -->
+    <string name="tracking_protection_standard">Standardní</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to strict -->
+    <string name="tracking_protection_strict">Přísná</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to custom -->
+    <string name="tracking_protection_custom">Vlastní</string>
     <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
     <string name="preference_option_autoplay_allowed2">Povolit zvuk i video</string>
     <!-- Label for site specific setting that indicates that all video and audio autoplay is allowed -->
@@ -1024,6 +1134,8 @@
     <string name="share_button_content_description">Sdílet</string>
     <!-- Text for the Save to PDF feature in the share menu -->
     <string name="share_save_to_pdf">Uložit jako PDF</string>
+    <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
+    <string name="unable_to_save_to_pdf_error">PDF se nepodařilo vygenerovat</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Poslat do zařízení</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1034,8 +1146,6 @@
     <string name="share_copy_link_to_clipboard">Zkopírovat do schránky</string>
     <!-- Toast shown after copying link to clipboard -->
     <string name="toast_copy_link_to_clipboard">Zkopírováno do schránky</string>
-    <!-- An option from the three dot menu to into sync -->
-    <string moz:removedIn="107" name="sync_menu_sign_in" tools:ignore="UnusedResources">Přihlásit se k synchronizaci</string>
     <!-- An option from the share dialog to sign into sync -->
     <string name="sync_sign_in">Přihlásit ke službě Sync</string>
      <!-- An option from the three dot menu to sync and save data -->
@@ -1076,6 +1186,12 @@
     <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
     %1$s is a placeholder that will be replaced by the app name (Fenix). -->
     <string name="notification_default_browser_text">Nastavit %1$s jako můj výchozí prohlížeč</string>
+
+    <!-- Title shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_title">Vyzkoušejte anonymní prohlížení</string>
+    <!-- Text shown in the notification that pops up to re-engage the user.
+    %1$s is a placeholder that will be replaced by the app name. -->
+    <string name="notification_re_engagement_text">Prohlížejte web bez ukládání cookies a historie v aplikaci %1$s</string>
 
     <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
@@ -1169,6 +1285,8 @@
 
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">Časové období mazání</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body">Odstraní historii (včetně synchronizované historie z ostatních zařízení), cookies a související data.</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
     <string name="delete_history_prompt_button_last_hour">Poslední hodina</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
@@ -1188,17 +1306,28 @@
     <!-- Text for the snackbar to show the user that the deletion of browsing data is in progress -->
     <string name="deleting_browsing_data_in_progress">Mazání soukromých dat…</string>
 
+    <!-- Dialog message to the user asking to delete all history items inside the opened group. Parameter will be replaced by a history group name. -->
+    <string name="delete_all_history_group_prompt_message">Smazat všechny stránky v %s</string>
     <!-- Text for the cancel button for the history group deletion dialog -->
     <string name="delete_history_group_prompt_cancel">Zrušit</string>
 
+    <!-- Onboarding -->
+    <!-- Text for onboarding welcome header. -->
+    <string name="onboarding_header_2">Vítá vás lepší internet</string>
     <!-- Text for the onboarding welcome message. -->
     <string name="onboarding_message">Prohlížeč postavený pro lidi, ne pro peníze.</string>
+    <!-- Text for the Firefox account onboarding sign in card header. -->
+    <string name="onboarding_account_sign_in_header">Pokračujte tam, kde jste skončili</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account. -->
+    <string name="onboarding_manual_sign_in_description">Synchronizujte panely a hesla mezi zařízeními pro bezproblémové přepínání obrazovky.</string>
     <!-- Text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in">Přihlásit se</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Synchronizace je zapnutá</string>
     <!-- Text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header">Ochrana soukromí již ve výchozím nastavení</string>
+    <!-- Text for the tracking protection card description. -->
+    <string name="onboarding_tracking_protection_description">Představujeme úplnou ochranu před cookies, které slouží k vašemu sledování napříč webovými stránkami.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Standardní (výchozí)</string>
     <!-- text for standard blocking option button description -->
@@ -1209,11 +1338,17 @@
     <string name="onboarding_tracking_protection_strict_button_description_3">Blokuje více sledovacích prvků. Zrychlí i načítání stránek, ale může omezit jejich fungování.</string>
     <!-- text for the toolbar position card header  -->
     <string name="onboarding_toolbar_placement_header_1">Vyberte si umístění nástrojové lišty</string>
+    <!-- Text for the toolbar position card description -->
+    <string name="onboarding_toolbar_placement_description">Dole, nebo nahoře.</string>
+    <!-- Text for the privacy notice onboarding card header -->
+    <string name="onboarding_privacy_notice_header_1">Vaše data jsou prostě vaše</string>
     <!-- Text for the privacy notice onboarding card description. -->
     <string name="onboarding_privacy_notice_description">Firefox vám dává kontrolu nad tím, co sdílíte online a co sdílíte s námi.</string>
     <!-- Text for the button to read the privacy notice -->
     <string name="onboarding_privacy_notice_read_button">Přečíst zásady ochrany osobních údajů</string>
 
+    <!-- Text for the conclusion onboarding message -->
+    <string name="onboarding_conclusion_header">Jste připraveni otevřít úžasný internet?</string>
     <!-- text for the button to finish onboarding -->
     <string name="onboarding_finish">Začít prohlížet</string>
 
@@ -1221,7 +1356,7 @@
     <!-- text for the theme picker onboarding card header -->
     <string name="onboarding_theme_picker_header">Vyberte si vzhled</string>
     <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description_2">Šetřete baterku i své oči povolením tmavého režimu.</string>
+    <string name="onboarding_theme_picker_description_2">Povolením tmavého režimu šetřete baterku i své oči.</string>
     <!-- Automatic theme setting (will follow device setting) -->
     <string name="onboarding_theme_automatic_title">Automatický</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
@@ -1300,6 +1435,8 @@
     <string name="preference_enhanced_tracking_protection_custom_cookies_3">Všechny cookies třetích stran (může omezit fungování některých stránek)</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies_4">Všechny cookies (omezí fungování některých stránek)</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_5">Izolovat cross-site cookies</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings for tracking content -->
     <string name="preference_enhanced_tracking_protection_custom_tracking_content">Sledující obsah</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
@@ -1326,6 +1463,8 @@
     <string name="etp_cookies_title_2">Cross-site cookies</string>
     <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_description">Blokuje cookies, které používají reklamní sítě a firmy ke sběru informací z mnoha serverů na internetu.</string>
+    <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_description_2">Úplná ochrana před cookies izoluje cookies pro web, na němž se nacházíte, aby vás sledující subjekty nemohly sledovat napříč stránkami.</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_title">Těžba kryptoměn</string>
     <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
@@ -1640,7 +1779,7 @@
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">Řetězec používaný pro vyhledávání</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
-    <string formatted="false" name="search_add_custom_engine_search_string_example">Dotaz nahraďte „%s“. Příklad: \nhttps://www.google.com/search?q=%s</string>
+    <string name="search_add_custom_engine_search_string_example" formatted="false">Dotaz nahraďte „%s“. Příklad: \nhttps://www.google.com/search?q=%s</string>
 
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Podrobnosti vlastního vyhledávače</string>
@@ -1810,6 +1949,16 @@
     <!-- Text for the snackbar to confirm auto-close is enabled for inactive tabs -->
     <string name="inactive_tabs_auto_close_message_snackbar">Automatické zavírání povoleno</string>
 
+    <!-- Awesome bar suggestion's headers -->
+    <!-- Search suggestions title for Firefox Suggest. -->
+    <string name="firefox_suggest_header">Návrhy od Firefoxu</string>
+
+    <!-- Title for search suggestions when Google is the default search suggestion engine. -->
+    <string name="google_search_engine_suggestion_header">Vyhledání na Googlu</string>
+
+    <!-- Title for search suggestions when the default search suggestion engine is anything other than Google. The first parameter is default search engine name. -->
+    <string name="other_default_search_engine_suggestion_header">Vyhledat pomocí %s</string>
+
     <!-- Default browser experiment -->
     <string name="default_browser_experiment_card_text">Nastavte si automatické otevírání odkazů, e-mailů a zpráv ve Firefoxu.</string>
 
@@ -1832,8 +1981,8 @@
     <string name="pocket_stories_categories_header">Články podle témat</string>
     <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
     <string name="pocket_stories_placeholder_text">Objevte více</string>
-    <!-- Title of an app feature. Smaller than a heading.-->
-    <string moz:removedIn="108" name="pocket_stories_feature_title" tools:ignore="UnusedResources">Službu poskytuje Pocket.</string>
+    <!-- Title of an app feature. Smaller than a heading. The first parameter is product name Pocket -->
+    <string name="pocket_stories_feature_title_2">Službu poskytuje %s.</string>
     <!-- Caption for describing a certain feature. The placeholder is for a clickable text (eg: Learn more) which will load an url in a new tab when clicked.  -->
     <string name="pocket_stories_feature_caption">Součást rodiny Firefoxu. %s</string>
     <!-- Clickable text for opening an external link for more information about Pocket. -->
@@ -1846,7 +1995,6 @@
     <string name="experiments_snackbar">Pro odesílání dat povolte telemetrii.</string>
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">Přejít do nastavení</string>
-    <string name="firefox_suggest_header">Návrhy od Firefoxu</string>
 
     <!-- Accessibility services actions labels. These will be appended to accessibility actions like "Double tap to.." but not by or applications but by services like Talkback. -->
     <!-- Action label for elements that can be collapsed if interacting with them. Talkback will append this to say "Double tap to collapse". -->
