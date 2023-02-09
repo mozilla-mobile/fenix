@@ -152,7 +152,7 @@
          in the Recently visited section -->
     <string name="recently_visited_menu_item_remove">Remove</string>
     <!-- Content description for the button which navigates the user to show all of their history. -->
-    <string name="past_explorations_show_all_content_description_2">Show all past explorations</string>
+    <string name="past_explorations_show_all_content_description_2">Show all past explorations button</string>
 
     <!-- Browser Fragment -->
     <!-- Content description (not visible, for screen readers etc.): Navigate backward (browsing history) -->
