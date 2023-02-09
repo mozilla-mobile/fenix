@@ -116,6 +116,27 @@ class SettingsSubMenuAutofillRobot {
         )
     }
 
+    fun verifyCountryOption(country: String) {
+        scrollToElementByText(getStringResource(R.string.addresses_country))
+        mDevice.pressBack()
+        assertItemContainingTextExists(itemContainingText(country))
+    }
+
+    fun verifyStateOption(state: String) =
+        assertItemContainingTextExists(itemContainingText(state))
+
+    fun verifyCountryOptions(vararg countries: String) {
+        countryDropDown.click()
+        for (country in countries) {
+            assertItemContainingTextExists(itemContainingText(country))
+        }
+    }
+
+    fun selectCountry(country: String) {
+        countryDropDown.click()
+        countryOption(country).click()
+    }
+
     fun verifyEditAddressView() {
         assertItemContainingTextExists(editAddressToolbarTitle)
         assertItemWithDescriptionExists(navigateBackButton)
@@ -162,8 +183,11 @@ class SettingsSubMenuAutofillRobot {
     fun clickConfirmDeleteAddressButton() = confirmDeleteAddressButton.click()
 
     fun clickSubRegionOption(subRegion: String) {
-        subRegionOption(subRegion).waitForExists(waitingTime)
-        subRegionOption(subRegion).click()
+        scrollToElementByText(subRegion)
+        subRegionOption(subRegion).also {
+            it.waitForExists(waitingTime)
+            it.click()
+        }
     }
     fun clickCountryOption(country: String) {
         countryOption(country).waitForExists(waitingTime)
@@ -184,21 +208,20 @@ class SettingsSubMenuAutofillRobot {
         emailAddress: String,
     ) {
         firstNameTextInput.waitForExists(waitingTime)
+        mDevice.pressBack()
         firstNameTextInput.setText(firstName)
         middleNameTextInput.setText(middleName)
         lastNameTextInput.setText(lastName)
         streetAddressTextInput.setText(streetAddress)
-        scrollToElementByText(getStringResource(R.string.addresses_city))
         cityTextInput.setText(city)
         subRegionDropDown.click()
         clickSubRegionOption(state)
         zipCodeTextInput.setText(zipCode)
         countryDropDown.click()
         clickCountryOption(country)
-        scrollToElementByText(getStringResource(R.string.addresses_phone))
+        scrollToElementByText(getStringResource(R.string.addresses_save_button))
         phoneTextInput.setText(phoneNumber)
         emailTextInput.setText(emailAddress)
-        scrollToElementByText(getStringResource(R.string.addresses_save_button))
         saveButton.click()
         manageAddressesButton.waitForExists(waitingTime)
     }
