@@ -28,9 +28,11 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.SecureFragment
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentSavedLoginsBinding
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -89,6 +91,10 @@ class SavedLoginsFragment : SecureFragment(), MenuProvider {
                 navController = findNavController(),
                 loginsFragmentStore = savedLoginsStore,
                 clipboardHandler = requireContext().components.clipboardHandler,
+                snackbar = FenixSnackbar.make(
+                    view = requireActivity().getRootView()!!,
+                    isDisplayedWithBrowserToolbar = false,
+                ),
             )
 
         savedLoginsInteractor =

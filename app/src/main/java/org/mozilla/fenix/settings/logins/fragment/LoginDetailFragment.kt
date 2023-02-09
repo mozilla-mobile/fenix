@@ -32,6 +32,7 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentLoginDetailBinding
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
@@ -90,6 +91,10 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail), Menu
                 navController = findNavController(),
                 loginsFragmentStore = savedLoginsStore,
                 clipboardHandler = requireContext().components.clipboardHandler,
+                snackbar = FenixSnackbar.make(
+                    view = requireActivity().getRootView()!!,
+                    isDisplayedWithBrowserToolbar = false,
+                ),
             ),
         )
 

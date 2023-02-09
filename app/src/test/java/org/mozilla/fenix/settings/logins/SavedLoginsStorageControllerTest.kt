@@ -10,6 +10,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verifyOrder
 import mozilla.components.concept.storage.EncryptedLogin
 import mozilla.components.concept.storage.Login
 import mozilla.components.concept.storage.LoginEntry
@@ -22,9 +23,11 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.ext.directionsEq
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
+import org.mozilla.fenix.settings.logins.fragment.AddLoginFragmentDirections
 import org.mozilla.fenix.settings.logins.fragment.EditLoginFragmentDirections
 import org.mozilla.fenix.utils.ClipboardHandler
 
@@ -41,6 +44,7 @@ class SavedLoginsStorageControllerTest {
     private val loginsFragmentStore: LoginsFragmentStore = mockk(relaxed = true)
     private val clipboardHandler: ClipboardHandler = mockk(relaxed = true)
     private val loginMock: Login = mockk(relaxed = true)
+    private val snackbar: FenixSnackbar = mockk(relaxed = true)
 
     @Before
     fun setup() {
@@ -57,6 +61,7 @@ class SavedLoginsStorageControllerTest {
             loginsFragmentStore = loginsFragmentStore,
             ioDispatcher = ioDispatcher,
             clipboardHandler = clipboardHandler,
+            snackbar = snackbar,
         )
     }
 
@@ -339,6 +344,26 @@ class SavedLoginsStorageControllerTest {
                     password = "password",
                 ),
             )
+        }
+    }
+
+    @Test
+    fun `WHEN a new login is added THEN a snackbar is shown and navigate to savedLogin`() = runTestOnMain {
+        controller.add(
+            originText = "https://www.firefox.com",
+            usernameText = "username",
+            passwordText = "password",
+        )
+
+        verifyOrder {
+            snackbar.context
+            snackbar.setText(any())
+            snackbar.setLength(FenixSnackbar.LENGTH_LONG)
+            snackbar.show()
+
+            val directions =
+                AddLoginFragmentDirections.actionAddLoginFragmentToSavedLoginsFragment()
+            navController.navigate(directions)
         }
     }
 }

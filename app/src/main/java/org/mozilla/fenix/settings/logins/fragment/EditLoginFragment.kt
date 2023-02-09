@@ -26,9 +26,11 @@ import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentEditLoginBinding
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.toEditable
@@ -83,6 +85,10 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login), MenuProvider {
                 navController = findNavController(),
                 loginsFragmentStore = loginsFragmentStore,
                 clipboardHandler = requireContext().components.clipboardHandler,
+                snackbar = FenixSnackbar.make(
+                    view = requireActivity().getRootView()!!,
+                    isDisplayedWithBrowserToolbar = false,
+                ),
             ),
         )
 

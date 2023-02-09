@@ -25,9 +25,11 @@ import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.android.view.showKeyboard
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentAddLoginBinding
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -76,6 +78,10 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
                 navController = findNavController(),
                 loginsFragmentStore = loginsFragmentStore,
                 clipboardHandler = requireContext().components.clipboardHandler,
+                snackbar = FenixSnackbar.make(
+                    view = requireActivity().getRootView()!!,
+                    isDisplayedWithBrowserToolbar = false,
+                ),
             ),
         )
 

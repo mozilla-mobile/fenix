@@ -21,6 +21,7 @@ import mozilla.components.service.sync.logins.LoginsApiException
 import mozilla.components.service.sync.logins.NoSuchRecordException
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.settings.logins.LoginsAction
 import org.mozilla.fenix.settings.logins.LoginsFragmentStore
 import org.mozilla.fenix.settings.logins.fragment.AddLoginFragmentDirections
@@ -39,6 +40,7 @@ open class SavedLoginsStorageController(
     private val loginsFragmentStore: LoginsFragmentStore,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val clipboardHandler: ClipboardHandler,
+    private val snackbar: FenixSnackbar,
 ) {
 
     fun delete(loginId: String) {
@@ -76,6 +78,11 @@ open class SavedLoginsStorageController(
             }
             saveLoginJob?.await()
             withContext(Dispatchers.Main) {
+                snackbar.apply {
+                    setText(context.getString(R.string.new_login_added))
+                    setLength(FenixSnackbar.LENGTH_LONG)
+                    show()
+                }
                 val directions =
                     AddLoginFragmentDirections.actionAddLoginFragmentToSavedLoginsFragment()
                 navController.navigate(directions)

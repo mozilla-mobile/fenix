@@ -1826,6 +1826,8 @@
     <string name="edit">Edit</string>
     <!--  The page title for adding new login. -->
     <string name="add_login">Add new login</string>
+    <!--  Snack message for adding new login. -->
+    <string name="new_login_added">New login added</string>
     <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Password required</string>
     <!--  The error message in add login view when username field is blank. -->
