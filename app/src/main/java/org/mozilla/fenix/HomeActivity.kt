@@ -212,6 +212,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     private val startupPathProvider = StartupPathProvider()
     private lateinit var startupTypeTelemetry: StartupTypeTelemetry
 
+    @Suppress("ComplexMethod")
     final override fun onCreate(savedInstanceState: Bundle?) {
         // DO NOT MOVE ANYTHING ABOVE THIS getProfilerTime CALL.
         val startTimeProfiler = components.core.engine.profiler?.getProfilerTime()
@@ -330,6 +331,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
             if (settings().showPocketSponsoredStories) {
                 components.core.pocketStoriesService.startPeriodicSponsoredStoriesRefresh()
+                // If the secret setting for sponsored stories parameters is set,
+                // force refresh the sponsored Pocket stories.
+                if (settings().useCustomConfigurationForSponsoredStories) {
+                    components.core.pocketStoriesService.refreshSponsoredStories()
+                }
             }
         }
 
@@ -988,14 +994,17 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
         } else {
             if (newTab) {
-                components.useCases.searchUseCases.newTabSearch
-                    .invoke(
-                        searchTermOrURL,
-                        SessionState.Source.Internal.UserEntered,
-                        true,
-                        mode.isPrivate,
-                        searchEngine = engine,
-                    )
+                val searchUseCase = if (mode.isPrivate) {
+                    components.useCases.searchUseCases.newPrivateTabSearch
+                } else {
+                    components.useCases.searchUseCases.newTabSearch
+                }
+                searchUseCase.invoke(
+                    searchTermOrURL,
+                    SessionState.Source.Internal.UserEntered,
+                    true,
+                    searchEngine = engine,
+                )
             } else {
                 components.useCases.searchUseCases.defaultSearch.invoke(searchTermOrURL, engine)
             }
