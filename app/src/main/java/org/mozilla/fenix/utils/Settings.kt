@@ -76,6 +76,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         private const val INACTIVE_TAB_MINIMUM_TO_SHOW_AUTO_CLOSE_DIALOG = 20
 
         const val FOUR_HOURS_MS = 60 * 60 * 4 * 1000L
+        const val ONE_MINUTE_MS = 60 * 1000L
+        const val ONE_HOUR_MS = 60 * ONE_MINUTE_MS
         const val ONE_DAY_MS = 60 * 60 * 24 * 1000L
         const val TWO_DAYS_MS = 2 * ONE_DAY_MS
         const val THREE_DAYS_MS = 3 * ONE_DAY_MS
@@ -402,6 +404,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
+    var nimbusLastFetchTime: Long by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_nimbus_last_fetch),
+        default = 0L,
+    )
+
     /**
      * Indicates the last time when the user was interacting with the [BrowserFragment],
      * This is useful to determine if the user has to start on the [HomeFragment]
@@ -647,7 +654,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var reEngagementNotificationEnabled by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_re_engagement_notification_enabled),
-        default = { FxNimbus.features.reEngagementNotification.value(appContext).enabled },
+        default = { FxNimbus.features.reEngagementNotification.value().enabled },
         featureFlag = true,
     )
 
@@ -697,13 +704,16 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val enabledTotalCookieProtection: Boolean
         get() = Config.channel.isNightlyOrDebug || mr2022Sections[Mr2022Section.TCP_FEATURE] == true
 
+    private val enabledTotalCookieProtectionCFR: Boolean
+        get() = Config.channel.isNightlyOrDebug || mr2022Sections[Mr2022Section.TCP_CFR] == true
+
     /**
      * Indicates if the total cookie protection CRF should be shown.
      */
     var shouldShowTotalCookieProtectionCFR by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_should_show_total_cookie_protection_popup),
         featureFlag = true,
-        default = { Config.channel.isNightlyOrDebug || mr2022Sections[Mr2022Section.TCP_CFR] == true },
+        default = { enabledTotalCookieProtectionCFR },
     )
 
     val blockCookiesSelectionInCustomTrackingProtection by stringPreference(
@@ -1447,6 +1457,38 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
+     *  Whether or not to display the Pocket sponsored stories parameter secret settings.
+     */
+    var useCustomConfigurationForSponsoredStories by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_custom_sponsored_stories_parameters_enabled),
+        default = false,
+    )
+
+    /**
+     * Site parameter used to set the spoc content.
+     */
+    var pocketSponsoredStoriesSiteId by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_custom_sponsored_stories_site_id),
+        default = "",
+    )
+
+    /**
+     * Country parameter used to set the spoc content.
+     */
+    var pocketSponsoredStoriesCountry by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_custom_sponsored_stories_country),
+        default = "",
+    )
+
+    /**
+     * City parameter used to set the spoc content.
+     */
+    var pocketSponsoredStoriesCity by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_custom_sponsored_stories_city),
+        default = "",
+    )
+
+    /**
      * Indicates if the Contile functionality should be visible.
      */
     var showContileFeature by booleanPreference(
@@ -1467,7 +1509,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var showUnifiedSearchFeature by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_show_unified_search),
-        default = { FxNimbus.features.unifiedSearch.value(appContext).enabled },
+        default = { FxNimbus.features.unifiedSearch.value().enabled },
         featureFlag = FeatureFlags.unifiedSearchFeature,
     )
 
@@ -1484,7 +1526,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var notificationPrePermissionPromptEnabled by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_notification_pre_permission_prompt_enabled),
-        default = { FxNimbus.features.prePermissionNotificationPrompt.value(appContext).enabled },
+        default = { FxNimbus.features.prePermissionNotificationPrompt.value().enabled },
         featureFlag = FeatureFlags.notificationPrePermissionPromptEnabled,
     )
 
@@ -1527,7 +1569,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      * Indicates if the cookie banner detect only mode should be enabled.
      */
     fun shouldEnabledCookieBannerDetectOnlyMode(): Boolean {
-        return shouldShowCookieBannerUI && !userOptOutOfReEngageCookieBannerDialog && !shouldUseCookieBanner
+        val tcpCFRAlreadyShown = if (enabledTotalCookieProtectionCFR) {
+            !userOptOutOfReEngageCookieBannerDialog
+        } else {
+            true
+        }
+        return shouldShowCookieBannerUI && tcpCFRAlreadyShown && !shouldUseCookieBanner
     }
 
     var setAsDefaultGrowthSent by booleanPreference(
@@ -1548,5 +1595,25 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var adClickGrowthSent by booleanPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_growth_ad_click_sent),
         default = false,
+    )
+
+    var usageTimeGrowthData by longPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_usage_time),
+        default = -1,
+    )
+
+    var usageTimeGrowthSent by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_usage_time_sent),
+        default = false,
+    )
+
+    var resumeGrowthLastSent by longPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_resume_last_sent),
+        default = 0,
+    )
+
+    var uriLoadGrowthLastSent by longPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_uri_load_last_sent),
+        default = 0,
     )
 }
