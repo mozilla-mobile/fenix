@@ -78,6 +78,7 @@
             android:id="@+id/createAccount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:minHeight="@dimen/accessibility_min_height"
             android:gravity="center"
             android:textAppearance="@style/Body14TextStyle"
             app:layout_constraintTop_toBottomOf="@id/signInEmailButton"
