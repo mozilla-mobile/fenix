@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -59,6 +60,13 @@ class SavedLoginsFragment : SecureFragment(), MenuProvider {
     override fun onResume() {
         super.onResume()
         initToolbar()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            findNavController().popBackStack(R.id.savedLoginsAuthFragment, false)
+        }
     }
 
     override fun onCreateView(

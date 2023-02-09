@@ -26,6 +26,7 @@ import org.mozilla.fenix.ext.directionsEq
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.logins.controller.SavedLoginsStorageController
 import org.mozilla.fenix.settings.logins.fragment.EditLoginFragmentDirections
+import org.mozilla.fenix.settings.logins.fragment.LoginDetailFragmentDirections
 import org.mozilla.fenix.utils.ClipboardHandler
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -68,7 +69,9 @@ class SavedLoginsStorageControllerTest {
 
         coVerify {
             passwordsStorage.delete(loginId)
-            navController.popBackStack(R.id.savedLoginsFragment, false)
+            val directions =
+                LoginDetailFragmentDirections.actionLoginDetailFragmentToSavedLoginsFragment()
+            navController.navigate(directions)
         }
     }
 
