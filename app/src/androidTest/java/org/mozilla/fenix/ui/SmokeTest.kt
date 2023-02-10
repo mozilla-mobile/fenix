@@ -27,7 +27,6 @@ import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.Constants.PackageName.YOUTUBE_APP
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
-import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
@@ -70,9 +69,9 @@ class SmokeTest {
         false,
     )
 
-    @Rule(order = 2)
-    @JvmField
-    val retryTestRule = RetryTestRule(3)
+    // @Rule(order = 2)
+    // @JvmField
+    // val retryTestRule = RetryTestRule(3)
 
     @Before
     fun setUp() {
