@@ -232,6 +232,7 @@ private fun OnboardingSyncSignInBottomContent(
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         PrimaryButton(
             text = stringResource(id = R.string.onboarding_home_sign_in_button),
+            minHeight = 48.dp,
             onClick = onSignInButtonClick,
         )
 
@@ -239,6 +240,7 @@ private fun OnboardingSyncSignInBottomContent(
 
         SecondaryButton(
             text = stringResource(id = R.string.onboarding_home_skip_button),
+            minHeight = 48.dp,
             onClick = onSkipButtonClick,
         )
 

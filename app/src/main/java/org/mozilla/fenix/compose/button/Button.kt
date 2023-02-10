@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
@@ -33,6 +35,7 @@ import org.mozilla.fenix.theme.FirefoxTheme
  * @param backgroundColor The background [Color] of the button.
  * @param icon Optional [Painter] used to display a [Icon] before the button text.
  * @param tint Tint [Color] to be applied to the icon.
+ * @param minHeight Optional [Dp] used to set the minimum height of the button.
  * @param onClick Invoked when the user clicks on the button.
  */
 @Composable
@@ -42,11 +45,15 @@ private fun Button(
     backgroundColor: Color,
     icon: Painter? = null,
     tint: Color,
+    minHeight: Dp? = null,
     onClick: () -> Unit,
 ) {
+    val modifier = Modifier.fillMaxWidth()
+    minHeight?.apply { modifier.defaultMinSize(minHeight = this) }
+
     androidx.compose.material.Button(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
         elevation = ButtonDefaults.elevation(defaultElevation = 0.dp, pressedElevation = 0.dp),
         colors = ButtonDefaults.outlinedButtonColors(
@@ -79,6 +86,7 @@ private fun Button(
  * @param textColor [Color] to apply to the button text.
  * @param backgroundColor The background [Color] of the button.
  * @param icon Optional [Painter] used to display an [Icon] before the button text.
+ * @param minHeight Optional [Dp] used to set the minimum height of the button.
  * @param onClick Invoked when the user clicks on the button.
  */
 @Composable
@@ -87,6 +95,7 @@ fun PrimaryButton(
     textColor: Color = FirefoxTheme.colors.textActionPrimary,
     backgroundColor: Color = FirefoxTheme.colors.actionPrimary,
     icon: Painter? = null,
+    minHeight: Dp? = null,
     onClick: () -> Unit,
 ) {
     Button(
@@ -95,6 +104,7 @@ fun PrimaryButton(
         backgroundColor = backgroundColor,
         icon = icon,
         tint = FirefoxTheme.colors.iconActionPrimary,
+        minHeight = minHeight,
         onClick = onClick,
     )
 }
@@ -106,6 +116,7 @@ fun PrimaryButton(
  * @param textColor [Color] to apply to the button text.
  * @param backgroundColor The background [Color] of the button.
  * @param icon Optional [Painter] used to display an [Icon] before the button text.
+ * @param minHeight Optional [Dp] used to set the minimum height of the button.
  * @param onClick Invoked when the user clicks on the button.
  */
 @Composable
@@ -114,6 +125,7 @@ fun SecondaryButton(
     textColor: Color = FirefoxTheme.colors.textActionSecondary,
     backgroundColor: Color = FirefoxTheme.colors.actionSecondary,
     icon: Painter? = null,
+    minHeight: Dp? = null,
     onClick: () -> Unit,
 ) {
     Button(
@@ -122,6 +134,7 @@ fun SecondaryButton(
         backgroundColor = backgroundColor,
         icon = icon,
         tint = FirefoxTheme.colors.iconActionSecondary,
+        minHeight = minHeight,
         onClick = onClick,
     )
 }
@@ -133,6 +146,7 @@ fun SecondaryButton(
  * @param textColor [Color] to apply to the button text.
  * @param backgroundColor The background [Color] of the button.
  * @param icon Optional [Painter] used to display an [Icon] before the button text.
+ * @param minHeight Optional [Dp] used to set the minimum height of the button.
  * @param onClick Invoked when the user clicks on the button.
  */
 @Composable
@@ -141,6 +155,7 @@ fun TertiaryButton(
     textColor: Color = FirefoxTheme.colors.textActionTertiary,
     backgroundColor: Color = FirefoxTheme.colors.actionTertiary,
     icon: Painter? = null,
+    minHeight: Dp? = null,
     onClick: () -> Unit,
 ) {
     Button(
@@ -149,6 +164,7 @@ fun TertiaryButton(
         backgroundColor = backgroundColor,
         icon = icon,
         tint = FirefoxTheme.colors.iconActionTertiary,
+        minHeight = minHeight,
         onClick = onClick,
     )
 }
@@ -160,6 +176,7 @@ fun TertiaryButton(
  * @param textColor [Color] to apply to the button text.
  * @param backgroundColor The background [Color] of the button.
  * @param icon Optional [Painter] used to display an [Icon] before the button text.
+ * @param minHeight Optional [Dp] used to set the minimum height of the button.
  * @param onClick Invoked when the user clicks on the button.
  */
 @Composable
@@ -168,6 +185,7 @@ fun DestructiveButton(
     textColor: Color = FirefoxTheme.colors.textWarningButton,
     backgroundColor: Color = FirefoxTheme.colors.actionSecondary,
     icon: Painter? = null,
+    minHeight: Dp? = null,
     onClick: () -> Unit,
 ) {
     Button(
@@ -176,6 +194,7 @@ fun DestructiveButton(
         backgroundColor = backgroundColor,
         icon = icon,
         tint = FirefoxTheme.colors.iconWarningButton,
+        minHeight = minHeight,
         onClick = onClick,
     )
 }
