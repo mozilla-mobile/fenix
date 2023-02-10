@@ -126,6 +126,7 @@ import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.perf.runBlockingIncrement
 import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.tabstray.TabsTrayAccessPoint
+import org.mozilla.fenix.utils.AppBarLayoutBehaviorEmptyRecyclerView
 import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
 import org.mozilla.fenix.utils.ToolbarPopupWindow
 import org.mozilla.fenix.utils.allowUndo
@@ -503,6 +504,15 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun appBarScrollingBehaviorWhenEmptyData() {
+        val appbarLayoutParams = binding.homeAppBar.layoutParams
+        if (appbarLayoutParams is CoordinatorLayout.LayoutParams) {
+            val behavior = AppBarLayoutBehaviorEmptyRecyclerView()
+            appbarLayoutParams.behavior = behavior
+        }
+        binding.homeAppBar.setExpanded(true, true)
+    }
+
     private fun updateLayout(view: View) {
         when (requireContext().settings().toolbarPosition) {
             ToolbarPosition.TOP -> {
@@ -639,6 +649,8 @@ class HomeFragment : Fragment() {
                     updateSearchSelectorMenu(search.searchEngines)
                 }
         }
+
+        appBarScrollingBehaviorWhenEmptyData()
 
         // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL!
         requireComponents.core.engine.profiler?.addMarker(
