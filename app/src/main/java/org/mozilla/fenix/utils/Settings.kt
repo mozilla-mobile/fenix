@@ -76,6 +76,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         private const val INACTIVE_TAB_MINIMUM_TO_SHOW_AUTO_CLOSE_DIALOG = 20
 
         const val FOUR_HOURS_MS = 60 * 60 * 4 * 1000L
+        const val ONE_MINUTE_MS = 60 * 1000L
+        const val ONE_HOUR_MS = 60 * ONE_MINUTE_MS
         const val ONE_DAY_MS = 60 * 60 * 24 * 1000L
         const val TWO_DAYS_MS = 2 * ONE_DAY_MS
         const val THREE_DAYS_MS = 3 * ONE_DAY_MS
@@ -400,6 +402,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var isFirstNimbusRun: Boolean by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_is_first_run),
         default = true,
+    )
+
+    var nimbusLastFetchTime: Long by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_nimbus_last_fetch),
+        default = 0L,
     )
 
     /**
@@ -1447,6 +1454,38 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_pocket_sponsored_stories_profile),
         default = UUID.randomUUID().toString(),
         persistDefaultIfNotExists = true,
+    )
+
+    /**
+     *  Whether or not to display the Pocket sponsored stories parameter secret settings.
+     */
+    var useCustomConfigurationForSponsoredStories by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_custom_sponsored_stories_parameters_enabled),
+        default = false,
+    )
+
+    /**
+     * Site parameter used to set the spoc content.
+     */
+    var pocketSponsoredStoriesSiteId by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_custom_sponsored_stories_site_id),
+        default = "",
+    )
+
+    /**
+     * Country parameter used to set the spoc content.
+     */
+    var pocketSponsoredStoriesCountry by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_custom_sponsored_stories_country),
+        default = "",
+    )
+
+    /**
+     * City parameter used to set the spoc content.
+     */
+    var pocketSponsoredStoriesCity by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_custom_sponsored_stories_city),
+        default = "",
     )
 
     /**
