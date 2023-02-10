@@ -248,7 +248,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         setupLeakCanary()
         startMetricsIfEnabled()
         setupPush()
-        migrateTopicSpecificSearchEngines()
 
         visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
         registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
@@ -476,11 +475,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         initializeRustErrors(components.analytics.crashReporter)
         // ... but RustHttpConfig.setClient() and RustLog.enable() can be called later.
 
-        // Once application-services has switched to using the new
-        // error reporting system, RustLog shouldn't input a CrashReporter
-        // anymore.
-        // (https://github.com/mozilla/application-services/issues/4981).
-        RustLog.enable(components.analytics.crashReporter)
+        RustLog.enable()
     }
 
     @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
@@ -792,6 +787,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                         name.set("custom")
                     }
                 }
+
+                migrateTopicSpecificSearchEngines()
             }
         }
     }
