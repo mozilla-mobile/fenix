@@ -53,7 +53,7 @@ class ShareControllerTest {
     private val shareSubject = "shareSubject"
     private val shareData = listOf(
         ShareData(url = "url0", title = "title0", text = "text0"),
-        ShareData(url = "url1", title = "title1", text = "text1")
+        ShareData(url = "url1", title = "title1", text = "text1"),
     )
 
     // Navigation between app fragments uses ShareTab as arguments. SendTabUseCases uses TabData.
