@@ -301,6 +301,9 @@
 
     <string name="pref_key_open_next_tab_desktop_mode" translatable="false">pref_key_open_next_tab_desktop_mode</string>
 
+    <string name="pref_key_focus_addressbar_on_new_tab_category" translatable="false">pref_key_focus_addressbar_on_new_tab_category</string>
+    <string name="pref_key_focus_addressbar_on_new_tab" translatable="false">pref_key_focus_addressbar_on_new_tab</string>
+
     <!-- Pocket -->
     <string name="pref_key_pocket_homescreen_recommendations" translatable="false">pref_key_pocket_homescreen_recommendations</string>
     <string name="pref_key_pocket_sponsored_stories" translatable="false">pref_key_pocket_sponsored_stories</string>

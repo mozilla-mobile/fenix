@@ -30,6 +30,9 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
     private lateinit var inactiveTabsCategory: PreferenceCategory
     private lateinit var inactiveTabs: SwitchPreference
 
+    private lateinit var keyboardFocusOnNewTabCategory: PreferenceCategory
+    private lateinit var keyboardFocusOnNewTab: SwitchPreference
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.tabs_preferences, rootKey)
     }
@@ -68,6 +71,13 @@ class TabsSettingsFragment : PreferenceFragmentCompat() {
         inactiveTabsCategory = requirePreference<PreferenceCategory>(R.string.pref_key_inactive_tabs_category).also {
             it.isEnabled = !(it.context.settings().closeTabsAfterOneDay || it.context.settings().closeTabsAfterOneWeek)
         }
+
+        keyboardFocusOnNewTab = requirePreference<SwitchPreference>(R.string.pref_key_focus_addressbar_on_new_tab).also {
+            it.isChecked = requireContext().settings().shouldOpenKeyboardOnNewTab
+            it.onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        keyboardFocusOnNewTabCategory = requirePreference<PreferenceCategory>(R.string.pref_key_focus_addressbar_on_new_tab_category)
 
         listRadioButton.onClickListener(::sendTabViewTelemetry)
         gridRadioButton.onClickListener(::sendTabViewTelemetry)

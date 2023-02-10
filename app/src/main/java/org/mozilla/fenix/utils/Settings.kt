@@ -518,6 +518,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         }
     }
 
+    var shouldOpenKeyboardOnNewTab by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_focus_addressbar_on_new_tab),
+        default = true,
+    )
+
     var shouldUseDarkTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_dark_theme),
         default = false,
