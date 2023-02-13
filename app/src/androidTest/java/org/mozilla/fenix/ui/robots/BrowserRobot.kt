@@ -33,6 +33,7 @@ import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiObjectNotFoundException
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import java.time.LocalDate
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.mediasession.MediaSession
@@ -57,7 +58,6 @@ import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.waitForObjects
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
-import java.time.LocalDate
 
 class BrowserRobot {
     private lateinit var sessionLoadedIdlingResource: SessionLoadedIdlingResource
@@ -1298,7 +1298,8 @@ private fun setPageObjectText(webPageItem: UiObject, text: String) {
         try {
             webPageItem.also {
                 it.waitForExists(waitingTime)
-                it.setText(text)
+                it.clearTextField()
+                it.text = text
             }
 
             break

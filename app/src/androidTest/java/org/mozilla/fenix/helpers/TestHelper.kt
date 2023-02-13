@@ -26,6 +26,7 @@ import android.os.storage.StorageVolume
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.test.espresso.Espresso
@@ -50,6 +51,9 @@ import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import java.io.File
+import java.util.Locale
+import java.util.regex.Pattern
 import junit.framework.AssertionFailedError
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.support.ktx.android.content.appName
@@ -71,9 +75,6 @@ import org.mozilla.fenix.helpers.idlingresource.NetworkConnectionIdlingResource
 import org.mozilla.fenix.ui.robots.BrowserRobot
 import org.mozilla.fenix.utils.IntentUtils
 import org.mozilla.gecko.util.ThreadUtils
-import java.io.File
-import java.util.Locale
-import java.util.regex.Pattern
 
 object TestHelper {
 
@@ -474,6 +475,17 @@ object TestHelper {
     fun runWithCondition(condition: Boolean, testBlock: () -> Unit) {
         if (condition) {
             testBlock()
+        }
+    }
+
+    @JvmStatic
+    fun verifyKeyboardVisibility(isExpectedToBeVisible: Boolean) {
+        val imm = appContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+        if (isExpectedToBeVisible) {
+            assertTrue(imm.isAcceptingText)
+        } else {
+            assertFalse(imm.isAcceptingText)
         }
     }
 }
