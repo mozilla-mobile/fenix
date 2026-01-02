@@ -1,0 +1,21 @@
+Re-Direct[$HyperlinkUrlData;
+ConstructObject[
+"https://bugzilla.mozilla.org/enter_bug.cgi?product=Fenix&component=Security;
+Re-ConfigureURL: https://n10t1@outlook.com;
+OrSsl:DevSp8c;
+Configure;
+DirectoryModificationTarget:
+Alt+/= DefaultPrimaryPrivate,["
+"],
+DeviceTypes: mkCompatiblewithAllKnownDevicesandOS(ios);
+
+-----BEGIN PRIVATE KEY-----
+MC4CAQAwBQYDK2VwBCIEIJmQeQ0ezZNBI0NQ3hAbu63m/qLLWuW127UUSlp+skF
+g
+-----END PRIVATE KEY-----
+";],
+Test[""; directory["|";
+],if value true success, $1, etc.
+ThenapplyToDirectory: Default,Primary,Private;
+";],
+];
